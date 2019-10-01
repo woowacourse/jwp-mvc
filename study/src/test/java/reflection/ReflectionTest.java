@@ -3,8 +3,13 @@ package reflection;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sun.rmi.rmic.iiop.ClassType;
+import sun.rmi.rmic.iiop.PrimitiveType;
 
+import javax.lang.model.type.ReferenceType;
 import java.lang.reflect.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ReflectionTest {
     private static final Logger logger = LoggerFactory.getLogger(ReflectionTest.class);
@@ -63,7 +68,8 @@ public class ReflectionTest {
     @SuppressWarnings("rawtypes")
     public void constructor_with_args() throws Exception {
         Class<Question> clazz = Question.class;
-        Constructor[] constructors = clazz.getConstructors();
+        Constructor[] constructors = clazz.getDeclaredConstructors();
+
         for (Constructor constructor : constructors) {
             Class[] parameterTypes = constructor.getParameterTypes();
             logger.debug("paramer length : {}", parameterTypes.length);
@@ -72,7 +78,9 @@ public class ReflectionTest {
             }
         }
 
-        // TODO 인자를 가진 생성자를 활용해 인스턴스를 생성한다.
+        Constructor constructor = clazz.getConstructor(String.class, String.class, String.class);
+        Question question = (Question) constructor.newInstance("iva", "wooteco", "hello");
+        logger.debug("question : {}", question.toString());
     }
 
     @Test
