@@ -35,7 +35,7 @@ public class ReflectionTest {
             .forEach(method -> logger.debug("메소드 이름: {}, 파라미터: {}, 리턴 타입: {}", method.getName(), method.getParameterCount(), method.getReturnType()));
     }
 
-    @Test   
+    @Test
     @SuppressWarnings("rawtypes")
     public void constructor_with_args() throws Exception {
         Class<Question> clazz = Question.class;
@@ -48,7 +48,10 @@ public class ReflectionTest {
             }
         }
 
-        // TODO 인자를 가진 생성자를 활용해 인스턴스를 생성한다.
+        Constructor constructor = clazz.getDeclaredConstructor(String.class, String.class, String.class);
+        Object instance = constructor.newInstance("hi", "hi1", "hi2");
+        logger.debug(instance.toString());
+        assertThat(instance).isEqualTo(new Question("hi", "hi1", "hi2"));
     }
 
     @Test
