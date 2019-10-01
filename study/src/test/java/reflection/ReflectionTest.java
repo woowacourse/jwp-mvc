@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.*;
+import java.util.Date;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -55,7 +56,17 @@ public class ReflectionTest {
             }
         }
 
-        // TODO 인자를 가진 생성자를 활용해 인스턴스를 생성한다.
+        Question question = null;
+        for (Constructor<?> declaredConstructor : clazz.getDeclaredConstructors()) {
+            if (declaredConstructor.getParameterCount() == 3) {
+                question = (Question) declaredConstructor.newInstance("writer", "title", "contents");
+            } else {
+                question = (Question) declaredConstructor.newInstance(1L, "writer", "title", "contents", new Date(), 0);
+            }
+        }
+
+        assertThat(question.getWriter()).isEqualTo("writer");
+        assertThat(question.getTitle()).isEqualTo("title");
     }
 
     @Test
