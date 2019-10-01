@@ -45,23 +45,21 @@ public class ReflectionTest {
     @Test
     @SuppressWarnings("rawtypes")
     public void constructor_with_args() throws Exception {
-        Class<Question> clazz = Question.class;
-        Constructor[] constructors = clazz.getConstructors();
-        for (Constructor constructor : constructors) {
-            Class[] parameterTypes = constructor.getParameterTypes();
-            logger.debug("paramer length : {}", parameterTypes.length);
-            for (Class paramType : parameterTypes) {
-                logger.debug("param type : {}", paramType);
-            }
-        }
-
         // TODO 인자를 가진 생성자를 활용해 인스턴스를 생성한다.
+
+        Class<Question> clazz = Question.class;
+
+        Constructor constructor = clazz.getDeclaredConstructor(String.class, String.class, String.class);
+        Question question = (Question) constructor.newInstance("무민", "개발은 어려워", "ㅠㅠ");
+        assertThat(question.getWriter()).isEqualTo("무민");
+        assertThat(question.getTitle()).isEqualTo("개발은 어려워");
+        assertThat(question.getContents()).isEqualTo("ㅠㅠ");
     }
 
     @Test
     public void privateFieldAccess() throws Exception {
         // TODO Student private field에 값을 저장하고 조회한다.
-        
+
         Class<Student> clazz = Student.class;
         Student instance = new Student();
 
