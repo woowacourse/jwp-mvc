@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Date;
 
 public class ReflectionTest {
     private static final Logger logger = LoggerFactory.getLogger(ReflectionTest.class);
@@ -43,9 +44,18 @@ public class ReflectionTest {
             for (Class paramType : parameterTypes) {
                 logger.debug("param type : {}", paramType);
             }
+
+            if (constructor.getParameterCount() == 3) {
+                Question question1 = (Question) constructor.newInstance("재성", "Next Step", "웹 프로그래밍");
+                logger.debug("question1 : {}", question1);
+            }
+
+            if (constructor.getParameterCount() == 6) {
+                Question question2 = (Question) constructor.newInstance(1L, "재성", "Next Step", "웹 프로그래밍", new Date(), 1);
+                logger.debug("question2 : {}", question2);
+            }
         }
 
-        // TODO 인자를 가진 생성자를 활용해 인스턴스를 생성한다.
     }
 
     @Test
