@@ -8,6 +8,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -52,16 +53,14 @@ public class ReflectionTest {
     @SuppressWarnings("rawtypes")
     public void constructor_with_args() throws Exception {
         Class<Question> clazz = Question.class;
-        Constructor[] constructors = clazz.getConstructors();
-        for (Constructor constructor : constructors) {
-            Class[] parameterTypes = constructor.getParameterTypes();
-            logger.debug("paramer length : {}", parameterTypes.length);
-            for (Class paramType : parameterTypes) {
-                logger.debug("param type : {}", paramType);
-            }
-        }
 
-        // TODO 인자를 가진 생성자를 활용해 인스턴스를 생성한다.
+        Constructor firstConstructor = clazz.getDeclaredConstructor(String.class, String.class, String.class);
+        Object[] firstConstructorArgs = {"writer", "title", "content"};
+        logger.debug("first constructor : {}", firstConstructor.newInstance(firstConstructorArgs));
+
+        Constructor secondConstructor = clazz.getDeclaredConstructor(long.class, String.class, String.class, String.class, Date.class, int.class);
+        Object[] secondConstructorArgs = {1L, "writer", "title", "content", new Date(), 1000};
+        logger.debug("second constructor : {}", secondConstructor.newInstance(secondConstructorArgs));
     }
 
     @Test
