@@ -5,6 +5,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.Arrays;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class ReflectionTest {
     private static final Logger logger = LoggerFactory.getLogger(ReflectionTest.class);
@@ -12,9 +17,18 @@ public class ReflectionTest {
     @Test
     public void showClass() {
         Class<Question> clazz = Question.class;
-        logger.debug(clazz.getName());
+        Method[] methods = clazz.getDeclaredMethods();
+        Constructor[] constructors = clazz.getDeclaredConstructors();
+        Field[] fields =  clazz.getDeclaredFields();
 
-        // TODO Question 클래스의 모든 필드, 생성자, 메소드에 대한 정보를 출력한다.
+        Arrays.asList(methods).forEach(x -> logger.debug(x.getName()));
+        assertThat(methods.length).isEqualTo(11);
+
+        Arrays.asList(constructors).forEach(x -> logger.debug("{}: {}",x,x.getParameterTypes().toString()));
+        assertThat(constructors.length).isEqualTo(2);
+
+        Arrays.asList(fields).forEach(x -> logger.debug(x.getName()));
+        assertThat(fields.length).isEqualTo(6);
     }
 
     @Test
