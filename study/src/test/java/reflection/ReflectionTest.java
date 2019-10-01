@@ -4,10 +4,9 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
+import java.lang.reflect.*;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class ReflectionTest {
     private static final Logger logger = LoggerFactory.getLogger(ReflectionTest.class);
@@ -50,7 +49,7 @@ public class ReflectionTest {
         Constructor[] constructors = clazz.getConstructors();
         for (Constructor constructor : constructors) {
             Class[] parameterTypes = constructor.getParameterTypes();
-            logger.debug("paramer length : {}", parameterTypes.length);
+            logger.debug("parameter length : {}", parameterTypes.length);
             for (Class paramType : parameterTypes) {
                 logger.debug("param type : {}", paramType);
             }
@@ -60,12 +59,22 @@ public class ReflectionTest {
     }
 
     @Test
-    public void privateFieldAccess() {
+    public void privateFieldAccess() throws NoSuchMethodException, IllegalAccessException, InvocationTargetException,
+            InstantiationException, NoSuchFieldException {
         Class<Student> clazz = Student.class;
         logger.debug(clazz.getName());
 
-        // TODO Student private field에 값을 저장하고 조회한다.
+        Student student = clazz.getConstructor().newInstance();
 
+        Field field = clazz.getDeclaredField("age");
+        field.setAccessible(true);
+        field.setInt(student, 29);
 
+        field = clazz.getDeclaredField("name");
+        field.setAccessible(true);
+        field.set(student, "sloth");
+
+        assertThat(student.getName()).isEqualTo("sloth");
+        assertThat(student.getAge()).isEqualTo(29);
     }
 }
