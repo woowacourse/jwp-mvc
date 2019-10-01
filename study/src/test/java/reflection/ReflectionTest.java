@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Constructor;
+import java.util.Arrays;
 
 public class ReflectionTest {
     private static final Logger logger = LoggerFactory.getLogger(ReflectionTest.class);
@@ -13,8 +14,14 @@ public class ReflectionTest {
     public void showClass() {
         Class<Question> clazz = Question.class;
         logger.debug(clazz.getName());
-
-        // TODO Question 클래스의 모든 필드, 생성자, 메소드에 대한 정보를 출력한다.
+        Arrays.stream(clazz.getDeclaredFields())
+                .forEach(r -> logger.debug(r.toString()));
+        logger.debug("-------------------------");
+        Arrays.stream(clazz.getConstructors())
+                .forEach(r -> logger.debug(r.toString()));
+        logger.debug("-------------------------");
+        Arrays.stream(clazz.getMethods())
+                .forEach(r -> logger.debug(r.toString()));
     }
 
     @Test
