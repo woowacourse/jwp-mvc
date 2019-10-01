@@ -6,12 +6,16 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Parameter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.in;
 
 public class ReflectionTest {
     private static final Logger logger = LoggerFactory.getLogger(ReflectionTest.class);
@@ -55,11 +59,23 @@ public class ReflectionTest {
     }
 
     @Test
-    public void privateFieldAccess() {
-        Class<Student> clazz = Student.class;
-        logger.debug(clazz.getName());
-
+    public void privateFieldAccess() throws Exception {
         // TODO Student private field에 값을 저장하고 조회한다.
+        
+        Class<Student> clazz = Student.class;
+        Student instance = new Student();
+
+        setValue(clazz, instance, "age", 17);
+        setValue(clazz, instance, "name", "updatedName");
+
+        assertThat(instance.getAge()).isEqualTo(17);
+        assertThat(instance.getName()).isEqualTo("updatedName");
+    }
+
+    private void setValue(Class<?> clazz, Object instance, String fieldName ,Object value) throws NoSuchFieldException, IllegalAccessException {
+        Field nameField = clazz.getDeclaredField(fieldName);
+        nameField.setAccessible(true);
+        nameField.set(instance, value);
     }
 
     private String parseParameters(Parameter[] parameters) {
