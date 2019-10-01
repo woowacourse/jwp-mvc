@@ -39,7 +39,7 @@ public class AnnotationHandlerMapping {
             RequestMethod requestMethod = method.getAnnotation(RequestMapping.class).method();
             if (Objects.isNull(requestMethod)) {
                 for (RequestMethod value : RequestMethod.values()) {
-                    HandlerKey handlerKey = new HandlerKey(url,value);
+                    HandlerKey handlerKey = new HandlerKey(url, value);
                     handlerExecutions.put(handlerKey,
                             (request, response) -> (ModelAndView) method.invoke(controller.newInstance(), request, response));
                 }
