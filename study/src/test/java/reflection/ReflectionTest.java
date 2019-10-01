@@ -7,7 +7,10 @@ import org.slf4j.LoggerFactory;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -35,16 +38,26 @@ public class ReflectionTest {
     @SuppressWarnings("rawtypes")
     public void constructor_with_args() throws Exception {
         Class<Question> clazz = Question.class;
-        Constructor[] constructors = clazz.getConstructors();
+        Constructor[] constructors = clazz.getDeclaredConstructors();
+        List<Class[]> parameterTypeList = new ArrayList<>();
         for (Constructor constructor : constructors) {
             Class[] parameterTypes = constructor.getParameterTypes();
             logger.debug("paramer length : {}", parameterTypes.length);
+            parameterTypeList.add(parameterTypes);
             for (Class paramType : parameterTypes) {
                 logger.debug("param type : {}", paramType);
             }
         }
 
         // TODO 인자를 가진 생성자를 활용해 인스턴스를 생성한다.
+        Constructor constructor = clazz.getDeclaredConstructor(parameterTypeList.get(0));
+        Question question = (Question) constructor.newInstance("a", "b", "c");
+
+        Constructor constructor2 = clazz.getDeclaredConstructor(parameterTypeList.get(1));
+        Question question2 = (Question) constructor2.newInstance(5l,"a", "b", "c", new Date(), 20);
+
+        assertThat(question).isEqualTo(new Question("a", "b", "c"));
+        assertThat(question2).isEqualTo(new Question(5l,"a", "b", "c", new Date(), 20));
     }
 
     @Test
