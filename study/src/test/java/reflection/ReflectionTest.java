@@ -19,12 +19,12 @@ public class ReflectionTest {
         Class<Question> clazz = Question.class;
         Method[] methods = clazz.getDeclaredMethods();
         Constructor[] constructors = clazz.getDeclaredConstructors();
-        Field[] fields =  clazz.getDeclaredFields();
+        Field[] fields = clazz.getDeclaredFields();
 
         Arrays.asList(methods).forEach(x -> logger.debug(x.getName()));
         assertThat(methods.length).isEqualTo(11);
 
-        Arrays.asList(constructors).forEach(x -> logger.debug("{}: {}",x,x.getParameterTypes().toString()));
+        Arrays.asList(constructors).forEach(x -> logger.debug("{}: {}", x, x.getParameterTypes().toString()));
         assertThat(constructors.length).isEqualTo(2);
 
         Arrays.asList(fields).forEach(x -> logger.debug(x.getName()));
@@ -48,10 +48,24 @@ public class ReflectionTest {
     }
 
     @Test
-    public void privateFieldAccess() {
+    public void privateFieldAccess() throws IllegalAccessException, NoSuchFieldException {
+        final int dummyAge = 29;
+        final String dummyName = "규동";
+
+        Student student = new Student();
+
         Class<Student> clazz = Student.class;
         logger.debug(clazz.getName());
 
-        // TODO Student private field에 값을 저장하고 조회한다.
+        Field nameField = clazz.getDeclaredField("name");
+        Field ageField = clazz.getDeclaredField("age");
+
+        nameField.setAccessible(true);
+        ageField.setAccessible(true);
+        nameField.set(student, dummyName);
+        ageField.set(student, dummyAge);
+
+        assertThat(student.getName()).isEqualTo(dummyName);
+        assertThat(student.getAge()).isEqualTo(dummyAge);
     }
 }
