@@ -12,11 +12,15 @@ public class ReflectionTest {
     private static final Logger logger = LoggerFactory.getLogger(ReflectionTest.class);
 
     @Test
-    public void showClass() {
+    public void showClass() throws NoSuchMethodException {
         Class<Question> clazz = Question.class;
         logger.debug("클래스 이름 : {} ", clazz.getName());
         Field[] fields = clazz.getDeclaredFields();
-        Arrays.stream(fields).forEach(field -> logger.debug("필드 이름 : {}, 필드 타입 : {}", field.getName(), field.getType()));
+        Arrays.stream(fields)
+            .forEach(field -> logger.debug("필드 이름 : {}, 필드 타입 : {}", field.getName(), field.getType()));
+        Arrays.stream(clazz.getConstructors())
+            .forEach(constructor -> logger.debug("생성자 이름: {} 생성자: {}", constructor.getName(), constructor));
+        logger.debug(clazz.getConstructor(String.class, String.class, String.class).toString());
         // TODO Question 클래스의 모든 필드, 생성자, 메소드에 대한 정보를 출력한다.
     }
 
