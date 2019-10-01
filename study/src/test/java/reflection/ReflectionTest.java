@@ -5,6 +5,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 
 public class ReflectionTest {
     private static final Logger logger = LoggerFactory.getLogger(ReflectionTest.class);
@@ -14,7 +16,20 @@ public class ReflectionTest {
         Class<Question> clazz = Question.class;
         logger.debug(clazz.getName());
 
-        // TODO Question 클래스의 모든 필드, 생성자, 메소드에 대한 정보를 출력한다.
+        Field[] fields = clazz.getDeclaredFields();
+        for (Field field : fields) {
+            logger.debug("필드 이름 : {}, 접근 제어자 : {}", field.getName(), field.getModifiers());
+        }
+
+        Constructor<?>[] constructors = clazz.getDeclaredConstructors();
+        for (Constructor<?> constructor : constructors) {
+            logger.debug("생성자 이름 : {}, 접근 제어자 : {}, 파라미터 타입 : {}", constructor.getName(), constructor.getModifiers(), constructor.getParameterTypes());
+        }
+
+        Method[] methods = clazz.getDeclaredMethods();
+        for (Method method : methods) {
+            logger.debug("메서드 이름 : {}, 접근 제어자 : {}, 파라미터 타입 : {}", method.getName(), method.getModifiers(), method.getParameterTypes());
+        }
     }
 
     @Test
