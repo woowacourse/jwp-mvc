@@ -4,10 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
+import java.lang.reflect.*;
 
 public class ReflectionTest {
     private static final Logger logger = LoggerFactory.getLogger(ReflectionTest.class);
@@ -79,10 +76,27 @@ public class ReflectionTest {
     }
 
     @Test
-    public void privateFieldAccess() {
+    public void privateFieldAccess()
+            throws IllegalAccessException, InvocationTargetException, NoSuchFieldException, NoSuchMethodException {
         Class<Student> clazz = Student.class;
         logger.debug(clazz.getName());
 
-        // TODO Student private field에 값을 저장하고 조회한다.
+        Student student = new Student();
+        setField(clazz, student, "name", "harry");
+        setField(clazz, student, "age", 26);
+
+        Method[] methods = {clazz.getDeclaredMethod("getName"), clazz.getDeclaredMethod("getAge")};
+
+        for (Method method : methods) {
+            Object value = method.invoke(student);
+            logger.debug("value:{}", value);
+        }
+    }
+
+    private void setField(Class<Student> clazz, Object classType, String fieldName, Object value)
+            throws NoSuchFieldException, IllegalAccessException {
+        Field age = clazz.getDeclaredField(fieldName);
+        age.setAccessible(true);
+        age.set(classType, value);
     }
 }
