@@ -51,10 +51,30 @@ public class ReflectionTest {
     }
 
     @Test
-    public void privateFieldAccess() {
+    public void privateFieldAccess() throws IllegalAccessException {
         Class<Student> clazz = Student.class;
         logger.debug(clazz.getName());
 
-        // TODO Student private field에 값을 저장하고 조회한다.
+        Field[] fields = clazz.getDeclaredFields();
+
+        Student student = new Student();
+
+        for (Field field : fields) {
+            if (isPrivateField(field)) {
+                field.setAccessible(true);
+                if (field.getName().equals("name")) {
+                    field.set(student, "Martin");
+                }
+                if (field.getName().equals("age")) {
+                    field.set(student, 1);
+                }
+            }
+        }
+        logger.debug(student.toString());
+    }
+
+    private boolean isPrivateField(Field field) {
+        String[] tokens = field.toGenericString().split(" ");
+        return "private".equals(tokens[0]);
     }
 }
