@@ -19,7 +19,8 @@ public class Junit3TestRunner {
         }
     }
 
-    private void invokeTestMethod(Class<Junit3Test> clazz, Method method) throws IllegalAccessException, InvocationTargetException, InstantiationException {
+    private void invokeTestMethod(Class<Junit3Test> clazz, Method method)
+            throws IllegalAccessException, InvocationTargetException, InstantiationException {
         if (method.getName().startsWith(TEST)) {
             method.invoke(clazz.newInstance());
         }
