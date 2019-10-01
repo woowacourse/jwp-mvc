@@ -6,7 +6,7 @@
 - [x] junit3Test클래스의 test로 시작하는 메소드만 실행하도록 구현
 
 ###d# 3 - @Test 애노테이션 메소드 실행
-- [ ] junit에서는 @Test 어노테이션만 자동으로 실행. @MyTest만 실행하도록 구현
+- [x] junit에서는 @Test 어노테이션만 자동으로 실행. @MyTest만 실행하도록 구현
 
 #### 4 - private field에 값 할당
 - [ ] Student 클래스의 NAme과 age 필드에 값을 할당.
