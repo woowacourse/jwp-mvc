@@ -1,17 +1,26 @@
 package reflection;
 
+import org.assertj.core.util.DateUtil;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.util.Arrays;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class ReflectionTest {
     private static final Logger logger = LoggerFactory.getLogger(ReflectionTest.class);
+    private static final Map<Class, Object> defaultMap = new HashMap<>();
+
+    static {
+        defaultMap.put(String.class, "abc");
+        defaultMap.put(long.class, 1L);
+        defaultMap.put(Date.class, DateUtil.now());
+        defaultMap.put(int.class, 1);
+    }
 
     @Test
     public void showClass() {
@@ -32,13 +41,21 @@ public class ReflectionTest {
         Constructor[] constructors = clazz.getConstructors();
         for (Constructor constructor : constructors) {
             Class[] parameterTypes = constructor.getParameterTypes();
-            logger.debug("paramer length : {}", parameterTypes.length);
+            logger.debug("parameter length : {}", parameterTypes.length);
             for (Class paramType : parameterTypes) {
-                logger.debug("param type : {}", paramType);
+                logger.debug("parameter type : {}", paramType);
             }
         }
 
-        // TODO 인자를 가진 생성자를 활용해 인스턴스를 생성한다.
+        // 인자를 가진 생성자를 활용해 인스턴스를 생성한다.
+        for (Constructor constructor : constructors) {
+            List<Object> params = new ArrayList<>();
+            for (Class parameterType : constructor.getParameterTypes()) {
+                params.add(defaultMap.get(parameterType));
+            }
+            Question question = (Question) constructor.newInstance(params.toArray());
+            logger.info(question.toString());
+        }
     }
 
     @Test
