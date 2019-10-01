@@ -14,4 +14,6 @@ public class Junit4Test {
     public void testThree() throws Exception {
         System.out.println("Running Test3");
     }
+
+
 }
