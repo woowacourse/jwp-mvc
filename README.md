@@ -21,3 +21,6 @@ https://gist.github.com/joshbuchea/6f47e86d2510bce28f8e7f42ae84c716
 
 #### 요구사항 5
 - [x] Question 클래스의 인스턴스를 자바 Reflection API를 활용해 Question 인스턴스를 생성한다.
+
+#### 요구사항 6
+- [x] examples 패키지에서 @Controller, @Service, @Repository 애노테이션이 설정되어 있는 모든 클래스를 찾아 출력한다.
