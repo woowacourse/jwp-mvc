@@ -15,3 +15,6 @@ https://gist.github.com/joshbuchea/6f47e86d2510bce28f8e7f42ae84c716
 
 #### 요구사항 3
 - [x] Junit4에서는 @Test 애노테이션일 설정되어 있는 메소드를 자동으로 실행한다
+
+#### 요구사항 4
+- [x] 자바 Reflection API를 활용해 다음 Student 클래스의 name과 age 필드에 값을 할당한 후 getter 메소드를 통해 값을 확인한다.
