@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Date;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -47,7 +48,29 @@ public class ReflectionTest {
             }
         }
 
-        // TODO 인자를 가진 생성자를 활용해 인스턴스를 생성한다.
+        long questionId = 1L;
+        String writer = "writer";
+        String title = "title";
+        String contents = "contents";
+        Date date = new Date();
+        int countOfComment = 2;
+
+        Constructor<Question> constructor = clazz.getDeclaredConstructor(String.class, String.class, String.class);
+        Question question = constructor.newInstance(writer, title, contents);
+
+        assertThat(question.getWriter()).isEqualTo(writer);
+        assertThat(question.getTitle()).isEqualTo(title);
+        assertThat(question.getContents()).isEqualTo(contents);
+
+        Constructor<Question> fullConstructor = clazz.getDeclaredConstructor(long.class, String.class, String.class, String.class, Date.class, int.class);
+        Question questionByFullConstructor = fullConstructor.newInstance(questionId, writer, title, contents, date, countOfComment);
+
+        assertThat(questionByFullConstructor.getQuestionId()).isEqualTo(questionId);
+        assertThat(questionByFullConstructor.getWriter()).isEqualTo(writer);
+        assertThat(questionByFullConstructor.getTitle()).isEqualTo(title);
+        assertThat(questionByFullConstructor.getContents()).isEqualTo(contents);
+        assertThat(questionByFullConstructor.getCreatedDate()).isEqualTo(date);
+        assertThat(questionByFullConstructor.getCountOfComment()).isEqualTo(countOfComment);
     }
 
     @Test
