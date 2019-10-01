@@ -4,17 +4,42 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.Constructor;
+import java.lang.reflect.*;
 
 public class ReflectionTest {
     private static final Logger logger = LoggerFactory.getLogger(ReflectionTest.class);
 
     @Test
-    public void showClass() {
+    void showClass() {
         Class<Question> clazz = Question.class;
         logger.debug(clazz.getName());
 
-        // TODO Question 클래스의 모든 필드, 생성자, 메소드에 대한 정보를 출력한다.
+        logger.debug("Question 클래스의 모든 필드 :");
+        for (final Field field : clazz.getDeclaredFields()) {
+            logger.debug("{} {} {}",
+                    Modifier.toString(field.getModifiers()),
+                    field.getType().getSimpleName(),
+                    field.getName());
+        }
+
+        logger.debug("Question 클래스의 모든 생성자 :");
+        for (final Constructor constructor : clazz.getDeclaredConstructors()) {
+            logger.debug("{} {}", Modifier.toString(constructor.getModifiers()), constructor.getName());
+            for (final Parameter parameter : constructor.getParameters()) {
+                logger.debug("{} {} {}",
+                        Modifier.toString(parameter.getModifiers()),
+                        parameter.getType().getSimpleName(),
+                        parameter.toString());
+            }
+        }
+
+        logger.debug("Question 클래스의 모든 메소드 :");
+        for (final Method method : clazz.getDeclaredMethods()) {
+            logger.debug("{} {} {}",
+                    Modifier.toString(method.getModifiers()),
+                    method.getReturnType().getSimpleName(),
+                    method.getName());
+        }
     }
 
     @Test
