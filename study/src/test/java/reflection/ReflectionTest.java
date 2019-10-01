@@ -29,10 +29,9 @@ public class ReflectionTest {
 
         Arrays.stream(clazz.getDeclaredMethods())
             .forEach(method -> logger.debug("메소드 이름: {}, 파라미터: {}, 리턴 타입: {}", method.getName(), method.getParameterCount(), method.getReturnType()));
-        // TODO Question 클래스의 모든 필드, 생성자, 메소드에 대한 정보를 출력한다.
     }
 
-    @Test
+    @Test   
     @SuppressWarnings("rawtypes")
     public void constructor_with_args() throws Exception {
         Class<Question> clazz = Question.class;
