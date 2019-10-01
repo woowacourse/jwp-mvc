@@ -1,11 +1,11 @@
 ### 1단계 reflection 실습
 #### 1 - 클래스 정보 출력
-- [] ReflectionTest의 showClass() 구현 -> Question 클래스의 모든 필드, 생성자, 메소드 정보 출력
+- [x] ReflectionTest의 showClass() 구현 -> Question 클래스의 모든 필드, 생성자, 메소드 정보 출력
 
 #### 2 - test로 시작하는 메소드 실행
-- [ ] junit3Test클래스의 test로 시작하는 메소드만 실행하도록 구현
+- [x] junit3Test클래스의 test로 시작하는 메소드만 실행하도록 구현
 
-#### 3 - @Test 애노테이션 메소드 실행
+###d# 3 - @Test 애노테이션 메소드 실행
 - [ ] junit에서는 @Test 어노테이션만 자동으로 실행. @MyTest만 실행하도록 구현
 
 #### 4 - private field에 값 할당
