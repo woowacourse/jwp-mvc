@@ -9,6 +9,8 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 public class ReflectionTest {
     private static final Logger logger = LoggerFactory.getLogger(ReflectionTest.class);
 
@@ -63,10 +65,20 @@ public class ReflectionTest {
     }
 
     @Test
-    public void privateFieldAccess() {
+    public void privateFieldAccess() throws IllegalAccessException, NoSuchFieldException {
         Class<Student> clazz = Student.class;
         logger.debug(clazz.getName());
 
-        // TODO Student private field에 값을 저장하고 조회한다.
+        Student student = new Student();
+        Field ageField = clazz.getDeclaredField("age");
+        Field nameField = clazz.getDeclaredField("name");
+
+        ageField.setAccessible(true);
+        ageField.set(student, 30);
+        nameField.setAccessible(true);
+        nameField.set(student, "재성");
+
+        assertThat(student.getAge()).isEqualTo(30);
+        assertThat(student.getName()).isEqualTo("재성");
     }
 }
