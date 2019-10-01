@@ -1,5 +1,6 @@
 package reflection;
 
+import javassist.tools.rmi.StubGenerator;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,6 +44,24 @@ public class ReflectionTest {
         Class<Student> clazz = Student.class;
         logger.debug(clazz.getName());
 
-        // TODO Student private field에 값을 저장하고 조회한다.
+        try {
+            Field name = getAccessibleField(clazz, "name");
+            Field age = getAccessibleField(clazz, "age");
+
+            Student student = new Student();
+            name.set(student, "pobi");
+            age.set(student, 20);
+
+            logger.info("[student] : {}", student.toString());
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            logger.error(e.getMessage());
+        }
+    }
+
+    private <T> Field getAccessibleField(Class<T> clazz, String fieldName) throws NoSuchFieldException {
+        Field field = clazz.getDeclaredField(fieldName);
+        field.setAccessible(true);
+
+        return field;
     }
 }
