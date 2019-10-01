@@ -57,6 +57,10 @@ public class Question {
         return countOfComment;
     }
 
+    public final int publicFinal() { return 1; }
+    
+    public static int publicStatic() { return 1; }
+
     public void update(Question newQuestion) {
         this.title = newQuestion.title;
         this.contents = newQuestion.contents;
