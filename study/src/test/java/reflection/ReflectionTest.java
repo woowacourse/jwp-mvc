@@ -5,6 +5,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
 
 public class ReflectionTest {
     private static final Logger logger = LoggerFactory.getLogger(ReflectionTest.class);
@@ -15,6 +18,29 @@ public class ReflectionTest {
         logger.debug(clazz.getName());
 
         // TODO Question 클래스의 모든 필드, 생성자, 메소드에 대한 정보를 출력한다.
+        // 일단 리플렉션 테스트로 리플렉션을 학습해보겠습니다
+        logger.debug("##### {} Fields #####", clazz.getName());
+        for (Field declaredField : clazz.getDeclaredFields()) {
+            logger.debug("Type : Name {}", String.format("%s : %s", declaredField.getType(), declaredField.getName()));
+        }
+        logger.debug("\r\n");
+
+        logger.debug("##### {} Constructor #####", clazz.getName());
+        for (Constructor<?> constructor : clazz.getDeclaredConstructors()) {
+            logger.debug("Modifiers : {}", String.format("%s ", constructor.getModifiers()));
+            for (Parameter parameter : constructor.getParameters()) {
+                logger.debug("Params : {}", String.format("Type : %s, Name : %s", parameter.getType(), parameter.getName()));
+            }
+        }
+        logger.debug("\r\n");
+
+        logger.debug("##### {} Method #####", clazz.getName());
+        for (Method method : clazz.getDeclaredMethods()) {
+            logger.debug(String.format("%s %s %s", method.getModifiers(), method.getReturnType(), method.getName()));
+            for (Parameter parameter : method.getParameters()) {
+                logger.debug("Params : {}", String.format("Type : %s, Name : %s", parameter.getType(), parameter.getName()));
+            }
+        }
     }
 
     @Test
@@ -39,5 +65,7 @@ public class ReflectionTest {
         logger.debug(clazz.getName());
 
         // TODO Student private field에 값을 저장하고 조회한다.
+
+
     }
 }
