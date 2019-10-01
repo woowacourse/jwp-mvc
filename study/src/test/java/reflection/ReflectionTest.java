@@ -49,10 +49,20 @@ public class ReflectionTest {
     }
 
     @Test
-    public void privateFieldAccess() {
+    public void privateFieldAccess() throws NoSuchFieldException, IllegalAccessException {
         Class<Student> clazz = Student.class;
         logger.debug(clazz.getName());
 
-        // TODO Student private field에 값을 저장하고 조회한다.
+        Field name = clazz.getDeclaredField("name");
+        Field age = clazz.getDeclaredField("age");
+
+        name.setAccessible(true);
+        age.setAccessible(true);
+
+        Student student = new Student();
+        name.set(student, "재성");
+        age.set(student, 40);
+
+        logger.debug("이름 : {}, 나이 : {}", student.getName(), student.getAge());
     }
 }
