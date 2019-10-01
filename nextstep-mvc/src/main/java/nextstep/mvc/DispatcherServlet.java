@@ -18,15 +18,15 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger logger = LoggerFactory.getLogger(DispatcherServlet.class);
     private static final String DEFAULT_REDIRECT_PREFIX = "redirect:";
 
-    private HandlerMapping rm;
+    private HandlerMapping requestMapping;
 
-    public DispatcherServlet(HandlerMapping rm) {
-        this.rm = rm;
+    public DispatcherServlet(HandlerMapping requestMapping) {
+        this.requestMapping = requestMapping;
     }
 
     @Override
     public void init() throws ServletException {
-        rm.initialize();
+        requestMapping.initialize();
     }
 
     @Override
@@ -34,7 +34,7 @@ public class DispatcherServlet extends HttpServlet {
         String requestUri = req.getRequestURI();
         logger.debug("Method : {}, Request URI : {}", req.getMethod(), requestUri);
 
-        Controller controller = rm.getHandler(requestUri);
+        Controller controller = requestMapping.getHandler(requestUri);
         try {
             String viewName = controller.execute(req, resp);
             move(viewName, req, resp);
