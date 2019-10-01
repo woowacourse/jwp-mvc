@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.util.Arrays;
 
 public class ReflectionTest {
@@ -41,10 +42,20 @@ public class ReflectionTest {
     }
 
     @Test
-    public void privateFieldAccess() {
+    public void privateFieldAccess() throws NoSuchFieldException, IllegalAccessException, InstantiationException {
         Class<Student> clazz = Student.class;
         logger.debug(clazz.getName());
+        Student student = clazz.newInstance();
+        Field name = clazz.getDeclaredField("name");
+        Field age = clazz.getDeclaredField("age");
 
+        name.setAccessible(true);
+        age.setAccessible(true);
+        name.set(student, "박재성");
+        age.set(student, 47);
+
+        logger.debug(student.getName());
+        logger.debug("{}", student.getAge());
         // TODO Student private field에 값을 저장하고 조회한다.
     }
 }
