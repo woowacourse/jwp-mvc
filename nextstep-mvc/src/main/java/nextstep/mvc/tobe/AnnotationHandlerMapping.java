@@ -48,7 +48,9 @@ public class AnnotationHandlerMapping {
 
     private void putHandlerExecution(Method method) {
         RequestMapping annotation = method.getAnnotation(RequestMapping.class);
-        HandlerKey handlerKey = new HandlerKey(annotation.value(), annotation.method());
-        handlerExecutions.put(handlerKey, new HandlerExecution(method));
+        annotation.method().getMethods().forEach(requestMethod -> {
+            HandlerKey handlerKeys = new HandlerKey(annotation.value(), requestMethod);
+            handlerExecutions.put(handlerKeys, new HandlerExecution(method));
+        });
     }
 }
