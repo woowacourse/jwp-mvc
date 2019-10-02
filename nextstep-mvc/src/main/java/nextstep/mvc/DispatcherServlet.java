@@ -1,8 +1,12 @@
 package nextstep.mvc;
 
 import nextstep.mvc.asis.Controller;
+import nextstep.mvc.tobe.AnnotationHandlerMapping;
+import nextstep.mvc.tobe.HandlerExecution;
+import nextstep.mvc.tobe.ModelAndView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import slipp.ManualHandlerMapping;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -11,6 +15,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
 
 @WebServlet(name = "dispatcher", urlPatterns = "/", loadOnStartup = 1)
 public class DispatcherServlet extends HttpServlet {
@@ -18,15 +23,15 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger logger = LoggerFactory.getLogger(DispatcherServlet.class);
     private static final String DEFAULT_REDIRECT_PREFIX = "redirect:";
 
-    private HandlerMapping rm;
+    private final List<HandlerMapping> handlerMappings;
 
-    public DispatcherServlet(HandlerMapping rm) {
-        this.rm = rm;
+    public DispatcherServlet(List<HandlerMapping> handlerMappings) {
+        this.handlerMappings = handlerMappings;
     }
 
     @Override
     public void init() throws ServletException {
-        rm.initialize();
+        handlerMappings.forEach(HandlerMapping::initialize);
     }
 
     @Override
@@ -34,14 +39,28 @@ public class DispatcherServlet extends HttpServlet {
         String requestUri = req.getRequestURI();
         logger.debug("Method : {}, Request URI : {}", req.getMethod(), requestUri);
 
-        Controller controller = rm.getHandler(requestUri);
+        Object handler = getHandler(req);
         try {
-            String viewName = controller.execute(req, resp);
-            move(viewName, req, resp);
+            if (handler instanceof AnnotationHandlerMapping) {
+                HandlerExecution handlerExecution = ((AnnotationHandlerMapping) handler).getHandler(req);
+                ModelAndView modelAndView = handlerExecution.handle(req, resp);
+                modelAndView.getView().render(modelAndView.getModel(), req, resp);
+            } else {
+                Controller controller = ((ManualHandlerMapping) handler).getHandler(requestUri);
+                String viewName = controller.execute(req, resp);
+                move(viewName, req, resp);
+            }
         } catch (Throwable e) {
             logger.error("Exception : {}", e);
             throw new ServletException(e.getMessage());
         }
+    }
+
+    private Object getHandler(HttpServletRequest req) {
+        if (((AnnotationHandlerMapping) handlerMappings.get(1)).hasControllerAnnotation(req)) {
+            return handlerMappings.get(1);
+        }
+        return handlerMappings.get(0);
     }
 
     private void move(String viewName, HttpServletRequest req, HttpServletResponse resp)
