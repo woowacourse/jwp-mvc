@@ -38,8 +38,12 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     private void createHandlerKey(Method method) {
         RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-        HandlerKey handlerKey = new HandlerKey(requestMapping.value(), requestMapping.method());
-        handlerExecutions.put(handlerKey, (req, res) -> (ModelAndView) method.invoke(method.getDeclaringClass().newInstance(), req, res));
+        RequestMethod[] methods = requestMapping.method();
+        String value = requestMapping.value();
+        Arrays.stream(methods)
+                .map(m -> new HandlerKey(value, m))
+                .forEach(key -> handlerExecutions.put(key,
+                        (req, res) -> (ModelAndView) method.invoke(method.getDeclaringClass().newInstance(), req, res)));
     }
 
     @Override
