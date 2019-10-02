@@ -37,4 +37,5 @@ https://gist.github.com/joshbuchea/6f47e86d2510bce28f8e7f42ae84c716
 #### 요구사항 2
 - [x] 몇가지 url (```/users/create```,```/users/login```, ```/users/form```, ```/users``` )일 경우 새로 만든 ```AnnotationHandlerMapping``` 사용하게 변경
 - [x] dispatchservlet에서 하나의 handlerMapping만 사용하도록 변경
-- [ ] view 변경? modelAndView 사용????
+- [x] view 변경? modelAndView 사용????
+- [x] 컨트롤러의 리턴값을 결정 (String vs View vs ModelAndView vs All) -> String, ModelAndView 동시 사용 가능 

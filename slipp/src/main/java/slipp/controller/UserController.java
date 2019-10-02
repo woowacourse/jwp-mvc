@@ -1,5 +1,7 @@
 package slipp.controller;
 
+import nextstep.mvc.tobe.ModelAndView;
+import nextstep.mvc.tobe.view.JspView;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
@@ -46,8 +48,8 @@ public class UserController {
     }
 
     @RequestMapping(value = "/users/form", method = RequestMethod.GET)
-    public String forwardUserForm(HttpServletRequest request, HttpServletResponse response) {
-        return "/user/form.jsp";
+    public ModelAndView forwardUserForm(HttpServletRequest request, HttpServletResponse response) {
+        return new ModelAndView(new JspView("/user/form.jsp"));
     }
 
     @RequestMapping(value = "/users", method = RequestMethod.GET)

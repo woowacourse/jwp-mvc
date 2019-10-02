@@ -3,6 +3,7 @@ package nextstep.mvc;
 import nextstep.mvc.asis.Controller;
 import nextstep.mvc.tobe.AnnotationHandlerMapping;
 import nextstep.mvc.tobe.HandlerExecution;
+import nextstep.mvc.tobe.ModelAndView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,11 +39,17 @@ public class DispatcherServlet extends HttpServlet {
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String requestUri = req.getRequestURI();
         logger.debug("Method : {}, Request URI : {}", req.getMethod(), requestUri);
-        String viewName;
         Object handler = getHandlerFromMapping(req);
         try {
-            viewName = executeHandler(req, resp, handler);
-            move(viewName, req, resp);
+            if (handler instanceof Controller) {
+                String viewName = ((Controller) handler).execute(req, resp);
+                move(viewName, req, resp);
+            } else if (handler instanceof HandlerExecution) {
+                ModelAndView modelAndView = ((HandlerExecution) handler).handle(req, resp);
+                modelAndView.render(req, resp);
+            } else {
+                throw new Exception();
+            }
         } catch (Exception e) {
             e.printStackTrace();
             logger.error("Exception : {}", e.getMessage());
@@ -55,18 +62,6 @@ public class DispatcherServlet extends HttpServlet {
             return requestMapping.getHandler(request);
         }
         return annotationHandlerMapping.getHandler(request);
-    }
-
-    private String executeHandler(HttpServletRequest req, HttpServletResponse resp, Object handler) throws Exception {
-        String viewName;
-        if (handler instanceof Controller) {
-            viewName = ((Controller) handler).execute(req, resp);
-        } else if (handler instanceof HandlerExecution) {
-            viewName = ((HandlerExecution) handler).handle(req, resp);
-        } else {
-            throw new Exception();
-        }
-        return viewName;
     }
 
     private void move(String viewName, HttpServletRequest req, HttpServletResponse resp)
