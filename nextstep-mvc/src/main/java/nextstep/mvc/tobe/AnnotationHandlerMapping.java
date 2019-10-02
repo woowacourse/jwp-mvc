@@ -1,7 +1,9 @@
 package nextstep.mvc.tobe;
 
 import com.google.common.collect.Maps;
+import nextstep.mvc.ModelAndViewHandlerMapping;
 import nextstep.mvc.tobe.exception.DuplicateRequestMappingException;
+import nextstep.mvc.tobe.exception.RenderFailedException;
 import nextstep.mvc.tobe.exception.RequestUrlNotFoundException;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
@@ -9,12 +11,13 @@ import nextstep.web.annotation.RequestMethod;
 import org.reflections.Reflections;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements ModelAndViewHandlerMapping {
     private Object[] basePackage;
 
     private Map<HandlerKey, HandlerExecution> handlerExecutions = Maps.newHashMap();
@@ -60,6 +63,27 @@ public class AnnotationHandlerMapping {
         }
     }
 
+    @Override
+    public boolean handle(final HttpServletRequest req, final HttpServletResponse resp) {
+        HandlerExecution execution = getHandler(req);
+        if (doesNotExistsExecution(execution)) {
+            return false;
+        }
+
+        try {
+            ModelAndView modelAndView = execution.handle(req, resp);
+            modelAndView.render(req, resp);
+        } catch (Exception e) {
+            throw new RenderFailedException();
+        }
+        return true;
+    }
+
+    private boolean doesNotExistsExecution(final HandlerExecution execution) {
+        return Objects.isNull(execution);
+    }
+
+    @Override
     public HandlerExecution getHandler(HttpServletRequest request) {
         String requestURI = request.getRequestURI();
         String method = request.getMethod();
@@ -72,7 +96,7 @@ public class AnnotationHandlerMapping {
     }
 
     private boolean doesNotExistsKey(final HandlerKey handlerKey) {
-        return Objects.isNull(handlerExecutions.get(handlerKey));
+        return !handlerExecutions.containsKey(handlerKey);
     }
 
     private HandlerKey findHandlerKeyByUrl(final String requestURI) {

@@ -1,9 +1,11 @@
 package nextstep.mvc;
 
-import nextstep.mvc.asis.Controller;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 public interface HandlerMapping {
     void initialize();
 
-    Controller getHandler(String requestUri);
+    boolean handle(HttpServletRequest req, HttpServletResponse resp) throws ServletException;
 }
