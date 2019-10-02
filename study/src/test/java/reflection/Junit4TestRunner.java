@@ -19,14 +19,9 @@ public class Junit4TestRunner {
                                     .forEach(x -> {
                                         try {
                                             x.invoke(clazz.getDeclaredConstructor().newInstance());
-                                        } catch (IllegalAccessException
-                                                | InvocationTargetException
-                                                | NoSuchMethodException
-                                                | InstantiationException e) {
+                                        } catch (Exception e) {
                                             logger.error(e.getMessage());
                                         }
                                     });
     }
-
-
 }

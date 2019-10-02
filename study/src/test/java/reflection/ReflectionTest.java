@@ -16,12 +16,12 @@ public class ReflectionTest {
     @Test
     public void showClass() {
         final Class<Question> clazz = Question.class;
-        logger.debug(clazz.getName());
+
+        // TODO Question 클래스의 모든 필드, 생성자, 메소드에 대한 정보를 출력한다.
         Stream.of(clazz.getDeclaredFields()).forEach(x -> logger.debug(x.toString()));
         Stream.of(clazz.getConstructors()).forEach(x -> logger.debug(x.toString()));
         Stream.of(clazz.getMethods()).forEach(x -> logger.debug(x.toString()));
 
-        // TODO Question 클래스의 모든 필드, 생성자, 메소드에 대한 정보를 출력한다.
     }
 
     @Test
@@ -36,7 +36,7 @@ public class ReflectionTest {
             final Student student = new Student();
             field.set(student, "재성");
             logger.debug(student.getName());
-        } catch (NoSuchFieldException | IllegalAccessException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

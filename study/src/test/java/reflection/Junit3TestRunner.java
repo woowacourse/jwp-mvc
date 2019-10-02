@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.stream.Stream;
 
 public class Junit3TestRunner {
@@ -19,10 +18,7 @@ public class Junit3TestRunner {
                                     .forEach(x -> {
                                         try {
                                             x.invoke(clazz.getDeclaredConstructor().newInstance());
-                                        } catch (IllegalAccessException
-                                                | InvocationTargetException
-                                                | NoSuchMethodException
-                                                | InstantiationException e) {
+                                        } catch (Exception e) {
                                             logger.error(e.getMessage());
                                         }
                                     });

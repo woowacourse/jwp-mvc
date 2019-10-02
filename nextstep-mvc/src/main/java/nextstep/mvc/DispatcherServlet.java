@@ -31,10 +31,9 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String requestUri = req.getRequestURI();
-        logger.debug("Method : {}, Request URI : {}", req.getMethod(), requestUri);
+        logger.debug("Method : {}, Request URI : {}", req.getMethod(), req.getRequestURI());
 
-        Controller controller = rm.getHandler(requestUri);
+        Controller controller = rm.getHandler(req);
         try {
             String viewName = controller.execute(req, resp);
             move(viewName, req, resp);
