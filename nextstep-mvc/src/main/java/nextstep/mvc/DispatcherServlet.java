@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 
 @WebServlet(name = "dispatcher", urlPatterns = "/", loadOnStartup = 1)
 public class DispatcherServlet extends HttpServlet {
@@ -56,13 +57,11 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private Object getHandler(HttpServletRequest request) {
-        for (HandlerMapping handlerMapping : handlerMappings) {
-            Object handler = handlerMapping.getHandler(request);
-            if (handler != null) {
-                return handler;
-            }
-        }
-        return null;
+        return handlerMappings.stream()
+                .map(handlerMapping -> handlerMapping.getHandler(request))
+                .filter(Objects::nonNull)
+                .findFirst()
+                .orElse(null);
     }
 
     private void move(String viewName, HttpServletRequest req, HttpServletResponse resp)
