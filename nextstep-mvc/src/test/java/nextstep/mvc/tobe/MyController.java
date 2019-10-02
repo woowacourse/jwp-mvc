@@ -40,4 +40,16 @@ public class MyController {
         request.setAttribute("test", true);
         return new ModelAndView();
     }
+
+    @RequestMapping("/no_name")
+    public ModelAndView test_no_attribute_name(HttpServletRequest request, HttpServletResponse response) {
+        request.setAttribute("test_no_value_name", true);
+        return new ModelAndView();
+    }
+
+    @RequestMapping
+    public ModelAndView test_empty_url(HttpServletRequest request, HttpServletResponse response) {
+        request.setAttribute("test_emtpy_url", true);
+        return new ModelAndView();
+    }
 }

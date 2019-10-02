@@ -4,6 +4,7 @@ import com.google.common.collect.Maps;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
+import org.apache.commons.lang3.StringUtils;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,12 +34,14 @@ public class AnnotationHandlerMapping {
             List<Method> methods = generateMethods(clazz);
             methods.forEach(method -> addHandlerExecutions(clazz, method));
         }
-        handlerExecutions.entrySet().forEach(entry -> logger.debug("handlerExecutions key : {}, value : {}", entry.getKey(), entry.getValue()));
+        handlerExecutions.entrySet().forEach(entry ->
+            logger.debug("handlerExecutions key : {}, value : {}", entry.getKey(), entry.getValue()));
     }
 
     private List<Method> generateMethods(Class<?> clazz) {
         return Arrays.stream(clazz.getMethods())
             .filter(method -> method.isAnnotationPresent(RequestMapping.class))
+            .filter(method -> StringUtils.isNotBlank(method.getAnnotation(RequestMapping.class).value().trim()))
             .collect(Collectors.toList());
     }
 

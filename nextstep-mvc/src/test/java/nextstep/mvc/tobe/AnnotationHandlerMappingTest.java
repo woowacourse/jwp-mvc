@@ -7,6 +7,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class AnnotationHandlerMappingTest {
     private AnnotationHandlerMapping handlerMapping;
@@ -61,5 +62,24 @@ public class AnnotationHandlerMappingTest {
         execution.handle(postRequest, response);
 
         assertThat(postRequest.getAttribute("test")).isEqualTo(true);
+    }
+
+    @Test
+    void test_no_request_mapping_attribute_name() throws Exception {
+        MockHttpServletRequest postRequest = new MockHttpServletRequest("POST", "/no_name");
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        HandlerExecution execution = handlerMapping.getHandler(postRequest);
+        execution.handle(postRequest, response);
+
+        assertThat(postRequest.getAttribute("test_no_value_name")).isEqualTo(true);
+    }
+
+    @Test
+    void test_empty_request_mapping_url() {
+        MockHttpServletRequest postRequest = new MockHttpServletRequest("POST", "");
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        HandlerExecution execution = handlerMapping.getHandler(postRequest);
+
+        assertThrows(NullPointerException.class, () -> execution.handle(postRequest, response));
     }
 }
