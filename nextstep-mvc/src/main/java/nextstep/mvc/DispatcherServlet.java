@@ -6,7 +6,6 @@ import nextstep.mvc.tobe.HandlerExecution;
 import nextstep.mvc.tobe.ModelAndView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import slipp.ManualHandlerMapping;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -39,14 +38,16 @@ public class DispatcherServlet extends HttpServlet {
         String requestUri = req.getRequestURI();
         logger.debug("Method : {}, Request URI : {}", req.getMethod(), requestUri);
 
-        Object handler = getHandler(req);
+        HandlerMapping manualHandlerMapping = handlerMappings.get(0);
+        HandlerMapping annotationHandlerMapping = handlerMappings.get(1);
+
         try {
-            if (handler instanceof AnnotationHandlerMapping) {
-                HandlerExecution handlerExecution = ((AnnotationHandlerMapping) handler).getHandler(req);
+            if (((AnnotationHandlerMapping) annotationHandlerMapping).hasControllerAnnotation(req)) {
+                HandlerExecution handlerExecution = ((AnnotationHandlerMapping) annotationHandlerMapping).getHandler(req);
                 ModelAndView modelAndView = handlerExecution.handle(req, resp);
                 modelAndView.getView().render(modelAndView.getModel(), req, resp);
             } else {
-                Controller controller = ((ManualHandlerMapping) handler).getHandler(requestUri);
+                Controller controller = manualHandlerMapping.getHandler(requestUri);
                 String viewName = controller.execute(req, resp);
                 move(viewName, req, resp);
             }
@@ -54,13 +55,6 @@ public class DispatcherServlet extends HttpServlet {
             logger.error("Exception : {}", e);
             throw new ServletException(e.getMessage());
         }
-    }
-
-    private Object getHandler(HttpServletRequest req) {
-        if (((AnnotationHandlerMapping) handlerMappings.get(1)).hasControllerAnnotation(req)) {
-            return handlerMappings.get(1);
-        }
-        return handlerMappings.get(0);
     }
 
     private void move(String viewName, HttpServletRequest req, HttpServletResponse resp)
