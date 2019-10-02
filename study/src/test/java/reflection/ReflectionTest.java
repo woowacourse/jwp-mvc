@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.*;
 
-public class ReflectionTest {
+class ReflectionTest {
     private static final Logger logger = LoggerFactory.getLogger(ReflectionTest.class);
 
     @Test
@@ -59,10 +59,22 @@ public class ReflectionTest {
     }
 
     @Test
-    public void privateFieldAccess() {
-        Class<Student> clazz = Student.class;
+    void privateFieldAccess() throws IllegalAccessException, NoSuchFieldException {
+        final Class<Student> clazz = Student.class;
         logger.debug(clazz.getName());
 
-        // TODO Student private field에 값을 저장하고 조회한다.
+        // Student private field에 값을 저장하고 조회한다.
+        final Student student = new Student();
+        setPrivateField(student, "name", "박재성");
+        setPrivateField(student, "age", 30);
+        logger.debug(student.toString());
+    }
+
+    private void setPrivateField(final Object instance, final String fieldName, final Object value)
+            throws NoSuchFieldException, IllegalAccessException {
+        final Class clazz = instance.getClass();
+        final Field field = clazz.getDeclaredField(fieldName);
+        field.setAccessible(true);
+        field.set(instance, value);
     }
 }
