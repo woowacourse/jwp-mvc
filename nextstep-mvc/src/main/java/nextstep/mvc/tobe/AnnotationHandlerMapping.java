@@ -26,6 +26,7 @@ public class AnnotationHandlerMapping implements ModelAndViewHandlerMapping {
         this.basePackage = basePackage;
     }
 
+    @Override
     public void initialize() {
         Reflections reflections = new Reflections(basePackage);
         Set<Class<?>> controllerClazz = reflections.getTypesAnnotatedWith(Controller.class);
