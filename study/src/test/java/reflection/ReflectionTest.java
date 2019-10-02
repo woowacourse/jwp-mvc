@@ -8,6 +8,8 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 
 public class ReflectionTest {
     private static final Logger logger = LoggerFactory.getLogger(ReflectionTest.class);
@@ -37,7 +39,6 @@ public class ReflectionTest {
 
         logger.debug("getDeclaredMethods: {}", Arrays.toString(clazz.getDeclaredMethods()));
 
-        // TODO Question 클래스의 모든 필드, 생성자, 메소드에 대한 정보를 출력한다.
     }
 
     @Test
@@ -53,7 +54,20 @@ public class ReflectionTest {
             }
         }
 
-        // TODO 인자를 가진 생성자를 활용해 인스턴스를 생성한다.
+        List<Object[]> argsList = (List<Object[]>) Arrays.asList(
+            new Object[]{1L, "writer", "title", "contents", new Date(), 0},
+            new Object[]{"writer", "title", "contents"}
+        );
+
+        for (Constructor constructor : constructors) {
+            for (Object[] args : argsList) {
+                if (constructor.getParameterCount() == args.length) {
+                    Question question = (Question) constructor.newInstance(args);
+                    logger.debug("question: {}", question);
+                    logger.debug("args: {}", Arrays.asList(args));
+                }
+            }
+        }
     }
 
     @Test
