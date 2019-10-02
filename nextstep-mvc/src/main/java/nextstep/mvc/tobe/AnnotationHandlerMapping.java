@@ -1,6 +1,7 @@
 package nextstep.mvc.tobe;
 
 import com.google.common.collect.Maps;
+import nextstep.mvc.HandlerMapping;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
@@ -8,10 +9,9 @@ import org.reflections.Reflections;
 
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.Map;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
     private Object[] basePackages;
 
     private Map<HandlerKey, HandlerExecution> handlerExecutions = Maps.newHashMap();
@@ -20,6 +20,12 @@ public class AnnotationHandlerMapping {
         this.basePackages = basePackages;
     }
 
+    @Override
+    public boolean canHandle(HttpServletRequest request) {
+        return handlerExecutions.containsKey(new HandlerKey(request.getRequestURI(), RequestMethod.of(request.getMethod())));
+    }
+
+    @Override
     public void initialize() {
         checkBasePackages();
     }
@@ -46,10 +52,12 @@ public class AnnotationHandlerMapping {
     private void putHandlerExecution(Method method) {
         if (method.isAnnotationPresent(RequestMapping.class)) {
             RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-            handlerExecutions.put(new HandlerKey(requestMapping.value(), requestMapping.method()), new HandlerExecution(method));
+            handlerExecutions.put(new HandlerKey(requestMapping.value(), requestMapping.method())
+                    , ((request, response) -> method.invoke(method.getDeclaringClass().getDeclaredConstructor().newInstance(), request, response)));
         }
     }
 
+    @Override
     public HandlerExecution getHandler(HttpServletRequest request) {
         return handlerExecutions.get(new HandlerKey(request.getRequestURI(), RequestMethod.of(request.getMethod())));
     }
