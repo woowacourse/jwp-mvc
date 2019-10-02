@@ -6,8 +6,12 @@ import nextstep.mvc.asis.Controller;
 import nextstep.mvc.asis.ForwardController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import slipp.controller.*;
+import slipp.controller.CreateUserController;
+import slipp.controller.LogoutController;
+import slipp.controller.ProfileController;
+import slipp.controller.UpdateFormUserController;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,8 +35,8 @@ public class ManualHandlerMapping implements HandlerMapping {
     }
 
     @Override
-    public Controller getHandler(String requestUri) {
-        return mappings.get(requestUri);
+    public Controller getHandler(HttpServletRequest request) {
+        return mappings.get(request.getRequestURI());
     }
 
     void put(String url, Controller controller) {
