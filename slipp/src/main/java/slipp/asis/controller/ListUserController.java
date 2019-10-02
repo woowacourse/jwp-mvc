@@ -1,8 +1,7 @@
-package slipp.controller;
+package slipp.asis.controller;
 
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
-import org.springframework.http.HttpMethod;
 import slipp.support.db.DataBase;
 import nextstep.mvc.asis.Controller;
 

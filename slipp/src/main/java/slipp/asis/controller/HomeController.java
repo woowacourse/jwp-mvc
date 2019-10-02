@@ -1,4 +1,4 @@
-package slipp.controller;
+package slipp.asis.controller;
 
 import slipp.support.db.DataBase;
 import nextstep.mvc.asis.Controller;
