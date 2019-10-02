@@ -15,7 +15,6 @@ import java.util.Map;
 import java.util.Set;
 
 public class AnnotationHandlerMapping {
-
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
     private Object[] basePackage;
@@ -27,18 +26,15 @@ public class AnnotationHandlerMapping {
     }
 
     public void initialize() {
+        log.info("Initialized Request Mapping!");
+
         Reflections reflections = new Reflections(basePackage);
         Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
 
         controllers.stream()
                 .flatMap(controller -> Arrays.stream(controller.getMethods()))
                 .filter(method -> method.isAnnotationPresent(RequestMapping.class))
-                .forEach(this::putHandlerExecution);
-
-
-        log.info("Initialized Request Mapping!");
-        handlerExecutions.keySet().forEach(handlerKey ->
-                log.info("HandlerKey : {}, HandlerExecution : {}", handlerKey, handlerExecutions.get(handlerKey)));
+                .forEach(this::putHandlerExecutions);
     }
 
     public HandlerExecution getHandler(HttpServletRequest request) {
@@ -46,11 +42,13 @@ public class AnnotationHandlerMapping {
         return handlerExecutions.get(handlerKey);
     }
 
-    private void putHandlerExecution(Method method) {
+    private void putHandlerExecutions(Method method) {
         RequestMapping annotation = method.getAnnotation(RequestMapping.class);
         annotation.method().getMethods().forEach(requestMethod -> {
-            HandlerKey handlerKeys = new HandlerKey(annotation.value(), requestMethod);
-            handlerExecutions.put(handlerKeys, new HandlerExecution(method));
+            HandlerKey handlerKey = new HandlerKey(annotation.value(), requestMethod);
+            HandlerExecution handlerExecution = new HandlerExecution((method));
+            handlerExecutions.put(handlerKey, handlerExecution);
+            log.info("HandlerKey : {}, HandlerExecution : {}", handlerKey, handlerExecution);
         });
     }
 }
