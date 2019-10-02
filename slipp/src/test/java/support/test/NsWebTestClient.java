@@ -1,6 +1,8 @@
 package support.test;
 
+import org.springframework.http.HttpMethod;
 import org.springframework.test.web.reactive.server.EntityExchangeResult;
+import org.springframework.test.web.reactive.server.StatusAssertions;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Mono;
 
@@ -26,6 +28,14 @@ public class NsWebTestClient {
     public NsWebTestClient basicAuth(String username, String password) {
         this.testClientBuilder = testClientBuilder.filter(basicAuthentication(username, password));
         return this;
+    }
+
+    public StatusAssertions sendRequest(HttpMethod method, String path) {
+        return testClientBuilder.build()
+                .method(method)
+                .uri(path)
+                .exchange()
+                .expectStatus();
     }
 
     public <T> URI createResource(String url, T body, Class<T> clazz) {
