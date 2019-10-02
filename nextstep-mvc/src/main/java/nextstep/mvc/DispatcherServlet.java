@@ -38,26 +38,39 @@ public class DispatcherServlet extends HttpServlet {
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String requestUri = req.getRequestURI();
         logger.debug("Method : {}, Request URI : {}", req.getMethod(), requestUri);
-
-        Controller controller = requestMapping.getHandler(requestUri);
+        String viewName;
+        Object handler = getHandlerFromMapping(req);
         try {
-            String viewName = controller.execute(req, resp);
+            viewName = executeHandler(req, resp, handler);
             move(viewName, req, resp);
-        } catch (Throwable e) {
-            HandlerExecution handlerExecution = annotationHandlerMapping.getHandler(req);
-            try {
-                String viewName = handlerExecution.handle(req, resp);
-                move(viewName, req, resp);
-            } catch (Exception ex) {
-                ex.printStackTrace();
-                logger.error("Exception : {}", e);
-                throw new ServletException(e.getMessage());
-            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.error("Exception : {}", e.getMessage());
+            throw new ServletException();
         }
     }
 
+    private Object getHandlerFromMapping(HttpServletRequest request) {
+        if (requestMapping.getHandler(request) != null) {
+            return requestMapping.getHandler(request);
+        }
+        return annotationHandlerMapping.getHandler(request);
+    }
+
+    private String executeHandler(HttpServletRequest req, HttpServletResponse resp, Object handler) throws Exception {
+        String viewName;
+        if (handler instanceof Controller) {
+            viewName = ((Controller) handler).execute(req, resp);
+        } else if (handler instanceof HandlerExecution) {
+            viewName = ((HandlerExecution) handler).handle(req, resp);
+        } else {
+            throw new Exception();
+        }
+        return viewName;
+    }
+
     private void move(String viewName, HttpServletRequest req, HttpServletResponse resp)
-            throws ServletException, IOException {
+        throws ServletException, IOException {
         if (viewName.startsWith(DEFAULT_REDIRECT_PREFIX)) {
             resp.sendRedirect(viewName.substring(DEFAULT_REDIRECT_PREFIX.length()));
             return;
