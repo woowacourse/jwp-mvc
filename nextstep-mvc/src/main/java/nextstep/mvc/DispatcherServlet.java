@@ -1,6 +1,9 @@
 package nextstep.mvc;
 
 import nextstep.mvc.asis.Controller;
+import nextstep.mvc.tobe.AnnotationHandlerMapping;
+import nextstep.mvc.tobe.HandlerExecution;
+import nextstep.mvc.tobe.ModelAndView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,6 +22,7 @@ public class DispatcherServlet extends HttpServlet {
     private static final String DEFAULT_REDIRECT_PREFIX = "redirect:";
 
     private HandlerMapping rm;
+    private AnnotationHandlerMapping arm;
 
     public DispatcherServlet(HandlerMapping rm) {
         this.rm = rm;
@@ -26,7 +30,9 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     public void init() throws ServletException {
+        arm = new AnnotationHandlerMapping("slipp.controller");
         rm.initialize();
+        arm.initialize();
     }
 
     @Override
@@ -35,12 +41,25 @@ public class DispatcherServlet extends HttpServlet {
         logger.debug("Method : {}, Request URI : {}", req.getMethod(), requestUri);
 
         Controller controller = rm.getHandler(requestUri);
-        try {
-            String viewName = controller.execute(req, resp);
-            move(viewName, req, resp);
-        } catch (Throwable e) {
-            logger.error("Exception : {}", e);
-            throw new ServletException(e.getMessage());
+
+        if (controller == null) {
+               HandlerExecution handlerExecution = arm.getHandler(req);
+            try {
+                ModelAndView modelAndView = handlerExecution.handle(req, resp);
+                String name = modelAndView.getViewName();
+                move(name, req, resp);
+            } catch (Exception e) {
+                logger.error("Exception : {}", e.getMessage());
+                resp.setStatus(404);
+            }
+        } else {
+            try {
+                String viewName = controller.execute(req, resp);
+                move(viewName, req, resp);
+            } catch (Throwable e) {
+                logger.error("Exception : {}", e.getMessage());
+                throw new ServletException(e.getMessage());
+            }
         }
     }
 
