@@ -52,19 +52,7 @@ class ReflectionTest {
         final Class<Question> clazz = Question.class;
 
         // 인자를 가진 생성자를 활용해 인스턴스를 생성한다.
-        final Map<Class, Object> classObjectMap = new HashMap<>();
-        classObjectMap.put(int.class, 0);
-        classObjectMap.put(long.class, 0L);
-        classObjectMap.put(char.class, 0);
-
-        final List<Object> list = new ArrayList<>();
-        final Constructor constructor = clazz.getConstructors()[0];
-        final Class[] parameterTypes = constructor.getParameterTypes();
-        for (final Class cls : parameterTypes) {
-            list.add(classObjectMap.getOrDefault(cls, null));
-        }
-
-        final Question question = (Question) constructor.newInstance(list.toArray());
+        final Question question = (Question) makeInstance(clazz);
         logger.debug("test : {}", question.toString());
     }
 
@@ -86,5 +74,20 @@ class ReflectionTest {
         final Field field = clazz.getDeclaredField(fieldName);
         field.setAccessible(true);
         field.set(instance, value);
+    }
+
+    private Object makeInstance(final Class clazz)
+            throws IllegalAccessException, InvocationTargetException, InstantiationException {
+        final Map<Class, Object> classObjectMap = new HashMap<>();
+        classObjectMap.put(int.class, 0);
+        classObjectMap.put(long.class, 0L);
+        classObjectMap.put(String.class, "");
+        final List<Object> arguments = new ArrayList<>();
+        final Constructor constructor = clazz.getConstructors()[0];
+        final Class[] parameterTypes = constructor.getParameterTypes();
+        for (final Class cls : parameterTypes) {
+            arguments.add(classObjectMap.getOrDefault(cls, null));
+        }
+        return constructor.newInstance(arguments.toArray());
     }
 }
