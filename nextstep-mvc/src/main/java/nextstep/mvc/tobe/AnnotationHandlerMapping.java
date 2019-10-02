@@ -48,9 +48,12 @@ public class AnnotationHandlerMapping {
                 .collect(Collectors.toList());
         for (Method method : methods) {
             RequestMapping annotation = method.getAnnotation(RequestMapping.class);
-            HandlerKey handlerKey = new HandlerKey(annotation.value(), annotation.method());
-            HandlerExecution handlerExecution = new HandlerExecution(handler, method);
-            handlerExecutions.put(handlerKey, handlerExecution);
+            Arrays.stream(annotation.method())
+                    .forEach(requestMethod -> {
+                        HandlerKey handlerKey = new HandlerKey(annotation.value(), requestMethod);
+                        HandlerExecution handlerExecution = new HandlerExecution(handler, method);
+                        handlerExecutions.put(handlerKey, handlerExecution);
+                    });
         }
     }
 
