@@ -49,8 +49,4 @@ public class ManualHandlerMapping implements HandlerMapping {
     public HandlerExecution getHandler(HttpServletRequest request) {
         return (req, res) -> mappings.get(request.getRequestURI()).execute(req, res);
     }
-
-    void put(String url, Controller controller) {
-        mappings.put(url, controller);
-    }
 }

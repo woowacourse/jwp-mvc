@@ -27,17 +27,22 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     @Override
-    public boolean canHandle(HttpServletRequest request) {
-        return handlerExecutions.containsKey(new HandlerKey(request.getRequestURI(), RequestMethod.of(request.getMethod())));
-    }
-
-    @Override
     public void initialize() {
         try {
             checkBasePackages();
         } catch (Exception e) {
             log.error(e.getMessage());
         }
+    }
+
+    @Override
+    public boolean canHandle(HttpServletRequest request) {
+        return handlerExecutions.containsKey(new HandlerKey(request.getRequestURI(), RequestMethod.of(request.getMethod())));
+    }
+
+    @Override
+    public HandlerExecution getHandler(HttpServletRequest request) {
+        return handlerExecutions.get(new HandlerKey(request.getRequestURI(), RequestMethod.of(request.getMethod())));
     }
 
     private void checkBasePackages() throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
@@ -75,10 +80,5 @@ public class AnnotationHandlerMapping implements HandlerMapping {
             return RequestMethod.values();
         }
         return requestMapping.method();
-    }
-
-    @Override
-    public HandlerExecution getHandler(HttpServletRequest request) {
-        return handlerExecutions.get(new HandlerKey(request.getRequestURI(), RequestMethod.of(request.getMethod())));
     }
 }

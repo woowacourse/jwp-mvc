@@ -5,9 +5,9 @@ import nextstep.mvc.tobe.HandlerExecution;
 import javax.servlet.http.HttpServletRequest;
 
 public interface HandlerMapping {
-    boolean canHandle(HttpServletRequest request);
-
     void initialize();
+
+    boolean canHandle(HttpServletRequest request);
 
     HandlerExecution getHandler(HttpServletRequest request);
 }
