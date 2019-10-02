@@ -1,6 +1,7 @@
-package nextstep.mvc.tobe;
+package samples;
 
 import nextstep.db.DataBase;
+import nextstep.mvc.tobe.ModelAndView;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
@@ -11,8 +12,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @Controller
-public class MyController {
-    private static final Logger logger = LoggerFactory.getLogger(MyController.class);
+public class MyUserController {
+    private static final Logger logger = LoggerFactory.getLogger(MyUserController.class);
 
     @RequestMapping(value = "/users", method = RequestMethod.GET)
     public ModelAndView findUserId(HttpServletRequest request, HttpServletResponse response) {
