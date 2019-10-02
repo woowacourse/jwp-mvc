@@ -56,7 +56,17 @@ public class NsWebTestClient {
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody(clazz)
-                .returnResult().getResponseBody();
+                .returnResult()
+                .getResponseBody();
+    }
+
+    public EntityExchangeResult<byte[]> getResponse(String url) {
+        return testClientBuilder.build()
+                .get()
+                .uri(url)
+                .exchange()
+                .expectBody()
+                .returnResult();
     }
 
     public static NsWebTestClient of(int port) {
