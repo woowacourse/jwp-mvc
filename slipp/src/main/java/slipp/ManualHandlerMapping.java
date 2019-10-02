@@ -1,21 +1,25 @@
 package slipp;
 
 import nextstep.mvc.DispatcherServlet;
-import nextstep.mvc.HandlerMapping;
 import nextstep.mvc.asis.Controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import slipp.controller.*;
+import slipp.controller.CreateUserController;
+import slipp.controller.ListUserController;
+import slipp.controller.LoginController;
+import slipp.controller.LogoutController;
+import slipp.controller.ProfileController;
+import slipp.controller.UpdateFormUserController;
+import slipp.controller.UpdateUserController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ManualHandlerMapping implements HandlerMapping {
+public class ManualHandlerMapping {
     private static final Logger logger = LoggerFactory.getLogger(DispatcherServlet.class);
     private Map<String, Controller> mappings = new HashMap<>();
 
-    @Override
     public void initialize() {
         //mappings.put("/", new HomeController());
         //mappings.put("/users/form", new ForwardController("/user/form.jsp"));
@@ -34,7 +38,6 @@ public class ManualHandlerMapping implements HandlerMapping {
         });
     }
 
-    @Override
     public Controller getHandler(HttpServletRequest request) {
         return mappings.get(request.getRequestURI());
     }

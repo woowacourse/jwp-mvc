@@ -47,15 +47,23 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         }
         Arrays.stream(methods)
                 .map(requestMethod -> new HandlerKey(mapping.value(), requestMethod))
-                .forEach(key -> handlerExecutions.put(key, invoke(method)));
+                .forEach(key -> handlerExecutions.put(key, executeController(method, getInstanceFromMethod(method))));
     }
 
-    private HandlerExecution invoke(Method method) {
+    private Object getInstanceFromMethod(Method method) {
+        try {
+            return method.getDeclaringClass().getConstructor().newInstance();
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            logger.error("Error while registering controller methods", e);
+            throw new RuntimeException(e);
+        }
+    }
+
+    private HandlerExecution executeController(Method method, Object instance) {
         return (request, response) -> {
             try {
-                Object instance = method.getDeclaringClass().getConstructor().newInstance();
                 return (ModelAndView) method.invoke(instance, request, response);
-            } catch (InstantiationException | InvocationTargetException | NoSuchMethodException | IllegalAccessException e) {
+            } catch (InvocationTargetException | IllegalAccessException e) {
                 logger.error("Error occurred while handle request", e);
                 throw new RuntimeException(e);
             }
