@@ -5,6 +5,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
 
 public class HandlerExecution {
+    private static final String DEFAULT_REDIRECT_PREFIX = "redirect:";
     private final Class<?> clazz;
     private final Method method;
 
@@ -13,8 +14,8 @@ public class HandlerExecution {
         this.method = method;
     }
 
-    public ModelAndView handle(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        return (ModelAndView) method.invoke(clazz.getDeclaredConstructor().newInstance(), request, response);
+    public String handle(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        return (String) method.invoke(clazz.getDeclaredConstructor().newInstance(), request, response);
     }
 
     @Override

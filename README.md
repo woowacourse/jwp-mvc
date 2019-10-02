@@ -33,3 +33,6 @@ https://gist.github.com/joshbuchea/6f47e86d2510bce28f8e7f42ae84c716
 - [x] AnnotationHandlerMappingTest 성공하게 변경
 - [x] ```@RequestMapping``` 에서 method 값이 없을 때 전부 다 매핑되게 변경
 - [x] ```@RequestMapping``` 에서 value 값이 없을 때 등록 안되고 에러 로그 찍어주기
+
+#### 요구사항 2
+- [x] 몇가지 url (```/users/create```,```/users/login```, ```/users/form```, ```/users``` )일 경우 새로 만든 ```AnnotationHandlerMapping``` 사용하게 변경
