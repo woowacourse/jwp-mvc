@@ -6,12 +6,18 @@ import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
 import org.reflections.Reflections;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Map;
+import java.util.stream.Stream;
 
 public class AnnotationHandlerMapping implements HandlerMapping {
+    private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
+
     private Object[] basePackages;
 
     private Map<HandlerKey, HandlerExecution> handlerExecutions = Maps.newHashMap();
@@ -27,34 +33,48 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     @Override
     public void initialize() {
-        checkBasePackages();
+        try {
+            checkBasePackages();
+        } catch (Exception e) {
+            log.error(e.getMessage());
+        }
     }
 
-    private void checkBasePackages() {
+    private void checkBasePackages() throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         for (Object basePackage : basePackages) {
             Reflections reflections = new Reflections(basePackage);
             checkClazz(reflections);
         }
     }
 
-    private void checkClazz(Reflections reflections) {
+    private void checkClazz(Reflections reflections) throws NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException {
         for (Class<?> clazz : reflections.getTypesAnnotatedWith(Controller.class)) {
             checkMethods(clazz);
         }
     }
 
-    private void checkMethods(Class<?> clazz) {
+    private void checkMethods(Class<?> clazz) throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         for (Method method : clazz.getDeclaredMethods()) {
             putHandlerExecution(method);
         }
     }
 
-    private void putHandlerExecution(Method method) {
+    private void putHandlerExecution(Method method) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
         if (method.isAnnotationPresent(RequestMapping.class)) {
             RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-            handlerExecutions.put(new HandlerKey(requestMapping.value(), requestMapping.method())
-                    , ((request, response) -> method.invoke(method.getDeclaringClass().getDeclaredConstructor().newInstance(), request, response)));
+            RequestMethod[] requestMethods = selectMethods(requestMapping);
+            Object instance = method.getDeclaringClass().getDeclaredConstructor().newInstance();
+            Stream.of(requestMethods)
+                    .forEach(requestMethod -> handlerExecutions.put(new HandlerKey(requestMapping.value(), requestMethod)
+                            , ((request, response) -> method.invoke(instance, request, response))));
         }
+    }
+
+    private RequestMethod[] selectMethods(RequestMapping requestMapping) {
+        if (requestMapping.method().length == 0) {
+            return RequestMethod.values();
+        }
+        return requestMapping.method();
     }
 
     @Override
