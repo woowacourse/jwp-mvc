@@ -30,22 +30,29 @@ public class AnnotationHandlerMapping {
         Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
 
         for (final Class clazz : controllers) {
-            List<Method> methods = generateMethods(controllers);
-            methods.forEach(method -> handlerExecutions.put(
-                new HandlerKey(
-                    method.getAnnotation(RequestMapping.class).value(),
-                    method.getAnnotation(RequestMapping.class).method()),
-                new HandlerExecution(clazz, method)));
+            List<Method> methods = generateMethods(clazz);
+            methods.forEach(method -> addHandlerExecutions(clazz, method));
         }
-
         handlerExecutions.entrySet().forEach(entry -> logger.debug("handlerExecutions key : {}, value : {}", entry.getKey(), entry.getValue()));
     }
 
-    private List<Method> generateMethods(Set<Class<?>> controllers) {
-        return controllers.stream()
-            .flatMap(controller -> Arrays.stream(controller.getMethods()))
+    private List<Method> generateMethods(Class<?> clazz) {
+        return Arrays.stream(clazz.getMethods())
             .filter(method -> method.isAnnotationPresent(RequestMapping.class))
             .collect(Collectors.toList());
+    }
+
+    private void addHandlerExecutions(Class clazz, Method method) {
+        String url = method.getAnnotation(RequestMapping.class).value();
+        RequestMethod[] requestMethods = method.getAnnotation(RequestMapping.class).method();
+        if (requestMethods.length == 0) {
+            requestMethods = RequestMethod.values();
+        }
+        Arrays.stream(requestMethods).forEach(m -> {
+            handlerExecutions.put(
+                new HandlerKey(url, m),
+                new HandlerExecution(clazz, method));
+        });
     }
 
     public HandlerExecution getHandler(HttpServletRequest request) {

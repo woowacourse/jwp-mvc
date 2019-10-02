@@ -26,12 +26,18 @@ public class MyController {
     @RequestMapping(value = "/users", method = RequestMethod.POST)
     public ModelAndView save(HttpServletRequest request, HttpServletResponse response) {
         User user = new User(
-                request.getParameter("userId"),
-                request.getParameter("password"),
-                request.getParameter("name"),
-                request.getParameter("email"));
+            request.getParameter("userId"),
+            request.getParameter("password"),
+            request.getParameter("name"),
+            request.getParameter("email"));
         logger.debug("User : {}", user);
         DataBase.addUser(user);
+        return new ModelAndView();
+    }
+
+    @RequestMapping(value = "/test")
+    public ModelAndView test(HttpServletRequest request, HttpServletResponse response) {
+        request.setAttribute("test", true);
         return new ModelAndView();
     }
 }

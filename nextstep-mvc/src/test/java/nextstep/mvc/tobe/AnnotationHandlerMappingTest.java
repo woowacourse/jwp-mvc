@@ -42,4 +42,24 @@ public class AnnotationHandlerMappingTest {
         HandlerExecution execution = handlerMapping.getHandler(request);
         execution.handle(request, response);
     }
+
+    @Test
+    void test_no_request_mapping_method_get() throws Exception {
+        MockHttpServletRequest getRequest = new MockHttpServletRequest("GET", "/test");
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        HandlerExecution execution = handlerMapping.getHandler(getRequest);
+        execution.handle(getRequest, response);
+
+        assertThat(getRequest.getAttribute("test")).isEqualTo(true);
+    }
+
+    @Test
+    void test_no_request_mapping_method_post() throws Exception {
+        MockHttpServletRequest postRequest = new MockHttpServletRequest("POST", "/test");
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        HandlerExecution execution = handlerMapping.getHandler(postRequest);
+        execution.handle(postRequest, response);
+
+        assertThat(postRequest.getAttribute("test")).isEqualTo(true);
+    }
 }
