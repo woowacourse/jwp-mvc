@@ -27,20 +27,18 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     @Override
-    public void init() throws ServletException {
+    public void init() {
         handlerMappings.forEach(HandlerMapping::initialize);
     }
 
     @Override
-    protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void service(HttpServletRequest req, HttpServletResponse resp) {
         logger.debug("Method : {}, Request URI : {}", req.getMethod(), req.getRequestURI());
 
         try {
             Handler handler = findHandler(req);
-            Object object = handler.execute(req, resp);
-            if (object instanceof String) {
-                move((String) object, req, resp);
-            }
+            String viewName = handler.execute(req, resp);
+            move(viewName, req, resp);
         } catch (Exception e) {
             logger.error("Exception : {}", e);
             e.printStackTrace();
