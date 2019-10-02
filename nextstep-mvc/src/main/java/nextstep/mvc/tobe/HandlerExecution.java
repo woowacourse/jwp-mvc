@@ -8,9 +8,9 @@ public class HandlerExecution {
     private Method method;
     private Object target;
 
-    public ModelAndView handle(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        method.invoke(target, request, response);
-        return null;
+    public String handle(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        Object result = method.invoke(target, request, response);
+        return String.valueOf(result);
     }
 
     public void setMethod(Method method) {
