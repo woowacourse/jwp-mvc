@@ -5,6 +5,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 class ReflectionTest {
     private static final Logger logger = LoggerFactory.getLogger(ReflectionTest.class);
@@ -44,18 +48,24 @@ class ReflectionTest {
 
     @Test
     @SuppressWarnings("rawtypes")
-    public void constructor_with_args() throws Exception {
-        Class<Question> clazz = Question.class;
-        Constructor[] constructors = clazz.getConstructors();
-        for (Constructor constructor : constructors) {
-            Class[] parameterTypes = constructor.getParameterTypes();
-            logger.debug("paramer length : {}", parameterTypes.length);
-            for (Class paramType : parameterTypes) {
-                logger.debug("param type : {}", paramType);
-            }
+    void constructor_with_args() throws Exception {
+        final Class<Question> clazz = Question.class;
+
+        // 인자를 가진 생성자를 활용해 인스턴스를 생성한다.
+        final Map<Class, Object> classObjectMap = new HashMap<>();
+        classObjectMap.put(int.class, 0);
+        classObjectMap.put(long.class, 0L);
+        classObjectMap.put(char.class, 0);
+
+        final List<Object> list = new ArrayList<>();
+        final Constructor constructor = clazz.getConstructors()[0];
+        final Class[] parameterTypes = constructor.getParameterTypes();
+        for (final Class cls : parameterTypes) {
+            list.add(classObjectMap.getOrDefault(cls, null));
         }
 
-        // TODO 인자를 가진 생성자를 활용해 인스턴스를 생성한다.
+        final Question question = (Question) constructor.newInstance(list.toArray());
+        logger.debug("test : {}", question.toString());
     }
 
     @Test
