@@ -1,4 +1,4 @@
-package nextstep.mvc;
+package nextstep.mvc.tobe.handlermapping;
 
 import nextstep.mvc.asis.Controller;
 

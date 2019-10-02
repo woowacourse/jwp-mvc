@@ -1,6 +1,6 @@
 package slipp;
 
-import nextstep.mvc.ControllerHandlerMapping;
+import nextstep.mvc.tobe.handlermapping.ControllerHandlerMapping;
 import nextstep.mvc.asis.Controller;
 import nextstep.mvc.asis.ForwardController;
 import org.slf4j.Logger;
