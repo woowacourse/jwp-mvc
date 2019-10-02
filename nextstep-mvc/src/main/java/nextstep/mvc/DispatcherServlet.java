@@ -1,6 +1,9 @@
 package nextstep.mvc;
 
 import nextstep.mvc.asis.Controller;
+import nextstep.mvc.tobe.AnnotationHandlerMapping;
+import nextstep.mvc.tobe.HandlerExecution;
+import nextstep.mvc.tobe.ModelAndView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,6 +14,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Objects;
 
 @WebServlet(name = "dispatcher", urlPatterns = "/", loadOnStartup = 1)
 public class DispatcherServlet extends HttpServlet {
@@ -19,14 +23,17 @@ public class DispatcherServlet extends HttpServlet {
     private static final String DEFAULT_REDIRECT_PREFIX = "redirect:";
 
     private HandlerMapping rm;
+    private AnnotationHandlerMapping annotationHandlerMapping;
 
-    public DispatcherServlet(HandlerMapping rm) {
+    public DispatcherServlet(HandlerMapping rm, AnnotationHandlerMapping annotationHandlerMapping) {
         this.rm = rm;
+        this.annotationHandlerMapping = annotationHandlerMapping;
     }
 
     @Override
-    public void init() throws ServletException {
+    public void init() {
         rm.initialize();
+        annotationHandlerMapping.initialize();
     }
 
     @Override
@@ -35,6 +42,19 @@ public class DispatcherServlet extends HttpServlet {
         logger.debug("Method : {}, Request URI : {}", req.getMethod(), requestUri);
 
         Controller controller = rm.getHandler(requestUri);
+        if (Objects.isNull(controller)) {
+            HandlerExecution handler = annotationHandlerMapping.getHandler(req);
+            try {
+                ModelAndView modelAndView = handler.handle(req, resp);
+                modelAndView.getView().render(modelAndView.getModel(), req, resp);
+            } catch (Exception e) {
+                logger.debug("Annotated Exception: {}", e.getMessage());
+                // TODO 예외 던지기
+            }
+
+            return;
+        }
+
         try {
             String viewName = controller.execute(req, resp);
             move(viewName, req, resp);

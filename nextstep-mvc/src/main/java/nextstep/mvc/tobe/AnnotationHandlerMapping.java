@@ -6,8 +6,6 @@ import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
 import org.reflections.ReflectionUtils;
 import org.reflections.Reflections;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
@@ -17,7 +15,6 @@ import java.util.Set;
 import static org.reflections.ReflectionUtils.getAllMethods;
 
 public class AnnotationHandlerMapping {
-    private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
     private Object[] basePackage;
 
     private Map<HandlerKey, HandlerExecution> handlerExecutions = Maps.newHashMap();
@@ -34,7 +31,8 @@ public class AnnotationHandlerMapping {
             Set<Method> allMethods = getAllMethods(aClass, ReflectionUtils.withAnnotation(RequestMapping.class));
             for (Method method : allMethods) {
                 RequestMapping rm = method.getAnnotation(RequestMapping.class);
-                handlerExecutions.put(createHandlerKey(rm), ((request, response) -> (ModelAndView) method.invoke(aClass.newInstance(), request, response)));
+                handlerExecutions.put(createHandlerKey(rm),
+                        ((request, response) -> (ModelAndView) method.invoke(aClass.newInstance(), request, response)));
             }
         }
     }

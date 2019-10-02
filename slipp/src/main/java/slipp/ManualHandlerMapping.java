@@ -17,7 +17,7 @@ public class ManualHandlerMapping implements HandlerMapping {
 
     @Override
     public void initialize() {
-        mappings.put("/", new HomeController());
+//        mappings.put("/", new HomeController());
         mappings.put("/users/form", new ForwardController("/user/form.jsp"));
         mappings.put("/users/loginForm", new ForwardController("/user/login.jsp"));
         mappings.put("/users", new ListUserController());
@@ -33,8 +33,7 @@ public class ManualHandlerMapping implements HandlerMapping {
             logger.info("Path : {}, Controller : {}", path, mappings.get(path).getClass());
         });
     }
-
-    @Override
+    
     public Controller getHandler(String requestUri) {
         return mappings.get(requestUri);
     }
