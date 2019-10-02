@@ -1,5 +1,6 @@
 package nextstep.mvc;
 
+import nextstep.mvc.exception.NotFoundHandlerException;
 import nextstep.mvc.tobe.HandlerExecution;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,6 +10,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.List;
 
 @WebServlet(name = "dispatcher", urlPatterns = "/", loadOnStartup = 1)
@@ -31,7 +33,7 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     @Override
-    protected void service(HttpServletRequest req, HttpServletResponse resp) {
+    protected void service(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         logger.debug("Method : {}, Request URI : {}", req.getMethod(), req.getRequestURI());
 
         HandlerExecution handlerExecution = getHandler(req);
@@ -39,7 +41,8 @@ public class DispatcherServlet extends HttpServlet {
             Object result = handlerExecution.handle(req, resp);
             handlerAdapter.handle(result, req, resp);
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error(e.getMessage());
+            resp.sendError(404);
         }
     }
 
@@ -47,7 +50,7 @@ public class DispatcherServlet extends HttpServlet {
         return handlerMappings.stream()
                 .filter(handlerMapping -> handlerMapping.canHandle(req))
                 .findAny()
-                .orElseThrow(IllegalArgumentException::new)
+                .orElseThrow(NotFoundHandlerException::new)
                 .getHandler(req);
     }
 }
