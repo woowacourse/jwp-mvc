@@ -1,6 +1,7 @@
 package nextstep.mvc.tobe;
 
 import com.google.common.collect.Maps;
+import nextstep.mvc.exception.MappingException;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
@@ -9,7 +10,6 @@ import org.reflections.Reflections;
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 
 public class AnnotationHandlerMapping {
@@ -37,15 +37,22 @@ public class AnnotationHandlerMapping {
         if (method.isAnnotationPresent(RequestMapping.class)) {
             String url = method.getAnnotation(RequestMapping.class).value();
             RequestMethod requestMethod = method.getAnnotation(RequestMapping.class).method();
-            if (Objects.isNull(requestMethod)) {
-                for (RequestMethod value : RequestMethod.values()) {
-                    HandlerKey handlerKey = new HandlerKey(url, value);
-                    handlerExecutions.put(handlerKey,
-                            (request, response) -> (ModelAndView) method.invoke(controller.newInstance(), request, response));
-                }
+            if (requestMethod.isAll()) {
+                putAllMethodMapping(controller, method, url);
                 return;
             }
             HandlerKey handlerKey = new HandlerKey(url, requestMethod);
+            handlerExecutions.put(handlerKey,
+                    (request, response) -> (ModelAndView) method.invoke(controller.newInstance(), request, response));
+        }
+    }
+
+    private void putAllMethodMapping(Class<?> controller, Method method, String url) {
+        for (RequestMethod value : RequestMethod.values()) {
+            HandlerKey handlerKey = new HandlerKey(url, value);
+            if (handlerExecutions.containsKey(handlerKey)) {
+                throw new MappingException();
+            }
             handlerExecutions.put(handlerKey,
                     (request, response) -> (ModelAndView) method.invoke(controller.newInstance(), request, response));
         }

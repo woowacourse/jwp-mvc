@@ -12,13 +12,17 @@ public enum RequestMethod {
     PATCH("PATCH"),
     DELETE("DELETE"),
     OPTIONS("OPTIONS"),
-    TRACE("TRACE");
-
+    TRACE("TRACE"),
+    ALL("ALL");
 
     private final String method;
 
     RequestMethod(String method) {
         this.method = method;
+    }
+
+    public boolean isAll() {
+        return this.equals(ALL);
     }
 
     public static RequestMethod of(String methodType) {
