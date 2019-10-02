@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 
@@ -56,10 +57,19 @@ public class ReflectionTest {
     }
 
     @Test
-    public void privateFieldAccess() {
+    public void privateFieldAccess() throws Exception {
         Class<Student> clazz = Student.class;
         logger.debug(clazz.getName());
 
-        // TODO Student private field에 값을 저장하고 조회한다.
+        Student student = clazz.getDeclaredConstructor().newInstance();
+        Field[] fields = clazz.getDeclaredFields();
+        fields[0].setAccessible(true); // name
+        fields[1].setAccessible(true); // age
+
+        fields[0].set(student, "mr.Conas");
+        fields[1].set(student, 20);
+
+        logger.debug("name: {}", student.getName());
+        logger.debug("age: {}", student.getAge());
     }
 }
