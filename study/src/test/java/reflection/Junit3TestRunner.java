@@ -12,15 +12,14 @@ public class Junit3TestRunner {
 
     @Test
     public void run() {
-        Junit3Test target = new Junit3Test();
         Class<Junit3Test> clazz = Junit3Test.class;
 
         Arrays.stream(clazz.getDeclaredMethods())
                 .filter(method -> method.getName().startsWith("test"))
                 .forEach(method -> {
                     try {
-                        method.invoke(target);
-                    } catch (IllegalAccessException | InvocationTargetException e) {
+                        method.invoke(clazz.newInstance());
+                    } catch (IllegalAccessException | InvocationTargetException | InstantiationException e) {
                         log.error("error: {}", e.getMessage());
                     }
                 });
