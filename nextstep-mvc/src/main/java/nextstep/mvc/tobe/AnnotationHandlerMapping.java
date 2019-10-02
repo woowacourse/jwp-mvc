@@ -1,6 +1,8 @@
 package nextstep.mvc.tobe;
 
 import com.google.common.collect.Maps;
+import nextstep.mvc.tobe.exception.DuplicateRequestMappingException;
+import nextstep.mvc.tobe.exception.RequestUrlNotFoundException;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
@@ -9,6 +11,7 @@ import org.reflections.Reflections;
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 public class AnnotationHandlerMapping {
@@ -37,6 +40,8 @@ public class AnnotationHandlerMapping {
 
                 HandlerExecution handlerExecution
                         = (request, response) -> (ModelAndView) method.invoke(clazz.newInstance(), request, response);
+
+                checkDuplicateRequestMapping(handlerKey);
                 handlerExecutions.put(handlerKey, handlerExecution);
             }
         }
@@ -49,11 +54,31 @@ public class AnnotationHandlerMapping {
         return new HandlerKey(url, requestMethod);
     }
 
+    private void checkDuplicateRequestMapping(final HandlerKey handlerKey) {
+        if (handlerExecutions.containsKey(handlerKey)) {
+            throw new DuplicateRequestMappingException();
+        }
+    }
+
     public HandlerExecution getHandler(HttpServletRequest request) {
         String requestURI = request.getRequestURI();
         String method = request.getMethod();
 
         HandlerKey handlerKey = new HandlerKey(requestURI, RequestMethod.valueOf(method));
+        if (doesNotExistsKey(handlerKey)) {
+            handlerKey = findHandlerKeyByUrl(requestURI);
+        }
         return handlerExecutions.get(handlerKey);
+    }
+
+    private boolean doesNotExistsKey(final HandlerKey handlerKey) {
+        return Objects.isNull(handlerExecutions.get(handlerKey));
+    }
+
+    private HandlerKey findHandlerKeyByUrl(final String requestURI) {
+        return handlerExecutions.keySet().stream()
+                .filter(handlerKey -> handlerKey.isSameUrl(requestURI))
+                .findFirst()
+                .orElseThrow(RequestUrlNotFoundException::new);
     }
 }

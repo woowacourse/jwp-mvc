@@ -1,12 +1,14 @@
 package nextstep.mvc.tobe;
 
 import nextstep.db.DataBase;
+import nextstep.mvc.tobe.exception.RequestUrlNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class AnnotationHandlerMappingTest {
     private AnnotationHandlerMapping handlerMapping;
@@ -33,7 +35,7 @@ public class AnnotationHandlerMappingTest {
     }
 
     private void createUser(User user) throws Exception {
-        MockHttpServletRequest request = new MockHttpServletRequest("POST", "/users");
+        MockHttpServletRequest request = new MockHttpServletRequest("POST", "/users/new");
         request.setParameter("userId", user.getUserId());
         request.setParameter("password", user.getPassword());
         request.setParameter("name", user.getName());
@@ -41,5 +43,11 @@ public class AnnotationHandlerMappingTest {
         MockHttpServletResponse response = new MockHttpServletResponse();
         HandlerExecution execution = handlerMapping.getHandler(request);
         execution.handle(request, response);
+    }
+
+    @Test
+    void notFoundRequestUrl() {
+        MockHttpServletRequest request = new MockHttpServletRequest("GET", "/none");
+        assertThrows(RequestUrlNotFoundException.class, () -> handlerMapping.getHandler(request));
     }
 }
