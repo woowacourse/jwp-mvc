@@ -1,8 +1,6 @@
 package nextstep.mvc;
 
-import nextstep.mvc.asis.Controller;
-import nextstep.mvc.tobe.AnnotationHandlerMapping;
-import nextstep.mvc.tobe.HandlerExecution;
+import nextstep.mvc.tobe.Handler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,6 +11,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
+import java.util.Objects;
 
 @WebServlet(name = "dispatcher", urlPatterns = "/", loadOnStartup = 1)
 public class DispatcherServlet extends HttpServlet {
@@ -20,43 +20,39 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger logger = LoggerFactory.getLogger(DispatcherServlet.class);
     private static final String DEFAULT_REDIRECT_PREFIX = "redirect:";
 
-    private HandlerMapping rm;
-    private AnnotationHandlerMapping annotationHandlerMapping;
+    private List<HandlerMapping> handlerMappings;
 
-    public DispatcherServlet(HandlerMapping rm, AnnotationHandlerMapping annotationHandlerMapping) {
-        this.rm = rm;
-        this.annotationHandlerMapping = annotationHandlerMapping;
+    public DispatcherServlet(List<HandlerMapping> handlerMappings) {
+        this.handlerMappings = handlerMappings;
     }
 
     @Override
     public void init() throws ServletException {
-        rm.initialize();
-        annotationHandlerMapping.initialize();
+        handlerMappings.forEach(HandlerMapping::initialize);
     }
 
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String requestUri = req.getRequestURI();
-        logger.debug("Method : {}, Request URI : {}", req.getMethod(), requestUri);
+        logger.debug("Method : {}, Request URI : {}", req.getMethod(), req.getRequestURI());
 
-        Controller controller = rm.getHandler(requestUri);
-        if (controller == null) {
-            HandlerExecution handlerExecution = annotationHandlerMapping.getHandler(req);
-            try {
-                String viewName = handlerExecution.handle(req, resp);
-                move(viewName, req, resp);
-                return;
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
         try {
-            String viewName = controller.execute(req, resp);
-            move(viewName, req, resp);
-        } catch (Throwable e) {
+            Handler handler = findHandler(req);
+            Object object = handler.execute(req, resp);
+            if (object instanceof String) {
+                move((String) object, req, resp);
+            }
+        } catch (Exception e) {
             logger.error("Exception : {}", e);
-            throw new ServletException(e.getMessage());
+            e.printStackTrace();
         }
+    }
+
+    private Handler findHandler(HttpServletRequest req) {
+        return handlerMappings.stream()
+                .map(handlerMapping -> handlerMapping.getHandler(req))
+                .filter(Objects::nonNull)
+                .findAny()
+                .orElseThrow(IllegalArgumentException::new);
     }
 
     private void move(String viewName, HttpServletRequest req, HttpServletResponse resp)

@@ -1,8 +1,6 @@
 package nextstep.mvc.asis;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import nextstep.mvc.tobe.Handler;
 
-public interface Controller {
-    String execute(HttpServletRequest req, HttpServletResponse resp) throws Exception;
+public interface Controller extends Handler {
 }
