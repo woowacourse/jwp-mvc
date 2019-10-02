@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
+import java.util.Objects;
 
 @WebServlet(name = "dispatcher", urlPatterns = "/", loadOnStartup = 1)
 public class DispatcherServlet extends HttpServlet {
@@ -49,12 +49,11 @@ public class DispatcherServlet extends HttpServlet {
      * @param req
      * @return Controller or HandlerExecution which matches given request
      */
-    private ModelAndView handleRequest(HttpServletRequest req, HttpServletResponse resp) throws RuntimeException {
+    private ModelAndView handleRequest(HttpServletRequest req, HttpServletResponse resp) {
         return handlerMappings.stream()
                 .map(mappnig -> mappnig.getHandler(req))
-                .map(handler -> handler.apply(req, resp))
-                .filter(Optional::isPresent)
-                .map(Optional::get)
+                .filter(Objects::nonNull)
+                .map(handler -> handler.handle(req, resp))
                 .findFirst()
                 .orElseThrow(() -> new NoHandlerMatchException(req));
     }

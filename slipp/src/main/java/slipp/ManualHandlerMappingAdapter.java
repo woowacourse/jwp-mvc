@@ -2,15 +2,13 @@ package slipp;
 
 import nextstep.mvc.HandlerMapping;
 import nextstep.mvc.asis.Controller;
+import nextstep.mvc.tobe.HandlerExecution;
 import nextstep.mvc.tobe.JspView;
 import nextstep.mvc.tobe.ModelAndView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.util.Optional;
-import java.util.function.BiFunction;
 
 public class ManualHandlerMappingAdapter implements HandlerMapping {
 
@@ -27,18 +25,19 @@ public class ManualHandlerMappingAdapter implements HandlerMapping {
     }
 
     @Override
-    public BiFunction<HttpServletRequest, HttpServletResponse, Optional<ModelAndView>> getHandler(HttpServletRequest request) {
+    public HandlerExecution getHandler(HttpServletRequest request) {
+        Controller controller = handlerMapping.getHandler(request);
+        if (controller == null) {
+            return null;
+        }
+
         return (req, resp) -> {
-            Controller controller = handlerMapping.getHandler(req);
-            if (controller == null) {
-                return Optional.empty();
-            }
             try {
-                return Optional.of(new ModelAndView(new JspView(controller.execute(req, resp))));
+                return new ModelAndView(new JspView(controller.execute(req, resp)));
             } catch (Exception e) {
                 logger.error("Failed to getting handler", e);
+                throw new RuntimeException(e);
             }
-            return Optional.empty();
         };
     }
 }
