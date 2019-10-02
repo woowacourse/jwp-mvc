@@ -54,17 +54,11 @@ public class AnnotationHandlerMapping {
         RequestMethod requestMethod = annotation.method();
         HandlerKey key = new HandlerKey(url, requestMethod);
         handlerExecutions.put(key, (req, res) -> (ModelAndView) method.invoke(controllerInstance, req, res));
-    }
+}
 
     public HandlerExecution getHandler(HttpServletRequest request) {
         String url = request.getRequestURI();
         RequestMethod method = RequestMethod.valueOf(request.getMethod());
-        HandlerExecution handler = handlerExecutions.get(new HandlerKey(url, method));
-
-        if(handler == null) {
-            throw new HandlerNotFoundException();
-        }
-
-        return handler;
+        return handlerExecutions.get(new HandlerKey(url, method));
     }
 }
