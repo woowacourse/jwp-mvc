@@ -17,8 +17,7 @@ public class ReflectionTest {
         Class<Question> clazz = Question.class;
         logger.debug(clazz.getName());
 
-        // TODO Question 클래스의 모든 필드, 생성자, 메소드에 대한 정보를 출력한다.
-        // 일단 리플렉션 테스트로 리플렉션을 학습해보겠습니다
+        // Question 클래스의 모든 필드, 생성자, 메소드에 대한 정보를 출력한다.
         logger.debug("##### {} Fields #####", clazz.getName());
         for (Field declaredField : clazz.getDeclaredFields()) {
             logger.debug("Type : Name {}", String.format("%s : %s", declaredField.getType(), declaredField.getName()));
