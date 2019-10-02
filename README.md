@@ -9,10 +9,15 @@
 - [x] junit에서는 @Test 어노테이션만 자동으로 실행. @MyTest만 실행하도록 구현
 
 #### 4 - private field에 값 할당
-- [ ] Student 클래스의 NAme과 age 필드에 값을 할당.
+- [x] Student 클래스의 NAme과 age 필드에 값을 할당.
 
 #### 5 - 인자를 가진 생성자의 인스턴스 생성
-- [ ] Question클래스의 Constructor를 reflection해서 인스턴스 생성
+- [x] Question클래스의 Constructor를 reflection해서 인스턴스 생성
 
 #### 6 - component scan
-- [ ] examples 패키지의 @Controller, @Service, @Repository 애노테이션 붙은 클래스 찾아서 출력
+- [x] examples 패키지의 @Controller, @Service, @Repository 애노테이션 붙은 클래스 찾아서 출력
+
+### 2단계 MVC 구현
+- [ ] 어노테이션 핸들러 구현
+- [ ] 핸들러 익스큐션 구현
+- [ ] 레거시 코드 리팩토링
