@@ -13,6 +13,12 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.lang.reflect.Method;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 @WebServlet(name = "dispatcher", urlPatterns = "/", loadOnStartup = 1)
 public class DispatcherServlet extends HttpServlet {
@@ -20,29 +26,21 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger logger = LoggerFactory.getLogger(DispatcherServlet.class);
     private static final String DEFAULT_REDIRECT_PREFIX = "redirect:";
 
-    private HandlerMapping handlerMapping;
-    private AnnotationHandlerMapping annotationHandlerMapping;
+    private List<HandlerMapping> handlerMappings;
 
-    public DispatcherServlet(HandlerMapping handlerMapping) {
-        this.handlerMapping = handlerMapping;
-    }
-
-    public DispatcherServlet(HandlerMapping handlerMapping, AnnotationHandlerMapping annotationHandlerMapping) {
-        this.handlerMapping = handlerMapping;
-        this.annotationHandlerMapping = annotationHandlerMapping;
+    public DispatcherServlet(List<HandlerMapping> handlerMappings) {
+        this.handlerMappings = handlerMappings;
     }
 
     @Override
     public void init() throws ServletException {
-        handlerMapping.initialize();
-        annotationHandlerMapping.initialize();
+        handlerMappings.forEach(HandlerMapping::initialize);
     }
 
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException {
         String requestUri = req.getRequestURI();
         logger.debug("Method : {}, Request URI : {}", req.getMethod(), requestUri);
-
         try {
             String viewName = getViewName(req, resp);
             move(viewName, req, resp);
@@ -53,15 +51,22 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private String getViewName(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        Controller controller = handlerMapping.getHandler(request.getRequestURI());
-        if (controller != null) {
-            return controller.execute(request, response);
+        Object handler = getHandler(request);
+        if (handler instanceof Controller) {
+            return ((Controller) handler).execute(request, response);
         }
-        HandlerExecution execution = annotationHandlerMapping.getHandler(request);
-        if (execution != null) {
-            return execution.handle(request, response);
+        if (handler instanceof HandlerExecution) {
+            return ((HandlerExecution) handler).handle(request, response);
         }
         return "/err/404.jsp";
+    }
+
+    private Object getHandler(HttpServletRequest request) {
+        return handlerMappings.stream()
+                .map(handlerMapping -> handlerMapping.getHandler(request))
+                .filter(Objects::nonNull)
+                .findFirst()
+                .orElse(null);
     }
 
     private void move(String viewName, HttpServletRequest req, HttpServletResponse resp)
