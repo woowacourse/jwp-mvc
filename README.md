@@ -24,3 +24,10 @@ https://gist.github.com/joshbuchea/6f47e86d2510bce28f8e7f42ae84c716
 
 #### 요구사항 6
 - [x] examples 패키지에서 @Controller, @Service, @Repository 애노테이션이 설정되어 있는 모든 클래스를 찾아 출력한다.
+
+----
+#### 요구사항 1
+- @Controller 인 클래스를 찾음
+- @RequestMapping의 값에 따라 적절한 HandlerExecution을 반환.
+- [x] HandlerExecution 생성자 생성
+- [x] AnnotationHandlerMappingTest 성공하게 변경
