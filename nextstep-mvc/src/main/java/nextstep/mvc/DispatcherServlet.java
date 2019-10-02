@@ -1,6 +1,9 @@
 package nextstep.mvc;
 
 import nextstep.mvc.asis.Controller;
+import nextstep.mvc.tobe.AnnotationHandlerMapping;
+import nextstep.mvc.tobe.HandlerExecution;
+import nextstep.mvc.tobe.ModelAndView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,15 +21,18 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger logger = LoggerFactory.getLogger(DispatcherServlet.class);
     private static final String DEFAULT_REDIRECT_PREFIX = "redirect:";
 
-    private HandlerMapping rm;
+    private HandlerMapping mm;
+    private AnnotationHandlerMapping am;
 
-    public DispatcherServlet(HandlerMapping rm) {
-        this.rm = rm;
+    public DispatcherServlet(HandlerMapping mm, AnnotationHandlerMapping am) {
+        this.mm = mm;
+        this.am = am;
     }
 
     @Override
     public void init() throws ServletException {
-        rm.initialize();
+        mm.initialize();
+        am.initialize();
     }
 
     @Override
@@ -34,10 +40,21 @@ public class DispatcherServlet extends HttpServlet {
         String requestUri = req.getRequestURI();
         logger.debug("Method : {}, Request URI : {}", req.getMethod(), requestUri);
 
-        Controller controller = rm.getHandler(requestUri);
+        Controller controller = mm.getHandler(requestUri);
+        HandlerExecution handler = am.getHandler(req);
+
         try {
-            String viewName = controller.execute(req, resp);
-            move(viewName, req, resp);
+            if (controller != null) {
+                String viewName = controller.execute(req, resp);
+                move(viewName, req, resp);
+                return;
+            }
+
+            if (handler != null) {
+                ModelAndView view = handler.handle(req, resp);
+                view.render(req, resp);
+                return;
+            }
         } catch (Throwable e) {
             logger.error("Exception : {}", e);
             throw new ServletException(e.getMessage());
@@ -45,7 +62,7 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private void move(String viewName, HttpServletRequest req, HttpServletResponse resp)
-            throws ServletException, IOException {
+        throws ServletException, IOException {
         if (viewName.startsWith(DEFAULT_REDIRECT_PREFIX)) {
             resp.sendRedirect(viewName.substring(DEFAULT_REDIRECT_PREFIX.length()));
             return;
