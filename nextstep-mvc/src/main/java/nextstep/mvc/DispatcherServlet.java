@@ -1,6 +1,8 @@
 package nextstep.mvc;
 
 import nextstep.mvc.asis.Controller;
+import nextstep.mvc.tobe.AnnotationHandlerMapping;
+import nextstep.mvc.tobe.HandlerExecution;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,14 +21,17 @@ public class DispatcherServlet extends HttpServlet {
     private static final String DEFAULT_REDIRECT_PREFIX = "redirect:";
 
     private HandlerMapping rm;
+    private AnnotationHandlerMapping annotationHandlerMapping;
 
-    public DispatcherServlet(HandlerMapping rm) {
+    public DispatcherServlet(HandlerMapping rm, AnnotationHandlerMapping annotationHandlerMapping) {
         this.rm = rm;
+        this.annotationHandlerMapping = annotationHandlerMapping;
     }
 
     @Override
     public void init() throws ServletException {
         rm.initialize();
+        annotationHandlerMapping.initialize();
     }
 
     @Override
@@ -35,6 +40,16 @@ public class DispatcherServlet extends HttpServlet {
         logger.debug("Method : {}, Request URI : {}", req.getMethod(), requestUri);
 
         Controller controller = rm.getHandler(requestUri);
+        if (controller == null) {
+            HandlerExecution handlerExecution = annotationHandlerMapping.getHandler(req);
+            try {
+                String viewName = handlerExecution.handle(req, resp);
+                move(viewName, req, resp);
+                return;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
         try {
             String viewName = controller.execute(req, resp);
             move(viewName, req, resp);
