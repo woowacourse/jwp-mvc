@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 public class AnnotationHandlerMapping implements HandlerMapping {
     private Object[] basePackage;
 
-    private Map<HandlerKey, HandlerExecution> handlerExecutions = Maps.newHashMap();
+    private Map<HandlerKey, Handler> handlerExecutions = Maps.newHashMap();
 
     public AnnotationHandlerMapping(Object... basePackage) {
         this.basePackage = basePackage;
@@ -53,14 +53,14 @@ public class AnnotationHandlerMapping implements HandlerMapping {
             Arrays.stream(annotation.method())
                     .forEach(requestMethod -> {
                         HandlerKey handlerKey = new HandlerKey(annotation.value(), requestMethod);
-                        HandlerExecution handlerExecution = new HandlerExecution(handler, method);
+                        Handler handlerExecution = new HandlerExecution(handler, method);
                         handlerExecutions.put(handlerKey, handlerExecution);
                     });
         }
     }
 
     @Override
-    public HandlerExecution getHandler(HttpServletRequest request) {
+    public Handler getHandler(HttpServletRequest request) {
         HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod()));
         return handlerExecutions.get(handlerKey);
     }
