@@ -17,6 +17,6 @@ class ControllerScannerTest {
 
         Map<HandlerKey, HandlerExecution> handlers = scanner.scan();
 
-        assertThat(handlers.size()).isEqualTo(2);
+        assertThat(handlers.size()).isEqualTo(6);
     }
 }

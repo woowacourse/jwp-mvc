@@ -35,4 +35,9 @@ public class MyController {
         DataBase.addUser(user);
         return null;
     }
+
+    @RequestMapping(value = "/sample")
+    public ModelAndView testForRequestMethod(HttpServletRequest request, HttpServletResponse response) {
+        return null;
+    }
 }
