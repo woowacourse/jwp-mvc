@@ -8,6 +8,11 @@ public class HandlerExecution {
     private Method method;
     private Object target;
 
+    public HandlerExecution(Object target, Method method) {
+        this.target = target;
+        this.method = method;
+    }
+
     public ModelAndView handle(HttpServletRequest request, HttpServletResponse response) throws Exception {
         Object result = method.invoke(target, request, response);
         return new ModelAndView(new JspView(String.valueOf(result)));
