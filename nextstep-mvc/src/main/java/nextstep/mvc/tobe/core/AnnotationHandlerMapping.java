@@ -1,6 +1,8 @@
 package nextstep.mvc.tobe.core;
 
 import com.google.common.collect.Maps;
+import nextstep.mvc.tobe.scanner.ControllerScanner;
+import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,14 +19,12 @@ public class AnnotationHandlerMapping {
         this.basePackage = basePackage;
     }
 
-    @SuppressWarnings("unchecked")
     public void initialize() {
-        ComponentScanner scanner = new ControllerScanner(basePackage);
-        try {
-            handlerExecutions = (Map<HandlerKey, HandlerExecution>) scanner.scan();
-        } catch (ClassCastException e) {
-            logger.error(e.getMessage());
-            throw new FailToInitializeException(e.getMessage());
+        Reflections reflections = new Reflections(basePackage);
+        ControllerScanner scanner = new ControllerScanner(reflections);
+        handlerExecutions = scanner.scan();
+        for (Map.Entry<HandlerKey, HandlerExecution> entry : handlerExecutions.entrySet()) {
+            logger.debug("Scanned {} mapping {}", entry.getKey(), entry.getValue());
         }
     }
 

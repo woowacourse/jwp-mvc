@@ -1,24 +1,21 @@
 package nextstep.mvc.tobe.core;
 
+import nextstep.mvc.tobe.scanner.ControllerScanner;
 import org.junit.jupiter.api.Test;
+import org.reflections.Reflections;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 class ControllerScannerTest {
-    private ComponentScanner scanner;
 
     @Test
     void 컨트롤러애너테이션_스캐닝_확인() {
-        scanner = new ControllerScanner("nextstep.mvc.tobe");
-        Object result = scanner.scan();
+        Reflections reflections = new Reflections("nextstep.mvc.tobe");
+        ControllerScanner scanner = new ControllerScanner(reflections);
 
-        assertThat(result).isNotNull();
-        assertThat(result instanceof HashMap).isTrue();
-
-        Map<HandlerKey, HandlerExecution> handlers = (Map<HandlerKey, HandlerExecution>) result;
+        Map<HandlerKey, HandlerExecution> handlers = scanner.scan();
 
         assertThat(handlers.size()).isEqualTo(2);
     }
