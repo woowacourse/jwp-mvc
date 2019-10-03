@@ -1,10 +1,14 @@
 package nextstep.mvc.tobe;
 
 import nextstep.db.DataBase;
+import nextstep.web.annotation.RequestMethod;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -27,7 +31,7 @@ public class AnnotationHandlerMappingTest {
         request.setParameter("userId", user.getUserId());
         MockHttpServletResponse response = new MockHttpServletResponse();
         HandlerExecution execution = handlerMapping.getHandler(request);
-        execution.handle(request, response);
+        execution.execute(request, response);
 
         assertThat(request.getAttribute("user")).isEqualTo(user);
     }
@@ -40,6 +44,15 @@ public class AnnotationHandlerMappingTest {
         request.setParameter("email", user.getEmail());
         MockHttpServletResponse response = new MockHttpServletResponse();
         HandlerExecution execution = handlerMapping.getHandler(request);
-        execution.handle(request, response);
+        execution.execute(request, response);
+    }
+
+    @Test
+    @DisplayName("RequsetMapping의 method가 없는 경우 모든 Method 지원")
+    void requestMapping_method_가_없는_경우() {
+        Stream.of(RequestMethod.values())
+                .map(method -> new MockHttpServletRequest(method.name(), "/users/nothing"))
+                .map(request -> handlerMapping.getHandler(request))
+                .forEach(handler -> assertThat(handler).isNotNull());
     }
 }

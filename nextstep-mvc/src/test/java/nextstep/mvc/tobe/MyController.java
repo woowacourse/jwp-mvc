@@ -34,4 +34,9 @@ public class MyController {
         DataBase.addUser(user);
         return null;
     }
+
+    @RequestMapping(value = "/users/nothing")
+    public ModelAndView nothing(HttpServletRequest request, HttpServletResponse response){
+        return null;
+    }
 }
