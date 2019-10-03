@@ -1,6 +1,7 @@
 package nextstep.mvc.tobe;
 
 import com.google.common.collect.Maps;
+import nextstep.mvc.HandlerMapping;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
@@ -13,7 +14,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 import java.util.stream.Stream;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
     private static final Logger logger = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
     private Object[] basePackage;
@@ -47,7 +48,7 @@ public class AnnotationHandlerMapping {
                                             final HandlerExecution handlerExecution = (req, resp) -> (ModelAndView) method.invoke(instance, req, resp);
                                             handlerExecutions.put(handlerKey, handlerExecution);
                                         }
-                                    }   else {
+                                    } else {
                                         for (final RequestMethod requestMethod : rm.method()) {
                                             final HandlerKey handlerKey = new HandlerKey(rm.value(), requestMethod);
                                             final HandlerExecution handlerExecution = (req, resp) -> (ModelAndView) method.invoke(instance, req, resp);
