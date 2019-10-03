@@ -1,6 +1,5 @@
 package nextstep.mvc.tobe;
 
-import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
 
 import javax.servlet.http.HttpServletRequest;
@@ -9,13 +8,13 @@ public class HandlerKey {
     private String url;
     private RequestMethod requestMethod;
 
-    public HandlerKey(String url, RequestMethod requestMethod) {
+    private HandlerKey(String url, RequestMethod requestMethod) {
         this.url = url;
         this.requestMethod = requestMethod;
     }
 
-    public static HandlerKey of(RequestMapping mapping) {
-        return new HandlerKey(mapping.value(), mapping.method());
+    public static HandlerKey of(String url, RequestMethod requestMethod) {
+        return new HandlerKey(url, requestMethod);
     }
 
     public static HandlerKey of(HttpServletRequest request) {

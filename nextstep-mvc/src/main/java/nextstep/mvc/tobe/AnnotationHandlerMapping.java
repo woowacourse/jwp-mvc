@@ -43,7 +43,7 @@ public class AnnotationHandlerMapping {
                     } catch (InstantiationException | IllegalAccessException e) {
                         logger.debug(e.getMessage());
                     }
-                    handlerExecutions.put(HandlerKey.of(mapping), handlerExecution);
+                    handlerExecutions.put(HandlerKey.of(mapping.value(), mapping.method()), handlerExecution);
                 });
     }
 
