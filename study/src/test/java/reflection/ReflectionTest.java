@@ -1,5 +1,6 @@
 package reflection;
 
+import annotation.Controller;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -7,10 +8,7 @@ import org.slf4j.LoggerFactory;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -54,10 +52,10 @@ public class ReflectionTest {
         Question question = (Question) constructor.newInstance("a", "b", "c");
 
         Constructor constructor2 = clazz.getDeclaredConstructor(parameterTypeList.get(1));
-        Question question2 = (Question) constructor2.newInstance(5l,"a", "b", "c", new Date(), 20);
+        Question question2 = (Question) constructor2.newInstance(5l, "a", "b", "c", new Date(), 20);
 
         assertThat(question).isEqualTo(new Question("a", "b", "c"));
-        assertThat(question2).isEqualTo(new Question(5l,"a", "b", "c", new Date(), 20));
+        assertThat(question2).isEqualTo(new Question(5l, "a", "b", "c", new Date(), 20));
     }
 
     @Test
@@ -80,5 +78,12 @@ public class ReflectionTest {
 
         assertThat(student.getName()).isEqualTo(dummyName);
         assertThat(student.getAge()).isEqualTo(dummyAge);
+    }
+
+    @Test
+    public void getClassByMethod() throws NoSuchMethodException {
+        Class<Question> clazz = Question.class;
+        Method method = clazz.getDeclaredMethod("getWriter");
+        assertThat(method.getDeclaringClass()).isEqualTo(clazz);
     }
 }
