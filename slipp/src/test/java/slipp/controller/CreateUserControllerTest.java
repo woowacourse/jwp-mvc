@@ -26,8 +26,8 @@ class CreateUserControllerTest {
     }
 
     @Test
-    @DisplayName("레거시 컨트롤러")
-    void crud() throws Exception {
+    @DisplayName("레거시 컨트롤러_RequestMapping 적용 : createUser")
+    void createUser() throws Exception {
         // 회원가입
         User expected = new User("sloth", "password", "redman", "marx@communism.rus");
         MockHttpServletRequest request = new MockHttpServletRequest("POST", "/users/create");
@@ -42,4 +42,5 @@ class CreateUserControllerTest {
 
         assertThat(DataBase.findUserById("sloth")).isEqualTo(expected);
     }
+
 }
