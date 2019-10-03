@@ -1,8 +1,10 @@
 package nextstep.mvc.tobe;
 
 import com.google.common.collect.Maps;
+import nextstep.mvc.HandlerMapping;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
+import nextstep.web.annotation.RequestMethod;
 import org.reflections.Reflections;
 
 import javax.servlet.http.HttpServletRequest;
@@ -28,13 +30,12 @@ public class AnnotationHandlerMapping {
             for (Method method : methods) {
                 RequestMapping rm = method.getAnnotation(RequestMapping.class);
                 handlerExecutions.put(new HandlerKey(rm.value(), rm.method()), new HandlerExecution(controller, method));
-
             }
         }
 
     }
 
     public HandlerExecution getHandler(HttpServletRequest request) {
-        return null;
+        return handlerExecutions.get(new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod())));
     }
 }

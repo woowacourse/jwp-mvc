@@ -35,7 +35,7 @@ public class MyController {
         return null;
     }
 
-    @RequestMapping(value = "/users", method = RequestMethod.POST)
+    @RequestMapping(value = "/notnull", method = RequestMethod.POST)
     public ModelAndView notNullTest(HttpServletRequest request, HttpServletResponse response) {
         return new ModelAndView();
     }
