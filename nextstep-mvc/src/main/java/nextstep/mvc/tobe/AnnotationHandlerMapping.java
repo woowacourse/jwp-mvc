@@ -1,6 +1,7 @@
 package nextstep.mvc.tobe;
 
 import com.google.common.collect.Maps;
+import nextstep.mvc.HandlerMapping;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
@@ -8,13 +9,14 @@ import org.reflections.ReflectionUtils;
 import org.reflections.Reflections;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.Set;
 
 import static org.reflections.ReflectionUtils.getAllMethods;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
     private Object[] basePackage;
 
     private Map<HandlerKey, HandlerExecution> handlerExecutions = Maps.newHashMap();
@@ -37,11 +39,12 @@ public class AnnotationHandlerMapping {
         }
     }
 
-    public HandlerExecution getHandler(HttpServletRequest request) {
+    @Override
+    public ModelAndView getHandler(HttpServletRequest request, HttpServletResponse response) throws Exception {
         String url = request.getRequestURI();
         RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
 
-        return handlerExecutions.get(new HandlerKey(url, requestMethod));
+        return handlerExecutions.get(new HandlerKey(url, requestMethod)).handle(request, response);
     }
 
     private HandlerKey createHandlerKey(RequestMapping rm) {
