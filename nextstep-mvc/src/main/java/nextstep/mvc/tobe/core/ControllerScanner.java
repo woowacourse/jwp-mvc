@@ -20,7 +20,7 @@ public class ControllerScanner implements ComponentScanner {
 
     private Reflections reflections;
 
-    public ControllerScanner(Object[] basePackages) {
+    public ControllerScanner(Object... basePackages) {
         this.reflections = new Reflections(basePackages);
     }
 
