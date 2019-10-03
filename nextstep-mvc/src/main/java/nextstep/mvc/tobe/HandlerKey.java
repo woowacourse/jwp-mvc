@@ -9,7 +9,7 @@ public class HandlerKey {
     private String url;
     private RequestMethod[] requestMethods;
 
-    public HandlerKey(String url, RequestMethod[] requestMethods) {
+    HandlerKey(String url, RequestMethod[] requestMethods) {
         this.url = url;
         this.requestMethods = requestMethods;
     }
