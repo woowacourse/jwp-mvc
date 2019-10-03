@@ -1,7 +1,6 @@
 package nextstep.mvc.tobe;
 
 import com.google.common.collect.Maps;
-import nextstep.mvc.HandlerMapping;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
@@ -10,8 +9,11 @@ import org.reflections.Reflections;
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class AnnotationHandlerMapping {
     private Object[] basePackage;
@@ -23,10 +25,13 @@ public class AnnotationHandlerMapping {
     }
 
     public void initialize() throws NoSuchMethodException, IllegalAccessException, InstantiationException, InvocationTargetException {
+        // TODO: 2019-10-03 2중 for 리펙토링
         Reflections reflections = new Reflections(basePackage);
         Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
         for (Class controller : controllers) {
-            Method[] methods = controller.getDeclaredMethods();
+            List<Method> methods = Arrays.stream(controller.getDeclaredMethods())
+                    .filter(method -> method.isAnnotationPresent(RequestMapping.class))
+                    .collect(Collectors.toList());
             for (Method method : methods) {
                 RequestMapping rm = method.getAnnotation(RequestMapping.class);
                 handlerExecutions.put(new HandlerKey(rm.value(), rm.method()), new HandlerExecution(controller, method));

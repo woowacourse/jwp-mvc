@@ -15,7 +15,6 @@ public class HandlerExecution {
     }
 
     public ModelAndView handle(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        // TODO: 2019-10-03 null check
         ModelAndView mv = (ModelAndView) method.invoke(instance,request,response);
         if(mv == null){
             return new ModelAndView(new EmptyView());
