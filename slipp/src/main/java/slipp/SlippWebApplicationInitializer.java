@@ -7,15 +7,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
 import javax.servlet.ServletRegistration;
 
 public class SlippWebApplicationInitializer implements WebApplicationInitializer {
     private static final Logger log = LoggerFactory.getLogger(SlippWebApplicationInitializer.class);
 
     @Override
-    public void onStartup(ServletContext servletContext) throws ServletException {
-        RequestMappingHandlerMapping mappings = new RequestMappingHandlerMapping(new ManualLegacyHandlerMapping());
+    public void onStartup(ServletContext servletContext) {
+        RequestMappingHandlerMapping mappings = new RequestMappingHandlerMapping(new ManualLegacyHandlerMapping(), "slipp.controller");
         DispatcherServlet dispatcherServlet = new DispatcherServlet(mappings);
 
         ServletRegistration.Dynamic dispatcher = servletContext.addServlet("dispatcher", dispatcherServlet);

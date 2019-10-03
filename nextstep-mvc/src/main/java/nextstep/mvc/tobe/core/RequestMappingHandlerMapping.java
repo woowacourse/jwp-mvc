@@ -15,8 +15,8 @@ public class RequestMappingHandlerMapping {
     private AnnotationHandlerMapping annotationMapping;
     private LegacyHandlerMapping legacyMapping;
 
-    public RequestMappingHandlerMapping(LegacyHandlerMapping legacyMapping) {
-        this.annotationMapping = new AnnotationHandlerMapping("slipp.controller");
+    public RequestMappingHandlerMapping(LegacyHandlerMapping legacyMapping, Object... basePackages) {
+        this.annotationMapping = new AnnotationHandlerMapping(basePackages);
         this.legacyMapping = legacyMapping;
     }
 
