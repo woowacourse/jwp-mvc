@@ -6,13 +6,15 @@ import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
+import java.lang.reflect.InvocationTargetException;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class AnnotationHandlerMappingTest {
     private AnnotationHandlerMapping handlerMapping;
 
     @BeforeEach
-    public void setup() {
+    public void setup() throws InvocationTargetException, IllegalAccessException {
         handlerMapping = new AnnotationHandlerMapping("nextstep.mvc.tobe");
         handlerMapping.initialize();
     }
