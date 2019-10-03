@@ -1,4 +1,4 @@
-package nextstep.mvc.tobe;
+package nextstep.mvc.tobe.core;
 
 import com.google.common.collect.Maps;
 import org.slf4j.Logger;
@@ -24,7 +24,7 @@ public class AnnotationHandlerMapping {
             handlerExecutions = (Map<HandlerKey, HandlerExecution>) scanner.scan();
         } catch (ClassCastException e) {
             logger.error(e.getMessage());
-            throw new FailToInitializeException();
+            throw new FailToInitializeException(e.getMessage());
         }
     }
 

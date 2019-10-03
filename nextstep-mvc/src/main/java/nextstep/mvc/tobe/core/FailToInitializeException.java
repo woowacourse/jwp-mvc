@@ -1,4 +1,4 @@
-package nextstep.mvc.tobe;
+package nextstep.mvc.tobe.core;
 
 public class FailToInitializeException extends RuntimeException {
     public FailToInitializeException() {

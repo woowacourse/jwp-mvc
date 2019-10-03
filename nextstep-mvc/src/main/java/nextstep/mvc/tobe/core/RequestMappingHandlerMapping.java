@@ -1,7 +1,9 @@
-package nextstep.mvc.tobe;
+package nextstep.mvc.tobe.core;
 
 import nextstep.mvc.LegacyHandlerMapping;
 import nextstep.mvc.asis.Controller;
+import nextstep.mvc.tobe.view.JspView;
+import nextstep.mvc.tobe.view.ModelAndView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
