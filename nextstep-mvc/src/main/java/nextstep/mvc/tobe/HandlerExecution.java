@@ -8,9 +8,9 @@ public class HandlerExecution {
     private Method method;
     private Object target;
 
-    public String handle(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public ModelAndView handle(HttpServletRequest request, HttpServletResponse response) throws Exception {
         Object result = method.invoke(target, request, response);
-        return String.valueOf(result);
+        return new ModelAndView(new JspView(String.valueOf(result)));
     }
 
     public void setMethod(Method method) {

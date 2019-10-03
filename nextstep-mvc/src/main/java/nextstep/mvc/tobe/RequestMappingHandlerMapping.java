@@ -23,11 +23,11 @@ public class RequestMappingHandlerMapping {
         legacyMapping.initialize();
     }
 
-    public String handle(HttpServletRequest req, HttpServletResponse resp) throws Exception {
+    public ModelAndView handle(HttpServletRequest req, HttpServletResponse resp) throws Exception {
         logger.debug("Method : {}, URI : {}", req.getMethod(), req.getRequestURI());
         Controller controller = legacyMapping.getHandler(req.getRequestURI());
         if (controller != null) {
-            return controller.execute(req, resp);
+            return new ModelAndView(new JspView(controller.execute(req, resp)));
         }
         return annotationMapping.getHandler(req).handle(req, resp);
     }

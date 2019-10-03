@@ -1,5 +1,6 @@
 package nextstep.mvc;
 
+import nextstep.mvc.tobe.ModelAndView;
 import nextstep.mvc.tobe.RequestMappingHandlerMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,16 +32,17 @@ public class DispatcherServlet extends HttpServlet {
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException {
         try {
-            String viewName = mappings.handle(req, resp);
-            move(viewName, req, resp);
+            ModelAndView mv = mappings.handle(req, resp);
+            move(mv, req, resp);
         } catch (Exception e) {
             logger.error(e.getMessage());
             throw new ServletException(e.getMessage());
         }
     }
 
-    private void move(String viewName, HttpServletRequest req, HttpServletResponse resp)
+    private void move(ModelAndView mv, HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
+        String viewName = mv.getView().getViewName();
         if (viewName.startsWith(DEFAULT_REDIRECT_PREFIX)) {
             resp.sendRedirect(viewName.substring(DEFAULT_REDIRECT_PREFIX.length()));
             return;
