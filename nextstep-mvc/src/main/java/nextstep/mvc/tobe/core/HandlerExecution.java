@@ -20,12 +20,4 @@ public class HandlerExecution {
         Object result = method.invoke(target, request, response);
         return new ModelAndView(new JspView(String.valueOf(result)));
     }
-
-    public void setMethod(Method method) {
-        this.method = method;
-    }
-
-    public void setTarget(Object target) {
-        this.target = target;
-    }
 }
