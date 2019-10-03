@@ -9,7 +9,6 @@ import org.reflections.ReflectionUtils;
 import org.reflections.Reflections;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.Set;
@@ -40,11 +39,11 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     @Override
-    public ModelAndView getHandler(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public HandlerExecution getHandler(HttpServletRequest request) {
         String url = request.getRequestURI();
         RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
 
-        return handlerExecutions.get(new HandlerKey(url, requestMethod)).handle(request, response);
+        return handlerExecutions.get(new HandlerKey(url, requestMethod));
     }
 
     private HandlerKey createHandlerKey(RequestMapping rm) {

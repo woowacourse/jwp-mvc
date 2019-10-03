@@ -1,6 +1,8 @@
 package nextstep.mvc;
 
+import nextstep.mvc.asis.Controller;
 import nextstep.mvc.tobe.AnnotationHandlerMapping;
+import nextstep.mvc.tobe.HandlerExecution;
 import nextstep.mvc.tobe.ModelAndView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,20 +40,20 @@ public class DispatcherServlet extends HttpServlet {
         String requestUri = req.getRequestURI();
         logger.debug("Method : {}, Request URI : {}", req.getMethod(), requestUri);
 
-        ModelAndView modelAndView = null;
         try {
-            modelAndView = manualHandlerMapping.getHandler(req, resp);
-
-        } catch (NoSuchControllerClassException e) {
-            try {
-                modelAndView = annotationHandlerMapping.getHandler(req, resp);
-            } catch (Exception ex) {
-
+            Object handler = manualHandlerMapping.getHandler(req);
+            if (handler == null) {
+                handler = annotationHandlerMapping.getHandler(req);
+                ModelAndView mav = ((HandlerExecution) handler).handle(req, resp);
+                mav.getView().render(mav.getModel(), req, resp);
+            } else {
+                String viewName = ((Controller) handler).execute(req, resp);
+                move(viewName, req, resp);
             }
-        } catch (Exception e) {
 
+        } catch (Exception e) {
+            logger.debug("Dispatcher Servlet Error : {} ", e.getMessage());
         }
-        // TODO 렌더링
 
     }
 
