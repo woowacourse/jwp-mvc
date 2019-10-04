@@ -2,6 +2,7 @@ package nextstep.mvc.tobe;
 
 import com.google.common.collect.Maps;
 import nextstep.mvc.HandlerMapping;
+import nextstep.utils.ClassUtils;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
@@ -28,19 +29,10 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     public void initialize() {
         Reflections reflections = new Reflections(basePackage);
         List<Object> handlers = reflections.getTypesAnnotatedWith(Controller.class).stream()
-                .map(this::createInstance)
+                .map(ClassUtils::createInstance)
                 .collect(Collectors.toList());
 
         handlers.forEach(this::registerHandlerExecution);
-    }
-
-    private Object createInstance(Class clazz) {
-        try {
-            return clazz.newInstance();
-        } catch (InstantiationException | IllegalAccessException e) {
-            e.printStackTrace();
-            return null;
-        }
     }
 
     private void registerHandlerExecution(Object handler) {
