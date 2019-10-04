@@ -1,7 +1,7 @@
 package nextstep.mvc;
 
-import nextstep.mvc.tobe.JspView;
-import nextstep.mvc.tobe.ModelAndView;
+import nextstep.mvc.tobe.view.JspView;
+import nextstep.mvc.tobe.view.ModelAndView;
 
 public class ViewResolver {
     public static ModelAndView resolve(Object object) {
