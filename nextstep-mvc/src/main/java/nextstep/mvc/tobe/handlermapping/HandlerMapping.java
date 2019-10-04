@@ -1,11 +1,11 @@
 package nextstep.mvc.tobe.handlermapping;
 
-import javax.servlet.ServletException;
+import nextstep.mvc.tobe.handlermapping.annotationmapping.HandlerExecution;
+
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 public interface HandlerMapping {
     void initialize();
 
-    boolean handle(HttpServletRequest req, HttpServletResponse resp) throws ServletException;
+    HandlerExecution getHandler(HttpServletRequest request);
 }
