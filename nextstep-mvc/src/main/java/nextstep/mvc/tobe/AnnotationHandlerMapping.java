@@ -1,16 +1,16 @@
 package nextstep.mvc.tobe;
 
 import com.google.common.collect.Maps;
-import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
-import org.reflections.Reflections;
+import org.reflections.ReflectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Arrays;
-import java.util.Map;
+import java.lang.reflect.Method;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class AnnotationHandlerMapping {
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
@@ -23,31 +23,38 @@ public class AnnotationHandlerMapping {
     }
 
     public void initialize() {
-        for (Object basePackage : basePackage) {
-            Reflections reflections = new Reflections(basePackage);
-            reflections.getTypesAnnotatedWith(Controller.class).forEach(controllerClazz -> {
-                log.debug("controllerClazz : {}", controllerClazz);
+        Map<Class<?>, Object> controllers = new ControllerScanner(basePackage).getControllers();
+        Map<Class<?>, Set<Method>> requestMappingMethods = getRequestMappingMethods(controllers.keySet());
 
-                Arrays.stream(controllerClazz.getDeclaredMethods()).forEach(method -> {
-                    RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+        requestMappingMethods.keySet().forEach(clazz -> {
+            for (Method method : requestMappingMethods.get(clazz)) {
+                createHandlerKeys(method.getAnnotation(RequestMapping.class)).forEach(handlerKey ->
+                        handlerExecutions.put(handlerKey, new HandlerExecution(method, controllers.get(clazz))));
+            }
+        });
+    }
 
-                    RequestMethod[] requestMethods = requestMapping.method();
-                    if (requestMethods.length == 0) {
-                        requestMethods = RequestMethod.values();
-                    }
-
-                    Arrays.stream(requestMethods).forEach(requestMethod -> {
-                        log.debug("requestMapping : {}", new HandlerKey(requestMapping.value(), requestMethod));
-                        handlerExecutions.put(new HandlerKey(requestMapping.value(), requestMethod), new HandlerExecution(method, controllerClazz));
-                    });
-                });
-            });
+    private List<HandlerKey> createHandlerKeys(RequestMapping requestMapping) {
+        RequestMethod[] requestMethods = requestMapping.method();
+        if (requestMethods.length == 0) {
+            requestMethods = RequestMethod.values();
         }
+
+        return Arrays.stream(requestMethods)
+                .map(requestMethod -> new HandlerKey(requestMapping.value(), requestMethod))
+                .collect(Collectors.toList());
+    }
+
+    private Map<Class<?>, Set<Method>> getRequestMappingMethods(Set<Class<?>> clazzes) {
+        Map<Class<?>, Set<Method>> list = new HashMap<>();
+        clazzes.forEach(clazz ->
+                list.put(clazz, ReflectionUtils.getAllMethods(clazz, ReflectionUtils.withAnnotation(RequestMapping.class))));
+        return list;
     }
 
     public HandlerExecution getHandler(HttpServletRequest request) {
         log.debug("path: {}", request.getRequestURI());
-        log.debug("path: {}",  RequestMethod.valueOf(request.getMethod()));
+        log.debug("path: {}", RequestMethod.valueOf(request.getMethod()));
         return handlerExecutions.get(new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod())));
     }
 }

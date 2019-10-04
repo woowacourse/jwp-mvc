@@ -10,15 +10,15 @@ import java.lang.reflect.Method;
 public class HandlerExecution {
     private static final Logger log = LoggerFactory.getLogger(HandlerExecution.class);
     private Method method;
-    private Class clazz;
+    private Object declearedObject;
 
-    public HandlerExecution(Method method, Class clazz) {
+    public HandlerExecution(Method method, Object declearedObject) {
         this.method = method;
-        this.clazz = clazz;
+        this.declearedObject = declearedObject;
     }
 
     public ModelAndView handle(HttpServletRequest request, HttpServletResponse response) throws Exception {
         log.debug("Method : {}", method);
-        return (ModelAndView) method.invoke(clazz.newInstance(), new Object[]{request, response});
+        return (ModelAndView) method.invoke(declearedObject, new Object[]{request, response});
     }
 }

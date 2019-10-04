@@ -30,7 +30,7 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     public void init() throws ServletException {
-        arm = new AnnotationHandlerMapping("slipp.controller");
+        arm = new AnnotationHandlerMapping("slipp");
         rm.initialize();
         arm.initialize();
     }
