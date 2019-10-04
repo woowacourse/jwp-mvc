@@ -47,7 +47,7 @@ public class LoginController implements Controller {
 
         if (cannotLogin(user, password)) {
             req.setAttribute("loginFailed", true);
-            return new ModelAndView(new RedirectView("/users/login"));
+            return new ModelAndView(new JspView("/user/login.jsp"));
         }
 
         HttpSession session = req.getSession();
