@@ -16,7 +16,7 @@ public class InstancePool {
     public static void initPool(Class<? extends Annotation> annotation, Object... basePackage) {
         Map<Class<?>, Object> controllers = Scanner.scan(annotation, basePackage);
         controllers.keySet()
-                .forEach(aClass -> instancePool.put(aClass, controllers.get(aClass)));
+                .forEach(clazz -> instancePool.put(clazz, controllers.get(clazz)));
     }
 
     public static Object getInstance(Class<?> controller) {
