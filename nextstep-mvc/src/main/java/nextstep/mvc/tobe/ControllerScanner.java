@@ -8,10 +8,15 @@ import java.util.Map;
 import java.util.Set;
 
 public class ControllerScanner {
-
+    private Object[] basePackage;
     private Map<Class<?>, Object> controllers = Maps.newHashMap();
 
     public ControllerScanner(Object... basePackage) throws IllegalAccessException, InstantiationException {
+        this.basePackage = basePackage;
+        putAnnotatedControllers();
+    }
+
+    private void putAnnotatedControllers() throws InstantiationException, IllegalAccessException {
         Reflections reflections = new Reflections(basePackage);
         Set<Class<?>> typesAnnotatedWith = reflections.getTypesAnnotatedWith(Controller.class);
 

@@ -2,11 +2,10 @@ package nextstep.mvc.tobe;
 
 import com.google.common.collect.Maps;
 import nextstep.mvc.HandlerMapping;
-import nextstep.web.annotation.Controller;
+import nextstep.mvc.NoSuchControllerClassException;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
 import org.reflections.ReflectionUtils;
-import org.reflections.Reflections;
 
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
@@ -16,19 +15,22 @@ import java.util.Set;
 import static org.reflections.ReflectionUtils.getAllMethods;
 
 public class AnnotationHandlerMapping implements HandlerMapping {
-    private Object[] basePackage;
+    private final Object[] basePackage;
 
-    private Map<HandlerKey, HandlerExecution> handlerExecutions = Maps.newHashMap();
+    private final Map<HandlerKey, HandlerExecution> handlerExecutions = Maps.newHashMap();
+    private final ControllerScanner controllerScanner;
 
     public AnnotationHandlerMapping(Object... basePackage) {
         this.basePackage = basePackage;
+        try {
+            this.controllerScanner = new ControllerScanner(basePackage);
+        } catch (IllegalAccessException | InstantiationException e) {
+            throw new NoSuchControllerClassException();
+        }
     }
 
     public void initialize() {
-        Reflections reflections = new Reflections(basePackage);
-        Set<Class<?>> typesAnnotatedWith = reflections.getTypesAnnotatedWith(Controller.class);
-
-        for (Class<?> aClass : typesAnnotatedWith) {
+        for (Class<?> aClass : controllerScanner.getKeys()) {
             Set<Method> allMethods = getAllMethods(aClass, ReflectionUtils.withAnnotation(RequestMapping.class));
             for (Method method : allMethods) {
                 RequestMapping rm = method.getAnnotation(RequestMapping.class);
