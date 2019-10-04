@@ -39,3 +39,11 @@ https://gist.github.com/joshbuchea/6f47e86d2510bce28f8e7f42ae84c716
 - [x] dispatchservlet에서 하나의 handlerMapping만 사용하도록 변경
 - [x] view 변경? modelAndView 사용????
 - [x] 컨트롤러의 리턴값을 결정 (String vs View vs ModelAndView vs All) -> String, ModelAndView 동시 사용 가능 
+
+---
+### 피드백
+- [ ] ```DispatcherServlet```에 있는 ```getHandlerFromMapping()```에서 하는 ```handler``` 매핑 과정을 좀 더 유연하게 리팩토링 하기(지금은 ```if```로 하고있음.)
+- [ ] ```DispatcherServlet```에서 ```mapping```되는 ```handler```가 없을 때 나는 에러 생성하기(지금은 그냥 ```Exception``` 던짐)
+- [ ] ```HandlerExecution```에서 ```view```를 만드는데, ```String```을 가지고 ```view```를 만드는 부분이 겹친다. 한번 중복을 제거해보자.
+- [x] ```AnnotationHandlerMapping```에서 컨트롤러를 스캔하는 부분을 다른 클래스로 분리.
+- [ ] ```nextstep-mvc.src.test.java.nextstep.mvc.tobe```에 있는 실제 테스트 클래스 이외의 학습을 위한 테스트들은 따로 패키지 분리하기

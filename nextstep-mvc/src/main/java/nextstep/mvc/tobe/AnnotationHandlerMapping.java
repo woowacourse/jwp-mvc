@@ -2,20 +2,21 @@ package nextstep.mvc.tobe;
 
 import com.google.common.collect.Maps;
 import nextstep.mvc.HandlerMapping;
-import nextstep.web.annotation.Controller;
+import nextstep.mvc.tobe.scanner.ControllerScanner;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
 import org.apache.commons.lang3.StringUtils;
-import org.reflections.Reflections;
+import org.reflections.ReflectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 public class AnnotationHandlerMapping implements HandlerMapping {
@@ -28,16 +29,23 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     @Override
-    public void initialize() {
-        Reflections reflections = new Reflections(basePackage);
-        Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
-
-        for (final Class clazz : controllers) {
-            List<Method> methods = generateMethods(clazz);
-            methods.forEach(method -> addHandlerExecutions(clazz, method));
+    public void initialize() throws ServletException {
+        Map<Class<?>, Object> controllerInstanceMap = scanController();
+        for (Map.Entry<Class<?>, Object> controllerSet : controllerInstanceMap.entrySet()) {
+            List<Method> methods = generateMethods(controllerSet.getKey());
+            methods.forEach(method -> addHandlerExecutions(controllerSet.getValue(), method));
         }
         handlerExecutions.entrySet().forEach(entry ->
             logger.debug("handlerExecutions key : {}, value : {}", entry.getKey(), entry.getValue()));
+    }
+
+    private Map<Class<?>, Object> scanController() throws ServletException {
+        try {
+            return ControllerScanner.scan(basePackage);
+        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException e) {
+            e.printStackTrace();
+            throw new ServletException();
+        }
     }
 
     private List<Method> generateMethods(Class<?> clazz) {
@@ -47,7 +55,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
             .collect(Collectors.toList());
     }
 
-    private void addHandlerExecutions(Class clazz, Method method) {
+    private void addHandlerExecutions(Object clazzInstance, Method method) {
         String url = method.getAnnotation(RequestMapping.class).value();
         RequestMethod[] requestMethods = method.getAnnotation(RequestMapping.class).method();
         if (requestMethods.length == 0) {
@@ -56,7 +64,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         Arrays.stream(requestMethods).forEach(m -> {
             handlerExecutions.put(
                 new HandlerKey(url, m),
-                new HandlerExecution(clazz, method));
+                new HandlerExecution(clazzInstance, method));
         });
     }
 
