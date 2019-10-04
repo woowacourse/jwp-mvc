@@ -28,7 +28,7 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     @Override
-    public void init() {
+    public void init()  {
         rm.initialize();
         try {
             am.initialize();
@@ -41,6 +41,7 @@ public class DispatcherServlet extends HttpServlet {
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String requestUri = req.getRequestURI();
         logger.debug("Method : {}, Request URI : {}", req.getMethod(), requestUri);
+        // TODO: 2019-10-04 handlerExecution과
         try {
             HandlerExecution execution = am.getHandler(req);
             ModelAndView mv = execution.handle(req, resp);
