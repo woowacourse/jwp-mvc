@@ -1,16 +1,14 @@
 package slipp.controller;
 
 import nextstep.mvc.asis.Controller;
-import nextstep.web.annotation.RequestMapping;
-import nextstep.web.annotation.RequestMethod;
 import slipp.support.db.DataBase;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@nextstep.web.annotation.Controller
+
 public class ListUserController implements Controller {
-    @RequestMapping(value = "/users", method = RequestMethod.GET)
+
     public String execute(HttpServletRequest req, HttpServletResponse resp) throws Exception {
         if (!UserSessionUtils.isLogined(req.getSession())) {
             return "redirect:/users/loginForm";

@@ -1,18 +1,23 @@
-package slipp.controller;
+package slipp.annotationcontroller;
 
-import nextstep.mvc.asis.Controller;
+import nextstep.web.annotation.Controller;
+import nextstep.web.annotation.RequestMapping;
+import nextstep.web.annotation.RequestMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import slipp.controller.UserSessionUtils;
 import slipp.domain.User;
 import slipp.support.db.DataBase;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public class UpdateUserController implements Controller {
-    private static final Logger log = LoggerFactory.getLogger(UpdateUserController.class);
+@Controller
+public class AnnotationUpdateUserController {
+    private static final Logger log = LoggerFactory.getLogger(AnnotationUpdateUserController.class);
 
-    public String execute(HttpServletRequest req, HttpServletResponse resp) throws Exception {
+    @RequestMapping(value = "/users/update", method = RequestMethod.POST)
+    public String update(HttpServletRequest req, HttpServletResponse resp) throws Exception {
         User user = DataBase.findUserById(req.getParameter("userId"));
         if (!UserSessionUtils.isSameUser(req.getSession(), user)) {
             throw new IllegalStateException("다른 사용자의 정보를 수정할 수 없습니다.");

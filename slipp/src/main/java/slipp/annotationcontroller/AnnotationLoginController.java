@@ -1,6 +1,9 @@
-package slipp.controller;
+package slipp.annotationcontroller;
 
-import nextstep.mvc.asis.Controller;
+import nextstep.web.annotation.Controller;
+import nextstep.web.annotation.RequestMapping;
+import nextstep.web.annotation.RequestMethod;
+import slipp.controller.UserSessionUtils;
 import slipp.domain.User;
 import slipp.support.db.DataBase;
 
@@ -8,9 +11,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-public class LoginController implements Controller {
-
-    public String execute(HttpServletRequest req, HttpServletResponse resp) throws Exception {
+@Controller
+public class AnnotationLoginController {
+    @RequestMapping(value = "/users/login", method = RequestMethod.POST)
+    public String logIn(HttpServletRequest req, HttpServletResponse resp) throws Exception {
         String userId = req.getParameter("userId");
         String password = req.getParameter("password");
         User user = DataBase.findUserById(userId);
