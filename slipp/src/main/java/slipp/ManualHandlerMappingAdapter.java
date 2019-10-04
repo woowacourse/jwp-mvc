@@ -31,7 +31,7 @@ public class ManualHandlerMappingAdapter implements HandlerMapping {
     public Optional<HandlerExecution> getHandler(HttpServletRequest request) {
         Controller controller = handlerMapping.getHandler(request);
         if (controller == null) {
-            return null;
+            return Optional.empty();
         }
 
         return Optional.of((req, resp) -> {
