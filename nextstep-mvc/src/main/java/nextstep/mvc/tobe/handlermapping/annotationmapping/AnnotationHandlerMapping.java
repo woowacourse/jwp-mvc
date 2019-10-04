@@ -1,9 +1,8 @@
-package nextstep.mvc.tobe.handlermapping;
+package nextstep.mvc.tobe.handlermapping.annotationmapping;
 
 import com.google.common.collect.Maps;
-import nextstep.mvc.tobe.HandlerExecution;
-import nextstep.mvc.tobe.HandlerKey;
-import nextstep.mvc.tobe.ModelAndView;
+import nextstep.mvc.tobe.handlermapping.ModelAndViewHandlerMapping;
+import nextstep.mvc.tobe.view.ModelAndView;
 import nextstep.mvc.tobe.exception.DuplicateRequestMappingException;
 import nextstep.mvc.tobe.exception.RenderFailedException;
 import nextstep.utils.ClassUtils;

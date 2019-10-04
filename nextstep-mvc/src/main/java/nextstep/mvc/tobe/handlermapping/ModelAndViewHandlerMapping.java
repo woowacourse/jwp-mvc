@@ -1,6 +1,6 @@
 package nextstep.mvc.tobe.handlermapping;
 
-import nextstep.mvc.tobe.HandlerExecution;
+import nextstep.mvc.tobe.handlermapping.annotationmapping.HandlerExecution;
 
 import javax.servlet.http.HttpServletRequest;
 
