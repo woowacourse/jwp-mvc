@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Optional;
 
 @WebServlet(name = "dispatcher", urlPatterns = "/", loadOnStartup = 1)
 public class DispatcherServlet extends HttpServlet {
@@ -35,6 +36,7 @@ public class DispatcherServlet extends HttpServlet {
         annotationHandlerMapping.initialize();
     }
 
+    // @TODO refactoring
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String requestUri = req.getRequestURI();
@@ -58,14 +60,12 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private Object getHandlerFromMapping(HttpServletRequest request) {
-        if (requestMapping.getHandler(request) != null) {
-            return requestMapping.getHandler(request);
-        }
-        return annotationHandlerMapping.getHandler(request);
+        return Optional.ofNullable(requestMapping.getHandler(request))
+                .orElseGet(() -> annotationHandlerMapping.getHandler(request));
     }
 
     private void move(String viewName, HttpServletRequest req, HttpServletResponse resp)
-        throws ServletException, IOException {
+            throws ServletException, IOException {
         if (viewName.startsWith(DEFAULT_REDIRECT_PREFIX)) {
             resp.sendRedirect(viewName.substring(DEFAULT_REDIRECT_PREFIX.length()));
             return;
