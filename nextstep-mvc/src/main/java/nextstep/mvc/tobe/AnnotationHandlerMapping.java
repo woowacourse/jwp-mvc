@@ -29,7 +29,8 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     @Override
     public void initialize() {
         try {
-            checkBasePackages();
+            Reflections reflections = new Reflections(basePackages);
+            checkClazz(reflections);
         } catch (Exception e) {
             log.error(e.getMessage());
             System.exit(1);
@@ -44,13 +45,6 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     @Override
     public HandlerExecution getHandler(HttpServletRequest request) {
         return handlerExecutions.get(new HandlerKey(request.getRequestURI(), RequestMethod.of(request.getMethod())));
-    }
-
-    private void checkBasePackages() throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
-        for (Object basePackage : basePackages) {
-            Reflections reflections = new Reflections(basePackage);
-            checkClazz(reflections);
-        }
     }
 
     private void checkClazz(Reflections reflections) throws NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException {
