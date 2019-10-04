@@ -62,7 +62,7 @@ public class DispatcherServlet extends HttpServlet {
                 .map(m -> m.getHandler(req))
                 .filter(Objects::nonNull)
                 .findFirst()
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(() -> new NotFoundHandlerException(req.getRequestURI()));
     }
 
     private void move(String viewName, HttpServletRequest req, HttpServletResponse resp)
