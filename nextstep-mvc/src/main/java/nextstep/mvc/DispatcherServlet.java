@@ -41,11 +41,11 @@ public class DispatcherServlet extends HttpServlet {
         try {
             if (((AnnotationHandlerMapping) annotationHandlerMapping).hasControllerAnnotation(req)) {
                 HandlerExecution handlerExecution = ((AnnotationHandlerMapping) annotationHandlerMapping).getHandler(req);
-                ModelAndView modelAndView = handlerExecution.handle(req, resp);
+                ModelAndView modelAndView = (ModelAndView) handlerExecution.execute(req, resp);
                 modelAndView.getView().render(modelAndView.getModel(), req, resp);
             } else {
                 Controller controller = (Controller) manualHandlerMapping.getHandler(req);
-                String viewName = controller.execute(req, resp);
+                String viewName = (String) controller.execute(req, resp);
                 move(viewName, req, resp);
             }
         } catch (Throwable e) {
