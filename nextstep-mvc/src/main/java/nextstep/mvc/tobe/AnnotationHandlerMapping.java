@@ -27,6 +27,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         addController("/users", RequestMethod.GET);
         addController("/users/loginForm", RequestMethod.GET);
         addController("/users/login", RequestMethod.POST);
+        addController("/users/logout", RequestMethod.GET);
     }
 
     private void addController(String requestUrl, RequestMethod requestMethod) {

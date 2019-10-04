@@ -39,4 +39,11 @@ public class UpdateLoginController {
         request.setAttribute("loginFailed", true);
         return new ModelAndView(new JspView("/user/login.jsp"));
     }
+
+    @RequestMapping(value = "/users/logout", method = RequestMethod.GET)
+    public ModelAndView logout(HttpServletRequest request, HttpServletResponse response) {
+        HttpSession session = request.getSession();
+        session.removeAttribute(UserSessionUtils.USER_SESSION_KEY);
+        return new ModelAndView(new JspView("redirect:/"));
+    }
 }
