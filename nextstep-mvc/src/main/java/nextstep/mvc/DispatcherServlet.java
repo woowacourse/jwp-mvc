@@ -1,5 +1,6 @@
 package nextstep.mvc;
 
+import com.google.common.collect.Lists;
 import nextstep.mvc.asis.Controller;
 import nextstep.mvc.tobe.AnnotationHandlerMapping;
 import nextstep.mvc.tobe.HandlerExecution;
@@ -14,6 +15,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 @WebServlet(name = "dispatcher", urlPatterns = "/", loadOnStartup = 1)
 public class DispatcherServlet extends HttpServlet {
@@ -21,46 +24,46 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger logger = LoggerFactory.getLogger(DispatcherServlet.class);
     private static final String DEFAULT_REDIRECT_PREFIX = "redirect:";
 
-    private HandlerMapping rm;
-    private AnnotationHandlerMapping arm;
+    private List<HandlerMapping> hms = Lists.newArrayList();
 
-    public DispatcherServlet(HandlerMapping rm) {
-        this.rm = rm;
+    public DispatcherServlet(HandlerMapping... hm) {
+        this.hms.addAll(Arrays.asList(hm));
     }
 
     @Override
-    public void init() throws ServletException {
-        arm = new AnnotationHandlerMapping("slipp");
-        rm.initialize();
-        arm.initialize();
+    public void init() {
+        hms.forEach(HandlerMapping::initialize);
     }
 
     @Override
-    protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException {
         String requestUri = req.getRequestURI();
         logger.debug("Method : {}, Request URI : {}", req.getMethod(), requestUri);
 
-        Controller controller = rm.getHandler(requestUri);
-
-        if (controller == null) {
-               HandlerExecution handlerExecution = arm.getHandler(req);
-            try {
-                ModelAndView modelAndView = handlerExecution.handle(req, resp);
+        try {
+            Object handler = getHandler(req);
+            if (handler instanceof HandlerExecution) {
+                ModelAndView modelAndView = ((HandlerExecution) handler).handle(req, resp);
                 String name = modelAndView.getViewName();
                 move(name, req, resp);
-            } catch (Exception e) {
-                logger.error("Exception : {}", e.getMessage());
+            } else if (handler instanceof Controller) {
+                String viewName = ((Controller) handler).execute(req, resp);
+                move(viewName, req, resp);
+            } else {
                 resp.setStatus(404);
             }
-        } else {
-            try {
-                String viewName = controller.execute(req, resp);
-                move(viewName, req, resp);
-            } catch (Throwable e) {
-                logger.error("Exception : {}", e.getMessage());
-                throw new ServletException(e.getMessage());
-            }
+        } catch (Throwable e) {
+            logger.error("Exception : {}", e.getMessage());
+            throw new ServletException(e.getMessage());
         }
+    }
+
+    private Object getHandler(HttpServletRequest req) {
+        return hms.stream()
+                .filter(hm -> hm.getHandler(req) != null)
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("URL이 없습니다."))
+                .getHandler(req);
     }
 
     private void move(String viewName, HttpServletRequest req, HttpServletResponse resp)
