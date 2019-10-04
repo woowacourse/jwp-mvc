@@ -9,6 +9,8 @@ import org.reflections.ReflectionUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -32,14 +34,15 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
             for (Method method : methods) {
                 String url = method.getAnnotation(RequestMapping.class).value();
-                RequestMethod requestMethod = method.getAnnotation(RequestMapping.class).method();
+                List<RequestMethod> requestMethod =
+                        Arrays.asList(method.getAnnotation(RequestMapping.class).method());
 
-                if (requestMethod.isAll()) {
+                if (requestMethod.isEmpty()) {
                     putAllRequestMethod(newInstance, method, url);
                     return;
                 }
 
-                putHandler(newInstance, method, new HandlerKey(url, requestMethod));
+                putHandler(newInstance, method, new HandlerKey(url, requestMethod.get(0)));
             }
         }
     }
