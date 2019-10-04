@@ -12,8 +12,8 @@ public class HandlerExecution {
     }
 
     public String handle(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        Class<?> clazz = method.getDeclaringClass();
-        Object instance = InstancePool.getInstance(clazz);
+        InstancePool instancePool = InstancePool.getInstance();
+        Object instance = instancePool.instanceOf(method.getDeclaringClass());
         return (String) method.invoke(instance, request, response);
     }
 

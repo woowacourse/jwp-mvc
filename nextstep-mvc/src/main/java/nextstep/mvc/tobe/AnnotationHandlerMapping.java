@@ -26,9 +26,10 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     public void initialize() {
-        InstancePool.initPool(Controller.class, basePackage);
+        InstancePool instancePool = InstancePool.getInstance();
+        instancePool.initPool(Controller.class, basePackage);
 
-        InstancePool.instancePoolKeySet().stream()
+        instancePool.instancePoolKeySet().stream()
                 .flatMap(controller -> Arrays.stream(controller.getMethods()))
                 .filter(method -> method.isAnnotationPresent(RequestMapping.class))
                 .forEach(this::putHandlerExecution);
