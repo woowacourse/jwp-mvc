@@ -42,12 +42,17 @@ public class ReflectionTest {
         for (Constructor constructor : constructors) {
             Class[] parameterTypes = constructor.getParameterTypes();
             logger.debug("paramer length : {}", parameterTypes.length);
+            if (parameterTypes.length == 3) {
+                Object question = constructor.newInstance("1", "2", "3");
+                assertThat(question).isInstanceOf(Question.class);
+            } else {
+                Object question = constructor.newInstance(1, "2", "3", "4", null, 6);
+                assertThat(question).isInstanceOf(Question.class);
+            }
             for (Class paramType : parameterTypes) {
                 logger.debug("param type : {}", paramType);
             }
         }
-
-        // TODO 인자를 가진 생성자를 활용해 인스턴스를 생성한다.
     }
 
     @Test
