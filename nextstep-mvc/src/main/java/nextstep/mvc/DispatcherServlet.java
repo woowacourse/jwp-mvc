@@ -1,11 +1,8 @@
 package nextstep.mvc;
 
-import nextstep.mvc.asis.Controller;
-import nextstep.mvc.tobe.HandlerExecution;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -21,9 +18,11 @@ public class DispatcherServlet extends HttpServlet {
     private static final String DEFAULT_REDIRECT_PREFIX = "redirect:";
 
     private HandlerMapping[] rm;
+    private HandlerAdapter[] ha;
 
-    public DispatcherServlet(HandlerMapping... rm) {
+    public DispatcherServlet(HandlerMapping[] rm, HandlerAdapter[] ha) {
         this.rm = rm;
+        this.ha = ha;
     }
 
     @Override
@@ -37,43 +36,16 @@ public class DispatcherServlet extends HttpServlet {
         String requestUri = req.getRequestURI();
         logger.debug("Method : {}, Request URI : {}", req.getMethod(), requestUri);
 
-        for (HandlerMapping handlerMapping : rm) {
-            Object handler = handlerMapping.getHandler(req);
-            if (handler instanceof Controller) {
-                Controller controller = (Controller) handler;
-
+        for (HandlerAdapter adapter : ha) {
+            if (adapter.isSupported(req)) {
                 try {
-                    String viewName = controller.execute(req, resp);
-                    move(viewName, req, resp);
-                    return;
-                } catch (Throwable e) {
-                    logger.error("Exception : {}", e);
-                    throw new ServletException(e.getMessage());
-                }
-            } else if (handler instanceof HandlerExecution) {
-                HandlerExecution execution = (HandlerExecution) handler;
-
-                try {
-                    execution.handle(req, resp);
-                    return;
+                    adapter.execute(req, resp);
                 } catch (Exception e) {
-                    logger.error("Exception : {}", e);
-                    throw new ServletException(e.getMessage());
+                    logger.error(e.getMessage());
                 }
             }
         }
 
         throw new IllegalArgumentException();
-    }
-
-    private void move(String viewName, HttpServletRequest req, HttpServletResponse resp)
-            throws ServletException, IOException {
-        if (viewName.startsWith(DEFAULT_REDIRECT_PREFIX)) {
-            resp.sendRedirect(viewName.substring(DEFAULT_REDIRECT_PREFIX.length()));
-            return;
-        }
-
-        RequestDispatcher rd = req.getRequestDispatcher(viewName);
-        rd.forward(req, resp);
     }
 }
