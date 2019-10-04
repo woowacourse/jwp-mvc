@@ -1,11 +1,10 @@
 package support.test;
 
-import org.springframework.test.web.reactive.server.EntityExchangeResult;
-import org.springframework.test.web.reactive.server.HeaderAssertions;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.web.reactive.function.BodyInserters;
 import reactor.core.publisher.Mono;
 
-import java.net.URI;
+import java.util.Map;
 
 import static org.springframework.web.reactive.function.client.ExchangeFilterFunctions.basicAuthentication;
 
@@ -29,39 +28,34 @@ public class WebTestClient {
         return this;
     }
 
-    public <T> org.springframework.test.web.reactive.server.WebTestClient.ResponseSpec createResource(String url, T body, Class<T> clazz) {
+    public <T> org.springframework.test.web.reactive.server.WebTestClient.ResponseSpec postResource(String url, Map<String, String> body, Class<T> clazz) {
         return testClientBuilder.build()
                 .post()
                 .uri(url)
-                .body(Mono.just(body), clazz)
-                .exchange()
-                .expectStatus().isFound();
+                .body(createFormData(clazz, body))
+                .exchange();
     }
 
-    public <T> void updateResource(String location, T body, Class<T> clazz) {
-        testClientBuilder.build()
-                .put()
-                .uri(location)
-                .body(Mono.just(body), clazz)
-                .exchange()
-                .expectStatus().isOk();
-    }
-
-    public <T> T getResource(String location, Class<T> clazz) {
+    public org.springframework.test.web.reactive.server.WebTestClient.ResponseSpec getResource(String url) {
         return testClientBuilder.build()
                 .get()
-                .uri(location)
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody(clazz)
-                .returnResult().getResponseBody();
+                .uri(url)
+                .exchange();
     }
 
     public static WebTestClient of(int port) {
         return of(BASE_URL, port);
     }
 
-    public static WebTestClient of(String baseUrl, int port) {
+    private static WebTestClient of(String baseUrl, int port) {
         return new WebTestClient(baseUrl, port);
+    }
+
+    private <T> BodyInserters.FormInserter<String> createFormData(Class<T> classType, Map<String, String> parameters) {
+        BodyInserters.FormInserter<String> body = BodyInserters.fromFormData(Strings.EMPTY, Strings.EMPTY);
+        for (int i = 0; i < classType.getDeclaredFields().length; i++) {
+            body.with(classType.getDeclaredFields()[i].getName(), parameters.get(classType.getDeclaredFields()[i].getName()));
+        }
+        return body;
     }
 }

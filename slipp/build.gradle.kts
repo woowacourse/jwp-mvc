@@ -25,4 +25,7 @@ dependencies {
     implementation("org.apache.tomcat.embed:tomcat-embed-core:$tomcatVersion")
     implementation("org.apache.tomcat.embed:tomcat-embed-logging-juli:8.5.2")
     implementation("org.apache.tomcat.embed:tomcat-embed-jasper:$tomcatVersion")
+    
+    testImplementation("org.apache.logging.log4j:log4j-api:2.11.2")
+    testImplementation("org.apache.logging.log4j:log4j-core:2.11.2")
 }

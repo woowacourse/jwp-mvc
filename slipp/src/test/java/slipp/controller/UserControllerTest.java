@@ -10,7 +10,10 @@ import slipp.dto.UserCreatedDto;
 import slipp.dto.UserUpdatedDto;
 import support.test.WebTestClient;
 
-import java.net.URI;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -27,34 +30,25 @@ class UserControllerTest {
     @Test
     @DisplayName("사용자 회원가입/조회/수정/삭제")
     void crud() {
-        // 회원가입
-        UserCreatedDto expected = new UserCreatedDto("pobi", "password", "포비", "pobi@nextstep.camp");
+        Map<String, String> expected = new HashMap<>();
+        expected.put("userId", "pobi");
+        expected.put("password", "password");
+        expected.put("name", "짜바지기");
+        expected.put("email", "pobi@slipp.net");
 
-        client.createResource("/users/create", expected, UserCreatedDto.class)
+        client.postResource("/users/create", expected, UserCreatedDto.class)
                 .expectBody()
                 .consumeWith(result -> {
-                    String location = result.getResponseHeaders().get("Location").get(0);
+                    String location = Objects.requireNonNull(result.getResponseHeaders().get("Location")).get(0);
                     assertThat(location).isEqualTo("/");
                 });
-    }
 
-    private void updateUser(String location) {
-        // 수정
-        UserUpdatedDto updateUser = new UserUpdatedDto("password2", "코난", "conan@nextstep.camp");
-        client.updateResource(location, updateUser, UserUpdatedDto.class);
-
-        User actual = client.getResource(location, User.class);
-        assertThat(actual.getPassword()).isEqualTo(updateUser.getPassword());
-        assertThat(actual.getName()).isEqualTo(updateUser.getName());
-        assertThat(actual.getEmail()).isEqualTo(updateUser.getEmail());
-    }
-
-    private User getUser(UserCreatedDto expected, String location) {
-        //조회
-        User actual = client.getResource(location, User.class);
-        assertThat(actual.getUserId()).isEqualTo(expected.getUserId());
-        assertThat(actual.getName()).isEqualTo(expected.getName());
-        assertThat(actual.getEmail()).isEqualTo(expected.getEmail());
-        return actual;
+       client.getResource("/users/profile?userId=pobi")
+               .expectBody()
+               .consumeWith(result -> {
+                   String body = new String(Objects.requireNonNull(result.getResponseBody()), StandardCharsets.UTF_8);
+                   assertThat(body).contains(expected.get("name"));
+                   assertThat(body).contains(expected.get("email"));
+               });
     }
 }
