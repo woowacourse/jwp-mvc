@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @WebServlet(name = "dispatcher", urlPatterns = "/", loadOnStartup = 1)
 public class DispatcherServlet extends HttpServlet {
@@ -52,7 +53,8 @@ public class DispatcherServlet extends HttpServlet {
     private ModelAndView handleRequest(HttpServletRequest req, HttpServletResponse resp) {
         return handlerMappings.stream()
                 .map(mappnig -> mappnig.getHandler(req))
-                .filter(Objects::nonNull)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
                 .map(handler -> handler.handle(req, resp))
                 .findFirst()
                 .orElseThrow(() -> new NoHandlerMatchException(req));

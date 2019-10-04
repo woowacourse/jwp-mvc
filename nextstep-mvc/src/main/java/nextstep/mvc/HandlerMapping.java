@@ -3,9 +3,10 @@ package nextstep.mvc;
 import nextstep.mvc.tobe.HandlerExecution;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Optional;
 
 public interface HandlerMapping {
     void initialize();
 
-    HandlerExecution getHandler(HttpServletRequest request);
+    Optional<HandlerExecution> getHandler(HttpServletRequest request);
 }

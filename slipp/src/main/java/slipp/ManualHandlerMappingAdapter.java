@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Optional;
 
 public class ManualHandlerMappingAdapter implements HandlerMapping {
 
@@ -27,13 +28,13 @@ public class ManualHandlerMappingAdapter implements HandlerMapping {
     }
 
     @Override
-    public HandlerExecution getHandler(HttpServletRequest request) {
+    public Optional<HandlerExecution> getHandler(HttpServletRequest request) {
         Controller controller = handlerMapping.getHandler(request);
         if (controller == null) {
             return null;
         }
 
-        return (req, resp) -> {
+        return Optional.of((req, resp) -> {
             try {
                 String viewName = controller.execute(req, resp);
                 return getModelAndView(viewName);
@@ -41,7 +42,7 @@ public class ManualHandlerMappingAdapter implements HandlerMapping {
                 logger.error("Failed to getting handler", e);
                 throw new RuntimeException(e);
             }
-        };
+        });
     }
 
     private ModelAndView getModelAndView(String viewName) {
