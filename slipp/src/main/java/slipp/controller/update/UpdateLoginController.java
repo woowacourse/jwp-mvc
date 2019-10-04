@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @Controller
-public class UpdateForwardController {
+public class UpdateLoginController {
     @RequestMapping(value = "/users/loginForm", method = RequestMethod.GET)
     public ModelAndView loginPage(HttpServletRequest request, HttpServletResponse response) {
         ModelAndView mov = new ModelAndView(new JspView("/user/login.jsp"));
