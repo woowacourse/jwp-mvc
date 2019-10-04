@@ -20,7 +20,7 @@ class HandlerExecutionTest {
 
         Method method = MyController.class.getDeclaredMethod("findUserId", HttpServletRequest.class, HttpServletResponse.class);
         HandlerExecution execution = new HandlerExecution(MyController.class, method);
-        assertThat(execution.handle(request,response).getView()).isInstanceOf(EmptyView.class);
+        assertThat(execution.handle(request, response).getView()).isInstanceOf(EmptyView.class);
     }
 
     @Test

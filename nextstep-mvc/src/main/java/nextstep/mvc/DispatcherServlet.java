@@ -28,7 +28,7 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     @Override
-    public void init() throws ServletException {
+    public void init() {
         rm.initialize();
         try {
             am.initialize();
