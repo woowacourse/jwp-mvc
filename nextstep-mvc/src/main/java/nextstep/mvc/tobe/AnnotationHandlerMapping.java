@@ -32,6 +32,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
             checkBasePackages();
         } catch (Exception e) {
             log.error(e.getMessage());
+            System.exit(1);
         }
     }
 
