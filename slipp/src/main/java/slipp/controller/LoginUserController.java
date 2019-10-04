@@ -15,7 +15,7 @@ import javax.servlet.http.HttpSession;
 public class LoginUserController {
 
     @RequestMapping(value = "/users/login", method = RequestMethod.POST)
-    public ModelAndView execute(HttpServletRequest req, HttpServletResponse resp) throws Exception {
+    public ModelAndView login(HttpServletRequest req, HttpServletResponse resp) throws Exception {
         String userId = req.getParameter("userId");
         String password = req.getParameter("password");
         User user = DataBase.findUserById(userId);
