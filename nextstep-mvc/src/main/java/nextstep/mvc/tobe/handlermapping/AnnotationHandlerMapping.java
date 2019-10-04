@@ -6,19 +6,18 @@ import nextstep.mvc.tobe.HandlerKey;
 import nextstep.mvc.tobe.ModelAndView;
 import nextstep.mvc.tobe.exception.DuplicateRequestMappingException;
 import nextstep.mvc.tobe.exception.RenderFailedException;
-import nextstep.mvc.tobe.exception.RequestUrlNotFoundException;
 import nextstep.utils.ClassUtils;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
+import org.apache.commons.lang3.ArrayUtils;
 import org.reflections.Reflections;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class AnnotationHandlerMapping implements ModelAndViewHandlerMapping {
     private Object[] basePackage;
@@ -42,27 +41,43 @@ public class AnnotationHandlerMapping implements ModelAndViewHandlerMapping {
     private void appendHandlerExecutions(final Class<?> clazz) {
         Object newInstance = ClassUtils.createNewInstance(clazz);
         Method[] methods = clazz.getDeclaredMethods();
-       
+
         for (Method method : methods) {
             if (method.isAnnotationPresent(RequestMapping.class)) {
-                HandlerKey handlerKey = createHandlerKey(method);
+                List<HandlerKey> handlerKeys = createHandlerKeys(method);
                 HandlerExecution handlerExecution = createHandlerExecution(newInstance, method);
 
-                checkDuplicateRequestMapping(handlerKey);
-                handlerExecutions.put(handlerKey, handlerExecution);
+                appendHandlerKeys(handlerKeys, handlerExecution);
             }
         }
     }
 
-    private HandlerKey createHandlerKey(final Method method) {
+    private List<HandlerKey> createHandlerKeys(final Method method) {
         RequestMapping annotation = method.getAnnotation(RequestMapping.class);
         String url = annotation.value();
-        RequestMethod requestMethod = annotation.method();
-        return new HandlerKey(url, requestMethod);
+        RequestMethod[] requestMethods = annotation.method();
+
+        if (ArrayUtils.isEmpty(requestMethods)) {
+            return createHandlerKeysWithRequestMethods(url, RequestMethod.values());
+        }
+        return createHandlerKeysWithRequestMethods(url, requestMethods);
+    }
+
+    private List<HandlerKey> createHandlerKeysWithRequestMethods(final String url, final RequestMethod[] requestMethods) {
+        return Arrays.stream(requestMethods)
+                .map(requestMethod -> new HandlerKey(url, requestMethod))
+                .collect(Collectors.toList());
     }
 
     private HandlerExecution createHandlerExecution(final Object newInstance, final Method method) {
         return (request, response) -> (ModelAndView) method.invoke(newInstance, request, response);
+    }
+
+    private void appendHandlerKeys(final List<HandlerKey> handlerKeys, final HandlerExecution handlerExecution) {
+        for (HandlerKey handlerKey : handlerKeys) {
+            checkDuplicateRequestMapping(handlerKey);
+            handlerExecutions.put(handlerKey, handlerExecution);
+        }
     }
 
     private void checkDuplicateRequestMapping(final HandlerKey handlerKey) {
@@ -97,20 +112,6 @@ public class AnnotationHandlerMapping implements ModelAndViewHandlerMapping {
         String method = request.getMethod();
 
         HandlerKey handlerKey = new HandlerKey(requestURI, RequestMethod.valueOf(method));
-        if (doesNotExistsKey(handlerKey)) {
-            handlerKey = findHandlerKeyByUrl(requestURI);
-        }
         return handlerExecutions.get(handlerKey);
-    }
-
-    private boolean doesNotExistsKey(final HandlerKey handlerKey) {
-        return !handlerExecutions.containsKey(handlerKey);
-    }
-
-    private HandlerKey findHandlerKeyByUrl(final String requestURI) {
-        return handlerExecutions.keySet().stream()
-                .filter(handlerKey -> handlerKey.isSameUrl(requestURI))
-                .findFirst()
-                .orElseThrow(RequestUrlNotFoundException::new);
     }
 }
