@@ -30,15 +30,15 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         controllers.forEach(this::fillHandlerExecutions);
     }
 
-    private void fillHandlerExecutions(Class<?> aClass) {
-        Arrays.stream(aClass.getMethods())
+    private void fillHandlerExecutions(Class clazz) {
+        Arrays.stream(clazz.getMethods())
                 .filter(method -> method.isAnnotationPresent(RequestMapping.class))
-                .forEach(this::fillHandlerExecution);
+                .forEach(method -> fillHandlerExecution(method, clazz));
     }
 
-    private void fillHandlerExecution(Method method) {
+    private void fillHandlerExecution(Method method, Class clazz) {
         RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-        handlerExecutions.put(new HandlerKey(requestMapping.value(), requestMapping.method()), new HandlerExecution(method));
+        handlerExecutions.put(new HandlerKey(requestMapping.value(), requestMapping.method()), new HandlerExecution(method, clazz));
     }
 
     public HandlerExecution getHandler(HttpServletRequest request) {
