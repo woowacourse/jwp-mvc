@@ -1,14 +1,14 @@
 package slipp;
 
-import nextstep.mvc.HandlerMapping;
 import nextstep.mvc.asis.Controller;
+import nextstep.mvc.tobe.*;
 
 import javax.servlet.http.HttpServletRequest;
 
 public class ManualHandlerMappingAdapter implements HandlerMapping {
-    private ManualHandlerMapping handlerMapping;
+    private LegacyHandlerMapping handlerMapping;
 
-    ManualHandlerMappingAdapter(ManualHandlerMapping handlerMapping) {
+    public ManualHandlerMappingAdapter(LegacyHandlerMapping handlerMapping) {
         this.handlerMapping = handlerMapping;
     }
 
@@ -18,7 +18,13 @@ public class ManualHandlerMappingAdapter implements HandlerMapping {
     }
 
     @Override
-    public Controller getHandler(HttpServletRequest request) {
-        return this.handlerMapping.getHandler(request.getRequestURI());
+    public HandlerExecution getHandler(HttpServletRequest request) {
+        Controller handler = this.handlerMapping.getHandler(request.getRequestURI());
+
+        if(handler == null) {
+            return null;
+        }
+
+        return (req, resp) -> new ModelAndView(new JspView(handler.execute(req, resp)));
     }
 }

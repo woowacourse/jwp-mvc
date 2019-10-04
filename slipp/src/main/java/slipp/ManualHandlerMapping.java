@@ -3,6 +3,7 @@ package slipp;
 import nextstep.mvc.DispatcherServlet;
 import nextstep.mvc.asis.Controller;
 import nextstep.mvc.asis.ForwardController;
+import nextstep.mvc.tobe.LegacyHandlerMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import slipp.controller.*;
@@ -10,7 +11,7 @@ import slipp.controller.*;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ManualHandlerMapping {
+public class ManualHandlerMapping implements LegacyHandlerMapping {
     private static final Logger logger = LoggerFactory.getLogger(DispatcherServlet.class);
     private Map<String, Controller> mappings = new HashMap<>();
 
@@ -31,7 +32,8 @@ public class ManualHandlerMapping {
             logger.info("Path : {}, Controller : {}", path, mappings.get(path).getClass());
         });
     }
-    
+
+    @Override
     public Controller getHandler(String requestUri) {
         return mappings.get(requestUri);
     }
