@@ -1,5 +1,6 @@
 package nextstep.mvc;
 
+import nextstep.exception.NoSuchHandlerException;
 import nextstep.mvc.asis.Controller;
 import nextstep.mvc.tobe.HandlerExecution;
 import nextstep.mvc.tobe.ModelAndView;
@@ -61,7 +62,7 @@ public class DispatcherServlet extends HttpServlet {
                 .map(m -> m.getHandler(req))
                 .filter(Objects::nonNull)
                 .findFirst()
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(NoSuchHandlerException::new);
     }
 
     private void move(String viewName, HttpServletRequest req, HttpServletResponse resp)
