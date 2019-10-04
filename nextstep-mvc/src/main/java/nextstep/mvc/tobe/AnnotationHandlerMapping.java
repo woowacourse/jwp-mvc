@@ -25,11 +25,11 @@ public class AnnotationHandlerMapping {
     }
 
     public void initialize() throws NoSuchMethodException, IllegalAccessException, InstantiationException, InvocationTargetException {
-        // TODO: 2019-10-03 2중 for 리펙토링
         Reflections reflections = new Reflections(basePackage);
         Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
         for (Class controller : controllers) {
             Arrays.stream(controller.getDeclaredMethods())
+                    .filter(method -> method.isAnnotationPresent(RequestMapping.class))
                     .forEach(method -> mappingHandlers(method));
         }
     }
@@ -37,7 +37,7 @@ public class AnnotationHandlerMapping {
     private void mappingHandlers(Method method) {
         RequestMapping rm = method.getAnnotation(RequestMapping.class);
         HandlerExecution handlerExecution = new HandlerExecution(method.getDeclaringClass(), method);
-        if (rm.method().length > 0) {
+        if (rm.method() != null) {
             HandlerKey handlerKey = new HandlerKey(rm.value(), rm.method()[0]);
             handlerExecutions.put(handlerKey, handlerExecution);
             return;
@@ -63,6 +63,15 @@ public class AnnotationHandlerMapping {
     public HandlerExecution getHandler(HttpServletRequest request) {
         String uri = request.getRequestURI();
         RequestMethod method = RequestMethod.valueOf(request.getMethod());
-        return handlerExecutions.get(new HandlerKey(uri, method));
+        HandlerExecution handlerExecution = handlerExecutions.get(new HandlerKey(uri, method));
+
+        isEmpty(handlerExecution);
+        return handlerExecution;
+    }
+
+    private void isEmpty(HandlerExecution handlerExecution) {
+        if (handlerExecution == null) {
+            throw new NotFoundHandlerException();
+        }
     }
 }

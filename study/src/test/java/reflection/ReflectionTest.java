@@ -48,7 +48,6 @@ public class ReflectionTest {
             }
         }
 
-        // TODO 인자를 가진 생성자를 활용해 인스턴스를 생성한다.
         Constructor constructor = clazz.getDeclaredConstructor(parameterTypeList.get(0));
         Question question = (Question) constructor.newInstance("a", "b", "c");
 

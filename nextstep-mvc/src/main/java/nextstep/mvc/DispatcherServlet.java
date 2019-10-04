@@ -43,15 +43,10 @@ public class DispatcherServlet extends HttpServlet {
         logger.debug("Method : {}, Request URI : {}", req.getMethod(), requestUri);
         try {
             HandlerExecution execution = am.getHandler(req);
-            try {
-                ModelAndView mv = execution.handle(req, resp);
-                move2(mv, req, resp);
-                return;
-            } catch (Throwable e) {
-                logger.error("Exception : {}", e);
-                throw new ServletException(e.getMessage());
-            }
-        } catch (NotFoundHandlerException e) {
+            ModelAndView mv = execution.handle(req, resp);
+            move2(mv, req, resp);
+
+        } catch (NotFoundHandlerException | IllegalAccessException | InvocationTargetException e) {
             Controller controller = rm.getHandler(requestUri);
             try {
                 String viewName = controller.execute(req, resp);
@@ -63,7 +58,7 @@ public class DispatcherServlet extends HttpServlet {
         }
     }
 
-    private void move2(ModelAndView mv, HttpServletRequest req, HttpServletResponse resp) throws Exception {
+    private void move2(ModelAndView mv, HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         View view = mv.getView();
         view.render(mv.getModel(), req, resp);
     }

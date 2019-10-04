@@ -1,10 +1,10 @@
 package nextstep.mvc.tobe;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.Map;
-
-import static nextstep.mvc.DispatcherServlet.DEFAULT_REDIRECT_PREFIX;
 
 public class JspView implements View {
     String name;
@@ -14,14 +14,9 @@ public class JspView implements View {
     }
 
     @Override
-    public void render(Map<String, ?> model, HttpServletRequest req, HttpServletResponse resp) throws Exception {
+    public void render(Map<String, ?> model, HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         model.entrySet().stream()
                 .forEach(entry -> req.setAttribute(entry.getKey(), entry.getValue()));
-        if (name.startsWith(DEFAULT_REDIRECT_PREFIX)) {
-            // TODO: 2019-10-04 RedirectView로 분리
-            resp.sendRedirect(name.substring(DEFAULT_REDIRECT_PREFIX.length()));
-            return;
-        }
         req.getRequestDispatcher(name).forward(req, resp);
     }
 }
