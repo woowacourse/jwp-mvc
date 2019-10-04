@@ -35,9 +35,6 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String requestUri = req.getRequestURI();
-        logger.debug("Method : {}, Request URI : {}", req.getMethod(), requestUri);
-
         HandlerMapping manualHandlerMapping = handlerMappings.get(0);
         HandlerMapping annotationHandlerMapping = handlerMappings.get(1);
 
@@ -47,7 +44,7 @@ public class DispatcherServlet extends HttpServlet {
                 ModelAndView modelAndView = handlerExecution.handle(req, resp);
                 modelAndView.getView().render(modelAndView.getModel(), req, resp);
             } else {
-                Controller controller = manualHandlerMapping.getHandler(requestUri);
+                Controller controller = (Controller) manualHandlerMapping.getHandler(req);
                 String viewName = controller.execute(req, resp);
                 move(viewName, req, resp);
             }
