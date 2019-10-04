@@ -1,10 +1,13 @@
 package nextstep.mvc.tobe;
 
 import com.google.common.collect.Maps;
+import nextstep.mvc.HandlerMapping;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
 import org.reflections.Reflections;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import java.lang.annotation.Annotation;
@@ -14,7 +17,8 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
+    private static final Logger logger = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
     private Object[] basePackage;
 
     private Map<HandlerKey, HandlerExecution> handlerExecutions = Maps.newHashMap();
@@ -23,6 +27,7 @@ public class AnnotationHandlerMapping {
         this.basePackage = basePackage;
     }
 
+    @Override
     public void initialize() {
         Reflections reflections = new Reflections(basePackage);
         scanControllers(reflections);
@@ -42,6 +47,7 @@ public class AnnotationHandlerMapping {
 
     private void findHandlersInController(Class<?> controller) throws InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         Object controllerInstance = controller.getDeclaredConstructor().newInstance();
+        logger.debug("c : {}", controller);
         Method[] methods = controller.getDeclaredMethods();
         Arrays.stream(methods)
             .filter(method -> method.isAnnotationPresent(RequestMapping.class))
@@ -56,7 +62,8 @@ public class AnnotationHandlerMapping {
         handlerExecutions.put(key, (req, res) -> (ModelAndView) method.invoke(controllerInstance, req, res));
 }
 
-    public HandlerExecution getHandler(HttpServletRequest request) {
+    @Override
+    public Object getHandler(HttpServletRequest request) {
         String url = request.getRequestURI();
         RequestMethod method = RequestMethod.valueOf(request.getMethod());
         return handlerExecutions.get(new HandlerKey(url, method));
