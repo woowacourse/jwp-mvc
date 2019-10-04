@@ -39,6 +39,9 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     private void createHandlerKey(Method method) {
         RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
         RequestMethod[] methods = requestMapping.method();
+        if (methods.length == 0) {
+            methods = RequestMethod.values();
+        }
         String value = requestMapping.value();
         Arrays.stream(methods)
                 .map(m -> new HandlerKey(value, m))
