@@ -55,7 +55,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
             return method.getDeclaringClass().getConstructor().newInstance();
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             logger.error("Error while registering controller methods", e);
-            throw new RuntimeException(e);
+            throw new HandlerMappingException(e);
         }
     }
 
@@ -65,7 +65,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
                 return (ModelAndView) method.invoke(instance, request, response);
             } catch (InvocationTargetException | IllegalAccessException e) {
                 logger.error("Error occurred while handle request", e);
-                throw new RuntimeException(e);
+                throw new HandlerMappingException(e);
             }
         };
     }
