@@ -26,7 +26,7 @@ public class AnnotationHandlerMappingTest {
         MockHttpServletRequest request = new MockHttpServletRequest("GET", "/users");
         request.setParameter("userId", user.getUserId());
         MockHttpServletResponse response = new MockHttpServletResponse();
-        HandlerExecution execution = handlerMapping.getHandler(request);
+        HandlerExecution execution = handlerMapping.getHandler(request).get();
         execution.handle(request, response);
 
         assertThat(request.getAttribute("user")).isEqualTo(user);
@@ -39,7 +39,34 @@ public class AnnotationHandlerMappingTest {
         request.setParameter("name", user.getName());
         request.setParameter("email", user.getEmail());
         MockHttpServletResponse response = new MockHttpServletResponse();
-        HandlerExecution execution = handlerMapping.getHandler(request);
+        HandlerExecution execution = handlerMapping.getHandler(request).get();
         execution.handle(request, response);
+    }
+
+    @Test
+    public void handle_all_methods() {
+        MockHttpServletRequest request = new MockHttpServletRequest("POST", "/do-some");
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        HandlerExecution execution = handlerMapping.getHandler(request).get();
+        assertThat(execution).isNotNull();
+        ModelAndView mav = execution.handle(request, response);
+        assertThat(mav.getObject("result")).isEqualTo("ok");
+    }
+
+    @Test
+    public void handle_multiple_methods() {
+        MockHttpServletRequest request = new MockHttpServletRequest("PUT", "/do-other");
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        HandlerExecution execution = handlerMapping.getHandler(request).get();
+        assertThat(execution).isNotNull();
+        ModelAndView mav = execution.handle(request, response);
+        assertThat(mav.getObject("result")).isEqualTo("ok");
+
+        MockHttpServletRequest request2 = new MockHttpServletRequest("DELETE", "/do-other");
+        MockHttpServletResponse response2 = new MockHttpServletResponse();
+        HandlerExecution execution2 = handlerMapping.getHandler(request).get();
+        assertThat(execution).isNotNull();
+        ModelAndView mav2 = execution2.handle(request2, response2);
+        assertThat(mav2.getObject("result")).isEqualTo("ok");
     }
 }
