@@ -7,7 +7,6 @@ import nextstep.mvc.tobe.JspView;
 import nextstep.mvc.tobe.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 public class HandlerMappingAdapter implements HandlerMapping {
     private LegacyHandlerMapping handlerMapping;
@@ -22,7 +21,7 @@ public class HandlerMappingAdapter implements HandlerMapping {
     }
 
     @Override
-    public HandlerExecution getHandler(HttpServletRequest request, HttpServletResponse response) {
+    public HandlerExecution getHandler(HttpServletRequest request) {
         Controller handler = this.handlerMapping.getHandler(request.getRequestURI());
         if (handler == null) {
             return null;

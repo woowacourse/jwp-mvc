@@ -36,10 +36,10 @@ public class DispatcherServlet extends HttpServlet {
         logger.debug("Method : {}, Request URI : {}", req.getMethod(), requestUri);
 
         HandlerExecution handler = Arrays.stream(handlerMappings)
-                .filter(handlerMapping -> handlerMapping.getHandler(req, resp) != null)
+                .filter(handlerMapping -> handlerMapping.getHandler(req) != null)
                 .findFirst()
                 .orElseThrow(ServletException::new)
-                .getHandler(req, resp);
+                .getHandler(req);
 
         adaptHandler(req, resp, handler);
     }
