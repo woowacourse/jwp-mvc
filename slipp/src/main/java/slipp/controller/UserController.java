@@ -1,7 +1,5 @@
 package slipp.controller;
 
-import nextstep.mvc.tobe.view.JsonView;
-import nextstep.mvc.tobe.view.JspView;
 import nextstep.mvc.tobe.view.ModelAndView;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
@@ -11,7 +9,6 @@ import slipp.support.db.DataBase;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.HashMap;
 
 @Controller
 public class UserController {

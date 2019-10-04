@@ -2,7 +2,6 @@ package reflection;
 
 import org.junit.jupiter.api.Test;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 
 public class Junit4TestRunner {
