@@ -34,13 +34,26 @@ public class AnnotationHandlerMapping {
                     .collect(Collectors.toList());
             for (Method method : methods) {
                 RequestMapping rm = method.getAnnotation(RequestMapping.class);
-                handlerExecutions.put(new HandlerKey(rm.value(), rm.method()), new HandlerExecution(controller, method));
+                try {
+                    handlerExecutions.put(new HandlerKey(rm.value(), rm.method()[0]), new HandlerExecution(controller, method));
+                } catch (ArrayIndexOutOfBoundsException e) {
+                    handlerExecutions.put(new HandlerKey(rm.value(), RequestMethod.EMPTY), new HandlerExecution(controller, method));
+                }
             }
         }
-
     }
 
     public HandlerExecution getHandler(HttpServletRequest request) {
-        return handlerExecutions.get(new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod())));
+        String uri = request.getRequestURI();
+        String method = request.getMethod();
+        HandlerExecution handlerExecution = handlerExecutions.get(new HandlerKey(uri, RequestMethod.valueOf(method)));
+        if (handlerExecution != null) {
+            return handlerExecution;
+        }
+        HandlerKey handlerKey = handlerExecutions.keySet().stream()
+                .filter(keySet -> keySet.getUrl().equals(uri))
+                .findFirst()
+                .orElseThrow(NotFoundHandlerException::new);
+        return handlerExecutions.get(handlerKey);
     }
 }

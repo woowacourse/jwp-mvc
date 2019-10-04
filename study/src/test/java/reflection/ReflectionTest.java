@@ -1,5 +1,6 @@
 package reflection;
 
+import annotation.Array;
 import annotation.Controller;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -85,5 +86,13 @@ public class ReflectionTest {
         Class<Question> clazz = Question.class;
         Method method = clazz.getDeclaredMethod("getWriter");
         assertThat(method.getDeclaringClass()).isEqualTo(clazz);
+    }
+
+    @Test
+    public void getMethodArray() throws NoSuchMethodException {
+      Class clazz = Question.class;
+      Method method = clazz.getDeclaredMethod("getTitle");
+     Array array = method.getAnnotation(Array.class);
+        System.out.println(array.name()[0]);
     }
 }

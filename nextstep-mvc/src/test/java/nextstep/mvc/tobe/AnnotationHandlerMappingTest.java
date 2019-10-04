@@ -6,7 +6,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -43,5 +46,21 @@ public class AnnotationHandlerMappingTest {
         MockHttpServletResponse response = new MockHttpServletResponse();
         HandlerExecution execution = handlerMapping.getHandler(request);
         execution.handle(request, response);
+    }
+
+    @Test
+    public void post_method_in_requestMapping_annotation() throws Exception {
+        MockHttpServletRequest request = new MockHttpServletRequest("POST", "/method");
+        HandlerExecution execution = handlerMapping.getHandler(request);
+        Method method = MyController.class.getDeclaredMethod("postMethod", HttpServletRequest.class, HttpServletResponse.class);
+        assertThat(execution.getMethod()).isEqualTo(method);
+    }
+
+    @Test
+    public void empty_method_in_requestMapping_annotation() throws Exception {
+        MockHttpServletRequest request = new MockHttpServletRequest("GET", "/method");
+        HandlerExecution execution = handlerMapping.getHandler(request);
+        Method method = MyController.class.getDeclaredMethod("emptyMethod", HttpServletRequest.class, HttpServletResponse.class);
+        assertThat(execution.getMethod()).isEqualTo(method);
     }
 }
