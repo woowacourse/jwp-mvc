@@ -1,6 +1,6 @@
 package nextstep.mvc;
 
-import nextstep.mvc.tobe.core.RequestMappingHandlerMapping;
+import nextstep.mvc.tobe.core.RequestHandlers;
 import nextstep.mvc.tobe.view.ModelAndView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,21 +18,21 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger logger = LoggerFactory.getLogger(DispatcherServlet.class);
     private static final String DEFAULT_REDIRECT_PREFIX = "redirect:";
-    private RequestMappingHandlerMapping mappings;
+    private RequestHandlers handlers;
 
-    public DispatcherServlet(RequestMappingHandlerMapping mappings) {
-        this.mappings = mappings;
+    public DispatcherServlet(RequestHandlers handlers) {
+        this.handlers = handlers;
     }
 
     @Override
     public void init() {
-        mappings.initialize();
+        handlers.initialize();
     }
 
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException {
         try {
-            ModelAndView mv = mappings.handle(req, resp);
+            ModelAndView mv = handlers.handle(req, resp);
             move(mv, req, resp);
         } catch (Exception e) {
             logger.error(e.getMessage());

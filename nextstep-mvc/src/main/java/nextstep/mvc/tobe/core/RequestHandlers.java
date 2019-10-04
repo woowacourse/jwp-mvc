@@ -10,12 +10,12 @@ import org.slf4j.LoggerFactory;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public class RequestMappingHandlerMapping {
-    private static final Logger logger = LoggerFactory.getLogger(RequestMappingHandlerMapping.class);
+public class RequestHandlers {
+    private static final Logger logger = LoggerFactory.getLogger(RequestHandlers.class);
     private AnnotationHandlerMapping annotationMapping;
     private LegacyHandlerMapping legacyMapping;
 
-    public RequestMappingHandlerMapping(LegacyHandlerMapping legacyMapping, Object... basePackages) {
+    public RequestHandlers(LegacyHandlerMapping legacyMapping, Object... basePackages) {
         this.annotationMapping = new AnnotationHandlerMapping(basePackages);
         this.legacyMapping = legacyMapping;
     }

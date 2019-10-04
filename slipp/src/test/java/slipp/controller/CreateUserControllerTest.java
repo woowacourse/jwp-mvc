@@ -1,6 +1,6 @@
 package slipp.controller;
 
-import nextstep.mvc.tobe.core.RequestMappingHandlerMapping;
+import nextstep.mvc.tobe.core.RequestHandlers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,11 +13,11 @@ import slipp.support.db.DataBase;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class CreateUserControllerTest {
-    private RequestMappingHandlerMapping mappings;
+    private RequestHandlers mappings;
 
     @BeforeEach
     void setUp() {
-        mappings = new RequestMappingHandlerMapping(new ManualLegacyHandlerMapping(), "slipp.controller");
+        mappings = new RequestHandlers(new ManualLegacyHandlerMapping(), "slipp.controller");
         mappings.initialize();
     }
 
