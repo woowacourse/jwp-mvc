@@ -15,6 +15,14 @@ public class ReflectionTest {
         logger.debug(clazz.getName());
 
         // TODO Question 클래스의 모든 필드, 생성자, 메소드에 대한 정보를 출력한다.
+        loggingMetaDataOfClass(clazz, clazz.getFields());
+        loggingMetaDataOfClass(clazz, clazz.getConstructors());
+        loggingMetaDataOfClass(clazz, clazz.getMethods());
+    }
+
+    private void loggingMetaDataOfClass(Class<?> clazz, Object metaData) {
+        Class<?> metaDataClass = metaData.getClass();
+        logger.debug("{}의 {} 정보: {}", clazz.getName(), metaDataClass, metaData);
     }
 
     @Test
