@@ -1,4 +1,4 @@
-package nextstep.mvc.tobe;
+package nextstep.mvc.tobe.test;
 
 import nextstep.db.DataBase;
 import nextstep.web.annotation.Controller;

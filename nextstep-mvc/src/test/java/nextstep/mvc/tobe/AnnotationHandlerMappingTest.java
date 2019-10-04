@@ -1,6 +1,7 @@
 package nextstep.mvc.tobe;
 
 import nextstep.db.DataBase;
+import nextstep.mvc.tobe.test.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -12,11 +13,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class AnnotationHandlerMappingTest {
+    private static final String BASE_PACKAGE = "nextstep.mvc.tobe.test";
     private AnnotationHandlerMapping handlerMapping;
 
     @BeforeEach
     public void setup() throws ServletException {
-        handlerMapping = new AnnotationHandlerMapping("nextstep.mvc.tobe");
+        handlerMapping = new AnnotationHandlerMapping(BASE_PACKAGE);
         handlerMapping.initialize();
     }
 
