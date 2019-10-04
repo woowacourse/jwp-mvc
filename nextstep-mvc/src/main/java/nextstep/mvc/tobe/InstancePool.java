@@ -1,23 +1,29 @@
 package nextstep.mvc.tobe;
 
-import nextstep.web.annotation.Controller;
-
+import java.lang.annotation.Annotation;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
 public class InstancePool {
 
-    private static Map<Class<?>, Object> controllerInstancePool;
+    private static Map<Class<?>, Object> instancePool;
 
-    public static void initControllerPoll(Object... basePackage) {
-        controllerInstancePool = Scanner.scan(Controller.class, basePackage);
+    static {
+        instancePool = new HashMap<>();
+    }
+
+    public static void initPool(Class<? extends Annotation> annotation, Object... basePackage) {
+        Map<Class<?>, Object> controllers = Scanner.scan(annotation, basePackage);
+        controllers.keySet()
+                .forEach(aClass -> instancePool.put(aClass, controllers.get(aClass)));
     }
 
     public static Object getInstance(Class<?> controller) {
-        return controllerInstancePool.get(controller);
+        return instancePool.get(controller);
     }
 
-    public static Set<Class<?>> controllerInstancePoolKeySet() {
-        return controllerInstancePool.keySet();
+    public static Set<Class<?>> instancePoolKeySet() {
+        return instancePool.keySet();
     }
 }
