@@ -50,14 +50,11 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private Controller findHandler(HttpServletRequest request) {
-        for (HandlerMapping handlerMapping : handlerMappings) {
-            Controller controller = handlerMapping.getHandler(request);
-            if (Objects.nonNull(controller)) {
-                return controller;
-            }
-        }
-
-        throw new IllegalArgumentException();
+        return handlerMappings.stream()
+                .map(handlerMapping -> handlerMapping.getHandler(request))
+                .filter(Objects::nonNull)
+                .findFirst()
+                .orElseThrow(IllegalArgumentException::new);
     }
 
     private void move(String viewName, HttpServletRequest req, HttpServletResponse resp)
