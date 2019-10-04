@@ -10,7 +10,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
-import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -60,7 +59,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         RequestMethod requestMethod = annotation.method();
         HandlerKey key = new HandlerKey(url, requestMethod);
         handlerExecutions.put(key, (req, res) -> (ModelAndView) method.invoke(controllerInstance, req, res));
-}
+    }
 
     @Override
     public Object getHandler(HttpServletRequest request) {
