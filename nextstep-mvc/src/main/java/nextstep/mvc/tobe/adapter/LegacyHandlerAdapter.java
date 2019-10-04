@@ -16,7 +16,10 @@ public class LegacyHandlerAdapter implements HandlerAdapter {
 
     @Override
     public ModelAndView handle(HttpServletRequest req, HttpServletResponse resp, Object handler) throws Exception {
-        String result = ((Controller) handler).execute(req, resp);
-        return new ModelAndView(new JspView(result));
+        ModelAndView mav = new ModelAndView();
+        String viewName = ((Controller) handler).execute(req, resp);
+        mav.setViewName(viewName);
+
+        return mav;
     }
 }

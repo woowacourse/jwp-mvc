@@ -4,6 +4,8 @@ import nextstep.mvc.exception.AdapterNotFoundException;
 import nextstep.mvc.exception.HandlerNotFoundException;
 import nextstep.mvc.tobe.adapter.HandlerAdapter;
 import nextstep.mvc.tobe.view.ModelAndView;
+import nextstep.mvc.tobe.view.View;
+import nextstep.mvc.tobe.viewresolver.ViewResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,12 +22,17 @@ import java.util.Objects;
 public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger logger = LoggerFactory.getLogger(DispatcherServlet.class);
+
     private List<HandlerMapping> handlerMappings;
     private List<HandlerAdapter> handlerAdapters;
+    private List<ViewResolver> viewResolvers;
 
-    public DispatcherServlet(List<HandlerMapping> handlerMappings, List<HandlerAdapter> handlerAdapters) {
+    public DispatcherServlet(List<HandlerMapping> handlerMappings,
+                             List<HandlerAdapter> handlerAdapters,
+                             List<ViewResolver> viewResolvers) {
         this.handlerMappings = handlerMappings;
         this.handlerAdapters = handlerAdapters;
+        this.viewResolvers = viewResolvers;
     }
 
     @Override
@@ -43,11 +50,20 @@ public class DispatcherServlet extends HttpServlet {
             Object handler = findHandler(req);
             HandlerAdapter handlerAdapter = findAdapter(handler);
             ModelAndView mav = handlerAdapter.handle(req, resp, handler);
-            mav.render(req, resp);
+            View view = findView(mav);
+            view.render(mav.getModel(), req, resp);
         } catch (Exception e) {
             logger.error("Exception : {}", e);
             throw new ServletException(e.getMessage());
         }
+    }
+
+    private Object findHandler(HttpServletRequest req) {
+        return handlerMappings.stream()
+                .map(handlerMapping -> handlerMapping.getHandler(req))
+                .filter(Objects::nonNull)
+                .findFirst()
+                .orElseThrow(() -> new HandlerNotFoundException("handler not found"));
     }
 
     private HandlerAdapter findAdapter(Object handler) {
@@ -57,11 +73,11 @@ public class DispatcherServlet extends HttpServlet {
                 .orElseThrow(() -> new AdapterNotFoundException("adapter not found"));
     }
 
-    private Object findHandler(HttpServletRequest req) {
-        return handlerMappings.stream()
-                .map(handlerMapping -> handlerMapping.getHandler(req))
-                .filter(Objects::nonNull)
+    private View findView(ModelAndView mav) {
+        return viewResolvers.stream()
+                .filter(viewResolver -> viewResolver.supports(mav))
+                .map(ViewResolver::resolve)
                 .findFirst()
-                .orElseThrow(() -> new HandlerNotFoundException("handler not found"));
+                .orElseThrow(() -> new RuntimeException());
     }
 }
