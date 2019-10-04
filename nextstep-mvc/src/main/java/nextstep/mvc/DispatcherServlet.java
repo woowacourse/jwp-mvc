@@ -1,10 +1,7 @@
 package nextstep.mvc;
 
 import nextstep.mvc.asis.Controller;
-import nextstep.mvc.tobe.AnnotationHandlerMapping;
-import nextstep.mvc.tobe.HandlerExecution;
-import nextstep.mvc.tobe.ModelAndView;
-import nextstep.mvc.tobe.View;
+import nextstep.mvc.tobe.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,10 +16,9 @@ import java.lang.reflect.InvocationTargetException;
 
 @WebServlet(name = "dispatcher", urlPatterns = "/", loadOnStartup = 1)
 public class DispatcherServlet extends HttpServlet {
+    public static final String DEFAULT_REDIRECT_PREFIX = "redirect:";
     private static final long serialVersionUID = 1L;
     private static final Logger logger = LoggerFactory.getLogger(DispatcherServlet.class);
-    public static final String DEFAULT_REDIRECT_PREFIX = "redirect:";
-
     private HandlerMapping rm;
     private AnnotationHandlerMapping am;
 
@@ -45,9 +41,8 @@ public class DispatcherServlet extends HttpServlet {
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String requestUri = req.getRequestURI();
         logger.debug("Method : {}, Request URI : {}", req.getMethod(), requestUri);
-
-        HandlerExecution execution = am.getHandler(req);
-        if (execution != null) {
+        try {
+            HandlerExecution execution = am.getHandler(req);
             try {
                 ModelAndView mv = execution.handle(req, resp);
                 move2(mv, req, resp);
@@ -56,21 +51,21 @@ public class DispatcherServlet extends HttpServlet {
                 logger.error("Exception : {}", e);
                 throw new ServletException(e.getMessage());
             }
-        }
-
-        Controller controller = rm.getHandler(requestUri);
-        try {
-            String viewName = controller.execute(req, resp);
-            move(viewName, req, resp);
-        } catch (Throwable e) {
-            logger.error("Exception : {}", e);
-            throw new ServletException(e.getMessage());
+        } catch (NotFoundHandlerException e) {
+            Controller controller = rm.getHandler(requestUri);
+            try {
+                String viewName = controller.execute(req, resp);
+                move(viewName, req, resp);
+            } catch (Throwable error) {
+                logger.error("Exception : {}", error);
+                throw new ServletException(e.getMessage());
+            }
         }
     }
 
     private void move2(ModelAndView mv, HttpServletRequest req, HttpServletResponse resp) throws Exception {
         View view = mv.getView();
-        view.render(mv.getModel(),req,resp);
+        view.render(mv.getModel(), req, resp);
     }
 
     private void move(String viewName, HttpServletRequest req, HttpServletResponse resp)

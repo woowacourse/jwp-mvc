@@ -1,5 +1,7 @@
 package nextstep.mvc.tobe;
 
+import nextstep.mvc.tobe.exception.InstanceCreationFailedException;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.InvocationTargetException;
@@ -9,9 +11,18 @@ public class HandlerExecution {
     private Object instance;
     private Method method;
 
-    public HandlerExecution(Class clazz, Method method) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
-        this.instance = clazz.getConstructor().newInstance();
+    public HandlerExecution(Class clazz, Method method)  {
+        this.instance = getInstance(clazz);
         this.method = method;
+    }
+
+    private Object getInstance(Class clazz) {
+        try {
+            return clazz.getConstructor().newInstance();
+        } catch (InstantiationException | IllegalAccessException
+                | InvocationTargetException | NoSuchMethodException e) {
+            throw new InstanceCreationFailedException(e);
+        }
     }
 
     public Method getMethod() {
