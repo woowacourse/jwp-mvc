@@ -20,7 +20,7 @@ public class MyController {
         logger.debug("Find UserId : {}", userId);
         User user = DataBase.findUserById(userId);
         request.setAttribute("user", user);
-        return new ModelAndView(new JsonView());
+        return null;
     }
 
     @RequestMapping(value = "/users", method = RequestMethod.POST)
@@ -32,6 +32,6 @@ public class MyController {
                 request.getParameter("email"));
         logger.debug("User : {}", user);
         DataBase.addUser(user);
-        return new ModelAndView(new JsonView());
+        return null;
     }
 }
