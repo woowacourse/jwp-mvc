@@ -49,7 +49,7 @@ public class DispatcherServlet extends HttpServlet {
             }
             if (handler instanceof HandlerExecution) {
                 ModelAndView mav = ((HandlerExecution) handler).handle(req, resp);
-                mav.getView().render(mav.getModel(), req, resp);
+                mav.render(req, resp);
             }
         } catch (Throwable e) {
             logger.error("Exception: {}", ExceptionUtils.getStackTrace(e));
