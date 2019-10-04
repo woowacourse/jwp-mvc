@@ -24,6 +24,7 @@ public class RequestMappingScanner {
 
     public List<Map.Entry<HandlerKey, HandlerExecution>> scan(Class<?> clazz, Object target) {
         return Arrays.stream(clazz.getDeclaredMethods())
+                .filter(method -> method.isAnnotationPresent(RequestMapping.class))
                 .filter(this::hasParamsTypeOfRequestAndResponse)
                 .flatMap(method -> getHandlerExecutionsEntry(target, method))
                 .collect(Collectors.toList());
