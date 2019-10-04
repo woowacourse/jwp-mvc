@@ -1,6 +1,7 @@
 package nextstep.mvc;
 
 import nextstep.mvc.asis.Controller;
+import nextstep.mvc.asis.Execution;
 import nextstep.mvc.tobe.HandlerExecution;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,16 +48,14 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private String getViewName(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        Object handler = getHandler(request);
-        if (handler instanceof Controller) {
-            return ((Controller) handler).execute(request, response);
-        } else if (handler instanceof HandlerExecution) {
-            return ((HandlerExecution) handler).handle(request, response);
+        Execution execution = getHandler(request);
+        if (execution == null) {
+            return "/err/404.jsp";
         }
-        return "/err/404.jsp";
+        return execution.execute(request, response);
     }
 
-    private Object getHandler(HttpServletRequest request) {
+    private Execution getHandler(HttpServletRequest request) {
         return handlerMappings.stream()
                 .map(handlerMapping -> handlerMapping.getHandler(request))
                 .filter(Objects::nonNull)
