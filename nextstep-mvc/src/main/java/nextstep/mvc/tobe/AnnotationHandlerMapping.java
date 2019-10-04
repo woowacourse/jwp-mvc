@@ -40,6 +40,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
         RequestMethod[] methods = requestMapping.method();
         String value = requestMapping.value();
+        if (methods.length == 0) methods = RequestMethod.values();
         Arrays.stream(methods)
                 .map(m -> new HandlerKey(value, m))
                 .forEach(key -> handlerExecutions.put(key,
