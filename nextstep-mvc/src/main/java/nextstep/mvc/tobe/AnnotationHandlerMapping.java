@@ -41,6 +41,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         handlerExecutions.put(new HandlerKey(requestMapping.value(), requestMapping.method()), new HandlerExecution(method));
     }
 
+    @Override
     public HandlerExecution getHandler(HttpServletRequest request) {
         return handlerExecutions.get(createHandlerKey(request));
     }
@@ -49,11 +50,6 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         String url = request.getRequestURI();
         String method = request.getMethod();
         return new HandlerKey(url, RequestMethod.valueOf(method));
-    }
-
-    @Override
-    public nextstep.mvc.asis.Controller getHandler(String requestUri) {
-        return null;
     }
 
     public boolean hasControllerAnnotation(HttpServletRequest req) {
