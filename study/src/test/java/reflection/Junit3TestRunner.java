@@ -12,15 +12,9 @@ public class Junit3TestRunner {
         Method[] methods = clazz.getDeclaredMethods();
 
         for (Method method : methods) {
-            if (getMethodName(method).startsWith("test")) {
+            if (method.getName().startsWith("test")) {
                 method.invoke(clazz.newInstance());
             }
         }
-    }
-
-    private String getMethodName(Method method) {
-        String[] tokens = method.toGenericString().split(" ");
-        String[] structures = tokens[2].split("\\.");
-        return structures[2];
     }
 }

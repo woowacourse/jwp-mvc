@@ -9,6 +9,8 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Date;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 public class ReflectionTest {
     private static final Logger logger = LoggerFactory.getLogger(ReflectionTest.class);
 
@@ -58,30 +60,20 @@ public class ReflectionTest {
     }
 
     @Test
-    public void privateFieldAccess() throws IllegalAccessException {
+    public void privateFieldAccess() throws IllegalAccessException, NoSuchFieldException {
         Class<Student> clazz = Student.class;
         logger.debug(clazz.getName());
 
-        Field[] fields = clazz.getDeclaredFields();
-
         Student student = new Student();
 
-        for (Field field : fields) {
-            if (isPrivateField(field)) {
-                field.setAccessible(true);
-                if (field.getName().equals("name")) {
-                    field.set(student, "Martin");
-                }
-                if (field.getName().equals("age")) {
-                    field.set(student, 1);
-                }
-            }
-        }
-        logger.debug(student.toString());
-    }
+        Field name = clazz.getDeclaredField("name");
+        name.setAccessible(true);
+        name.set(student, "Martin");
 
-    private boolean isPrivateField(Field field) {
-        String[] tokens = field.toGenericString().split(" ");
-        return "private".equals(tokens[0]);
+        Field age = clazz.getDeclaredField("age");
+        age.setAccessible(true);
+        age.set(student, 11);
+
+        assertThat(student.toString()).isEqualTo("Student{name='Martin', age=11}");
     }
 }
