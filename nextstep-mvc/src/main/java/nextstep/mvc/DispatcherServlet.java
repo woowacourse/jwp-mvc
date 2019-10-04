@@ -3,6 +3,7 @@ package nextstep.mvc;
 import nextstep.mvc.asis.Controller;
 import nextstep.mvc.tobe.HandlerExecution;
 import nextstep.mvc.tobe.ModelAndView;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,8 +52,8 @@ public class DispatcherServlet extends HttpServlet {
                 mav.getView().render(mav.getModel(), req, resp);
             }
         } catch (Throwable e) {
-            logger.error("Exception : {}", e.getMessage());
-            throw new ServletException(e.getMessage());
+            logger.error("Exception: {}", ExceptionUtils.getStackTrace(e));
+            throw new ServletException(e);
         }
     }
 
