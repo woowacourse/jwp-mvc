@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Set;
 
 public class AnnotationHandlerMapping {
+    public static final int DEFAULT_REQUEST_METHODS_LENGTH = 0;
     private Object[] basePackage;
 
     private Map<HandlerKey, HandlerExecution> handlerExecutions = Maps.newHashMap();
@@ -21,29 +22,47 @@ public class AnnotationHandlerMapping {
     }
 
     public void initialize() {
-
-    }
-
-    public HandlerExecution getHandler(HttpServletRequest request) {
         Reflections reflections = new Reflections(basePackage);
         Set<Class<?>> classes = reflections.getTypesAnnotatedWith(Controller.class);
         for (Class<?> clazz : classes) {
-            Method[] methods = clazz.getDeclaredMethods();
-            for (Method method : methods) {
-                if (method.isAnnotationPresent(RequestMapping.class)) {
-                    String pathInfo = request.getRequestURI();
-                    RequestMapping annotation = method.getAnnotation(RequestMapping.class);
-                    if (annotation.value().equals(pathInfo)) {
-                        RequestMethod[] requestMethods = annotation.method();
-                        for (RequestMethod requestMethod : requestMethods) {
-                            if (requestMethod.toString().equals(request.getMethod().toUpperCase())) {
-                                return new HandlerExecution(method);
-                            }
-                        }
-                    }
-                }
-            }
+            filterMethods(clazz);
         }
-        return null;
+    }
+
+    private void filterMethods(Class<?> clazz) {
+        Method[] methods = clazz.getDeclaredMethods();
+        for (Method method : methods) {
+            filterRequestMapping(method);
+        }
+    }
+
+    private void filterRequestMapping(Method method) {
+        if (method.isAnnotationPresent(RequestMapping.class)) {
+            RequestMapping annotation = method.getAnnotation(RequestMapping.class);
+            RequestMethod[] requestMethods = annotation.method();
+            if (isDefaultRequestMethod(requestMethods)) {
+                make(method, annotation, RequestMethod.values());
+                return;
+            }
+            make(method, annotation, requestMethods);
+        }
+    }
+
+    private boolean isDefaultRequestMethod(RequestMethod[] requestMethods) {
+        return requestMethods.length == DEFAULT_REQUEST_METHODS_LENGTH;
+    }
+
+    // TODO: 메서드 이름 적절한 것으로 변경하기
+    private void make(Method method, RequestMapping annotation, RequestMethod[] values) {
+        for (RequestMethod value : values) {
+            HandlerKey handlerKey = new HandlerKey(annotation.value(), value);
+            handlerExecutions.put(handlerKey, new HandlerExecution(method));
+        }
+    }
+
+    public HandlerExecution getHandler(HttpServletRequest request) {
+        HandlerKey handlerKey = new HandlerKey(request.getRequestURI(),
+                RequestMethod.valueOf(request.getMethod().toUpperCase()));
+        return handlerExecutions.get(handlerKey);
     }
 }
