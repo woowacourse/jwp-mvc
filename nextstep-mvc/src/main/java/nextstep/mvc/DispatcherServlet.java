@@ -1,6 +1,7 @@
 package nextstep.mvc;
 
 import nextstep.mvc.tobe.Handler;
+import nextstep.mvc.tobe.HandlerAdapter;
 import nextstep.mvc.tobe.ModelAndView;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
@@ -11,7 +12,6 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -21,9 +21,11 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger logger = LoggerFactory.getLogger(DispatcherServlet.class);
 
     private List<HandlerMapping> mappings;
+    private List<HandlerAdapter> handlerAdapters;
 
-    public DispatcherServlet(HandlerMapping... mappings) {
-        this.mappings = Arrays.asList(mappings);
+    public DispatcherServlet(List<HandlerMapping> mappings, List<HandlerAdapter> handlerAdapters) {
+        this.mappings = mappings;
+        this.handlerAdapters = handlerAdapters;
     }
 
     @Override
@@ -33,13 +35,12 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException {
-        ViewResolver viewResolver = new ViewResolver();
         logger.debug("Method : {}, Request URI : {}", req.getMethod(), req.getRequestURI());
 
         try {
             Handler handler = getHandler(req);
-            Object view = handler.execute(req, resp);
-            ModelAndView mav = viewResolver.resolve(view);
+            HandlerAdapter handlerAdapter = getHandlerAdapter(handler);
+            ModelAndView mav = handlerAdapter.handle(req, resp, handler);
             mav.render(req, resp);
         } catch (Throwable e) {
             logger.error("Exception: {}", ExceptionUtils.getStackTrace(e));
@@ -53,5 +54,12 @@ public class DispatcherServlet extends HttpServlet {
                 .filter(Objects::nonNull)
                 .findFirst()
                 .orElseThrow(() -> new NotFoundHandlerException(req.getRequestURI()));
+    }
+
+    private HandlerAdapter getHandlerAdapter(Object handler) {
+        return handlerAdapters.stream()
+                .filter(adapter -> adapter.supports(handler))
+                .findFirst()
+                .orElseThrow(NotFoundAdapterException::new);
     }
 }
