@@ -2,10 +2,8 @@ package nextstep.mvc.tobe;
 
 import com.google.common.collect.Maps;
 import nextstep.mvc.HandlerMapping;
-import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,22 +20,21 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     private static final Logger logger = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
     private Object[] basePackage;
+    private ComponentScanner componentScanner;
 
     private Map<HandlerKey, HandlerExecution> handlerExecutions = Maps.newHashMap();
 
     public AnnotationHandlerMapping(Object... basePackage) {
         this.basePackage = basePackage;
+
+        this.componentScanner = ComponentScanner.of(basePackage);
     }
 
     @Override
     public void initialize() {
-        Reflections reflections = new Reflections(basePackage);
-        Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
-        logger.info("{} Controllers are added by Annotation.", controllers.size());
-        controllers.stream()
-                .flatMap(clazz -> Arrays.stream(clazz.getDeclaredMethods())
-                        .filter(method -> method.isAnnotationPresent(RequestMapping.class)))
-                .forEach(this::mapControllerMethod);
+        Set<Method> methods = componentScanner.getRequestMappingMethods();
+        logger.info("{} Controllers are added by Annotation.", methods.size());
+        methods.forEach(this::mapControllerMethod);
     }
 
     private void mapControllerMethod(Method method) {
