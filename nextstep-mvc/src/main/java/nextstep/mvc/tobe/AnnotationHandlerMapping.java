@@ -42,12 +42,14 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     private void putHandlerExecutions(Method method, Object instance) {
+        HandlerExecution handlerExecution = new HandlerExecution(method, instance);
         RequestMapping annotation = method.getAnnotation(RequestMapping.class);
-        annotation.method().getMethods().forEach(requestMethod -> {
-            HandlerKey handlerKey = new HandlerKey(annotation.value(), requestMethod);
-            HandlerExecution handlerExecution = new HandlerExecution(method, instance);
-            handlerExecutions.put(handlerKey, handlerExecution);
-            log.info("HandlerKey : {}, HandlerExecution : {}", handlerKey, handlerExecution);
-        });
+
+        Arrays.stream(annotation.method())
+                .map(requestMethod -> new HandlerKey(annotation.value(), requestMethod))
+                .forEach(handlerKey -> {
+                    handlerExecutions.put(handlerKey, handlerExecution);
+                    log.info("HandlerKey : {}, HandlerExecution : {}", handlerKey, handlerExecution);
+                });
     }
 }
