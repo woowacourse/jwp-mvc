@@ -1,6 +1,5 @@
 package nextstep.mvc.tobe;
 
-import com.google.common.collect.Maps;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
@@ -12,7 +11,7 @@ import java.util.*;
 
 public class AnnotationHandlerMapping {
     private final Object[] basePackage;
-    private final Map<HandlerKey, HandlerExecution> handlerExecutions = Maps.newHashMap();
+    private final Map<HandlerKey, HandlerExecution> handlerExecutions = new HashMap<>();
 
     public AnnotationHandlerMapping(final Object... basePackage) {
         this.basePackage = basePackage;
@@ -36,14 +35,14 @@ public class AnnotationHandlerMapping {
     }
 
     private void registerHandler(final Method method) {
-        final List<HandlerKey> keys = getRequestMappingKeys(method);
+        final List<HandlerKey> keys = makeRequestMappingKeys(method);
         final HandlerExecution execution = new HandlerExecution(method);
         for (final HandlerKey key : keys) {
             handlerExecutions.put(key, execution);
         }
     }
 
-    private List<HandlerKey> getRequestMappingKeys(final Method method) {
+    private List<HandlerKey> makeRequestMappingKeys(final Method method) {
         final List<HandlerKey> result = new ArrayList<>();
         final RequestMapping mapping = method.getAnnotation(RequestMapping.class);
         final RequestMethod[] methods = mapping.method().length == 0 ? RequestMethod.values() : mapping.method();
