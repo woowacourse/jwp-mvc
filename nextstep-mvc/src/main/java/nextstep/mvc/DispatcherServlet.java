@@ -1,5 +1,6 @@
 package nextstep.mvc;
 
+import nextstep.mvc.exception.NotFoundHandlerAdapterException;
 import nextstep.mvc.exception.NotFoundHandlerException;
 import nextstep.mvc.tobe.HandlerExecution;
 import org.slf4j.Logger;
@@ -11,6 +12,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
 @WebServlet(name = "dispatcher", urlPatterns = "/", loadOnStartup = 1)
@@ -19,7 +21,7 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger logger = LoggerFactory.getLogger(DispatcherServlet.class);
 
     private List<HandlerMapping> handlerMappings;
-    private HandlerAdapter handlerAdapter = new HandlerAdapter();
+    private List<HandlerAdapter> handlerAdapters;
 
     public DispatcherServlet(List<HandlerMapping> handlerMappings) {
         this.handlerMappings = handlerMappings;
@@ -30,6 +32,7 @@ public class DispatcherServlet extends HttpServlet {
         for (HandlerMapping handlerMapping : handlerMappings) {
             handlerMapping.initialize();
         }
+        handlerAdapters = Arrays.asList(new StringHandlerAdapter());
     }
 
     @Override
@@ -39,6 +42,7 @@ public class DispatcherServlet extends HttpServlet {
         HandlerExecution handlerExecution = getHandler(req);
         try {
             Object result = handlerExecution.handle(req, resp);
+            HandlerAdapter handlerAdapter = getHandlerAdapter(result);
             handlerAdapter.handle(result, req, resp);
         } catch (Exception e) {
             logger.error(e.getMessage());
@@ -52,5 +56,12 @@ public class DispatcherServlet extends HttpServlet {
                 .findAny()
                 .orElseThrow(NotFoundHandlerException::new)
                 .getHandler(req);
+    }
+
+    private HandlerAdapter getHandlerAdapter(Object result) {
+        return handlerAdapters.stream()
+                .filter(adapter -> adapter.canHandle(result))
+                .findAny()
+                .orElseThrow(NotFoundHandlerAdapterException::new);
     }
 }
