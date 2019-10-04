@@ -7,7 +7,10 @@ import org.slf4j.LoggerFactory;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.Date;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class ReflectionTest {
     private static final Logger logger = LoggerFactory.getLogger(ReflectionTest.class);
@@ -58,30 +61,25 @@ public class ReflectionTest {
     }
 
     @Test
-    public void privateFieldAccess() throws IllegalAccessException {
+    public void privateFieldAccess() throws IllegalAccessException, NoSuchFieldException {
         Class<Student> clazz = Student.class;
         logger.debug(clazz.getName());
 
-        Field[] fields = clazz.getDeclaredFields();
-
         Student student = new Student();
+        setPrivateField(student, "name", "Martin");
+        setPrivateField(student, "age", 1);
 
-        for (Field field : fields) {
-            if (isPrivateField(field)) {
-                field.setAccessible(true);
-                if (field.getName().equals("name")) {
-                    field.set(student, "Martin");
-                }
-                if (field.getName().equals("age")) {
-                    field.set(student, 1);
-                }
-            }
-        }
+        assertThat(student.getName()).isEqualTo("Martin");
+        assertThat(student.getAge()).isEqualTo(1);
         logger.debug(student.toString());
     }
 
-    private boolean isPrivateField(Field field) {
-        String[] tokens = field.toGenericString().split(" ");
-        return "private".equals(tokens[0]);
+    private void setPrivateField(Student student, String fieldName, Object fieldValue) throws NoSuchFieldException, IllegalAccessException {
+        Class<Student> clazz = Student.class;
+        Field name = clazz.getDeclaredField(fieldName);
+        if (name.getModifiers() == Modifier.PRIVATE) {
+            name.setAccessible(true);
+        }
+        name.set(student, fieldValue);
     }
 }
