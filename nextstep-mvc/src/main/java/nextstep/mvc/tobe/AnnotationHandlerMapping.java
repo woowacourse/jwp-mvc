@@ -2,10 +2,8 @@ package nextstep.mvc.tobe;
 
 import com.google.common.collect.Maps;
 import nextstep.mvc.HandlerMapping;
-import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,7 +11,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Map;
-import java.util.Set;
 
 public class AnnotationHandlerMapping implements HandlerMapping {
 
@@ -28,14 +25,12 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     public void initialize() {
-        Reflections reflections = new Reflections(basePackage);
-        Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
+        InstancePool.initControllerPoll(basePackage);
 
-        controllers.stream()
+        InstancePool.controllerInstancePoolKeySet().stream()
                 .flatMap(controller -> Arrays.stream(controller.getMethods()))
                 .filter(method -> method.isAnnotationPresent(RequestMapping.class))
                 .forEach(this::putHandlerExecution);
-
 
         log.info("Initialized Request Mapping!");
         handlerExecutions.keySet().forEach(handlerKey ->

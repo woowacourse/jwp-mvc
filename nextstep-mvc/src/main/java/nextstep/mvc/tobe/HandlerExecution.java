@@ -12,7 +12,9 @@ public class HandlerExecution {
     }
 
     public String handle(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        return (String) method.invoke(method.getDeclaringClass().newInstance(), request, response);
+        Class<?> clazz = method.getDeclaringClass();
+        Object instance = InstancePool.getInstance(clazz);
+        return (String) method.invoke(instance, request, response);
     }
 
     @Override
