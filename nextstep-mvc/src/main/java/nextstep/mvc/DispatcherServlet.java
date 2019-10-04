@@ -33,15 +33,17 @@ public class DispatcherServlet extends HttpServlet {
         handlerMappings.add(handlerMapping);
     }
 
-    private void processByHandler(HttpServletRequest req, HttpServletResponse resp, Object handler) throws ServletException {
+    private boolean processByHandler(HttpServletRequest req, HttpServletResponse resp, Object handler) throws ServletException {
         if (handler instanceof Controller) {
             executeAndRenderByManualHandler(req, resp, (Controller) handler);
-            return;
+            return true;
         }
 
         if (handler instanceof HandlerExecution) {
             executeAndRenderByAnnotationHandler(req, resp, (HandlerExecution) handler);
+            return true;
         }
+        return false;
     }
 
     private void executeAndRenderByManualHandler(HttpServletRequest req, HttpServletResponse resp, Controller handler) throws ServletException {
@@ -86,11 +88,13 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     @Override
-    protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException {
         logger.debug("Method : {}, Request URI : {}", req.getMethod(), req.getRequestURI());
         for (HandlerMapping handlerMapping : handlerMappings) {
             Object handler = handlerMapping.getHandler(req);
-            processByHandler(req, resp, handler);
+            if (processByHandler(req, resp, handler)) {
+                return;
+            }
         }
     }
 }
