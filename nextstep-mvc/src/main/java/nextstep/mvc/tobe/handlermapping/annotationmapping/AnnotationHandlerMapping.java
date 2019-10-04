@@ -1,27 +1,29 @@
 package nextstep.mvc.tobe.handlermapping.annotationmapping;
 
 import com.google.common.collect.Maps;
-import nextstep.mvc.tobe.handlermapping.ModelAndViewHandlerMapping;
-import nextstep.mvc.tobe.view.ModelAndView;
+import nextstep.mvc.tobe.ControllerScanner;
 import nextstep.mvc.tobe.exception.DuplicateRequestMappingException;
 import nextstep.mvc.tobe.exception.RenderFailedException;
-import nextstep.utils.ClassUtils;
-import nextstep.web.annotation.Controller;
+import nextstep.mvc.tobe.handlermapping.ModelAndViewHandlerMapping;
+import nextstep.mvc.tobe.view.ModelAndView;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
 import org.apache.commons.lang3.ArrayUtils;
-import org.reflections.Reflections;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class AnnotationHandlerMapping implements ModelAndViewHandlerMapping {
-    private Object[] basePackage;
+    private final Object[] basePackage;
 
-    private Map<HandlerKey, HandlerExecution> handlerExecutions = Maps.newHashMap();
+    private final Map<HandlerKey, HandlerExecution> handlerExecutions = Maps.newHashMap();
+    private final ControllerScanner controllerScanner = new ControllerScanner();
 
     public AnnotationHandlerMapping(Object... basePackage) {
         this.basePackage = basePackage;
@@ -29,25 +31,22 @@ public class AnnotationHandlerMapping implements ModelAndViewHandlerMapping {
 
     @Override
     public void initialize() {
-        Reflections reflections = new Reflections(basePackage);
-        Set<Class<?>> controllerClazz = reflections.getTypesAnnotatedWith(Controller.class);
+        controllerScanner.scan(basePackage);
 
-        for (Class<?> clazz : controllerClazz) {
-            appendHandlerExecutions(clazz);
+        for (Method method : controllerScanner.getAllDeclaredMethods()) {
+            appendHandlerExecutions(method);
         }
     }
 
-    private void appendHandlerExecutions(final Class<?> clazz) {
-        Object newInstance = ClassUtils.createNewInstance(clazz);
-        Method[] methods = clazz.getDeclaredMethods();
+    private void appendHandlerExecutions(final Method method) {
+        Class<?> clazz = method.getDeclaringClass();
+        Object newInstance = controllerScanner.get(clazz);
 
-        for (Method method : methods) {
-            if (method.isAnnotationPresent(RequestMapping.class)) {
-                List<HandlerKey> handlerKeys = createHandlerKeys(method);
-                HandlerExecution handlerExecution = createHandlerExecution(newInstance, method);
+        if (method.isAnnotationPresent(RequestMapping.class)) {
+            List<HandlerKey> handlerKeys = createHandlerKeys(method);
+            HandlerExecution handlerExecution = createHandlerExecution(newInstance, method);
 
-                appendHandlerKeys(handlerKeys, handlerExecution);
-            }
+            appendHandlerKeys(handlerKeys, handlerExecution);
         }
     }
 
