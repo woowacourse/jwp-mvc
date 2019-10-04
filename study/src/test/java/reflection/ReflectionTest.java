@@ -35,15 +35,23 @@ public class ReflectionTest {
     public void constructor_with_args() throws Exception {
         Class<Question> clazz = Question.class;
         Constructor[] constructors = clazz.getConstructors();
+        Constructor selected = null;
         for (Constructor constructor : constructors) {
             Class[] parameterTypes = constructor.getParameterTypes();
-            logger.debug("paramer length : {}", parameterTypes.length);
-            for (Class paramType : parameterTypes) {
-                logger.debug("param type : {}", paramType);
+            if (parameterTypes.length == 3) {
+                selected = constructor;
             }
         }
 
         // TODO 인자를 가진 생성자를 활용해 인스턴스를 생성한다.
+        String testWriter = "pkch";
+        String testTitle = "Frank Lampard";
+        String testContents = "첼시 화이팅!";
+
+        Question createdStudent = (Question) selected.newInstance(testWriter, testTitle, testContents);
+        assertThat(createdStudent.getWriter()).isEqualTo(testWriter);
+        assertThat(createdStudent.getTitle()).isEqualTo(testTitle);
+        assertThat(createdStudent.getContents()).isEqualTo(testContents);
     }
 
     @Test
