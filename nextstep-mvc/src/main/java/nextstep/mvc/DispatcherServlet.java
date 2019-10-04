@@ -37,11 +37,11 @@ public class DispatcherServlet extends HttpServlet {
 
         try {
             ModelAndView mav = handleRequest(req, resp);
-            mav.getView().render(mav.getModel(), req, resp);
+            mav.renderView(req, resp);
         } catch (NoHandlerMatchException e) {
             resp.sendError(HttpServletResponse.SC_NOT_FOUND);
         } catch (Exception e) {
-            logger.error(e.getMessage());
+            logger.error("Error while handling request", e);
             resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
     }
@@ -52,7 +52,7 @@ public class DispatcherServlet extends HttpServlet {
      */
     private ModelAndView handleRequest(HttpServletRequest req, HttpServletResponse resp) {
         return handlerMappings.stream()
-                .map(mappnig -> mappnig.getHandler(req))
+                .map(mapping -> mapping.getHandler(req))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .map(handler -> handler.handle(req, resp))
