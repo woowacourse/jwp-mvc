@@ -1,8 +1,8 @@
 package nextstep.mvc;
 
 import nextstep.mvc.asis.Controller;
-import nextstep.mvc.tobe.AnnotationHandlerMapping;
 import nextstep.mvc.tobe.HandlerExecution;
+import nextstep.mvc.tobe.HandlerNotExistException;
 import nextstep.mvc.tobe.ModelAndView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,25 +14,22 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
 
 @WebServlet(name = "dispatcher", urlPatterns = "/", loadOnStartup = 1)
 public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger logger = LoggerFactory.getLogger(DispatcherServlet.class);
     private static final String DEFAULT_REDIRECT_PREFIX = "redirect:";
+    private final List<HandlerMapping> handlerMappings;
 
-    private HandlerMapping mm;
-    private AnnotationHandlerMapping am;
-
-    public DispatcherServlet(HandlerMapping mm, AnnotationHandlerMapping am) {
-        this.mm = mm;
-        this.am = am;
+    public DispatcherServlet(List<HandlerMapping> handlerMappings) {
+        this.handlerMappings = handlerMappings;
     }
 
     @Override
     public void init() throws ServletException {
-        mm.initialize();
-        am.initialize();
+        handlerMappings.forEach(HandlerMapping::initialize);
     }
 
     @Override
@@ -40,25 +37,48 @@ public class DispatcherServlet extends HttpServlet {
         String requestUri = req.getRequestURI();
         logger.debug("Method : {}, Request URI : {}", req.getMethod(), requestUri);
 
-        Controller controller = mm.getHandler(requestUri);
-        HandlerExecution handler = am.getHandler(req);
+        Object handler = getHandler(req);
 
         try {
-            if (controller != null) {
-                String viewName = controller.execute(req, resp);
-                move(viewName, req, resp);
-                return;
-            }
-
-            if (handler != null) {
-                ModelAndView view = handler.handle(req, resp);
-                view.render(req, resp);
-                return;
-            }
-        } catch (Throwable e) {
+            handle(req, resp, handler);
+        } catch (Exception e) {
             logger.error("Exception : {}", e);
             throw new ServletException(e.getMessage());
         }
+    }
+
+    private Object getHandler(HttpServletRequest req) {
+        return handlerMappings.stream()
+            .filter(handlerMapping -> handlerMapping.getHandler(req) != null)
+            .findFirst()
+            .orElseThrow(HandlerNotExistException::new)
+            .getHandler(req);
+    }
+
+    private void handle(HttpServletRequest req, HttpServletResponse resp, Object handler) throws Exception {
+        if (handler instanceof Controller) {
+            handleLegacy(req, resp, (Controller) handler);
+            return;
+        }
+
+        if (handler instanceof HandlerExecution) {
+            handleAnnotation(req, resp, (HandlerExecution) handler);
+            return;
+        }
+
+        throw new UnsupportedHandlerTypeException();
+    }
+
+    private void handleAnnotation(HttpServletRequest req, HttpServletResponse resp, HandlerExecution handler) throws Exception {
+        HandlerExecution handlerExecution = handler;
+        ModelAndView view = handlerExecution.handle(req, resp);
+        view.render(req, resp);
+    }
+
+    private void handleLegacy(HttpServletRequest req, HttpServletResponse resp, Controller handler) throws Exception {
+        Controller controller = handler;
+        String viewName = controller.execute(req, resp);
+        move(viewName, req, resp);
     }
 
     private void move(String viewName, HttpServletRequest req, HttpServletResponse resp)
