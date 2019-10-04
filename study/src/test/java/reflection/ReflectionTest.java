@@ -5,9 +5,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class ReflectionTest {
     private static final Logger logger = LoggerFactory.getLogger(ReflectionTest.class);
+    private static final String NAME_FIELD = "name";
+    private static final String AGE_FIELD = "age";
 
     @Test
     public void showClass() {
@@ -47,5 +52,25 @@ public class ReflectionTest {
         logger.debug(clazz.getName());
 
         // TODO Student private field에 값을 저장하고 조회한다.
+        Student student = new Student();
+
+        String testName = "pkch";
+        int testAge = 27;
+        try {
+            Field name = clazz.getDeclaredField(NAME_FIELD);
+            name.setAccessible(true);
+            name.set(student, testName);
+
+            Field age = clazz.getDeclaredField(AGE_FIELD);
+            age.setAccessible(true);
+            age.set(student, testAge);
+        } catch (NoSuchFieldException e) {
+            logger.error("정의 된 필드가 아닙니다! {}", e.getMessage());
+        } catch (IllegalAccessException e) {
+            logger.error("값을 세팅할 수 없습니다. {}", e.getMessage());
+        }
+
+        assertThat(student.getName()).isEqualTo(testName);
+        assertThat(student.getAge()).isEqualTo(testAge);
     }
 }
