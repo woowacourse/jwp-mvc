@@ -4,10 +4,10 @@ import com.google.common.collect.Maps;
 import nextstep.mvc.tobe.HandlerExecution;
 import nextstep.mvc.tobe.HandlerKey;
 import nextstep.mvc.tobe.ModelAndView;
-import nextstep.mvc.tobe.handlermapping.ModelAndViewHandlerMapping;
 import nextstep.mvc.tobe.exception.DuplicateRequestMappingException;
 import nextstep.mvc.tobe.exception.RenderFailedException;
 import nextstep.mvc.tobe.exception.RequestUrlNotFoundException;
+import nextstep.utils.ClassUtils;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
@@ -40,13 +40,13 @@ public class AnnotationHandlerMapping implements ModelAndViewHandlerMapping {
     }
 
     private void appendHandlerExecutions(final Class<?> clazz) {
+        Object newInstance = ClassUtils.createNewInstance(clazz);
         Method[] methods = clazz.getDeclaredMethods();
+       
         for (Method method : methods) {
             if (method.isAnnotationPresent(RequestMapping.class)) {
                 HandlerKey handlerKey = createHandlerKey(method);
-
-                HandlerExecution handlerExecution
-                        = (request, response) -> (ModelAndView) method.invoke(clazz.newInstance(), request, response);
+                HandlerExecution handlerExecution = createHandlerExecution(newInstance, method);
 
                 checkDuplicateRequestMapping(handlerKey);
                 handlerExecutions.put(handlerKey, handlerExecution);
@@ -59,6 +59,10 @@ public class AnnotationHandlerMapping implements ModelAndViewHandlerMapping {
         String url = annotation.value();
         RequestMethod requestMethod = annotation.method();
         return new HandlerKey(url, requestMethod);
+    }
+
+    private HandlerExecution createHandlerExecution(final Object newInstance, final Method method) {
+        return (request, response) -> (ModelAndView) method.invoke(newInstance, request, response);
     }
 
     private void checkDuplicateRequestMapping(final HandlerKey handlerKey) {
