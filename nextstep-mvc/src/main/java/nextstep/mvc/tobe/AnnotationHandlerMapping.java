@@ -5,6 +5,7 @@ import nextstep.mvc.HandlerMapping;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,10 +42,17 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         RequestMethod[] methods = requestMapping.method();
         String value = requestMapping.value();
         if (methods.length == 0) methods = RequestMethod.values();
-        Arrays.stream(methods)
-                .map(m -> new HandlerKey(value, m))
-                .forEach(key -> handlerExecutions.put(key,
-                        (req, res) -> (ModelAndView) method.invoke(method.getDeclaringClass().newInstance(), req, res)));
+
+        try {
+            Object object = method.getDeclaringClass().newInstance();
+            HandlerExecution handlerExecution = new HandlerExecution(method, object);
+            Arrays.stream(methods)
+                    .map(m -> new HandlerKey(value, m))
+                    .forEach(key -> handlerExecutions.put(key, handlerExecution));
+        } catch (Exception e) {
+            logger.debug("New Instance Exception: {}", ExceptionUtils.getStackTrace(e));
+        }
+
     }
 
     @Override
