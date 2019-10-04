@@ -43,25 +43,24 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     private void putHandlerExecution(Class<?> controller, Method method) {
         if (method.isAnnotationPresent(RequestMapping.class)) {
             String url = method.getAnnotation(RequestMapping.class).value();
-            RequestMethod requestMethod = method.getAnnotation(RequestMapping.class).method();
-            if (requestMethod.isAll()) {
-                putAllMethodMapping(controller, method, url);
-                return;
+            RequestMethod[] requestMethod = method.getAnnotation(RequestMapping.class).method();
+            requestMethod = isRequestMethodEmpty(requestMethod);
+
+            HandlerKey handlerKey = new HandlerKey(url, requestMethod[0]);
+
+            if (handlerExecutions.containsKey(handlerKey)) {
+                throw new MappingException();
             }
-            HandlerKey handlerKey = new HandlerKey(url, requestMethod);
+
             handlerExecutions.put(handlerKey,
                     (request, response) -> method.invoke(controller.newInstance(), request, response));
         }
     }
 
-    private void putAllMethodMapping(Class<?> controller, Method method, String url) {
-        for (RequestMethod value : RequestMethod.values()) {
-            HandlerKey handlerKey = new HandlerKey(url, value);
-            if (handlerExecutions.containsKey(handlerKey)) {
-                throw new MappingException();
-            }
-            handlerExecutions.put(handlerKey,
-                    (request, response) -> method.invoke(controller.newInstance(), request, response));
+    private RequestMethod[] isRequestMethodEmpty(RequestMethod[] requestMethod) {
+        if (requestMethod.length == 0) {
+            requestMethod = RequestMethod.values();
         }
+        return requestMethod;
     }
 }

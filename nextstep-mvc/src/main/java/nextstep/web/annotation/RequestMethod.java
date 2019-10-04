@@ -5,30 +5,19 @@ import nextstep.mvc.exception.NotFoundHttpMethodException;
 import java.util.Arrays;
 
 public enum RequestMethod {
-    GET("GET"),
-    HEAD("HEAD"),
-    POST("POST"),
-    PUT("PUT"),
-    PATCH("PATCH"),
-    DELETE("DELETE"),
-    OPTIONS("OPTIONS"),
-    TRACE("TRACE"),
-    ALL("ALL");
-
-    private final String method;
-
-    RequestMethod(String method) {
-        this.method = method;
-    }
-
-    public boolean isAll() {
-        return this.equals(ALL);
-    }
+    GET,
+    HEAD,
+    POST,
+    PUT,
+    PATCH,
+    DELETE,
+    OPTIONS,
+    TRACE;
 
     public static RequestMethod of(String methodType) {
         return Arrays
                 .stream(values())
-                .filter(m -> methodType.equals(m.method))
+                .filter(m -> methodType.equals(m.name()))
                 .findFirst()
                 .orElseThrow(NotFoundHttpMethodException::new);
     }
