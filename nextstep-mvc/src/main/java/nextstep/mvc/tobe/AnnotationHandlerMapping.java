@@ -2,10 +2,10 @@ package nextstep.mvc.tobe;
 
 import com.google.common.collect.Maps;
 import nextstep.mvc.HandlerMapping;
+import nextstep.mvc.Scanner;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,7 +13,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Map;
-import java.util.Set;
 
 public class AnnotationHandlerMapping implements HandlerMapping {
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
@@ -28,14 +27,12 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     public void initialize() {
         log.info("Initialized Request Mapping!");
+        Map<Class<?>, Object> mapping = Scanner.scan(Controller.class, basePackage);
 
-        Reflections reflections = new Reflections(basePackage);
-        Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
-
-        controllers.stream()
-                .flatMap(controller -> Arrays.stream(controller.getMethods()))
+        mapping.keySet().stream()
+                .flatMap(clazz -> Arrays.stream(clazz.getMethods()))
                 .filter(method -> method.isAnnotationPresent(RequestMapping.class))
-                .forEach(this::putHandlerExecutions);
+                .forEach(method -> putHandlerExecutions(method, mapping.get(method)));
     }
 
     @Override
@@ -44,11 +41,11 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         return handlerExecutions.get(handlerKey);
     }
 
-    private void putHandlerExecutions(Method method) {
+    private void putHandlerExecutions(Method method, Object instance) {
         RequestMapping annotation = method.getAnnotation(RequestMapping.class);
         annotation.method().getMethods().forEach(requestMethod -> {
             HandlerKey handlerKey = new HandlerKey(annotation.value(), requestMethod);
-            HandlerExecution handlerExecution = new HandlerExecution((method));
+            HandlerExecution handlerExecution = new HandlerExecution(method, instance);
             handlerExecutions.put(handlerKey, handlerExecution);
             log.info("HandlerKey : {}, HandlerExecution : {}", handlerKey, handlerExecution);
         });
