@@ -8,6 +8,8 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 public class ReflectionTest {
     private static final Logger logger = LoggerFactory.getLogger(ReflectionTest.class);
 
@@ -49,10 +51,26 @@ public class ReflectionTest {
     }
 
     @Test
-    public void privateFieldAccess() {
+    public void privateFieldAccess() throws Exception {
         Class<Student> clazz = Student.class;
         logger.debug(clazz.getName());
 
-        // TODO Student private field에 값을 저장하고 조회한다.
+        clazz.getDeclaredMethods();
+
+        Constructor<Student> constructor = clazz.getConstructor();
+        Student student = constructor.newInstance();
+
+        Field[] fields = clazz.getDeclaredFields();
+        for (Field field : fields) {
+            field.setAccessible(true);
+            String fieldName = field.getName();
+            if ("name".equals(fieldName)) {
+                field.set(student, "뚱이");
+            } else {
+                field.set(student, 27);
+            }
+        }
+        assertThat(student.getName()).isEqualTo("뚱이");
+        assertThat(student.getAge()).isEqualTo(27);
     }
 }
