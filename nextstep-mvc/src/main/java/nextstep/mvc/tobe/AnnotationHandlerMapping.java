@@ -5,7 +5,6 @@ import nextstep.mvc.HandlerMapping;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
-import org.reflections.Reflections;
 
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
@@ -30,8 +29,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     private void addController(String requestUrl, RequestMethod requestMethod) {
-        Reflections reflections = new Reflections(basePackage);
-        Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
+        Set<Class<?>> controllers = ControllerScanner.scan(basePackage, Controller.class);
 
         for (Class<?> controller : controllers) {
             Method[] methods = controller.getMethods();
