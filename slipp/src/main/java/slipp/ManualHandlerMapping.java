@@ -10,10 +10,11 @@ import slipp.controller.*;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ManualHandlerMapping {
+public class ManualHandlerMapping implements LegacyHandlerMapping {
     private static final Logger logger = LoggerFactory.getLogger(DispatcherServlet.class);
     private Map<String, Controller> mappings = new HashMap<>();
 
+    @Override
     public void initialize() {
 //        mappings.put("/", new HomeController());
         mappings.put("/users/form", new ForwardController("/user/form.jsp"));
@@ -31,7 +32,8 @@ public class ManualHandlerMapping {
             logger.info("Path : {}, Controller : {}", path, mappings.get(path).getClass());
         });
     }
-    
+
+    @Override
     public Controller getHandler(String requestUri) {
         return mappings.get(requestUri);
     }

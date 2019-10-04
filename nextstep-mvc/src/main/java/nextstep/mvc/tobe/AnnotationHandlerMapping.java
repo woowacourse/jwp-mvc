@@ -8,6 +8,7 @@ import nextstep.web.annotation.RequestMethod;
 import org.reflections.ReflectionUtils;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.Set;
@@ -29,6 +30,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         }
     }
 
+    @Override
     public void initialize() {
         for (Class<?> aClass : controllerScanner.getKeys()) {
             Set<Method> allMethods = getAllMethods(aClass, ReflectionUtils.withAnnotation(RequestMapping.class));
@@ -41,7 +43,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     @Override
-    public HandlerExecution getHandler(HttpServletRequest request) {
+    public HandlerExecution getHandler(HttpServletRequest request, HttpServletResponse response) {
         String url = request.getRequestURI();
         RequestMethod[] requestMethod = {RequestMethod.valueOf(request.getMethod())};
 
