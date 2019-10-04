@@ -17,13 +17,12 @@ public class ReflectionsTest {
     public void showAnnotationClass() {
         Reflections reflections = new Reflections("examples");
 
-        // TODO 클래스 레벨에 @Controller, @Service, @Repository 애노테이션이 설정되어 모든 클래스 찾아 로그로 출력한다.
         Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
         Set<Class<?>> services = reflections.getTypesAnnotatedWith(Service.class);
         Set<Class<?>> repos = reflections.getTypesAnnotatedWith(Repository.class);
 
-        controllers.stream().forEach(controller -> logger.info("[controller] : {}", controller));
-        services.stream().forEach(service -> logger.info("[service] : {}", service));
-        repos.stream().forEach(repo -> logger.info("[repository] : {}", repo));
+        controllers.forEach(controller -> logger.info("[controller] : {}", controller));
+        services.forEach(service -> logger.info("[service] : {}", service));
+        repos.forEach(repo -> logger.info("[repository] : {}", repo));
     }
 }

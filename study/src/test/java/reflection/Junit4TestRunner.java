@@ -19,7 +19,7 @@ public class Junit4TestRunner {
 
         Arrays.stream(methods)
                 .filter(method -> method.isAnnotationPresent(MyTest.class))
-                .forEach(method -> invoke(method));
+                .forEach(this::invoke);
     }
 
     private void invoke(Method method) {

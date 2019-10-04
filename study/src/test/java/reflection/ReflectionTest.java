@@ -4,11 +4,12 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.awt.*;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.Date;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class ReflectionTest {
     private static final Logger logger = LoggerFactory.getLogger(ReflectionTest.class);
@@ -62,7 +63,8 @@ public class ReflectionTest {
             name.set(student, "pobi");
             age.set(student, 20);
 
-            logger.info("[student] : {}", student.toString());
+            assertThat(student.getName()).isEqualTo("pobi");
+            assertThat(student.getAge()).isEqualTo(20);
         } catch (NoSuchFieldException | IllegalAccessException e) {
             logger.error(e.getMessage());
         }
