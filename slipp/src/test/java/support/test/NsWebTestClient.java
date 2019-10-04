@@ -1,10 +1,14 @@
 package support.test;
 
+import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.EntityExchangeResult;
 import org.springframework.test.web.reactive.server.WebTestClient;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.web.reactive.function.BodyInserters;
 import reactor.core.publisher.Mono;
 
 import java.net.URI;
+import java.util.Map;
 
 import static org.springframework.web.reactive.function.client.ExchangeFilterFunctions.basicAuthentication;
 
@@ -75,5 +79,24 @@ public class NsWebTestClient {
 
     public static NsWebTestClient of(String baseUrl, int port) {
         return new NsWebTestClient(baseUrl, port);
+    }
+
+    public URI postForm(String url, Map<String, String> params) {
+        BodyInserters.FormInserter<String> body = BodyInserters.fromFormData("", "");
+        for (String key : params.keySet()) {
+            body.with(key, params.get(key));
+        }
+
+        EntityExchangeResult<byte[]> response = testClientBuilder.build()
+            .post()
+            .uri(url)
+            .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+            .body(body)
+            .exchange()
+            .expectStatus()
+            .is3xxRedirection()
+            .expectBody()
+            .returnResult();
+        return response.getResponseHeaders().getLocation();
     }
 }
