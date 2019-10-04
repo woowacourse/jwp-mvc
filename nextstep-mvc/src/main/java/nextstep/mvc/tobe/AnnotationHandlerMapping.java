@@ -19,14 +19,10 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger logger = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
-    private Object[] basePackage;
     private ComponentScanner componentScanner;
-
     private Map<HandlerKey, HandlerExecution> handlerExecutions = Maps.newHashMap();
 
     public AnnotationHandlerMapping(Object... basePackage) {
-        this.basePackage = basePackage;
-
         this.componentScanner = ComponentScanner.of(basePackage);
     }
 
@@ -45,16 +41,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         }
         Arrays.stream(methods)
                 .map(requestMethod -> new HandlerKey(mapping.value(), requestMethod))
-                .forEach(key -> handlerExecutions.put(key, executeController(method, getInstanceFromMethod(method))));
-    }
-
-    private Object getInstanceFromMethod(Method method) {
-        try {
-            return method.getDeclaringClass().getConstructor().newInstance();
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            logger.error("Error while registering controller methods", e);
-            throw new HandlerMappingException(e);
-        }
+                .forEach(key -> handlerExecutions.put(key, executeController(method, componentScanner.instanceFromMethod(method))));
     }
 
     private HandlerExecution executeController(Method method, Object instance) {
