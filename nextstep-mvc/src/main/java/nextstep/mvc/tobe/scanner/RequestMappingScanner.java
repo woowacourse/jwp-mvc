@@ -5,8 +5,6 @@ import nextstep.mvc.tobe.core.HandlerKey;
 import nextstep.web.annotation.RequestMapping;
 import org.reflections.Reflections;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
 import java.util.AbstractMap;
 import java.util.Arrays;
@@ -25,14 +23,8 @@ public class RequestMappingScanner {
     public List<Map.Entry<HandlerKey, HandlerExecution>> scan(Class<?> clazz, Object target) {
         return Arrays.stream(clazz.getDeclaredMethods())
                 .filter(method -> method.isAnnotationPresent(RequestMapping.class))
-                .filter(this::hasParamsTypeOfRequestAndResponse)
                 .flatMap(method -> getHandlerExecutionsEntry(target, method))
                 .collect(Collectors.toList());
-    }
-
-    private boolean hasParamsTypeOfRequestAndResponse(Method method) {
-        return Arrays.stream(method.getParameterTypes())
-                .allMatch(type -> type.equals(HttpServletRequest.class) || type.equals(HttpServletResponse.class));
     }
 
     private Stream<Map.Entry<HandlerKey, HandlerExecution>> getHandlerExecutionsEntry(Object target, Method method) {
