@@ -1,6 +1,5 @@
 package nextstep.mvc;
 
-import nextstep.mvc.tobe.Handler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,7 +35,7 @@ public class DispatcherServlet extends HttpServlet {
         logger.debug("Method : {}, Request URI : {}", req.getMethod(), req.getRequestURI());
 
         try {
-            Handler handler = findHandler(req);
+            Object handler = findHandler(req);
             String viewName = handler.execute(req, resp);
             move(viewName, req, resp);
         } catch (Exception e) {
@@ -45,7 +44,7 @@ public class DispatcherServlet extends HttpServlet {
         }
     }
 
-    private Handler findHandler(HttpServletRequest req) {
+    private Object findHandler(HttpServletRequest req) {
         return handlerMappings.stream()
                 .map(handlerMapping -> handlerMapping.getHandler(req))
                 .filter(Objects::nonNull)
