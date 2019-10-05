@@ -6,9 +6,6 @@ import nextstep.mvc.asis.Controller;
 import nextstep.mvc.asis.ForwardController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import slipp.asis.controller.CreateUserController;
-import slipp.asis.controller.HomeController;
-import slipp.asis.controller.LoginController;
 import slipp.asis.controller.LogoutController;
 import slipp.asis.controller.ProfileController;
 import slipp.asis.controller.UpdateFormUserController;
@@ -26,9 +23,9 @@ public class ManualHandlerMapping implements HandlerMapping {
     public void initialize() {
        // mappings.put("/", new HomeController());
         mappings.put("/users/form", new ForwardController("/user/form.jsp"));
-        mappings.put("/users/loginForm", new ForwardController("/user/login.jsp"));
+       // mappings.put("/users/loginForm", new ForwardController("/user/login.jsp"));
 //        mappings.put("/users", new ListUserController());
-        mappings.put("/users/login", new LoginController());
+       // mappings.put("/users/login", new LoginController());
         mappings.put("/users/profile", new ProfileController());
         mappings.put("/users/logout", new LogoutController());
        // mappings.put("/users/create", new CreateUserController());

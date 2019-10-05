@@ -73,6 +73,30 @@ public class NsWebTestClient {
                 .returnResult();
     }
 
+    public void responseOk(String url) {
+        testClientBuilder.build()
+            .get()
+            .uri(url)
+            .exchange()
+            .expectStatus()
+            .isOk();
+    }
+
+    public void postResponse(String url, Map<String, String> params) {
+        BodyInserters.FormInserter<String> body = BodyInserters.fromFormData("", "");
+        for (String key : params.keySet()) {
+            body.with(key, params.get(key));
+        }
+
+        testClientBuilder.build()
+            .post()
+            .uri(url)
+            .body(body)
+            .exchange()
+            .expectStatus()
+            .isOk();
+    }
+
     public static NsWebTestClient of(int port) {
         return of(BASE_URL, port);
     }
