@@ -32,7 +32,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         mapping.keySet().stream()
                 .flatMap(clazz -> Arrays.stream(clazz.getMethods()))
                 .filter(method -> method.isAnnotationPresent(RequestMapping.class))
-                .forEach(method -> putHandlerExecutions(method, mapping.get(method)));
+                .forEach(method -> putHandlerExecutions(method, mapping.get(method.getDeclaringClass())));
     }
 
     @Override
