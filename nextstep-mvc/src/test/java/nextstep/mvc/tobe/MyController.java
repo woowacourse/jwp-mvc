@@ -34,4 +34,19 @@ public class MyController {
         DataBase.addUser(user);
         return null;
     }
+
+    @RequestMapping(value = "/notnull", method = RequestMethod.POST)
+    public ModelAndView notNullTest(HttpServletRequest request, HttpServletResponse response) {
+        return new ModelAndView();
+    }
+
+    @RequestMapping(value = "/method", method = RequestMethod.POST)
+    public ModelAndView postMethod(HttpServletRequest request, HttpServletResponse response) {
+        return new ModelAndView();
+    }
+
+    @RequestMapping(value = "/method")
+    public ModelAndView emptyMethod(HttpServletRequest request, HttpServletResponse response) {
+        return new ModelAndView();
+    }
 }
