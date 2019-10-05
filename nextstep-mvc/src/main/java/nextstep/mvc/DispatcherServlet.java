@@ -1,8 +1,9 @@
 package nextstep.mvc;
 
+import nextstep.exception.NoSuchAdapterException;
 import nextstep.exception.NoSuchHandlerException;
-import nextstep.mvc.tobe.Handler;
-import nextstep.mvc.tobe.ViewResolver;
+import nextstep.mvc.tobe.ModelAndView;
+import nextstep.mvc.tobe.adapter.HandlerAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,7 +12,6 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -21,9 +21,11 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
     private List<HandlerMapping> mappings;
+    private List<HandlerAdapter> adapters;
 
-    public DispatcherServlet(HandlerMapping... mappings) {
-        this.mappings = Arrays.asList(mappings);
+    public DispatcherServlet(List<HandlerMapping> mappings, List<HandlerAdapter> adapters) {
+        this.mappings = mappings;
+        this.adapters = adapters;
     }
 
     @Override
@@ -34,22 +36,29 @@ public class DispatcherServlet extends HttpServlet {
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException {
         logger.debug("Method : {}, Request URI : {}", req.getMethod(), req.getRequestURI());
-        Handler handler = getHandler(req);
-
+        Object handler = getHandler(req);
+        HandlerAdapter handlerAdapter = getHandlerAdapter(handler);
         try {
-            Object view = handler.execute(req, resp);
-            new ViewResolver().resolve(view, req, resp);
+            ModelAndView mav = handlerAdapter.handle(req, resp, handler);
+            mav.render(req, resp);
         } catch (Throwable e) {
             logger.error("Exception : {}", e.getMessage());
             throw new ServletException(e.getMessage());
         }
     }
 
-    private Handler getHandler(HttpServletRequest req) {
+    private Object getHandler(HttpServletRequest req) {
         return mappings.stream()
                 .map(m -> m.getHandler(req))
                 .filter(Objects::nonNull)
                 .findFirst()
                 .orElseThrow(NoSuchHandlerException::new);
+    }
+
+    private HandlerAdapter getHandlerAdapter(Object handler) {
+        return adapters.stream()
+                .filter(a -> a.supports(handler))
+                .findFirst()
+                .orElseThrow(NoSuchAdapterException::new);
     }
 }
