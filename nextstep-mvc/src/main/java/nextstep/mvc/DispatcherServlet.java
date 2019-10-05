@@ -70,14 +70,12 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private void handleAnnotation(HttpServletRequest req, HttpServletResponse resp, HandlerExecution handler) throws Exception {
-        HandlerExecution handlerExecution = handler;
-        ModelAndView view = handlerExecution.handle(req, resp);
+        ModelAndView view = handler.handle(req, resp);
         view.render(req, resp);
     }
 
     private void handleLegacy(HttpServletRequest req, HttpServletResponse resp, Controller handler) throws Exception {
-        Controller controller = handler;
-        String viewName = controller.execute(req, resp);
+        String viewName = handler.execute(req, resp);
         move(viewName, req, resp);
     }
 
