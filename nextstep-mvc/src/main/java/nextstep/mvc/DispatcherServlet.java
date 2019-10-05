@@ -47,6 +47,6 @@ public class DispatcherServlet extends HttpServlet {
             }
         }
 
-        return new ModelAndView(new JspView("404"));
+        return new ModelAndView(new JspView("/404.jsp"));
     }
 }
