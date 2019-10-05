@@ -52,7 +52,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     @Override
     public HandlerExecution getHandler(HttpServletRequest request) {
         String uri = request.getRequestURI();
-        RequestMethod method = RequestMethod.of(request.getMethod());
+        RequestMethod method = RequestMethod.valueOf(request.getMethod());
 
         HandlerKey handlerKey = new HandlerKey(uri, method);
         if (handlerExecutions.containsKey(handlerKey)) {
