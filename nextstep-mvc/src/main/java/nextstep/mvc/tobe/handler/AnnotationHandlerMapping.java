@@ -20,8 +20,8 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     private static final Logger logger = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
     private Object[] basePackage;
-
     private Map<HandlerKey, HandlerExecution> handlerExecutions = Maps.newHashMap();
+    private Map<Class<?>, Object> instances = Maps.newHashMap();
 
     public AnnotationHandlerMapping(Object... basePackage) {
         this.basePackage = basePackage;
@@ -32,9 +32,18 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         Reflections reflections = new Reflections(basePackage);
         Set<Class<?>> clazz = reflections.getTypesAnnotatedWith(Controller.class);
         clazz.stream()
+                .peek(this::createInstance)
                 .flatMap(c -> Arrays.stream(c.getDeclaredMethods())
                         .filter(m -> m.isAnnotationPresent(RequestMapping.class)))
                 .forEach(this::createHandlerKey);
+    }
+
+    private void createInstance(Class<?> c) {
+        try {
+            instances.put(c, c.getDeclaredConstructor().newInstance());
+        } catch (Exception e) {
+            logger.error("error: {}", ExceptionUtils.getStackTrace(e));
+        }
     }
 
     private void createHandlerKey(Method method) {
@@ -45,10 +54,9 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         }
         String value = requestMapping.value();
         try {
-            Object methodDeclaringClass = method.getDeclaringClass().newInstance();
             for (RequestMethod m : methods) {
                 HandlerKey key = new HandlerKey(value, m);
-                handlerExecutions.put(key, new HandlerExecution(method, methodDeclaringClass));
+                handlerExecutions.put(key, new HandlerExecution(method, instances.get(method.getDeclaringClass())));
             }
         } catch (Exception e) {
             logger.error("error: {}", ExceptionUtils.getStackTrace(e));
