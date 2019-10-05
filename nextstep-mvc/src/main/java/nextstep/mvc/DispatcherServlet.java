@@ -2,8 +2,8 @@ package nextstep.mvc;
 
 import nextstep.exception.NoSuchAdapterException;
 import nextstep.exception.NoSuchHandlerException;
-import nextstep.mvc.tobe.ModelAndView;
 import nextstep.mvc.tobe.adapter.HandlerAdapter;
+import nextstep.mvc.tobe.view.ModelAndView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

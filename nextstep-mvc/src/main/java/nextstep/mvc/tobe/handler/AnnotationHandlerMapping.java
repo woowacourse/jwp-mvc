@@ -1,4 +1,4 @@
-package nextstep.mvc.tobe;
+package nextstep.mvc.tobe.handler;
 
 import com.google.common.collect.Maps;
 import nextstep.mvc.HandlerMapping;

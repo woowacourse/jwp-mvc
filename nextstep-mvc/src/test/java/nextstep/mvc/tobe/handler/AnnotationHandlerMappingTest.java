@@ -1,6 +1,7 @@
-package nextstep.mvc.tobe;
+package nextstep.mvc.tobe.handler;
 
 import nextstep.db.DataBase;
+import nextstep.mvc.tobe.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
