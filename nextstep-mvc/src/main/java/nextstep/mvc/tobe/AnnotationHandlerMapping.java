@@ -10,8 +10,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
 
 public class AnnotationHandlerMapping implements HandlerMapping {
     private Object[] basePackage;
@@ -23,30 +21,19 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     public void initialize() {
-        addController("/users", RequestMethod.POST);
-        addController("/users", RequestMethod.GET);
-        addController("/users/loginForm", RequestMethod.GET);
-        addController("/users/login", RequestMethod.POST);
-        addController("/users/logout", RequestMethod.GET);
+        ControllerScanner.scan(basePackage, Controller.class).forEach(controller ->
+                Arrays.stream(controller.getMethods())
+                        .filter(method -> method.isAnnotationPresent(RequestMapping.class))
+                        .forEach(method -> putHandlerExecution(controller, method))
+        );
     }
 
-    private void addController(String requestUrl, RequestMethod requestMethod) {
-        Set<Class<?>> controllers = ControllerScanner.scan(basePackage, Controller.class);
+    private void putHandlerExecution(Class<?> controller, Method method) {
+        RequestMapping annotation = method.getAnnotation(RequestMapping.class);
+        HandlerKey handlerKey = new HandlerKey(annotation.value(), annotation.method());
+        HandlerExecution handlerExecution = new HandlerExecution(controller, method);
 
-        for (Class<?> controller : controllers) {
-            Method[] methods = controller.getMethods();
-            matchRequest(methods, requestUrl, requestMethod).ifPresent(method -> handlerExecutions.put(
-                    new HandlerKey(requestUrl, requestMethod),
-                    new HandlerExecution(controller, method)));
-        }
-    }
-
-    private Optional<Method> matchRequest(Method[] methods, String requestUrl, RequestMethod requestMethod) {
-        return Arrays.stream(methods)
-                .filter(m -> m.isAnnotationPresent(RequestMapping.class)
-                        && m.getAnnotation(RequestMapping.class).method().equals(requestMethod)
-                        && m.getAnnotation(RequestMapping.class).value().equals(requestUrl))
-                .findAny();
+        handlerExecutions.put(handlerKey, handlerExecution);
     }
 
     @Override
