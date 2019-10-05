@@ -40,7 +40,7 @@ public class ManualHandlerMappingAdapter implements HandlerMapping {
                 return getModelAndView(viewName);
             } catch (Exception e) {
                 logger.error("Failed to getting handler", e);
-                throw new RuntimeException(e);
+                throw new ManualHandlerMappingException(req, e);
             }
         });
     }
