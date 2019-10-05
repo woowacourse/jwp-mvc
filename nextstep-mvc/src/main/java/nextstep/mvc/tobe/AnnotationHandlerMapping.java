@@ -4,12 +4,16 @@ import nextstep.mvc.HandlerMapping;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
 import org.reflections.Reflections;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
 import java.util.*;
 
 public class AnnotationHandlerMapping implements HandlerMapping {
+    private static final Logger logger = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
     private static final int EMPTY = 0;
 
     private final Object[] basePackage;
@@ -24,6 +28,9 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         new ComponentScan(new Reflections(basePackage))
                 .getRequestMappingAnnotationPresentMethod()
                 .forEach(this::registerHandler);
+
+        handlerExecutions.keySet()
+                .forEach(key -> logger.info("Path : {}, Controller : {}", key, handlerExecutions.get(key).getClass()));
     }
 
     private void registerHandler(Method method) {
@@ -40,7 +47,9 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     @Override
-    public HandlerExecution getHandler(final HttpServletRequest request) {
-        return handlerExecutions.get(new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod())));
+    public ModelAndView execute(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        return handlerExecutions
+                .get(new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod())))
+                .handle(request, response);
     }
 }
