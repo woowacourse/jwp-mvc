@@ -2,17 +2,16 @@ package nextstep.mvc.tobe;
 
 import com.google.common.collect.Maps;
 import nextstep.mvc.HandlerMapping;
+import nextstep.utils.ClassUtils;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
 import org.reflections.Reflections;
 
 import javax.servlet.http.HttpServletRequest;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class AnnotationHandlerMapping implements HandlerMapping {
@@ -26,20 +25,11 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     public void initialize() {
         for (Class<?> controllerReflection : collectControllerReflections()) {
-            Object controller = createController(controllerReflection);
+            Object controller = ClassUtils.classToInstance(controllerReflection);
 
             Stream.of(controllerReflection.getDeclaredMethods())
                     .filter(method -> method.isAnnotationPresent(RequestMapping.class))
                     .forEach(method -> addHandlerExecution(controller, method));
-        }
-    }
-
-    private Object createController(Class<?> controllerReflection) {
-        try {
-            return controllerReflection.getDeclaredConstructor().newInstance();
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            e.printStackTrace();
-            throw new RuntimeException();
         }
     }
 
