@@ -26,12 +26,21 @@
 ## TODO
 
 - [x] 미션 요구사항 1,2 구현
-- [ ] 리턴타입 ModelAndView, String 둘 다 가능하게 하기
-- [ ] ComponentScanner
-- [ ] HandlerAdapter
-- [ ] Controller 메소드 인자 매핑
+- [x] 리턴타입 ModelAndView, String 둘 다 가능하게 하기
+- [x] ComponentScanner
+- [x] HandlerAdapter
+- [x] Controller 메소드 인자 매핑 (java bean으로 매핑, PathVariable)
+     - [ ] 역할별로 클래스 분리하기
+     - [ ] 리팩토링하기
+     - [ ] 누락된 기능 추가하기 (누락된 매핑 등)
+     - [ ] 특정 기능들(형변환..) 재사용 가능하게 하기
+     - [ ] DispatcherServlet 에 적용하기
+- [ ] 성능 측정 ServletFilter 구현해보기
+- [ ] /users/{id} - url 요청 가능하게 하기   
 
-
+## 추가 미션
+- [ ] 다른 템플릿 엔진 지원하기
+- [ ] 인터셉터 구현하기
 
 새로운 컨트롤러 (RequestMapping 스캔 기반)은 controller2 패키지에 위치
 
@@ -40,3 +49,4 @@
 ### 질문
 
 - List<HandlerMapping> 도 포장하는 것이 좋을까? 
+- try-catch 는 필요한 부분만 묶는 것이 좋을까? 가독성을 위해서 전체를 묶는 것이 좋을까?
