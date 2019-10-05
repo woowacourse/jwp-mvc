@@ -5,18 +5,18 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ModelAndView {
-    private View view;
-    private Map<String, Object> model = new HashMap<String, Object>();
+    private Object view;
+    private Map<String, Object> model = new HashMap<>();
 
     public ModelAndView() {
     }
 
-    public ModelAndView(View view) {
+    public ModelAndView(final View view) {
         this.view = view;
     }
 
     public ModelAndView(final String viewName) {
-
+        this.view = viewName;
     }
 
     public ModelAndView addObject(String attributeName, Object attributeValue) {
@@ -33,6 +33,10 @@ public class ModelAndView {
     }
 
     public View getView() {
-        return view;
+        return view instanceof View ? (View) view : null;
+    }
+
+    public String getViewName() {
+        return view instanceof String ? (String) view : null;
     }
 }

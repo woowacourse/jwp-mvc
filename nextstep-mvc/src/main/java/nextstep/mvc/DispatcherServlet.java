@@ -1,6 +1,8 @@
 package nextstep.mvc;
 
+import nextstep.mvc.tobe.DefaultHandlerAdapter;
 import nextstep.mvc.tobe.Handler;
+import nextstep.mvc.tobe.HandlerAdapter;
 import nextstep.mvc.tobe.ModelAndView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,9 +25,11 @@ public class DispatcherServlet extends HttpServlet {
     private static final String DEFAULT_REDIRECT_PREFIX = "redirect:";
 
     private List<HandlerMapping> handlerMappings;
+    private List<HandlerAdapter> handlerAdapters;
 
     public DispatcherServlet(HandlerMapping... handlerMappings) {
         this.handlerMappings = Arrays.asList(handlerMappings);
+        this.handlerAdapters = Arrays.asList(new DefaultHandlerAdapter());
     }
 
     @Override
@@ -35,36 +39,36 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        logger.debug("Method : {}, Request URI : {}", req.getMethod(), req.getRequestURI());
-        // todo 404
-        final Handler handler = handlerMappings.stream()
-                .map(handlerMapping -> handlerMapping.getHandler(req))
-                .filter(Objects::nonNull)
-                .findFirst()
-                .orElseThrow(UnsupportedOperationException::new);
-
         try {
-            //todo HandlerAdapter
-            final Object viewName = handler.execute(req, resp);
-            logger.debug("viewName: {}, handler: {}", viewName, handler.getClass().getName());
-            if (viewName instanceof String) {
-                move(String.valueOf(viewName), req, resp);
-            } else if (viewName instanceof ModelAndView) {
-                throw new UnsupportedOperationException("not support ModelAndView yet");
-            }
-        } catch (Throwable e) {
-            logger.error("Exception : {}", e);
-            throw new ServletException(e.getMessage());
+            logger.debug("Method : {}, Request URI : {}", req.getMethod(), req.getRequestURI());
+            // todo 404
+            final Handler handler = handlerMappings.stream()
+                    .map(handlerMapping -> handlerMapping.getHandler(req))
+                    .filter(Objects::nonNull)
+                    .findFirst()
+                    .orElseThrow(UnsupportedOperationException::new);
+
+            // TODO Exception
+            final HandlerAdapter handlerAdapter = handlerAdapters.stream()
+                    .filter(adapter -> adapter.supports(handler))
+                    .findAny()
+                    .orElseThrow(UnsupportedOperationException::new);
+
+            final ModelAndView mav = handlerAdapter.handle(req, resp, handler);
+
+            // TODO ViewResolver (2단계)
+            move(mav, req, resp);
+        }catch (Exception e){
+            logger.error(e.getMessage());
         }
     }
 
-    private void move(String viewName, HttpServletRequest req, HttpServletResponse resp)
-            throws ServletException, IOException {
+    private void move(ModelAndView mav, HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        final String viewName = mav.getViewName();
         if (viewName.startsWith(DEFAULT_REDIRECT_PREFIX)) {
             resp.sendRedirect(viewName.substring(DEFAULT_REDIRECT_PREFIX.length()));
             return;
         }
-
         RequestDispatcher rd = req.getRequestDispatcher(viewName);
         rd.forward(req, resp);
     }

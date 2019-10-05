@@ -12,7 +12,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-//todo 나중에 레거시와 합칠 때 구현
 @Controller
 public class LoginController {
 
