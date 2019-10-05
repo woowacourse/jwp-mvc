@@ -9,9 +9,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class ControllerScanner {
     private static final Logger log = LoggerFactory.getLogger(ControllerScanner.class);
@@ -23,15 +22,12 @@ public class ControllerScanner {
     }
 
     public Map<HandlerKey, HandlerExecution> scan() {
-        Map<HandlerKey, HandlerExecution> handlerExecutions = new HashMap<>();
-        RequestMappingScanner requestMappingScanner = new RequestMappingScanner(reflections);
+        RequestMappingScanner requestMappingScanner = new RequestMappingScanner();
 
-        for (Class<?> clazz : reflections.getTypesAnnotatedWith(Controller.class)) {
-            Object target = getInstance(clazz);
-            putKeyAndValue(handlerExecutions, requestMappingScanner.scan(clazz, target));
-        }
+        Map<Class<?>, Object> collect = reflections.getTypesAnnotatedWith(Controller.class).stream()
+                .collect(Collectors.toMap(clazz -> clazz, this::getInstance));
 
-        return handlerExecutions;
+        return requestMappingScanner.scan(collect);
     }
 
     private Object getInstance(Class<?> clazz) {
@@ -40,12 +36,6 @@ public class ControllerScanner {
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             log.error(e.getMessage());
             throw new FailToComponentScanException(e.getMessage());
-        }
-    }
-
-    private void putKeyAndValue(Map<HandlerKey, HandlerExecution> handlers, List<Map.Entry<HandlerKey, HandlerExecution>> entries) {
-        for (Map.Entry<HandlerKey, HandlerExecution> entry : entries) {
-            handlers.put(entry.getKey(), entry.getValue());
         }
     }
 }
