@@ -5,6 +5,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.Arrays;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class ReflectionTest {
     private static final Logger logger = LoggerFactory.getLogger(ReflectionTest.class);
@@ -15,6 +20,20 @@ public class ReflectionTest {
         logger.debug(clazz.getName());
 
         // TODO Question 클래스의 모든 필드, 생성자, 메소드에 대한 정보를 출력한다.
+        logger.debug("Question 클래스의 모든 필드");
+        Arrays.stream(clazz.getDeclaredFields())
+                .map(Field::getName)
+                .forEach(logger::debug);
+
+        logger.debug("Question 클래스의 모든 생성자");
+        Arrays.stream(clazz.getDeclaredConstructors())
+                .map(Constructor::toString)
+                .forEach(logger::debug);
+
+        logger.debug("Question 클래스의 모든 메소드");
+        Arrays.stream(clazz.getDeclaredMethods())
+                .map(Method::getName)
+                .forEach(logger::debug);
     }
 
     @Test
@@ -31,13 +50,28 @@ public class ReflectionTest {
         }
 
         // TODO 인자를 가진 생성자를 활용해 인스턴스를 생성한다.
+        Constructor<Question> constructor = clazz.getDeclaredConstructor(String.class, String.class, String.class);
+        Question question = constructor.newInstance("writer", "title", "contents");
+        assertThat(question).isEqualTo(new Question("writer", "title", "contents"));
     }
 
     @Test
-    public void privateFieldAccess() {
+    public void privateFieldAccess() throws NoSuchFieldException, IllegalAccessException {
         Class<Student> clazz = Student.class;
         logger.debug(clazz.getName());
 
         // TODO Student private field에 값을 저장하고 조회한다.
+
+        Field nameField = clazz.getDeclaredField("name");
+        Field ageField = clazz.getDeclaredField("age");
+        nameField.setAccessible(true);
+        ageField.setAccessible(true);
+
+        Student student = new Student();
+        nameField.set(student, "재성");
+        ageField.set(student, 49);
+
+        assertThat(student.getName()).isEqualTo("재성");
+        assertThat(student.getAge()).isEqualTo(49);
     }
 }
