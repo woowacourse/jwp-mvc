@@ -8,19 +8,21 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Objects;
 
 public class AnnotationHandlerAdapter implements HandlerAdapter {
-    HandlerMapping annotationHandler;
+    private final HandlerMapping annotationHandlerMapping;
 
-    public AnnotationHandlerAdapter(HandlerMapping annotationHandler) {
-        this.annotationHandler = annotationHandler;
+    public AnnotationHandlerAdapter(HandlerMapping annotationHandlerMapping) {
+        annotationHandlerMapping.initialize();
+        this.annotationHandlerMapping = annotationHandlerMapping;
     }
 
     @Override
-    public boolean isSupported(HttpServletRequest req) {
-        return Objects.nonNull(annotationHandler.getHandler(req));
+    public boolean isSupported(HttpServletRequest request) {
+        return Objects.nonNull(annotationHandlerMapping.getHandler(request));
     }
 
     @Override
     public ModelAndView execute(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        return ((HandlerExecution) annotationHandler.getHandler(request)).handle(request, response);
+        HandlerExecution handler = (HandlerExecution) annotationHandlerMapping.getHandler(request);
+        return handler.handle(request, response);
     }
 }
