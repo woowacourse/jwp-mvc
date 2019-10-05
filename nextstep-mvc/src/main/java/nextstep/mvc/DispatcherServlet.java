@@ -1,6 +1,11 @@
 package nextstep.mvc;
 
 import nextstep.mvc.asis.Controller;
+import nextstep.mvc.tobe.HandlerMappingManager;
+import nextstep.mvc.tobe.ModelAndView;
+import nextstep.mvc.tobe.exception.BadRequestException;
+import nextstep.mvc.tobe.handlermapping.AnnotationHandlerMapping;
+import nextstep.mvc.tobe.handlermapping.HandlerExecution;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,6 +16,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 @WebServlet(name = "dispatcher", urlPatterns = "/", loadOnStartup = 1)
 public class DispatcherServlet extends HttpServlet {
@@ -18,15 +26,15 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger logger = LoggerFactory.getLogger(DispatcherServlet.class);
     private static final String DEFAULT_REDIRECT_PREFIX = "redirect:";
 
-    private HandlerMapping rm;
+    private final HandlerMappingManager handlerMappingManager;
 
-    public DispatcherServlet(HandlerMapping rm) {
-        this.rm = rm;
+    public DispatcherServlet(HandlerMapping... rm) {
+        handlerMappingManager = new HandlerMappingManager(Arrays.asList(rm));
     }
 
     @Override
     public void init() throws ServletException {
-        rm.initialize();
+        handlerMappingManager.initialize();
     }
 
     @Override
@@ -34,10 +42,17 @@ public class DispatcherServlet extends HttpServlet {
         String requestUri = req.getRequestURI();
         logger.debug("Method : {}, Request URI : {}", req.getMethod(), requestUri);
 
-        Controller controller = rm.getHandler(requestUri);
+        Object handler = handlerMappingManager.getHandler(req);
         try {
-            String viewName = controller.execute(req, resp);
-            move(viewName, req, resp);
+            if (handler instanceof Controller) {
+                String viewName = ((Controller) handler).execute(req, resp);
+                move(viewName, req, resp);
+            } else if (handler instanceof HandlerExecution) {
+                ModelAndView mv = ((HandlerExecution) handler).handle(req, resp);
+            } else {
+                logger.error("적절하지 않은 요청입니다. {}", req);
+                throw new BadRequestException();
+            }
         } catch (Throwable e) {
             logger.error("Exception : {}", e);
             throw new ServletException(e.getMessage());
