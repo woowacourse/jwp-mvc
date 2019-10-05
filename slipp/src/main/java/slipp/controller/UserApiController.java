@@ -3,6 +3,7 @@ package slipp.controller;
 import nextstep.mvc.tobe.JsonView;
 import nextstep.mvc.tobe.ModelAndView;
 import nextstep.utils.JsonUtils;
+import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
 import org.slf4j.Logger;
@@ -16,6 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.stream.Collectors;
 
+@Controller
 public class UserApiController {
 
     private static final Logger logger = LoggerFactory.getLogger(UserApiController.class);

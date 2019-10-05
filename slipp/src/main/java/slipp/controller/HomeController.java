@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 public class HomeController {
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
-    public ModelAndView showMainPage(HttpServletRequest req, HttpServletResponse resp) {
+    public ModelAndView mainPage(HttpServletRequest req, HttpServletResponse resp) {
         req.setAttribute("users", DataBase.findAll());
         return new ModelAndView(new JspView("home.jsp"));
     }

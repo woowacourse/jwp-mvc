@@ -4,7 +4,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 public class ModelAndView {
     private View view;
@@ -18,7 +17,9 @@ public class ModelAndView {
     }
 
     public void renderView(HttpServletRequest req, HttpServletResponse resp) throws Exception {
-        Objects.requireNonNull(view);
+        if (view == null) {
+            view = new TextView("");
+        }
         view.render(model, req, resp);
     }
 

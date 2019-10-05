@@ -57,6 +57,6 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     @Override
     public Optional<HandlerExecution> getHandler(HttpServletRequest request) {
-        return Optional.of(handlerExecutions.get(new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod()))));
+        return Optional.ofNullable(handlerExecutions.get(new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod()))));
     }
 }
