@@ -1,6 +1,7 @@
 package nextstep.mvc.tobe;
 
 import nextstep.db.DataBase;
+import nextstep.mvc.tobe.view.ModelAndView;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
@@ -32,6 +33,11 @@ public class MyController {
                 request.getParameter("email"));
         logger.debug("User : {}", user);
         DataBase.addUser(user);
+        return null;
+    }
+
+    @RequestMapping(value = "/sample")
+    public ModelAndView testForRequestMethod(HttpServletRequest request, HttpServletResponse response) {
         return null;
     }
 }

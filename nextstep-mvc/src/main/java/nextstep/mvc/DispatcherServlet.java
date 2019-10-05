@@ -1,6 +1,7 @@
 package nextstep.mvc;
 
-import nextstep.mvc.asis.Controller;
+import nextstep.mvc.tobe.core.RequestHandlers;
+import nextstep.mvc.tobe.view.ModelAndView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,35 +18,31 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger logger = LoggerFactory.getLogger(DispatcherServlet.class);
     private static final String DEFAULT_REDIRECT_PREFIX = "redirect:";
+    private RequestHandlers handlers;
 
-    private HandlerMapping rm;
-
-    public DispatcherServlet(HandlerMapping rm) {
-        this.rm = rm;
+    public DispatcherServlet(RequestHandlers handlers) {
+        this.handlers = handlers;
     }
 
     @Override
-    public void init() throws ServletException {
-        rm.initialize();
+    public void init() {
+        handlers.initialize();
     }
 
     @Override
-    protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String requestUri = req.getRequestURI();
-        logger.debug("Method : {}, Request URI : {}", req.getMethod(), requestUri);
-
-        Controller controller = rm.getHandler(requestUri);
+    protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException {
         try {
-            String viewName = controller.execute(req, resp);
-            move(viewName, req, resp);
-        } catch (Throwable e) {
-            logger.error("Exception : {}", e);
+            ModelAndView mv = handlers.handle(req, resp);
+            move(mv, req, resp);
+        } catch (Exception e) {
+            logger.error(e.getMessage());
             throw new ServletException(e.getMessage());
         }
     }
 
-    private void move(String viewName, HttpServletRequest req, HttpServletResponse resp)
+    private void move(ModelAndView mv, HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
+        String viewName = mv.getView().getViewName();
         if (viewName.startsWith(DEFAULT_REDIRECT_PREFIX)) {
             resp.sendRedirect(viewName.substring(DEFAULT_REDIRECT_PREFIX.length()));
             return;
