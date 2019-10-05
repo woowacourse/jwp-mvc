@@ -38,10 +38,22 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     private void handlerMapping(Method method, Object controller) {
         RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+        RequestMethod[] requestMethods = requestMapping.method();
 
-        Arrays.stream(requestMapping.method())
+        if (requestMethods.length != 0) {
+            handlerMappingForRequestMethod(requestMethods, method, controller, requestMapping);
+        } else {
+            handlerMappingForRequestMethod(RequestMethod.values(), method, controller, requestMapping);
+        }
+    }
+
+    private void handlerMappingForRequestMethod(RequestMethod[] requestMethods,
+                                                Method method,
+                                                Object controller,
+                                                RequestMapping requestMapping) {
+        Arrays.stream(requestMethods)
                 .forEach(requestMethod -> handlerExecutions.put(createHandlerKey(requestMapping.value(), requestMethod),
-                (request, response) -> (ModelAndView) method.invoke(controller, request, response)));
+                        (request, response) -> (ModelAndView) method.invoke(controller, request, response)));
     }
 
     private HandlerKey createHandlerKey(String url, RequestMethod requestMethod) {
