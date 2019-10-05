@@ -29,19 +29,24 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String requestUri = req.getRequestURI();
-        logger.debug("Method : {}, Request URI : {}", req.getMethod(), requestUri);
+        logger.debug("Method : {}, Request URI : {}", req.getMethod(), req.getRequestURI());
 
-        for (HandlerAdapter adapter : ha) {
+        ModelAndView modelAndView = getModelAndView(req, resp);
+        modelAndView.render(req, resp);
+    }
+
+    private ModelAndView getModelAndView(HttpServletRequest req, HttpServletResponse resp) {
+        for (HandlerAdapter adapter : handlerAdapters) {
             if (adapter.isSupported(req)) {
                 try {
-                    adapter.execute(req, resp);
+                    return adapter.execute(req, resp);
                 } catch (Exception e) {
                     logger.error(e.getMessage());
+                    throw new DispatcherServletException();
                 }
             }
         }
 
-        throw new IllegalArgumentException();
+        return new ModelAndView(new JspView("404"));
     }
 }
