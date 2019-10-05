@@ -1,7 +1,6 @@
 package nextstep.mvc;
 
-import nextstep.mvc.exception.HandlerNotFoundException;
-import nextstep.mvc.tobe.HandlerExecution;
+import nextstep.mvc.asis.Controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,8 +11,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.List;
-import java.util.Objects;
 
 @WebServlet(name = "dispatcher", urlPatterns = "/", loadOnStartup = 1)
 public class DispatcherServlet extends HttpServlet {
@@ -21,15 +18,15 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger logger = LoggerFactory.getLogger(DispatcherServlet.class);
     private static final String DEFAULT_REDIRECT_PREFIX = "redirect:";
 
-    private List<HandlerMapping> requestMappings;
+    private HandlerMapping rm;
 
-    public DispatcherServlet(List<HandlerMapping> requestMappings) {
-        this.requestMappings = requestMappings;
+    public DispatcherServlet(HandlerMapping rm) {
+        this.rm = rm;
     }
 
     @Override
     public void init() throws ServletException {
-        requestMappings.forEach(HandlerMapping::initialize);
+        rm.initialize();
     }
 
     @Override
@@ -37,24 +34,14 @@ public class DispatcherServlet extends HttpServlet {
         String requestUri = req.getRequestURI();
         logger.debug("Method : {}, Request URI : {}", req.getMethod(), requestUri);
 
+        Controller controller = (Controller) rm.getHandler(req);
         try {
-            String viewName = findHandler(req).execute(req, resp);
+            String viewName = controller.execute(req, resp);
             move(viewName, req, resp);
-        } catch (HandlerNotFoundException e) {
-            logger.error("Exception : {}", e);
-            resp.sendError(404);
         } catch (Throwable e) {
             logger.error("Exception : {}", e);
             throw new ServletException(e.getMessage());
         }
-    }
-
-    private HandlerExecution findHandler(HttpServletRequest req) {
-        return requestMappings.stream()
-                .map(requestMapping -> requestMapping.getHandler(req))
-                .filter(Objects::nonNull)
-                .findAny()
-                .orElseThrow(HandlerNotFoundException::new);
     }
 
     private void move(String viewName, HttpServletRequest req, HttpServletResponse resp)
