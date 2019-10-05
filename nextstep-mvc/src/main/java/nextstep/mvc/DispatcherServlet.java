@@ -1,5 +1,7 @@
 package nextstep.mvc;
 
+import nextstep.mvc.exception.HandlerAdapterNotSupportedException;
+import nextstep.mvc.exception.HandlerNotFoundException;
 import nextstep.mvc.tobe.DefaultHandlerAdapter;
 import nextstep.mvc.tobe.Handler;
 import nextstep.mvc.tobe.HandlerAdapter;
@@ -17,6 +19,9 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+
+import static javax.servlet.http.HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
+import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
 
 @WebServlet(name = "dispatcher", urlPatterns = "/", loadOnStartup = 1)
 public class DispatcherServlet extends HttpServlet {
@@ -41,25 +46,28 @@ public class DispatcherServlet extends HttpServlet {
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
             logger.debug("Method : {}, Request URI : {}", req.getMethod(), req.getRequestURI());
-            // todo 404
+
             final Handler handler = handlerMappings.stream()
                     .map(handlerMapping -> handlerMapping.getHandler(req))
                     .filter(Objects::nonNull)
                     .findFirst()
-                    .orElseThrow(UnsupportedOperationException::new);
+                    .orElseThrow(HandlerNotFoundException::new);
 
-            // TODO Exception
             final HandlerAdapter handlerAdapter = handlerAdapters.stream()
                     .filter(adapter -> adapter.supports(handler))
                     .findAny()
-                    .orElseThrow(UnsupportedOperationException::new);
+                    .orElseThrow(HandlerAdapterNotSupportedException::new);
 
             final ModelAndView mav = handlerAdapter.handle(req, resp, handler);
 
             // TODO ViewResolver (2단계)
             move(mav, req, resp);
-        }catch (Exception e){
+        } catch (HandlerNotFoundException e) {
+            logger.debug("not support uri: {} ", req.getRequestURI());
+            resp.sendError(SC_NOT_FOUND);
+        } catch (Exception e) {
             logger.error(e.getMessage());
+            resp.sendError(SC_INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
 
