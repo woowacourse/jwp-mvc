@@ -44,10 +44,8 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     private Set<Class<?>> collectControllerReflections() {
-        return Stream.of(basePackage)
-                .map(Reflections::new)
-                .flatMap(reflections -> reflections.getTypesAnnotatedWith(Controller.class).stream())
-                .collect(Collectors.toSet());
+        Reflections reflections = new Reflections(basePackage);
+        return reflections.getTypesAnnotatedWith(Controller.class);
     }
 
     private void addHandlerExecution(Object controller, Method method) {
