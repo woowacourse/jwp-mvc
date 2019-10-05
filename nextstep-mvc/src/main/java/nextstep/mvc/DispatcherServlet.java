@@ -40,38 +40,33 @@ public class DispatcherServlet extends HttpServlet {
         logger.debug("Method : {}, Request URI : {}", req.getMethod(), requestUri);
 
         try {
-            View view = getView(req, resp);
-            view.send(req, resp);
+            renderView(req, resp);
         } catch (Exception e) {
             logger.error("Exception : {}", e);
             throw new ServletException(e.getMessage());
         }
     }
 
-    private View getView(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    private void renderView(HttpServletRequest request, HttpServletResponse response) throws Exception {
         Execution execution = getHandler(request);
         if (execution == null) {
-            return new JspView("/err/404.jsp");
+            new JspView("/err/404.jsp").render(null, request, response);
+            return;
         }
-        Object view = execution.execute(request, response);
-        if (view instanceof String) {
-            return ViewResolver.resolve((String) view);
+        Object result = execution.execute(request, response);
+        if (result instanceof String) {
+            ViewResolver.resolve((String) result).render(null, request, response);
+            return;
         }
-        if (view instanceof ModelAndView) {
-            ModelAndView modelAndView = (ModelAndView) view;
-            return render(modelAndView, request, response);
-        }
-        return (View) view;
-    }
+        if (result instanceof ModelAndView) {
+            ModelAndView modelAndView = (ModelAndView) result;
+            Map<String, Object> model = modelAndView.getModel();
+            View view = modelAndView.getView();
 
-    private View render(ModelAndView modelAndView,
-                        HttpServletRequest request,
-                        HttpServletResponse response) throws Exception {
-        Map<String, Object> model = modelAndView.getModel();
-        View view = modelAndView.getView();
-
-        view.render(model, request, response);
-        return view;
+            view.render(model, request, response);
+            return;
+        }
+        throw new SecurityException("처리할 수 없는 형식입니다.");
     }
 
     private Execution getHandler(HttpServletRequest request) {

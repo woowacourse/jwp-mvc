@@ -9,9 +9,4 @@ public class JsonView implements View {
     public void render(Map<String, ?> model, HttpServletRequest request, HttpServletResponse response) throws Exception {
 
     }
-
-    @Override
-    public void send(HttpServletRequest request, HttpServletResponse response) throws Exception {
-
-    }
 }
