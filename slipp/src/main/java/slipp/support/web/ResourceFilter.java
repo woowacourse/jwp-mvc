@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-@WebFilter("/*")
+@WebFilter("/*") //컨트롤러를 탈 필요가 없는 애들 처리 mvc 프레임웤으로 요청을 보내지 않고 톰캣으로 바로 요청을 처리하겠다.
 public class ResourceFilter implements Filter {
     private static final Logger logger = LoggerFactory.getLogger(ResourceFilter.class);
     private static final List<String> resourcePrefixs = new ArrayList<>();

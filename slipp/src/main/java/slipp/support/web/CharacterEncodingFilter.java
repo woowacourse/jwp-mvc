@@ -4,7 +4,7 @@ import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;
 import java.io.IOException;
 
-@WebFilter("/*")
+@WebFilter("/*")//모든 요청 데이터를 UTF-8로 해라/ 안해주면 doFilter코드를 모든 곳에 넣어야한다. 한글 깨지는 문제 해결
 public class CharacterEncodingFilter implements Filter {
     private static final String DEFAULT_ENCODING = "UTF-8";
 
