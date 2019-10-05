@@ -19,16 +19,16 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger logger = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
-    private ComponentScanner componentScanner;
+    private RequestMappingScanner requestMappingScanner;
     private Map<HandlerKey, HandlerExecution> handlerExecutions = Maps.newHashMap();
 
     public AnnotationHandlerMapping(Object... basePackage) {
-        this.componentScanner = ComponentScanner.of(basePackage);
+        this.requestMappingScanner = new RequestMappingScanner(ComponentScanner.of(basePackage));
     }
 
     @Override
     public void initialize() {
-        Set<Method> methods = componentScanner.getRequestMappingMethods();
+        Set<Method> methods = requestMappingScanner.getRequestMappingMethods();
         logger.info("{} Controllers are added by Annotation.", methods.size());
         methods.forEach(this::mapControllerMethod);
     }
@@ -41,7 +41,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         }
         Arrays.stream(methods)
                 .map(requestMethod -> new HandlerKey(mapping.value(), requestMethod))
-                .forEach(key -> handlerExecutions.put(key, executeController(method, componentScanner.instanceFromMethod(method))));
+                .forEach(key -> handlerExecutions.put(key, executeController(method, requestMappingScanner.instanceFromMethod(method))));
     }
 
     private HandlerExecution executeController(Method method, Object instance) {
