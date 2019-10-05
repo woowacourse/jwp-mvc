@@ -3,6 +3,7 @@ package nextstep.mvc;
 import nextstep.mvc.asis.Controller;
 import nextstep.mvc.tobe.HandlerMappingManager;
 import nextstep.mvc.tobe.ModelAndView;
+import nextstep.mvc.tobe.View;
 import nextstep.mvc.tobe.exception.BadRequestException;
 import nextstep.mvc.tobe.handlermapping.AnnotationHandlerMapping;
 import nextstep.mvc.tobe.handlermapping.HandlerExecution;
@@ -19,6 +20,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 @WebServlet(name = "dispatcher", urlPatterns = "/", loadOnStartup = 1)
 public class DispatcherServlet extends HttpServlet {
@@ -48,7 +50,8 @@ public class DispatcherServlet extends HttpServlet {
                 String viewName = ((Controller) handler).execute(req, resp);
                 move(viewName, req, resp);
             } else if (handler instanceof HandlerExecution) {
-                ModelAndView mv = ((HandlerExecution) handler).handle(req, resp);
+                ModelAndView mav = ((HandlerExecution) handler).handle(req, resp);
+                render(mav, req, resp);
             } else {
                 logger.error("적절하지 않은 요청입니다. {}", req);
                 throw new BadRequestException();
@@ -68,5 +71,12 @@ public class DispatcherServlet extends HttpServlet {
 
         RequestDispatcher rd = req.getRequestDispatcher(viewName);
         rd.forward(req, resp);
+    }
+
+    private void render(ModelAndView mav, HttpServletRequest req, HttpServletResponse resp) throws Exception {
+        View view = mav.getView();
+        Map<String, Object> model = mav.getModel();
+
+        view.render(model, req, resp);
     }
 }
