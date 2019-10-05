@@ -1,5 +1,7 @@
 package slipp.controller;
 
+import nextstep.mvc.tobe.JspView;
+import nextstep.mvc.tobe.ModelAndView;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
@@ -11,12 +13,12 @@ import javax.servlet.http.HttpServletResponse;
 @Controller
 public class ListUserController {
     @RequestMapping(value = "/users", method = RequestMethod.GET)
-    public String listUser(HttpServletRequest req, HttpServletResponse resp) throws Exception {
+    public ModelAndView list(HttpServletRequest req, HttpServletResponse resp) throws Exception {
         if (!UserSessionUtils.isLogined(req.getSession())) {
-            return "redirect:/users/loginForm";
+            return new ModelAndView(new JspView("redirect:/users/loginForm"));
         }
 
         req.setAttribute("users", DataBase.findAll());
-        return "/user/list.jsp";
+        return new ModelAndView(new JspView("/user/list.jsp"));
     }
 }
