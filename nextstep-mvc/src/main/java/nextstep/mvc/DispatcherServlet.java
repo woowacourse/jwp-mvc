@@ -1,11 +1,10 @@
 package nextstep.mvc;
 
-import nextstep.mvc.asis.Controller;
+import nextstep.mvc.exception.HandlerAdapterNotFoundException;
 import nextstep.mvc.exception.HandlerNotFoundException;
-import nextstep.mvc.tobe.HandlerExecution;
-import nextstep.mvc.tobe.JspView;
+import nextstep.mvc.tobe.handleradapter.HandlerAdapter;
 import nextstep.mvc.tobe.ModelAndView;
-import nextstep.mvc.tobe.View;
+import nextstep.mvc.tobe.view.View;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,9 +23,11 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger logger = LoggerFactory.getLogger(DispatcherServlet.class);
 
     private List<HandlerMapping> requestMappings;
+    private List<HandlerAdapter> handlerAdapters;
 
-    public DispatcherServlet(List<HandlerMapping> requestMappings) {
+    public DispatcherServlet(List<HandlerMapping> requestMappings, List<HandlerAdapter> handlerAdapters) {
         this.requestMappings = requestMappings;
+        this.handlerAdapters = handlerAdapters;
     }
 
     @Override
@@ -40,34 +41,37 @@ public class DispatcherServlet extends HttpServlet {
         logger.debug("Method : {}, Request URI : {}", req.getMethod(), requestUri);
 
         try {
-            Object handler = getHandler(req);
-            ModelAndView modelAndView = handle(handler, req, resp);
-            View view = modelAndView.getView();
-            view.render(modelAndView.getModel(), req, resp);
+            ModelAndView modelAndView = handleRequest(req, resp);
+            render(modelAndView, req, resp);
         } catch (Throwable e) {
             logger.error("Exception : {}", e);
             throw new ServletException(e.getMessage());
         }
     }
 
-    private Object getHandler(HttpServletRequest req) {
+    private void render(ModelAndView modelAndView, HttpServletRequest req, HttpServletResponse resp) throws Exception {
+        View view = modelAndView.getView();
+        view.render(modelAndView.getModel(), req, resp);
+    }
+
+    private ModelAndView handleRequest(HttpServletRequest req, HttpServletResponse resp) throws Exception {
+        Object handler = findHandler(req);
+        HandlerAdapter handlerAdapter = findHandlerAdapter(handler);
+        return handlerAdapter.handle(handler, req, resp);
+    }
+
+    private Object findHandler(HttpServletRequest req) {
         return requestMappings.stream()
                 .map(requestMapping -> requestMapping.getHandler(req))
                 .filter(Objects::nonNull)
                 .findAny()
-                .orElseThrow(HandlerNotFoundException::new);
+                .orElseThrow(() -> new HandlerNotFoundException(req));
     }
 
-    private ModelAndView handle(Object handler, HttpServletRequest req, HttpServletResponse resp) throws Exception {
-        if (handler instanceof Controller) {
-            String viewName = ((Controller) handler).execute(req, resp);
-            return new ModelAndView(new JspView(viewName));
-        }
-
-        if (handler instanceof HandlerExecution) {
-            return ((HandlerExecution) handler).handle(req, resp);
-        }
-
-        throw new RuntimeException("HANDLE FAILED");
+    private HandlerAdapter findHandlerAdapter(Object handler) {
+        return handlerAdapters.stream()
+                .filter(ha -> ha.supports(handler))
+                .findAny()
+                .orElseThrow(HandlerAdapterNotFoundException::new);
     }
 }
