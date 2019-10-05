@@ -3,16 +3,21 @@ package nextstep.mvc.tobe;
 import nextstep.db.DataBase;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+
 public class AnnotationHandlerMappingTest {
+    private static final Logger LOGGER = LoggerFactory.getLogger(AnnotationHandlerMappingTest.class);
+
     private AnnotationHandlerMapping handlerMapping;
 
     @BeforeEach
-    public void setup() {
+    public void setup() throws InstantiationException, IllegalAccessException {
         handlerMapping = new AnnotationHandlerMapping("nextstep.mvc.tobe");
         handlerMapping.initialize();
     }
