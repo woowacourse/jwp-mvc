@@ -7,3 +7,13 @@
 
 ## 우아한테크코스 코드리뷰
 * [온라인 코드 리뷰 과정](https://github.com/woowacourse/woowacourse-docs/blob/master/maincourse/README.md)
+
+
+## To do
+1. Annotation Scan 하는 부분을 AnnotationHandlerMapping 클래스에서 분리, 별도의
+객체로 책임을 위임한다.
+
+2. Dispatcher Servlet 의 입장에서, ManualHandlerMapping 의 리턴 타입(Controller)과
+AnnotationHandlerMapping 의 리턴 타입(HandlerExecution)이 맞지 않아 분기문이 발생한다.
+이를 방지하기 위해 ControllerAdaptor 를 만들고, HandlerExecution 을 구현하도록 만든다.
+ManualHandlerMapping 은 Controller 가 아니라 ControllerAdaptor 를 리턴한다.

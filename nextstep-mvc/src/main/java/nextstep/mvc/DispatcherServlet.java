@@ -2,8 +2,9 @@ package nextstep.mvc;
 
 import nextstep.mvc.asis.Controller;
 import nextstep.mvc.tobe.HandlerExecution;
-import nextstep.mvc.tobe.HandlerNotExistException;
+import nextstep.mvc.tobe.exception.HandlerNotExistException;
 import nextstep.mvc.tobe.ModelAndView;
+import nextstep.mvc.tobe.exception.UnsupportedHandlerTypeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,7 +38,7 @@ public class DispatcherServlet extends HttpServlet {
         String requestUri = req.getRequestURI();
         logger.debug("Method : {}, Request URI : {}", req.getMethod(), requestUri);
 
-        Object handler = getHandler(req);
+        HandlerExecution handler = getHandler(req);
 
         try {
             handle(req, resp, handler);
@@ -47,7 +48,7 @@ public class DispatcherServlet extends HttpServlet {
         }
     }
 
-    private Object getHandler(HttpServletRequest req) {
+    private HandlerExecution getHandler(HttpServletRequest req) {
         return handlerMappings.stream()
             .filter(handlerMapping -> handlerMapping.getHandler(req) != null)
             .findFirst()
@@ -70,14 +71,12 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private void handleAnnotation(HttpServletRequest req, HttpServletResponse resp, HandlerExecution handler) throws Exception {
-        HandlerExecution handlerExecution = handler;
-        ModelAndView view = handlerExecution.handle(req, resp);
+        ModelAndView view = handler.handle(req, resp);
         view.render(req, resp);
     }
 
     private void handleLegacy(HttpServletRequest req, HttpServletResponse resp, Controller handler) throws Exception {
-        Controller controller = handler;
-        String viewName = controller.execute(req, resp);
+        String viewName = handler.execute(req, resp);
         move(viewName, req, resp);
     }
 
