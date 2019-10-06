@@ -36,17 +36,27 @@ public class MyController {
     }
 
     @RequestMapping(value = "/notnull", method = RequestMethod.POST)
-    public ModelAndView notNullTest(HttpServletRequest request, HttpServletResponse response) {
+    public ModelAndView returnNotNull(HttpServletRequest request, HttpServletResponse response) {
         return new ModelAndView();
     }
 
     @RequestMapping(value = "/method", method = RequestMethod.POST)
-    public ModelAndView postMethod(HttpServletRequest request, HttpServletResponse response) {
+    public ModelAndView handlePost(HttpServletRequest request, HttpServletResponse response) {
         return new ModelAndView();
     }
 
     @RequestMapping(value = "/method")
-    public ModelAndView emptyMethod(HttpServletRequest request, HttpServletResponse response) {
+    public ModelAndView cannotHandlePost(HttpServletRequest request, HttpServletResponse response) {
+        return new ModelAndView();
+    }
+
+    @RequestMapping(value = "/one-method", method = RequestMethod.POST)
+    public ModelAndView handleOneRequestMethod(HttpServletRequest request, HttpServletResponse response) {
+        return new ModelAndView();
+    }
+
+    @RequestMapping(value = "/all-method")
+    public ModelAndView handleAllRequestMethods(HttpServletRequest request, HttpServletResponse response) {
         return new ModelAndView();
     }
 }

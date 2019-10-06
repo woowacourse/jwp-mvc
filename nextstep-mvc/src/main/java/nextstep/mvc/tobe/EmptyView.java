@@ -14,6 +14,5 @@ public class EmptyView implements View {
 
     @Override
     public void render(Map<String, ?> model, HttpServletRequest request, HttpServletResponse response) {
-
     }
 }

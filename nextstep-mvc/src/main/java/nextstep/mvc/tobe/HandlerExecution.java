@@ -7,7 +7,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-public class HandlerExecution {
+public class HandlerExecution implements ServletRequestHandler {
     private Object instance;
     private Method method;
 
@@ -29,11 +29,10 @@ public class HandlerExecution {
         return method;
     }
 
-    public ModelAndView handle(HttpServletRequest request, HttpServletResponse response) throws InvocationTargetException, IllegalAccessException {
+    @Override
+    public ModelAndView execute(HttpServletRequest request, HttpServletResponse response) throws InvocationTargetException, IllegalAccessException {
         ModelAndView mv = (ModelAndView) method.invoke(instance, request, response);
-        if (mv == null) {
-            return new ModelAndView(new EmptyView());
-        }
-        return mv;
+
+        return mv == null ? new ModelAndView(new EmptyView()) : mv;
     }
 }
