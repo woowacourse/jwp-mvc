@@ -20,6 +20,8 @@ import java.util.List;
 
 @WebServlet(name = "dispatcher", urlPatterns = "/", loadOnStartup = 1)
 public class DispatcherServlet extends HttpServlet {
+    private static final int PAGE_NOT_FOUND = 404;
+    private static final int METHOD_NOT_ALLOWED = 405;
     private static final long serialVersionUID = 1L;
     private static final Logger logger = LoggerFactory.getLogger(DispatcherServlet.class);
 
@@ -52,7 +54,7 @@ public class DispatcherServlet extends HttpServlet {
 
     private void move404Page(HttpServletRequest req, HttpServletResponse resp) throws ServletException {
         try {
-            move(new ModelAndView(new ErrorView()), req, resp);
+            move(new ModelAndView(new ErrorView(PAGE_NOT_FOUND)), req, resp);
         } catch (Throwable e) {
             logger.error("Exception : {}", e.getMessage());
             throw new ServletException(e.getMessage());
@@ -67,11 +69,11 @@ public class DispatcherServlet extends HttpServlet {
         return ((HandlerExecution) handler).handle(req, resp);
     }
 
-    private Object getHandler(HttpServletRequest req) throws PageNotFoundException {
+    private Object getHandler(HttpServletRequest req) throws Exception {
         return getHandlerMapping(req).getHandler(req);
     }
 
-    private HandlerMapping getHandlerMapping(HttpServletRequest req) throws PageNotFoundException {
+    private HandlerMapping getHandlerMapping(HttpServletRequest req) throws Exception {
         return hms.stream()
                 .filter(hm -> hm.getHandler(req) != null)
                 .findFirst().orElseThrow(PageNotFoundException::new);
