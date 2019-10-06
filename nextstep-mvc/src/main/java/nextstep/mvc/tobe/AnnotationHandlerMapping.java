@@ -15,8 +15,9 @@ import java.util.stream.Collectors;
 
 public class AnnotationHandlerMapping implements HandlerMapping {
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
-    private Object[] basePackage;
+    private static final int EMPTY_METHODS = 0;;
 
+    private Object[] basePackage;
     private Map<HandlerKey, HandlerExecution> handlerExecutions = Maps.newHashMap();
 
     public AnnotationHandlerMapping(Object... basePackage) {
@@ -50,7 +51,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     private List<HandlerKey> createHandlerKeys(RequestMapping requestMapping) {
         RequestMethod[] requestMethods = requestMapping.method();
-        if (requestMethods.length == 0) {
+        if (requestMethods.length == EMPTY_METHODS) {
             requestMethods = RequestMethod.values();
         }
 

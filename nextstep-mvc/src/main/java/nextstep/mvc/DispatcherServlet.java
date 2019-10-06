@@ -42,7 +42,7 @@ public class DispatcherServlet extends HttpServlet {
 
         try {
             Object handler = getHandler(req);
-            move(getModelAndView(req, resp, handler).getViewName(), req, resp);
+            move(getModelAndView(req, resp, handler), req, resp);
         } catch (Throwable e) {
             logger.error("Exception : {}", e.getMessage());
             throw new ServletException(e.getMessage());
@@ -65,14 +65,8 @@ public class DispatcherServlet extends HttpServlet {
                 .getHandler(req);
     }
 
-    private void move(String viewName, HttpServletRequest req, HttpServletResponse resp)
-            throws ServletException, IOException {
-        if (viewName.startsWith(DEFAULT_REDIRECT_PREFIX)) {
-            resp.sendRedirect(viewName.substring(DEFAULT_REDIRECT_PREFIX.length()));
-            return;
-        }
-
-        RequestDispatcher rd = req.getRequestDispatcher(viewName);
-        rd.forward(req, resp);
+    private void move(ModelAndView modelAndView, HttpServletRequest req, HttpServletResponse resp)
+            throws Exception {
+        modelAndView.renderView(req, resp);
     }
 }
