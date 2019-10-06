@@ -14,6 +14,11 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class ReflectionTest {
+    private static final List<String> FIELD_NAMES = Arrays.asList("questionId", "writer", "title", "contents", "createdDate", "countOfComment");
+    private static final List<String> METHOD_NAMES = Arrays.asList("equals", "toString", "hashCode", "update", "getCountOfComment",
+            "getQuestionId", "getWriter", "getTitle", "getContents", "getTimeFromCreateDate", "getCreatedDate");
+
+
     private static final String FIELD_NAME = "name";
     private static final String FIELD_AGE = "age";
 
@@ -23,9 +28,8 @@ public class ReflectionTest {
     private static final long QUESTION_ID = 1L;
     private static final int CONTENT_OF_COMMENT = 10;
 
-
     private static final String NAME = "재성";
-    private static final int AGE = 50;
+    private static final int AGE = 28;
 
     private static final Logger logger = LoggerFactory.getLogger(ReflectionTest.class);
 
@@ -33,6 +37,9 @@ public class ReflectionTest {
     public void showClass() {
         Class<Question> clazz = Question.class;
         logger.debug(clazz.getName());
+        Arrays.stream(clazz.getDeclaredFields()).forEach(field -> assertThat(FIELD_NAMES.contains(field.getName())).isTrue());
+        assertThat(clazz.getDeclaredConstructors().length).isEqualTo(2);
+        Arrays.stream(clazz.getDeclaredMethods()).forEach(method -> METHOD_NAMES.contains(method.getName()));
 
         Arrays.stream(clazz.getDeclaredFields())
                 .forEach(field -> logger.debug("field : {}", field));
