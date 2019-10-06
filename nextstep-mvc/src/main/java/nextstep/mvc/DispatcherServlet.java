@@ -1,20 +1,20 @@
 package nextstep.mvc;
 
 import com.google.common.collect.Lists;
-import nextstep.HandlerAdapter;
 import nextstep.ControllerHandlerAdapter;
+import nextstep.HandlerAdapter;
+import nextstep.exception.PageNotFoundException;
+import nextstep.mvc.tobe.ErrorView;
 import nextstep.mvc.tobe.HandlerExecution;
 import nextstep.mvc.tobe.ModelAndView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -42,6 +42,17 @@ public class DispatcherServlet extends HttpServlet {
         try {
             Object handler = getHandler(req);
             move(getModelAndView(req, resp, handler), req, resp);
+        } catch (PageNotFoundException e) {
+            move404Page(req, resp);
+        } catch (Throwable e) {
+            logger.error("Exception : {}", e.getMessage());
+            throw new ServletException(e.getMessage());
+        }
+    }
+
+    private void move404Page(HttpServletRequest req, HttpServletResponse resp) throws ServletException {
+        try {
+            move(new ModelAndView(new ErrorView()), req, resp);
         } catch (Throwable e) {
             logger.error("Exception : {}", e.getMessage());
             throw new ServletException(e.getMessage());
@@ -56,12 +67,14 @@ public class DispatcherServlet extends HttpServlet {
         return ((HandlerExecution) handler).handle(req, resp);
     }
 
-    private Object getHandler(HttpServletRequest req) {
+    private Object getHandler(HttpServletRequest req) throws PageNotFoundException {
+        return getHandlerMapping(req).getHandler(req);
+    }
+
+    private HandlerMapping getHandlerMapping(HttpServletRequest req) throws PageNotFoundException {
         return hms.stream()
                 .filter(hm -> hm.getHandler(req) != null)
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("URL이 없습니다."))
-                .getHandler(req);
+                .findFirst().orElseThrow(PageNotFoundException::new);
     }
 
     private void move(ModelAndView modelAndView, HttpServletRequest req, HttpServletResponse resp)
