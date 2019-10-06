@@ -1,16 +1,17 @@
 package nextstep.mvc.tobe;
 
 import com.google.common.collect.Maps;
+import nextstep.mvc.scanner.ControllerScanner;
+import nextstep.mvc.scanner.RequestMappingScanner;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Map;
+import java.util.Set;
 
 public class AnnotationHandlerMapping {
 
@@ -22,39 +23,36 @@ public class AnnotationHandlerMapping {
         this.basePackage = basePackage;
     }
 
-    public void initialize()  {
+    public void initialize() {
+        ControllerScanner controllerScanner = new ControllerScanner(basePackage);
 
+        for (Map.Entry<Class<?>, Object> entry : controllerScanner.getInstanceOfClazz().entrySet()) {
+            Class clazz = entry.getKey();
+            Object instance = entry.getValue();
 
+            RequestMappingScanner requestMappingScanner = new RequestMappingScanner(clazz);
+            Set<Method> methods = requestMappingScanner.getMethods();
+            putExecutionsByMethod(instance, methods);
+        }
     }
 
-    private HandlerKey makeHandlerKey(Method method) throws InvocationTargetException, IllegalAccessException {
-        Annotation annotation = method.getAnnotation(RequestMapping.class);
-
-        Class<? extends Annotation> type = annotation.annotationType();
-
-        // value, method
-        String value = null;
-        RequestMethod[] methods = null;
-        for (Method annotationMethod : type.getDeclaredMethods()) {
-            if ("value".equals(annotationMethod.getName())) {
-                value = (String) annotationMethod.invoke(annotation);
-            } else if ("method".equals(annotationMethod.getName())) {
-                methods = (RequestMethod[]) annotationMethod.invoke(annotation);
-            }
+    private void putExecutionsByMethod(final Object instance, final Set<Method> methods) {
+        for (Method method : methods) {
+            RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+            putHandlerExecutions(instance, method, requestMapping);
         }
-        RequestMethod requestMethod = (methods == null) ? null : methods[0];
-        return new HandlerKey(value, requestMethod);
+    }
+
+    private void putHandlerExecutions(final Object instance, final Method method, final RequestMapping requestMapping) {
+        for (RequestMethod requestMethod : requestMapping.method()) {
+            HandlerKey handlerKey = new HandlerKey(requestMapping.value(), requestMethod);
+            handlerExecutions.put(handlerKey, new HandlerExecution(instance, method));
+        }
     }
 
     public HandlerExecution getHandler(HttpServletRequest request) {
         log.debug("URI: {}", request.getRequestURI());
         HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod()));
-
-        if (handlerExecutions.containsKey(handlerKey)) {
-            return handlerExecutions.get(handlerKey);
-        }
-
-        HandlerKey emptyMethodHandlerKey = new HandlerKey(request.getRequestURI(), null);
-        return handlerExecutions.get(emptyMethodHandlerKey);
+        return handlerExecutions.get(handlerKey);
     }
 }
