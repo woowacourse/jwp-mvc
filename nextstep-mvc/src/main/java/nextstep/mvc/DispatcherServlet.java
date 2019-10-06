@@ -1,15 +1,15 @@
 package nextstep.mvc;
 
+import nextstep.mvc.tobe.handleradapter.HandlerAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -21,13 +21,14 @@ public class DispatcherServlet extends HttpServlet {
 
     private List<HandlerMapping> handlerMappings;
 
-    public DispatcherServlet(List<HandlerMapping> handlerMappings) {
-        this.handlerMappings = handlerMappings;
+    public DispatcherServlet(HandlerMapping... handlerMappings) {
+        this.handlerMappings = Arrays.asList(handlerMappings);
     }
 
     @Override
     public void init() {
         handlerMappings.forEach(HandlerMapping::initialize);
+
     }
 
     @Override
@@ -36,7 +37,6 @@ public class DispatcherServlet extends HttpServlet {
 
         try {
             Object handler = findHandler(req);
-            String viewName = handler.execute(req, resp);
         } catch (Exception e) {
             logger.error("Exception : {}", e);
             e.printStackTrace();
