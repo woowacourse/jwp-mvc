@@ -1,4 +1,4 @@
-package nextstep.mvc.tobe;
+package nextstep.exception;
 
 public class ObjectMapperException extends RuntimeException {
     public ObjectMapperException() {
