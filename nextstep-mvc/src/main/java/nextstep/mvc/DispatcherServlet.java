@@ -1,8 +1,8 @@
 package nextstep.mvc;
 
 import com.google.common.collect.Lists;
-import nextstep.mvc.asis.Controller;
-import nextstep.mvc.tobe.AnnotationHandlerMapping;
+import nextstep.HandlerAdapter;
+import nextstep.ControllerHandlerAdapter;
 import nextstep.mvc.tobe.HandlerExecution;
 import nextstep.mvc.tobe.ModelAndView;
 import org.slf4j.Logger;
@@ -42,20 +42,19 @@ public class DispatcherServlet extends HttpServlet {
 
         try {
             Object handler = getHandler(req);
-            if (handler instanceof HandlerExecution) {
-                ModelAndView modelAndView = ((HandlerExecution) handler).handle(req, resp);
-                String name = modelAndView.getViewName();
-                move(name, req, resp);
-            } else if (handler instanceof Controller) {
-                String viewName = ((Controller) handler).execute(req, resp);
-                move(viewName, req, resp);
-            } else {
-                resp.setStatus(404);
-            }
+            move(getModelAndView(req, resp, handler).getViewName(), req, resp);
         } catch (Throwable e) {
             logger.error("Exception : {}", e.getMessage());
             throw new ServletException(e.getMessage());
         }
+    }
+
+    private ModelAndView getModelAndView(HttpServletRequest req, HttpServletResponse resp, Object handler) throws Exception {
+        HandlerAdapter handlerAdapter = new ControllerHandlerAdapter();
+        if (handlerAdapter.supports(handler)) {
+            return handlerAdapter.handle(req, resp, handler);
+        }
+        return ((HandlerExecution) handler).handle(req, resp);
     }
 
     private Object getHandler(HttpServletRequest req) {
