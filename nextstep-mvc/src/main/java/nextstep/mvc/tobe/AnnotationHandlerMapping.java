@@ -1,6 +1,7 @@
 package nextstep.mvc.tobe;
 
 import com.google.common.collect.Maps;
+import nextstep.mvc.NotSupportedHandlerMethod;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
 import org.reflections.ReflectionUtils;
@@ -36,9 +37,10 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     @Override
     public HandlerExecution getHandler(HttpServletRequest request) {
         String url = request.getRequestURI();
-        RequestMethod[] requestMethod = {RequestMethod.valueOf(request.getMethod())};
+        RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
 
-        return handlerExecutions.get(new HandlerKey(url, requestMethod));
+        HandlerKey handlerKey = findHandlerKey(url, requestMethod);
+        return handlerExecutions.get(handlerKey);
     }
 
     private ControllerScan scanController() {
@@ -65,5 +67,12 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     private HandlerKey createHandlerKey(RequestMapping rm) {
         return new HandlerKey(rm.value(), rm.method());
+    }
+
+    private HandlerKey findHandlerKey(String url, RequestMethod requestMethod) {
+        return handlerExecutions.keySet().stream()
+                .filter(hk -> hk.isUrl(url))
+                .filter(hk -> hk.containsMethodType(requestMethod))
+                .findFirst().orElseThrow(NotSupportedHandlerMethod::new);
     }
 }
