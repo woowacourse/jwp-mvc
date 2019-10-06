@@ -13,7 +13,7 @@ public class HandlerExecution {
         this.method = method;
     }
 
-    public String execute(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        return (String) method.invoke(handler, request, response);
+    public Object execute(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        return method.invoke(handler, request, response);
     }
 }

@@ -15,6 +15,12 @@ public class RequestMappingHandlerAdapter implements HandlerAdapter {
 
     @Override
     public ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        return new ModelAndView(((HandlerExecution) handler).execute(request, response));
+        Object returnValue = ((HandlerExecution) handler).execute(request, response);
+
+        if (returnValue instanceof String) {
+            return new ModelAndView((String) returnValue);
+        }
+
+        return (ModelAndView) returnValue;
     }
 }
