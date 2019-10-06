@@ -19,6 +19,7 @@ import java.util.List;
 
 @WebServlet(name = "dispatcher", urlPatterns = "/", loadOnStartup = 1)
 public class DispatcherServlet extends HttpServlet {
+    private static final int STATUS_CODE_FORBIDDEN = 405;
     private static final long serialVersionUID = 1L;
     private static final Logger logger = LoggerFactory.getLogger(DispatcherServlet.class);
 
@@ -47,7 +48,7 @@ public class DispatcherServlet extends HttpServlet {
             view.render(modelAndView.getModel(), req, resp);
         } catch (Exception e) {
             logger.error("Exception : {}", e.getMessage());
-            resp.setStatus(404);
+            resp.setStatus(STATUS_CODE_FORBIDDEN);
         }
     }
 

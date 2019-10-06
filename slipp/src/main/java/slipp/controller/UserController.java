@@ -13,6 +13,7 @@ import slipp.support.db.DataBase;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Optional;
 
 @Controller
 public class UserController {
@@ -31,16 +32,14 @@ public class UserController {
     @RequestMapping(value = "/users/profile", method = RequestMethod.GET)
     public ModelAndView profile(HttpServletRequest req, HttpServletResponse resp) throws Exception {
         String userId = req.getParameter("userId");
-        User user = DataBase.findUserById(userId);
-        if (user == null) {
-            throw new NullPointerException("사용자를 찾을 수 없습니다.");
-        }
+        User user = Optional.ofNullable(DataBase.findUserById(userId))
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
         req.setAttribute("user", user);
         return new ModelAndView(new JspView("/user/profile.jsp"));
     }
 
     @RequestMapping(value = "/users", method = RequestMethod.GET)
-    public ModelAndView userList(HttpServletRequest req, HttpServletResponse resp) throws Exception {
+    public ModelAndView showUserList(HttpServletRequest req, HttpServletResponse resp) throws Exception {
         if (!UserSessionUtils.isLogined(req.getSession())) {
             return new ModelAndView(new RedirectView("redirect:/users/loginForm"));
         }
