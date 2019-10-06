@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 @WebServlet(name = "dispatcher", urlPatterns = "/", loadOnStartup = 1)
 public class DispatcherServlet extends HttpServlet {
@@ -23,23 +24,14 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger logger = LoggerFactory.getLogger(DispatcherServlet.class);
     private static final String DEFAULT_REDIRECT_PREFIX = "redirect:";
 
-    private HandlerMapping manualHandlerMapping;
-    private HandlerMapping annotationHandlerMapping;
-
     private List<HandlerMapping> handlerMappings;
 
     public DispatcherServlet(HandlerMapping manualHandlerMapping, AnnotationHandlerMapping annotationHandlerMapping) {
-        this.manualHandlerMapping = manualHandlerMapping;
-        this.annotationHandlerMapping = annotationHandlerMapping;
-
         handlerMappings = Arrays.asList(manualHandlerMapping, annotationHandlerMapping);
     }
 
     @Override
     public void init() {
-        manualHandlerMapping.initialize();
-        annotationHandlerMapping.initialize();
-
         for (HandlerMapping handlerMapping : handlerMappings) {
             handlerMapping.initialize();
         }
@@ -51,10 +43,11 @@ public class DispatcherServlet extends HttpServlet {
         logger.debug("Method : {}, Request URI : {}", req.getMethod(), requestUri);
 
         HandlerMapping handler = handlerMappings.stream()
-                .filter(handlerMapping -> handlerMapping.getHandler(req) != null)
+                .filter(handlerMapping -> Objects.nonNull(handlerMapping.getHandler(req)))
                 .findFirst().orElseThrow(NotSupportedHandlerMethod::new);
 
         HandlerExecution handlerExecution = handler.getHandler(req);
+
         try {
             ModelAndView mav = handlerExecution.handle(req, resp);
             mav.getView().render(mav.getModel(), req, resp);

@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 public class ManualHandlerMappingAdapter implements HandlerMapping {
     private LegacyHandlerMapping handlerMapping;
 
-    public ManualHandlerMappingAdapter(LegacyHandlerMapping handlerMapping) {
+    ManualHandlerMappingAdapter(LegacyHandlerMapping handlerMapping) {
         this.handlerMapping = handlerMapping;
     }
 
