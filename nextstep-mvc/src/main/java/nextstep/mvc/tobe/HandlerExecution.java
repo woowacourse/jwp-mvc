@@ -11,8 +11,8 @@ public class HandlerExecution {
     private Object instance;
     private Method method;
 
-    public HandlerExecution(Class clazz, Method method) {
-        this.instance = getInstance(clazz);
+    public HandlerExecution(Method method) {
+        this.instance = getInstance(method.getDeclaringClass());
         this.method = method;
     }
 
