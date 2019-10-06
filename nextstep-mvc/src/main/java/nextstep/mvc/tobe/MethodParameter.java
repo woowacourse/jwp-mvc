@@ -1,5 +1,8 @@
 package nextstep.mvc.tobe;
 
+import nextstep.web.annotation.PathVariable;
+
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Parameter;
 import java.util.Objects;
 
@@ -12,6 +15,10 @@ public class MethodParameter {
         this.parameter = parameter;
         this.name = name;
         this.index = index;
+    }
+
+    public boolean isAnnotationPresent(final Class<? extends Annotation> annotation) {
+        return parameter.isAnnotationPresent(annotation);
     }
 
     public Parameter getParameter() {
