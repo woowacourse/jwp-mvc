@@ -1,6 +1,7 @@
 package nextstep.mvc.tobe;
 
 import nextstep.db.DataBase;
+import nextstep.mvc.tobe.view.ModelAndView;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
@@ -26,10 +27,10 @@ public class MyController {
     @RequestMapping(value = "/users", method = RequestMethod.POST)
     public ModelAndView save(HttpServletRequest request, HttpServletResponse response) {
         User user = new User(
-                request.getParameter("userId"),
-                request.getParameter("password"),
-                request.getParameter("name"),
-                request.getParameter("email"));
+            request.getParameter("userId"),
+            request.getParameter("password"),
+            request.getParameter("name"),
+            request.getParameter("email"));
         logger.debug("User : {}", user);
         DataBase.addUser(user);
         return null;

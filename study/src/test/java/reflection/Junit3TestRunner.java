@@ -3,7 +3,6 @@ package reflection;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Method;
-import java.util.Arrays;
 
 public class Junit3TestRunner {
 
@@ -15,7 +14,7 @@ public class Junit3TestRunner {
         Object obj = clazz.getDeclaredConstructor().newInstance();
 
         for (Method method : methods) {
-            if (method.getName().indexOf("test")==0){
+            if (method.getName().indexOf("test") == 0) {
                 method.invoke(obj);
             }
         }

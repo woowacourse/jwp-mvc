@@ -1,5 +1,6 @@
 package nextstep.mvc.tobe;
 
+import nextstep.mvc.tobe.view.ModelAndView;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,8 +43,8 @@ public class HandlerMethodArgumentResolverTest {
 
     private Method getMethod(String name, Method[] methods) {
         return Arrays.stream(methods)
-                .filter(method -> method.getName().equals(name))
-                .findFirst()
-                .get();
+            .filter(method -> method.getName().equals(name))
+            .findFirst()
+            .get();
     }
 }
