@@ -10,7 +10,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpSession;
 import java.util.Map;
 
-public class DispatcherTest {
+public class DispatcherTestHelper {
     private static final String URL_DELIMITER = "\\?";
     private static final String QUERY_DELIMITER = "&";
     private static final String KEY_VALUE_DELIMITER = "=";
@@ -20,7 +20,7 @@ public class DispatcherTest {
     private MockHttpServletRequest request;
     private MockHttpServletResponse response;
 
-    public DispatcherTest() {
+    public DispatcherTestHelper() {
         dispatcher = new DispatcherServlet(new ManualHandlerMapping(), new AnnotationHandlerMapping("slipp"));
         dispatcher.init();
 
@@ -28,7 +28,7 @@ public class DispatcherTest {
         response = new MockHttpServletResponse();
     }
 
-    public DispatcherTest get(String url) {
+    public DispatcherTestHelper get(String url) {
         request.setRequestURI(getPath(url));
         request.setMethod(RequestMethod.GET.name());
         return this;
@@ -49,7 +49,7 @@ public class DispatcherTest {
         }
     }
 
-    public DispatcherTest post(String path, Map<String, String> body) {
+    public DispatcherTestHelper post(String path, Map<String, String> body) {
         request.setRequestURI(path);
         request.setMethod(RequestMethod.POST.name());
         setBody(body);
@@ -64,7 +64,7 @@ public class DispatcherTest {
         return request.getSession();
     }
 
-    public DispatcherTest setSession(HttpSession session) {
+    public DispatcherTestHelper setSession(HttpSession session) {
         request.setSession(session);
         return this;
     }

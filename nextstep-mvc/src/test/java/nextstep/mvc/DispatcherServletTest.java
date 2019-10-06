@@ -10,11 +10,11 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class DispatcherServletTest {
-    private DispatcherTest dispatcherTest;
+    private DispatcherTestHelper dispatcherTestHelper;
 
     @BeforeEach
     void setUp() {
-        dispatcherTest = new DispatcherTest();
+        dispatcherTestHelper = new DispatcherTestHelper();
     }
 
     @Test
@@ -23,14 +23,14 @@ class DispatcherServletTest {
         body.put("userId", "admin");
         body.put("password", "password");
 
-        dispatcherTest.post("/users/create", body).service();
-        assertThat(dispatcherTest.getResponse().getRedirectedUrl()).isEqualTo("/");
+        dispatcherTestHelper.post("/users/create", body).service();
+        assertThat(dispatcherTestHelper.getResponse().getRedirectedUrl()).isEqualTo("/");
     }
 
     @Test
     void 유저프로필_조회() throws ServletException {
-        dispatcherTest.get("/users/profile?userId=admin").service();
-        assertThat(dispatcherTest.getResponse().getForwardedUrl()).isEqualTo("/user/profile.jsp");
+        dispatcherTestHelper.get("/users/profile?userId=admin").service();
+        assertThat(dispatcherTestHelper.getResponse().getForwardedUrl()).isEqualTo("/user/profile.jsp");
     }
 
     @Test
@@ -39,13 +39,13 @@ class DispatcherServletTest {
         body.put("userId", "admin");
         body.put("password", "password");
 
-        DispatcherTest loginDispatcher = new DispatcherTest();
+        DispatcherTestHelper loginDispatcher = new DispatcherTestHelper();
         loginDispatcher.post("/users/login", body).service();
 
-        dispatcherTest.get("/users")
+        dispatcherTestHelper.get("/users")
                 .setSession(loginDispatcher.getSession())
                 .service();
 
-        assertThat(dispatcherTest.getResponse().getForwardedUrl()).isEqualTo("/user/list.jsp");
+        assertThat(dispatcherTestHelper.getResponse().getForwardedUrl()).isEqualTo("/user/list.jsp");
     }
 }
