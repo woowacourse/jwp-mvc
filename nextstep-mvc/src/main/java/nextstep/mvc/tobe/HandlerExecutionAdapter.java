@@ -1,15 +1,10 @@
 package nextstep.mvc.tobe;
 
-import org.springframework.core.LocalVariableTableParameterNameDiscoverer;
-import org.springframework.core.ParameterNameDiscoverer;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.lang.reflect.Parameter;
 
 public class HandlerExecutionAdapter implements HandlerAdapter {
     private HandlerMethodArgumentResolverComposite argumentResolvers;
-    private ParameterNameDiscoverer nameDiscoverer = new LocalVariableTableParameterNameDiscoverer();
 
     public HandlerExecutionAdapter() {
         argumentResolvers = new HandlerMethodArgumentResolverComposite();
@@ -19,20 +14,19 @@ public class HandlerExecutionAdapter implements HandlerAdapter {
     public ModelAndView handle(final HttpServletRequest req, final HttpServletResponse resp, final Object handler) throws Exception {
         final HandlerExecution handlerExecution = (HandlerExecution) handler;
 
-        final Parameter[] parameters = handlerExecution.getParameters();
-        final String[] names = nameDiscoverer.getParameterNames(handlerExecution.getMethod());
-        final Object[] values = new Object[parameters.length];
+        final MethodParameters methodParameters = new MethodParameters(handlerExecution.getMethod());
 
-        for (int i = 0; i < values.length; i++) {
-            if (parameters[i].getType().equals(HttpServletRequest.class)) {
-                values[i] = req;
-            } else if (parameters[i].getType().equals(HttpServletResponse.class)) {
-                values[i] = resp;
-            } else {
-                final MethodParameter methodParameter = new MethodParameter(parameters[i], names[i], i);
-                values[i] = argumentResolvers.resolveArgument(req, methodParameter);
-            }
-        }
+        final Object[] values = methodParameters.getMethodParams().stream()
+                .map(parameter -> {
+                    if (parameter.isSameType(HttpServletRequest.class)) {
+                        return req;
+                    }
+                    if (parameter.isSameType(HttpServletResponse.class)) {
+                        return resp;
+                    }
+                    return argumentResolvers.resolveArgument(req, parameter, handlerExecution.getMethod());
+                })
+                .toArray();
 
         final Object result = handlerExecution.execute(values);
 

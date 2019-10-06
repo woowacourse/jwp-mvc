@@ -4,10 +4,7 @@ package nextstep.mvc.tobe;
 import nextstep.mvc.exception.HandlerMethodArgumentResolverException;
 
 import javax.servlet.http.HttpServletRequest;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Parameter;
+import java.lang.reflect.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -37,7 +34,7 @@ public class DefaultHandlerMethodArgumentResolver implements HandlerMethodArgume
     }
 
     @Override
-    public Object resolveArgument(final HttpServletRequest request, final MethodParameter methodParameter) {
+    public Object resolveArgument(final HttpServletRequest request, final MethodParameter methodParameter, final Method method) {
         final String value = request.getParameter(methodParameter.getName());
         final Parameter parameter = methodParameter.getParameter();
 

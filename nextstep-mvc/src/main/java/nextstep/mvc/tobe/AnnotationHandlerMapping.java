@@ -59,7 +59,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
                 .findAny();
 
         return handlerKey
-                .map(key-> handlerExecutions.get(new HandlerKey(key.getUrl(), rm)))
+                .map(key -> handlerExecutions.get(new HandlerKey(key.getUrl(), rm)))
                 .orElse(null);
     }
 }

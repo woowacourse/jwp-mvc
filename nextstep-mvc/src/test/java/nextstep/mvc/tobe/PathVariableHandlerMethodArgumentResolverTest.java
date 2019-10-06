@@ -1,11 +1,12 @@
 package nextstep.mvc.tobe;
 
 import nextstep.web.annotation.PathVariable;
+import nextstep.web.annotation.RequestMapping;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 
-import java.lang.reflect.Executable;
+import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.stream.Stream;
 
@@ -17,14 +18,15 @@ public class PathVariableHandlerMethodArgumentResolverTest {
     private Parameter[] parameters;
     private MockHttpServletRequest request;
     private String id = "1";
+    private Method method;
 
     @BeforeEach
     void setUp() {
-        parameters = Stream.of(clazz.getDeclaredMethods())
+        method = Stream.of(clazz.getDeclaredMethods())
                 .filter(method -> method.getName().equals("foo"))
                 .findAny()
-                .map(Executable::getParameters)
                 .get();
+        parameters = method.getParameters();
 
         request = new MockHttpServletRequest();
         request.addParameter("id", id);
@@ -55,12 +57,13 @@ public class PathVariableHandlerMethodArgumentResolverTest {
         request.setRequestURI("/users/10");
 
         // when
-        final Object actual = resolver.resolveArgument(request, methodParameter);
+        final Object actual = resolver.resolveArgument(request, methodParameter, method);
 
         // then
         assertThat(actual).isEqualTo(10L);
     }
 
+    @RequestMapping(value = "/users/{id}")
     Long foo(@PathVariable Long args1, String args2) {
         return args1;
     }

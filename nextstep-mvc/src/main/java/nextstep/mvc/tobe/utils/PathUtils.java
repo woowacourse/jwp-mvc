@@ -5,7 +5,8 @@ import org.springframework.web.util.pattern.PathPattern;
 import org.springframework.web.util.pattern.PathPatternParser;
 
 public class PathUtils {
-    private PathUtils(){}
+    private PathUtils() {
+    }
 
     public static PathPattern parse(String path) {
         PathPatternParser pp = new PathPatternParser();

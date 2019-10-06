@@ -88,7 +88,7 @@ class HandlerMethodArgumentResolverCompositeTest {
 
         final Object[] values = methodParameters.getMethodParams()
                 .stream()
-                .map(methodParameter -> resolver.resolveArgument(request, methodParameter))
+                .map(methodParameter -> resolver.resolveArgument(request, methodParameter, method))
                 .toArray();
         return (ModelAndView) method.invoke(clazz.newInstance(), values);
     }

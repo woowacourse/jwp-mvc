@@ -36,7 +36,7 @@ public class MyController {
     }
 
     @RequestMapping(value = "/users/nothing")
-    public ModelAndView nothing(HttpServletRequest request, HttpServletResponse response){
+    public ModelAndView nothing(HttpServletRequest request, HttpServletResponse response) {
         return null;
     }
 }

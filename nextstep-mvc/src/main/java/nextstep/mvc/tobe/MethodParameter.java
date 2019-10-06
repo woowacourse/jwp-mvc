@@ -35,6 +35,10 @@ public class MethodParameter {
         return index;
     }
 
+    public boolean isSameType(final Class<?> classType) {
+        return parameter.getType().equals(classType);
+    }
+
     @Override
     public boolean equals(final Object o) {
         if (this == o) return true;
