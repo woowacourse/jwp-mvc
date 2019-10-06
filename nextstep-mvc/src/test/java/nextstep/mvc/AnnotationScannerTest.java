@@ -9,11 +9,11 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ScannerTest {
+public class AnnotationScannerTest {
     @Test
     @DisplayName("MyController scan")
     void scan() {
-        Map<Class<?>, Object> mappings = Scanner.scan(Controller.class, "nextstep.mvc");
+        Map<Class<?>, Object> mappings = AnnotationScanner.scan(Controller.class, "nextstep.mvc");
 
         assertThat(mappings.keySet().contains(MyController.class)).isTrue();
         assertThat(mappings.get(MyController.class)).isInstanceOf(MyController.class);

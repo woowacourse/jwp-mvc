@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-public class Scanner {
+public class AnnotationScanner {
     public static Map<Class<?>, Object> scan(Class clazz, Object... basePackage) {
         Reflections reflections = new Reflections(basePackage);
         Set<Class<?>> annotated = reflections.getTypesAnnotatedWith(clazz);

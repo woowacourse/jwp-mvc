@@ -2,7 +2,7 @@ package nextstep.mvc.tobe;
 
 import com.google.common.collect.Maps;
 import nextstep.mvc.HandlerMapping;
-import nextstep.mvc.Scanner;
+import nextstep.mvc.AnnotationScanner;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
@@ -27,7 +27,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     public void initialize() {
         log.info("Initialized Request Mapping!");
-        Map<Class<?>, Object> mapping = Scanner.scan(Controller.class, basePackage);
+        Map<Class<?>, Object> mapping = AnnotationScanner.scan(Controller.class, basePackage);
 
         mapping.keySet().stream()
                 .flatMap(clazz -> Arrays.stream(clazz.getMethods()))
