@@ -31,6 +31,7 @@ public class UserAcceptanceTest {
         UserCreatedDto expected =
                 new UserCreatedDto("pobi", "password", "포비", "pobi@nextstep.camp");
         URI location = client.createResource("/api/users", expected, UserCreatedDto.class);
+//        URI location = client.createResource("/users/create", expected, UserCreatedDto.class);
         logger.debug("location : {}", location); // /api/users?userId=pobi 와 같은 형태로 반환
 
         // 조회
