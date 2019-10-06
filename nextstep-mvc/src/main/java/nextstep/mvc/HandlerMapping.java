@@ -9,5 +9,5 @@ public interface HandlerMapping {
 
     boolean canHandle(HttpServletRequest request);
 
-    HandlerExecution getHandler(HttpServletRequest request);
+    Object getHandler(HttpServletRequest request);
 }

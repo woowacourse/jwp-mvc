@@ -42,7 +42,7 @@ public class ManualHandlerMapping implements HandlerMapping {
     }
 
     @Override
-    public HandlerExecution getHandler(HttpServletRequest request) {
-        return (req, res) -> mappings.get(request.getRequestURI()).execute(req, res);
+    public Controller getHandler(HttpServletRequest request) {
+        return mappings.get(request.getRequestURI());
     }
 }
