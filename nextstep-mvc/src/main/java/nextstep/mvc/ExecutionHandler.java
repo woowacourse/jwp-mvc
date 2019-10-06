@@ -12,12 +12,12 @@ import java.util.Map;
 import java.util.function.Function;
 
 public class ExecutionHandler {
-    private static Map<Class<?>, Function<Object, ModelAndView>> handlerMapping;
+    private static Map<Class<?>, Function<Object, ModelAndView>> converters;
 
     static {
-        handlerMapping = new HashMap<>();
-        handlerMapping.put(String.class, o -> convertString((String) o));
-        handlerMapping.put(ModelAndView.class, o -> (ModelAndView) o);
+        converters = new HashMap<>();
+        converters.put(ModelAndView.class, o -> (ModelAndView) o);
+        converters.put(String.class, o -> convertString((String) o));
     }
 
     public static ModelAndView handle(Execution execution,
@@ -28,11 +28,11 @@ public class ExecutionHandler {
         }
 
         Object result = execution.execute(request, response);
-        ModelAndView modelAndView = handlerMapping.get(result.getClass()).apply(request);
-        if (modelAndView == null) {
+        Function<Object, ModelAndView> converter = converters.get(result.getClass());
+        if (converter == null) {
             throw new ExecutionHandleException("처리할 수 없는 형태입니다.");
         }
-        return modelAndView;
+        return converter.apply(result);
     }
 
     private static ModelAndView convertString(String result) {
