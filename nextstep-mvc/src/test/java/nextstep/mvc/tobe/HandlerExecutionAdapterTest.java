@@ -1,7 +1,6 @@
 package nextstep.mvc.tobe;
 
 
-import nextstep.mvc.asis.Controller;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -10,10 +9,9 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
-class DefaultHandlerAdapterTest {
-    private final HandlerAdapter handlerAdapter = new DefaultHandlerAdapter();
+class HandlerExecutionAdapterTest {
+    private final HandlerAdapter handlerAdapter = new HandlerExecutionAdapter();
     private final HandlerExecution handler = mock(HandlerExecution.class);
 
     @Test

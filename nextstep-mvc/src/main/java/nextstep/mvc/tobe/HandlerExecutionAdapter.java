@@ -7,11 +7,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Parameter;
 
-public class DefaultHandlerAdapter implements HandlerAdapter {
+public class HandlerExecutionAdapter implements HandlerAdapter {
     private HandlerMethodArgumentResolverComposite argumentResolvers;
     private ParameterNameDiscoverer nameDiscoverer = new LocalVariableTableParameterNameDiscoverer();
 
-    public DefaultHandlerAdapter() {
+    public HandlerExecutionAdapter() {
         argumentResolvers = new HandlerMethodArgumentResolverComposite();
     }
 

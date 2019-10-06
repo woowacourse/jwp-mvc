@@ -2,7 +2,7 @@ package nextstep.mvc;
 
 import nextstep.mvc.exception.HandlerAdapterNotSupportedException;
 import nextstep.mvc.exception.HandlerNotFoundException;
-import nextstep.mvc.tobe.DefaultHandlerAdapter;
+import nextstep.mvc.tobe.HandlerExecutionAdapter;
 import nextstep.mvc.tobe.HandlerAdapter;
 import nextstep.mvc.tobe.ModelAndView;
 import nextstep.mvc.tobe.SimpleControllerAdapter;
@@ -34,7 +34,7 @@ public class DispatcherServlet extends HttpServlet {
 
     public DispatcherServlet(HandlerMapping... handlerMappings) {
         this.handlerMappings = Arrays.asList(handlerMappings);
-        this.handlerAdapters = Arrays.asList(new SimpleControllerAdapter(), new DefaultHandlerAdapter());
+        this.handlerAdapters = Arrays.asList(new SimpleControllerAdapter(), new HandlerExecutionAdapter());
     }
 
     @Override
