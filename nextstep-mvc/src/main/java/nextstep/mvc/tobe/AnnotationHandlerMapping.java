@@ -1,6 +1,7 @@
 package nextstep.mvc.tobe;
 
 import com.google.common.collect.Maps;
+import nextstep.mvc.HandlerMapping;
 import nextstep.mvc.scanner.ControllerScanner;
 import nextstep.mvc.scanner.RequestMappingScanner;
 import nextstep.web.annotation.RequestMapping;
@@ -13,7 +14,7 @@ import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.Set;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
     private Object[] basePackage;
@@ -23,6 +24,7 @@ public class AnnotationHandlerMapping {
         this.basePackage = basePackage;
     }
 
+    @Override
     public void initialize() {
         ControllerScanner controllerScanner = new ControllerScanner(basePackage);
 
@@ -50,6 +52,7 @@ public class AnnotationHandlerMapping {
         }
     }
 
+    @Override
     public HandlerExecution getHandler(HttpServletRequest request) {
         log.debug("URI: {}", request.getRequestURI());
         HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod()));
