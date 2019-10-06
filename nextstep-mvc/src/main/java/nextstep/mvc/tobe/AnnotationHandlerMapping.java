@@ -7,7 +7,6 @@ import nextstep.web.annotation.RequestMethod;
 import org.reflections.Reflections;
 
 import javax.servlet.http.HttpServletRequest;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
@@ -24,40 +23,60 @@ public class AnnotationHandlerMapping {
         this.basePackage = basePackage;
     }
 
-    public void initialize() throws NoSuchMethodException, IllegalAccessException, InstantiationException, InvocationTargetException {
+    public void initialize() {
         Reflections reflections = new Reflections(basePackage);
         Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
+
         for (Class controller : controllers) {
             Arrays.stream(controller.getDeclaredMethods())
                     .filter(method -> method.isAnnotationPresent(RequestMapping.class))
-                    .forEach(method -> mappingHandlers(method));
+                    .forEach(this::createHandlerMapping);
         }
     }
 
-    private void mappingHandlers(Method method) {
-        RequestMapping rm = method.getAnnotation(RequestMapping.class);
-        HandlerExecution handlerExecution = new HandlerExecution(method.getDeclaringClass(), method);
-        if (rm.method() != null) {
-            HandlerKey handlerKey = new HandlerKey(rm.value(), rm.method()[0]);
-            handlerExecutions.put(handlerKey, handlerExecution);
+    private void createHandlerMapping(Method controllerMethod) {
+        RequestMapping annotation = controllerMethod.getAnnotation(RequestMapping.class);
+        HandlerExecution execution = createHandlerExecutionOf(controllerMethod);
+        RequestMethod[] requestMethods = annotation.method();
+
+        if (requestMethods.length == 0) {
+            connectHandlerToAllConnectableRequestMethods(annotation, execution);
             return;
         }
-        mappingEmptyMethodHandler(rm, handlerExecution);
+
+        connectHandler(annotation, execution);
     }
 
-    private void mappingEmptyMethodHandler(RequestMapping rm, HandlerExecution handlerExecution) {
-        List<RequestMethod> requestMethods = Arrays.stream(RequestMethod.values())
-                .filter(requestMethod -> isDuplicated(new HandlerKey(rm.value(), requestMethod)))
+    private HandlerExecution createHandlerExecutionOf(Method method) {
+        Class controller = method.getDeclaringClass();
+        return new HandlerExecution(controller, method);
+    }
+
+    private void connectHandlerToAllConnectableRequestMethods(RequestMapping annotation,
+                                                              HandlerExecution execution) {
+        String uri = annotation.value();
+        List<RequestMethod> connectable = Arrays.stream(RequestMethod.values())
+                .filter(requestMethod -> isConnectable(new HandlerKey(uri, requestMethod)))
                 .collect(Collectors.toList());
 
-        for (RequestMethod requestMethod : requestMethods) {
-            HandlerKey handlerKey = new HandlerKey(rm.value(), requestMethod);
-            handlerExecutions.put(handlerKey, handlerExecution);
+        HandlerKey handlerKey;
+        for (RequestMethod requestMethod : connectable) {
+            handlerKey = new HandlerKey(uri, requestMethod);
+            handlerExecutions.put(handlerKey, execution);
         }
     }
 
-    private boolean isDuplicated(HandlerKey handlerKey) {
-        return handlerExecutions.get(handlerKey) == null;
+    private boolean isConnectable(HandlerKey handlerKey) {
+        return !handlerExecutions.containsKey(handlerKey);
+    }
+
+    private void connectHandler(RequestMapping annotation, HandlerExecution execution) {
+        String uri = annotation.value();
+
+        for (RequestMethod requestMethod : annotation.method()) {
+            HandlerKey handlerKey = new HandlerKey(uri, requestMethod);
+            handlerExecutions.put(handlerKey, execution);
+        }
     }
 
     public HandlerExecution getHandler(HttpServletRequest request) {
@@ -65,11 +84,11 @@ public class AnnotationHandlerMapping {
         RequestMethod method = RequestMethod.valueOf(request.getMethod());
         HandlerExecution handlerExecution = handlerExecutions.get(new HandlerKey(uri, method));
 
-        isEmpty(handlerExecution);
+        checkNull(handlerExecution);
         return handlerExecution;
     }
 
-    private void isEmpty(HandlerExecution handlerExecution) {
+    private void checkNull(HandlerExecution handlerExecution) {
         if (handlerExecution == null) {
             throw new NotFoundHandlerException();
         }
