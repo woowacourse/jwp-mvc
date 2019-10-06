@@ -34,7 +34,6 @@ public class DispatcherServlet extends HttpServlet {
         logger.debug("Method : {}, Request URI : {}", req.getMethod(), requestUri);
 
         HandlerExecution handler = getHandler(req);
-
         try {
             ModelAndView mav = handler.handle(req, resp);
             mav.render(req, resp);
@@ -46,9 +45,9 @@ public class DispatcherServlet extends HttpServlet {
 
     private HandlerExecution getHandler(HttpServletRequest req) {
         return handlerMappings.stream()
-            .filter(handlerMapping -> handlerMapping.getHandler(req) != null)
-            .findFirst()
-            .orElseThrow(HandlerNotExistException::new)
-            .getHandler(req);
+                .filter(handlerMapping -> handlerMapping.getHandler(req) != null)
+                .findFirst()
+                .orElseThrow(HandlerNotExistException::new)
+                .getHandler(req);
     }
 }
