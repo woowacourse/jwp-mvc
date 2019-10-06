@@ -29,6 +29,10 @@ public class MethodParameter {
         return name;
     }
 
+    public Class<?> getType() {
+        return parameter.getType();
+    }
+
     public int getIndex() {
         return index;
     }
