@@ -1,9 +1,9 @@
 package nextstep.mvc.tobe.adapter;
 
-import nextstep.mvc.tobe.handler.HandlerExecution;
-import nextstep.mvc.tobe.method.MethodParameters;
 import nextstep.mvc.tobe.ModelAndView;
+import nextstep.mvc.tobe.handler.HandlerExecution;
 import nextstep.mvc.tobe.method.HandlerMethodArgumentResolverComposite;
+import nextstep.mvc.tobe.method.MethodParameters;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -18,7 +18,6 @@ public class HandlerExecutionAdapter implements HandlerAdapter {
     @Override
     public ModelAndView handle(final HttpServletRequest req, final HttpServletResponse resp, final Object handler) throws Exception {
         final HandlerExecution handlerExecution = (HandlerExecution) handler;
-
         final MethodParameters methodParameters = new MethodParameters(handlerExecution.getMethod());
 
         final Object[] values = methodParameters.getMethodParams().stream()
@@ -35,7 +34,10 @@ public class HandlerExecutionAdapter implements HandlerAdapter {
 
         final Object result = handlerExecution.execute(values);
 
-        // view
+        return parseModelAndView(result);
+    }
+
+    private ModelAndView parseModelAndView(final Object result) {
         if (result instanceof String) {
             return new ModelAndView(String.valueOf(result));
         }
