@@ -48,8 +48,15 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         Arrays.stream(annotation.method())
                 .map(requestMethod -> new HandlerKey(annotation.value(), requestMethod))
                 .forEach(handlerKey -> {
+                    checkDuplicateKey(handlerKey);
                     handlerExecutions.put(handlerKey, handlerExecution);
                     log.info("HandlerKey : {}, HandlerExecution : {}", handlerKey, handlerExecution);
                 });
+    }
+
+    private void checkDuplicateKey(HandlerKey handlerKey) {
+        if (handlerExecutions.containsKey(handlerKey)) {
+            throw new DuplicateHandlerKeyException();
+        }
     }
 }
