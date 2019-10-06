@@ -1,23 +1,21 @@
 package nextstep.mvc.tobe;
 
-import nextstep.mvc.DispatcherServlet;
+import org.apache.commons.lang3.StringUtils;
 
-import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 
-public class JspView implements View {
+public class RedirectView implements View {
+    private static final String PREFIX_REDIRECTION = "redirect:";
     private final String path;
 
-    public JspView(String path) {
+    public RedirectView(String path) {
         this.path = path;
     }
 
     @Override
     public void render(Map<String, ?> model, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        RequestDispatcher rd = request.getRequestDispatcher(path);
-        model.forEach(request::setAttribute);
-        rd.forward(request, response);
+        response.sendRedirect(StringUtils.stripStart(path, PREFIX_REDIRECTION));
     }
 }

@@ -11,15 +11,15 @@ import java.lang.reflect.Method;
 public class HandlerExecution {
     private static final Logger log = LoggerFactory.getLogger(HandlerExecution.class);
     private Method method;
-    private Object declearedObject;
+    private Object declaredObject;
 
-    public HandlerExecution(Method method, Object declearedObject) {
+    public HandlerExecution(Method method, Object declaredObject) {
         this.method = method;
-        this.declearedObject = declearedObject;
+        this.declaredObject = declaredObject;
     }
 
     public ModelAndView handle(HttpServletRequest request, HttpServletResponse response) throws InvocationTargetException, IllegalAccessException {
         log.debug("Method : {}", method);
-        return (ModelAndView) method.invoke(declearedObject, new Object[]{request, response});
+        return (ModelAndView) method.invoke(declaredObject, new Object[]{request, response});
     }
 }

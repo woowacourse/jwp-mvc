@@ -5,6 +5,7 @@ import nextstep.mvc.asis.Controller;
 import nextstep.mvc.tobe.AnnotationHandlerMapping;
 import nextstep.mvc.tobe.HandlerExecution;
 import nextstep.mvc.tobe.ModelAndView;
+import nextstep.mvc.tobe.View;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,8 +45,8 @@ public class DispatcherServlet extends HttpServlet {
             Object handler = getHandler(req);
             if (handler instanceof HandlerExecution) {
                 ModelAndView modelAndView = ((HandlerExecution) handler).handle(req, resp);
-                String name = modelAndView.getViewName();
-                move(name, req, resp);
+                View view = modelAndView.getView();
+                view.render(modelAndView.getModel(), req, resp);
             } else if (handler instanceof Controller) {
                 String viewName = ((Controller) handler).execute(req, resp);
                 move(viewName, req, resp);
