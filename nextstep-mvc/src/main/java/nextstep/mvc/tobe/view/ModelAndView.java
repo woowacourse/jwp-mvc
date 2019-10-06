@@ -1,12 +1,18 @@
-package nextstep.mvc.tobe;
+package nextstep.mvc.tobe.view;
 
+import nextstep.mvc.tobe.exception.RenderFailedException;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 public class ModelAndView {
     private View view;
-    private Map<String, Object> model = new HashMap<String, Object>();
+    private Map<String, Object> model = new HashMap<>();
 
     public ModelAndView() {
     }
@@ -30,5 +36,13 @@ public class ModelAndView {
 
     public View getView() {
         return view;
+    }
+
+    public void render(HttpServletRequest req, HttpServletResponse resp) {
+        try {
+            view.render(model, req, resp);
+        } catch (ServletException | IOException e) {
+            throw new RenderFailedException(e);
+        }
     }
 }
