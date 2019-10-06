@@ -1,21 +1,20 @@
 package nextstep.mvc.tobe;
 
+import java.lang.reflect.Method;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import com.google.common.collect.Maps;
 import nextstep.mvc.ModelAndViewHandlerMapping;
 import nextstep.mvc.tobe.exception.DuplicateRequestMappingException;
 import nextstep.mvc.tobe.exception.RenderFailedException;
 import nextstep.mvc.tobe.exception.RequestUrlNotFoundException;
-import nextstep.web.annotation.Controller;
+import nextstep.mvc.tobe.scanner.ControllerScanner;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
-import org.reflections.Reflections;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.lang.reflect.Method;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
 
 public class AnnotationHandlerMapping implements ModelAndViewHandlerMapping {
     private Object[] basePackage;
@@ -28,8 +27,7 @@ public class AnnotationHandlerMapping implements ModelAndViewHandlerMapping {
 
     @Override
     public void initialize() {
-        Reflections reflections = new Reflections(basePackage);
-        Set<Class<?>> controllerClazz = reflections.getTypesAnnotatedWith(Controller.class);
+        Set<Class<?>> controllerClazz = ControllerScanner.scanController(basePackage);
 
         for (Class<?> clazz : controllerClazz) {
             appendHandlerExecutions(clazz);
