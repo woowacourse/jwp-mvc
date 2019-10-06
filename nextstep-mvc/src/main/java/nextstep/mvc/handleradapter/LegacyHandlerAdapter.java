@@ -1,14 +1,13 @@
-package nextstep.mvc;
+package nextstep.mvc.handleradapter;
 
 import nextstep.mvc.asis.Controller;
+import nextstep.mvc.handleradapter.HandlerAdapter;
 import nextstep.mvc.tobe.ModelAndView;
 import nextstep.mvc.tobe.view.JspView;
 import nextstep.mvc.tobe.view.RedirectView;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 
 public class LegacyHandlerAdapter implements HandlerAdapter {
     private static final String DEFAULT_REDIRECT_PREFIX = "redirect:";
