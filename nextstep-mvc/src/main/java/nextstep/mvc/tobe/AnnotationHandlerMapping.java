@@ -30,19 +30,20 @@ public class AnnotationHandlerMapping {
     }
 
     private void mappingMethod(Reflections reflections) {
+
         reflections.getMethodsAnnotatedWith(RequestMapping.class).stream()
                 .filter(method -> Arrays.stream(method.getParameterTypes())
                         .allMatch(x -> x.equals(HttpServletRequest.class) || x.equals(HttpServletResponse.class)))
                 .forEach(method -> {
                     RequestMapping mapping = method.getDeclaredAnnotation(RequestMapping.class);
-                    HandlerExecution handlerExecution = new HandlerExecution();
-                    handlerExecution.setMethod(method);
-
+                    HandlerExecution handlerExecution = null;
                     try {
-                        handlerExecution.setTarget(method.getDeclaringClass().newInstance());
+                        handlerExecution = new HandlerExecution(method, method.getDeclaringClass().newInstance());
                     } catch (InstantiationException | IllegalAccessException e) {
-                        logger.debug(e.getMessage());
+                        logger.debug(e.getMessage(), e.getCause());
+                        throw new RuntimeException(e);
                     }
+
                     handlerExecutions.put(HandlerKey.of(mapping.value(), mapping.method()), handlerExecution);
                 });
     }
