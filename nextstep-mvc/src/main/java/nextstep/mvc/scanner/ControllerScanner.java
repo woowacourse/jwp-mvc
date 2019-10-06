@@ -14,7 +14,7 @@ public class ControllerScanner {
     private static final Logger log = LoggerFactory.getLogger(ControllerScanner.class);
     private final Map<Class<?>, Object> instanceOfClazz = new HashMap<>();
 
-    public ControllerScanner(final Object[] basePackage) {
+    public ControllerScanner(final Object... basePackage) {
         Reflections reflections = new Reflections(basePackage);
         Set<Class<?>> controllerClazz = reflections.getTypesAnnotatedWith(Controller.class);
         controllerClazz.forEach(clazz -> {
