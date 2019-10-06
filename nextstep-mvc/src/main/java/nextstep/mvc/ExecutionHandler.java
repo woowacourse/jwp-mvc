@@ -4,15 +4,21 @@ import nextstep.mvc.exception.ExecutionHandleException;
 import nextstep.mvc.tobe.Execution;
 import nextstep.mvc.tobe.ModelAndView;
 import nextstep.mvc.tobe.view.JspView;
-import nextstep.mvc.tobe.view.RedirectView;
-import nextstep.mvc.tobe.view.View;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Function;
 
 public class ExecutionHandler {
-    private static final String REDIRECT_PREFIX = "redirect:";
-    private static final String JSP_SUFFIX = ".jsp";
+    private static Map<Class<?>, Function<Object, ModelAndView>> handlerMapping;
+
+    static {
+        handlerMapping = new HashMap<>();
+        handlerMapping.put(String.class, o -> convertString((String) o));
+        handlerMapping.put(ModelAndView.class, o -> (ModelAndView) o);
+    }
 
     public static ModelAndView handle(Execution execution,
                                       HttpServletRequest request,
@@ -22,22 +28,14 @@ public class ExecutionHandler {
         }
 
         Object result = execution.execute(request, response);
-        if (result instanceof String) {
-            return new ModelAndView(resolve((String) result));
+        ModelAndView modelAndView = handlerMapping.get(result.getClass()).apply(request);
+        if (modelAndView == null) {
+            throw new ExecutionHandleException("처리할 수 없는 형태입니다.");
         }
-        if (result instanceof ModelAndView) {
-            return (ModelAndView) result;
-        }
-        throw new ExecutionHandleException("처리할 수 없는 형태입니다.");
+        return modelAndView;
     }
 
-    private static View resolve(String viewName) {
-        if (viewName.startsWith(REDIRECT_PREFIX)) {
-            return new RedirectView(viewName.substring(REDIRECT_PREFIX.length()));
-        }
-        if (viewName.endsWith(JSP_SUFFIX)) {
-            return new JspView(viewName);
-        }
-        throw new ExecutionHandleException("해당하는 View가 없습니다.");
+    private static ModelAndView convertString(String result) {
+        return new ModelAndView(ViewNameResolver.resolve(result));
     }
 }
