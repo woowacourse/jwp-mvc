@@ -14,6 +14,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 @WebServlet(name = "dispatcher", urlPatterns = "/", loadOnStartup = 1)
 public class DispatcherServlet extends HttpServlet {
@@ -21,18 +23,17 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger logger = LoggerFactory.getLogger(DispatcherServlet.class);
     private static final String DEFAULT_REDIRECT_PREFIX = "redirect:";
 
-    private HandlerMapping rm;
-    private AnnotationHandlerMapping annotationHandlerMapping;
+    private List<HandlerMapping> handlerMappings;
 
-    public DispatcherServlet(HandlerMapping rm, AnnotationHandlerMapping annotationHandlerMapping) {
-        this.rm = rm;
-        this.annotationHandlerMapping = annotationHandlerMapping;
+    public DispatcherServlet(HandlerMapping... handlerMappings) {
+        this.handlerMappings = Arrays.asList(handlerMappings);
     }
 
     @Override
     public void init() throws ServletException {
-        rm.initialize();
-        annotationHandlerMapping.initialize();
+        for (HandlerMapping handlerMapping: handlerMappings) {
+            handlerMapping.initialize();
+        }
     }
 
     @Override
@@ -40,12 +41,12 @@ public class DispatcherServlet extends HttpServlet {
         String requestUri = req.getRequestURI();
         logger.debug("Method : {}, Request URI : {}", req.getMethod(), requestUri);
 
-        Object object = rm.getHandler(req) == null ? annotationHandlerMapping.getHandler(req) : rm.getHandler(req);
+        Object object = getHandler(req);
         try {
             if (object instanceof HandlerExecution) {
                 ModelAndView modelAndView = ((HandlerExecution) object).handle(req, resp);
                 modelAndView.render(req, resp);
-            } else {
+            } else if(object instanceof  Controller) {
                 String viewName = ((Controller) object).execute(req, resp);
                 move(viewName, req, resp);
             }
@@ -53,6 +54,14 @@ public class DispatcherServlet extends HttpServlet {
             logger.error("Exception : {}", e);
             throw new ServletException(e.getMessage());
         }
+    }
+
+    private Object getHandler(HttpServletRequest req) {
+        return handlerMappings.stream()
+                .map(handlerMapping -> handlerMapping.getHandler(req))
+                .filter(object -> object != null)
+                .findAny()
+                .orElse(null);
     }
 
     private void move(String viewName, HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
