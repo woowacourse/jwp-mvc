@@ -1,7 +1,7 @@
 package nextstep.mvc.handler;
 
 import nextstep.mvc.tobe.HandlerExecution;
-import nextstep.mvc.tobe.ModelAndView;
+import nextstep.mvc.view.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

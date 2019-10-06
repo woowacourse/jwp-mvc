@@ -5,8 +5,8 @@ import nextstep.mvc.handler.AnnotationHandler;
 import nextstep.mvc.handler.HandlerAdapter;
 import nextstep.mvc.handler.LegacyHandler;
 import nextstep.mvc.tobe.HandlerExecution;
-import nextstep.mvc.tobe.ModelAndView;
-import nextstep.mvc.tobe.View;
+import nextstep.mvc.view.ModelAndView;
+import nextstep.mvc.view.View;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,12 +53,11 @@ public class DispatcherServlet extends HttpServlet {
 
     private ModelAndView handle(HttpServletRequest req, HttpServletResponse resp) throws Exception {
         Object handler = getHandler(req);
-        HandlerAdapter handlerAdapter = adapters.stream()
+        return adapters.stream()
                 .filter(adapter -> adapter.apply(handler))
                 .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("지원하지 않는 형식입니다."));
-
-        return handlerAdapter.handle(req, resp, handler);
+                .orElseThrow(() -> new IllegalArgumentException("지원하지 않는 형식입니다."))
+                .handle(req, resp, handler);
     }
 
     private Object getHandler(HttpServletRequest req) {

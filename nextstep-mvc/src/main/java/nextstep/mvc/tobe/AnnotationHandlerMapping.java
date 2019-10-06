@@ -4,20 +4,19 @@ import com.google.common.collect.Maps;
 import nextstep.mvc.HandlerMapping;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
-import org.reflections.ReflectionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class AnnotationHandlerMapping implements HandlerMapping {
-    private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
-    private Object[] basePackage;
-
-    private Map<HandlerKey, HandlerExecution> handlerExecutions = Maps.newHashMap();
+    private static final int EMPTY_REQUEST_METHOD_COUNT = 0;
+    private final Object[] basePackage;
+    private final Map<HandlerKey, HandlerExecution> handlerExecutions = Maps.newHashMap();
 
     public AnnotationHandlerMapping(Object... basePackage) {
         this.basePackage = basePackage;
@@ -36,9 +35,22 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         });
     }
 
+    private Map<Class<?>, Set<Method>> getRequestMappingMethods(Set<Class<?>> clazzes) {
+        Map<Class<?>, Set<Method>> methods = Maps.newHashMap();
+        clazzes.forEach(clazz ->
+                methods.put(clazz, getRequestMappingAnnotations(clazz.getDeclaredMethods())));
+        return methods;
+    }
+
+    private Set<Method> getRequestMappingAnnotations(Method[] methods) {
+        return Arrays.stream(methods)
+                .filter(method -> method.isAnnotationPresent(RequestMapping.class))
+                .collect(Collectors.toSet());
+    }
+
     private List<HandlerKey> createHandlerKeys(RequestMapping requestMapping) {
         RequestMethod[] requestMethods = requestMapping.method();
-        if (requestMethods.length == 0) {
+        if (requestMethods.length == EMPTY_REQUEST_METHOD_COUNT) {
             requestMethods = RequestMethod.values();
         }
 
@@ -47,17 +59,8 @@ public class AnnotationHandlerMapping implements HandlerMapping {
                 .collect(Collectors.toList());
     }
 
-    private Map<Class<?>, Set<Method>> getRequestMappingMethods(Set<Class<?>> clazzes) {
-        Map<Class<?>, Set<Method>> list = new HashMap<>();
-        clazzes.forEach(clazz ->
-                list.put(clazz, ReflectionUtils.getAllMethods(clazz, ReflectionUtils.withAnnotation(RequestMapping.class))));
-        return list;
-    }
-
     @Override
     public HandlerExecution getHandler(HttpServletRequest request) {
-        log.debug("path: {}", request.getRequestURI());
-        log.debug("path: {}", RequestMethod.valueOf(request.getMethod()));
         return handlerExecutions.get(new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod())));
     }
 }
