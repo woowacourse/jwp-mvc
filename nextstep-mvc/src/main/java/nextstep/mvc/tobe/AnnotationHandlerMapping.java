@@ -87,21 +87,6 @@ public class AnnotationHandlerMapping implements ModelAndViewHandlerMapping {
         String requestURI = request.getRequestURI();
         String method = request.getMethod();
 
-        HandlerKey handlerKey = new HandlerKey(requestURI, RequestMethod.valueOf(method));
-        if (doesNotExistsKey(handlerKey)) {
-            handlerKey = findHandlerKeyByUrl(requestURI);
-        }
-        return handlerExecutions.get(handlerKey);
-    }
-
-    private boolean doesNotExistsKey(final HandlerKey handlerKey) {
-        return !handlerExecutions.containsKey(handlerKey);
-    }
-
-    private HandlerKey findHandlerKeyByUrl(final String requestURI) {
-        return handlerExecutions.keySet().stream()
-                .filter(handlerKey -> handlerKey.isSameUrl(requestURI))
-                .findFirst()
-                .orElseThrow(RequestUrlNotFoundException::new);
+        return handlerExecutions.get(new HandlerKey(requestURI, RequestMethod.valueOf(method)));
     }
 }
