@@ -1,13 +1,10 @@
 package nextstep.mvc;
 
-import nextstep.mvc.asis.Controller;
-import nextstep.mvc.tobe.AnnotationHandlerMapping;
-import nextstep.mvc.tobe.HandlerExecution;
 import nextstep.mvc.tobe.ModelAndView;
+import nextstep.mvc.tobe.ObjectMapperException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -23,9 +20,12 @@ public class DispatcherServlet extends HttpServlet {
     private static final String DEFAULT_REDIRECT_PREFIX = "redirect:";
 
     private final List<HandlerMapping> handlerMappings;
+    private final List<HandlerAdapter> handlerAdapters;
 
-    public DispatcherServlet(List<HandlerMapping> handlerMappings) {
+
+    public DispatcherServlet(List<HandlerMapping> handlerMappings, List<HandlerAdapter> handlerAdapters) {
         this.handlerMappings = handlerMappings;
+        this.handlerAdapters = handlerAdapters;
     }
 
     @Override
@@ -41,34 +41,24 @@ public class DispatcherServlet extends HttpServlet {
         Object handler = getHandler(req);
 
         try {
-            if ( handler instanceof HandlerExecution) {
-                ModelAndView modelAndView = ((HandlerExecution) handler).handle(req, resp);
-                modelAndView.getView().render(modelAndView.getModel(), req, resp);
-            } else {
-                String viewName = ((Controller) handler).execute(req, resp);
-                move(viewName, req, resp);
-            }
-        } catch (Throwable e) {
-            logger.error("Exception : {}", e);
-            throw new ServletException(e.getMessage());
+            ModelAndView modelAndView = handlerAdapters.stream()
+                    .filter(handlerAdapter -> handlerAdapter.supports(handler))
+                    .findAny()
+                    .orElseThrow(ObjectMapperException::new)
+                    .handle(req, resp, handler);
+
+            modelAndView.getView().render(modelAndView.getModel(), req, resp);
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
     private Object getHandler(HttpServletRequest req) {
-        if (((AnnotationHandlerMapping) handlerMappings.get(1)).hasControllerAnnotation(req)) {
-            return handlerMappings.get(1).getHandler(req);
-        }
-        return handlerMappings.get(0).getHandler(req);
-    }
-
-    private void move(String viewName, HttpServletRequest req, HttpServletResponse resp)
-            throws ServletException, IOException {
-        if (viewName.startsWith(DEFAULT_REDIRECT_PREFIX)) {
-            resp.sendRedirect(viewName.substring(DEFAULT_REDIRECT_PREFIX.length()));
-            return;
-        }
-
-        RequestDispatcher rd = req.getRequestDispatcher(viewName);
-        rd.forward(req, resp);
+        return handlerMappings.stream()
+                .filter(handlerMapping -> handlerMapping.getHandler(req) != null)
+                .findAny()
+                .orElseThrow(ObjectMapperException::new)
+                .getHandler(req);
     }
 }
