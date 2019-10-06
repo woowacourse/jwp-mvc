@@ -43,10 +43,13 @@ public class DispatcherServlet extends HttpServlet {
         logger.debug("Method : {}, Request URI : {}", req.getMethod(), req.getRequestURI());
 
         Object handler = getHandler(req);
+
         try {
+
             HandlerAdapter handlerAdapter = getHandlerAdapter(handler);
             ModelAndView modelAndView = handlerAdapter.handle(req, resp, handler);
             modelAndView.getView().render(modelAndView.getModel(), req, resp);
+
         } catch (Exception e) {
             logger.error(e.getMessage());
             resp.sendError(404);
