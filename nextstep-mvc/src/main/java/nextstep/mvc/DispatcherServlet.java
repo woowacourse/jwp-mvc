@@ -14,7 +14,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @WebServlet(name = "dispatcher", urlPatterns = "/", loadOnStartup = 1)
 public class DispatcherServlet extends HttpServlet {
@@ -22,18 +25,15 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger logger = LoggerFactory.getLogger(DispatcherServlet.class);
     private static final String DEFAULT_REDIRECT_PREFIX = "redirect:";
 
-    private HandlerMapping requestMapping;
-    private AnnotationHandlerMapping annotationHandlerMapping;
+    private List<HandlerMapping> handlerMappings;
 
-    public DispatcherServlet(HandlerMapping requestMapping, AnnotationHandlerMapping annotationHandlerMapping) {
-        this.requestMapping = requestMapping;
-        this.annotationHandlerMapping = annotationHandlerMapping;
+    public DispatcherServlet(final List<HandlerMapping> handlerMappings) {
+        this.handlerMappings = handlerMappings;
     }
 
     @Override
-    public void init() throws ServletException {
-        requestMapping.initialize();
-        annotationHandlerMapping.initialize();
+    public void init() {
+        handlerMappings.forEach(HandlerMapping::initialize);
     }
 
     // @TODO refactoring
@@ -41,8 +41,8 @@ public class DispatcherServlet extends HttpServlet {
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String requestUri = req.getRequestURI();
         logger.debug("Method : {}, Request URI : {}", req.getMethod(), requestUri);
-        Object handler = getHandlerFromMapping(req);
         try {
+            Object handler = getHandlerFromMapping(req);
             if (handler instanceof Controller) {
                 String viewName = ((Controller) handler).execute(req, resp);
                 move(viewName, req, resp);
@@ -60,8 +60,10 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private Object getHandlerFromMapping(HttpServletRequest request) {
-        return Optional.ofNullable(requestMapping.getHandler(request))
-                .orElseGet(() -> annotationHandlerMapping.getHandler(request));
+        return handlerMappings.stream()
+                .map(handlerMapping -> handlerMapping.getHandler(request))
+                .filter(Objects::nonNull)
+                .findFirst();
     }
 
     private void move(String viewName, HttpServletRequest req, HttpServletResponse resp)

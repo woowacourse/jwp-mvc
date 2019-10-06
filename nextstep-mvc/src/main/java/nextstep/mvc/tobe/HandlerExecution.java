@@ -9,6 +9,7 @@ import java.lang.reflect.Method;
 
 public class HandlerExecution {
     private static final String DEFAULT_REDIRECT_PREFIX = "redirect:";
+
     private final Class<?> clazz;
     private final Method method;
 

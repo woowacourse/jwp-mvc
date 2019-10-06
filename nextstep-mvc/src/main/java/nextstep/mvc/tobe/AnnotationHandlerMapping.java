@@ -19,9 +19,10 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class AnnotationHandlerMapping implements HandlerMapping {
+    private static final Logger logger = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
+
     private Object[] basePackage;
     private Map<HandlerKey, HandlerExecution> handlerExecutions = Maps.newHashMap();
-    private static final Logger logger = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
     public AnnotationHandlerMapping(Object... basePackage) {
         this.basePackage = basePackage;
