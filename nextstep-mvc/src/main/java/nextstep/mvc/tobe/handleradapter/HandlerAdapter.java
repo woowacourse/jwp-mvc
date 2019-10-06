@@ -7,5 +7,5 @@ import javax.servlet.http.HttpServletResponse;
 
 public interface HandlerAdapter {
     boolean supports(Object handler);
-    ModelAndView handler(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object handler) throws Exception;
+    ModelAndView handle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object handler) throws Exception;
 }
