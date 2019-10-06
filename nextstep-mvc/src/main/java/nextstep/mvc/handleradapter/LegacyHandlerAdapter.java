@@ -1,7 +1,6 @@
 package nextstep.mvc.handleradapter;
 
 import nextstep.mvc.asis.Controller;
-import nextstep.mvc.handleradapter.HandlerAdapter;
 import nextstep.mvc.tobe.ModelAndView;
 import nextstep.mvc.tobe.view.JspView;
 import nextstep.mvc.tobe.view.RedirectView;
@@ -27,20 +26,4 @@ public class LegacyHandlerAdapter implements HandlerAdapter {
         }
         return new ModelAndView(new JspView(viewName));
     }
-
-//    @Override
-//    public void handle(Object result, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-//        move((String) result, request, response);
-//    }
-//
-//    private void move(String viewName, HttpServletRequest req, HttpServletResponse resp)
-//            throws ServletException, IOException {
-//        if (viewName.startsWith(DEFAULT_REDIRECT_PREFIX)) {
-//            resp.sendRedirect(viewName.substring(DEFAULT_REDIRECT_PREFIX.length()));
-//            return;
-//        }
-//
-//        RequestDispatcher rd = req.getRequestDispatcher(viewName);
-//        rd.forward(req, resp);
-//    }
 }
