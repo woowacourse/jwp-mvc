@@ -3,6 +3,7 @@ package reflection;
 import annotation.Controller;
 import annotation.Repository;
 import annotation.Service;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
@@ -13,32 +14,51 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Set;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 public class ReflectionsTest {
     private static final Logger logger = LoggerFactory.getLogger(ReflectionsTest.class);
 
     @Test
-    public void showAnnotationClass() throws Exception {
+    @DisplayName("@Controller 어노테이션이 붙은 정보를 출력하고 1개인지 확인한다.")
+    public void findControllerAnnotation() throws Exception {
         Reflections reflections = new Reflections("examples");
-
-        // TODO 클래스 레벨에 @Controller, @Service, @Repository 애노테이션이 설정되어 모든 클래스 찾아 로그로 출력한다.
         Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
-        Set<Class<?>> services = reflections.getTypesAnnotatedWith(Service.class);
-        Set<Class<?>> repositories = reflections.getTypesAnnotatedWith(Repository.class);
 
         for (Class<?> controller : controllers) {
             logger.debug("Controller : {}", controller.getName());
             printClassInfo(controller);
         }
 
+        assertThat(controllers.size()).isEqualTo(1);
+    }
+
+    @Test
+    @DisplayName("@Service 어노테이션이 붙은 정보를 출력하고 1개인지 확인한다.")
+    public void findServiceAnnotation() throws Exception {
+        Reflections reflections = new Reflections("examples");
+        Set<Class<?>> services = reflections.getTypesAnnotatedWith(Service.class);
+
         for (Class<?> service : services) {
             logger.debug("Service : {}", service.getName());
             printClassInfo(service);
         }
 
+        assertThat(services.size()).isEqualTo(1);
+    }
+
+    @Test
+    @DisplayName("@Repository 어노테이션이 붙은 정보를 출력하고 2개인지 확인한다.")
+    public void findRepositoryAnnotation() throws Exception {
+        Reflections reflections = new Reflections("examples");
+        Set<Class<?>> repositories = reflections.getTypesAnnotatedWith(Repository.class);
+
         for (Class<?> repository : repositories) {
             logger.debug("Repository : {}", repository.getName());
             printClassInfo(repository);
         }
+
+        assertThat(repositories.size()).isEqualTo(2);
     }
 
     public void printClassInfo(Class clazz) {
