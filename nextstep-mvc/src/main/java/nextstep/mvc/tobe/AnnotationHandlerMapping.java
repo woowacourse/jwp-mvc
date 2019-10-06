@@ -15,13 +15,10 @@ import java.util.Set;
 import static org.reflections.ReflectionUtils.getAllMethods;
 
 public class AnnotationHandlerMapping implements HandlerMapping {
-    private final Object[] basePackage;
-
     private final Map<HandlerKey, HandlerExecution> handlerExecutions = Maps.newHashMap();
     private final ControllerScanner controllerScanner;
 
     public AnnotationHandlerMapping(Object... basePackage) {
-        this.basePackage = basePackage;
         try {
             this.controllerScanner = new ControllerScanner(basePackage);
         } catch (IllegalAccessException | InstantiationException e) {
@@ -36,7 +33,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
             for (Method method : allMethods) {
                 RequestMapping rm = method.getAnnotation(RequestMapping.class);
                 handlerExecutions.put(createHandlerKey(rm),
-                        ((request, response) -> (ModelAndView) method.invoke(aClass.newInstance(), request, response)));
+                        ((req, resp) -> (ModelAndView) method.invoke(controllerScanner.getController(aClass), req, resp)));
             }
         }
     }
