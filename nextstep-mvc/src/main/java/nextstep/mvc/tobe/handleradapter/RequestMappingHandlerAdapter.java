@@ -1,10 +1,8 @@
 package nextstep.mvc.tobe.handleradapter;
 
 import nextstep.mvc.tobe.HandlerExecution;
+import nextstep.mvc.tobe.RequestContext;
 import nextstep.mvc.tobe.view.ModelAndView;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 public class RequestMappingHandlerAdapter implements HandlerAdapter {
 
@@ -14,8 +12,9 @@ public class RequestMappingHandlerAdapter implements HandlerAdapter {
     }
 
     @Override
-    public ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        Object returnValue = ((HandlerExecution) handler).execute(request, response);
+    public ModelAndView handle(RequestContext requestContext, Object handler) throws Exception {
+        HandlerExecution handlerExecution = (HandlerExecution) handler;
+        Object returnValue = handlerExecution.execute(requestContext.getHttpServletRequest(), requestContext.getHttpServletResponse());
 
         if (returnValue instanceof String) {
             return new ModelAndView((String) returnValue);

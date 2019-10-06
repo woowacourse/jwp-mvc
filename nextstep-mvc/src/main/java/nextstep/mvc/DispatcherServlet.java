@@ -1,5 +1,6 @@
 package nextstep.mvc;
 
+import nextstep.mvc.tobe.RequestContext;
 import nextstep.mvc.tobe.handleradapter.HandlerAdapter;
 import nextstep.mvc.tobe.view.ModelAndView;
 import nextstep.mvc.tobe.view.View;
@@ -41,13 +42,13 @@ public class DispatcherServlet extends HttpServlet {
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response) {
         logger.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
-
+        RequestContext requestContext = new RequestContext(request, response);
         try {
             Object handler = findHandler(request);
             HandlerAdapter handlerAdapter = findHandlerAdapter(handler);
-            ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
+            ModelAndView modelAndView = handlerAdapter.handle(requestContext, handler);
             View view = findView(modelAndView);
-            view.render(modelAndView.getModel(), request, response);
+            view.render(modelAndView.getModelMap(), requestContext);
         } catch (Exception e) {
             logger.error("Exception : {}", e);
             e.printStackTrace();

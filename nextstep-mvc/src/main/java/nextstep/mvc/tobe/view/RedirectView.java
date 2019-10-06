@@ -1,5 +1,7 @@
 package nextstep.mvc.tobe.view;
 
+import nextstep.mvc.tobe.RequestContext;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
@@ -12,7 +14,7 @@ public class RedirectView implements View {
     }
 
     @Override
-    public void render(Map<String, ?> model, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        response.sendRedirect(viewName);
+    public void render(Map<String, ?> model, RequestContext requestContext) throws Exception {
+        requestContext.getHttpServletResponse().sendRedirect(viewName);
     }
 }

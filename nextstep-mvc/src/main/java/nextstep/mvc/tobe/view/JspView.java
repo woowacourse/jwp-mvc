@@ -1,5 +1,7 @@
 package nextstep.mvc.tobe.view;
 
+import nextstep.mvc.tobe.RequestContext;
+
 import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -13,7 +15,10 @@ public class JspView implements View {
     }
 
     @Override
-    public void render(Map<String, ?> model, HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public void render(Map<String, ?> model, RequestContext requestContext) throws Exception {
+        HttpServletRequest request = requestContext.getHttpServletRequest();
+        HttpServletResponse response = requestContext.getHttpServletResponse();
+
         model.forEach(request::setAttribute);
 
         RequestDispatcher requestDispatcher = request.getRequestDispatcher(viewName);
