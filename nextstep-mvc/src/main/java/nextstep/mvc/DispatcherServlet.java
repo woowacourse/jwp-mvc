@@ -2,6 +2,9 @@ package nextstep.mvc;
 
 import nextstep.mvc.exception.NotFoundHandlerAdapterException;
 import nextstep.mvc.exception.NotFoundHandlerException;
+import nextstep.mvc.handleradapter.AnnotationHandlerAdapter;
+import nextstep.mvc.handleradapter.HandlerAdapter;
+import nextstep.mvc.handleradapter.LegacyHandlerAdapter;
 import nextstep.mvc.tobe.ModelAndView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,15 +42,11 @@ public class DispatcherServlet extends HttpServlet {
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         logger.debug("Method : {}, Request URI : {}", req.getMethod(), req.getRequestURI());
 
-//        HandlerExecution handlerExecution = getHandler(req);
         Object handler = getHandler(req);
         try {
-//            Object result = handlerExecution.handle(req, resp);
             HandlerAdapter handlerAdapter = getHandlerAdapter(handler);
             ModelAndView modelAndView = handlerAdapter.handle(req, resp, handler);
             modelAndView.getView().render(modelAndView.getModel(), req, resp);
-//            HandlerAdapter handlerAdapter = getHandlerAdapter(result);
-//            handlerAdapter.handle(result, req, resp);
         } catch (Exception e) {
             logger.error(e.getMessage());
             resp.sendError(404);
