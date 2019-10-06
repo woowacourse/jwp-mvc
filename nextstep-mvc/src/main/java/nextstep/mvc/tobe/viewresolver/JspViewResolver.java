@@ -1,16 +1,16 @@
 package nextstep.mvc.tobe.viewresolver;
 
-import nextstep.mvc.tobe.view.JsonView;
+import nextstep.mvc.tobe.view.JspView;
 import nextstep.mvc.tobe.view.View;
 
-public class JsonViewResolver implements ViewResolver {
+public class JspViewResolver implements ViewResolver {
     @Override
     public boolean supports(String viewName) {
-        return viewName.equals("jsonView");
+        return viewName.endsWith(".jsp");
     }
 
     @Override
     public View resolve(String viewName) {
-        return new JsonView();
+        return new JspView(viewName);
     }
 }

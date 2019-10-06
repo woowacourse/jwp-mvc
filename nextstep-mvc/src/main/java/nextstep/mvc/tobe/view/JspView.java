@@ -5,10 +5,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 
-public class InternalResourceView implements View {
+public class JspView implements View {
     private final String viewName;
 
-    public InternalResourceView(String viewName) {
+    public JspView(String viewName) {
         this.viewName = viewName;
     }
 

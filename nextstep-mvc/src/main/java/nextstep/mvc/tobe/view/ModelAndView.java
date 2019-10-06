@@ -36,6 +36,10 @@ public class ModelAndView {
         return view instanceof View ? (View) view : null;
     }
 
+    public boolean hasViewReference(){
+        return view instanceof View;
+    }
+
     public String getViewName() {
         return view instanceof String ? (String) view : null;
     }

@@ -7,12 +7,13 @@ public class RedirectViewResolver implements ViewResolver {
     private static final String DEFAULT_REDIRECT_PREFIX = "redirect:";
 
     @Override
-    public View resolve(String viewName) {
-        if(viewName.startsWith(DEFAULT_REDIRECT_PREFIX)) {
-            return new RedirectView(extractRedirectViewName(viewName));
-        }
+    public boolean supports(String viewName) {
+        return viewName.startsWith(DEFAULT_REDIRECT_PREFIX);
+    }
 
-        return null;
+    @Override
+    public View resolve(String viewName) {
+        return new RedirectView(extractRedirectViewName(viewName));
     }
 
     private String extractRedirectViewName(String viewName) {
