@@ -29,7 +29,7 @@ public class UserController {
     }
 
     @RequestMapping(value = "/users/profile", method = RequestMethod.GET)
-    public ModelAndView profile(HttpServletRequest req, HttpServletResponse resp) throws Exception {
+    public ModelAndView showProfile(HttpServletRequest req, HttpServletResponse resp) throws Exception {
         String userId = req.getParameter("userId");
         User user = DataBase.findUserById(userId);
         if (user == null) {
@@ -40,7 +40,7 @@ public class UserController {
     }
 
     @RequestMapping(value = "/users", method = RequestMethod.GET)
-    public ModelAndView userList(HttpServletRequest req, HttpServletResponse resp) throws Exception {
+    public ModelAndView showUsers(HttpServletRequest req, HttpServletResponse resp) throws Exception {
         if (!UserSessionUtils.isLogined(req.getSession())) {
             return new ModelAndView(new RedirectView("/users/loginForm"));
         }
