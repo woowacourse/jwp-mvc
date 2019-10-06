@@ -36,15 +36,24 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         handlerExecutions.put(handlerKey, handlerExecution);
     }
 
-    @Override
-    public HandlerExecution getHandler(HttpServletRequest request) {
+    public static HandlerKey createKey(HttpServletRequest request) {
         String uri = request.getRequestURI();
         RequestMethod method = RequestMethod.valueOf(request.getMethod());
 
-        HandlerKey handlerKey = new HandlerKey(uri, method);
-        if (handlerExecutions.containsKey(handlerKey)) {
-            return handlerExecutions.get(handlerKey);
-        }
-        throw new IllegalArgumentException();
+        return new HandlerKey(uri, method);
+    }
+
+    @Override
+    public boolean containsKey(HttpServletRequest request) {
+        HandlerKey handlerKey = createKey(request);
+
+        return handlerExecutions.containsKey(handlerKey);
+    }
+
+    @Override
+    public HandlerExecution getHandler(HttpServletRequest request) {
+        HandlerKey handlerKey = createKey(request);
+
+        return handlerExecutions.get(handlerKey);
     }
 }
