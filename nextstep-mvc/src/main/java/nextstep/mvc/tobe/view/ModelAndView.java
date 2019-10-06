@@ -11,6 +11,10 @@ public class ModelAndView {
     public ModelAndView() {
     }
 
+    public ModelAndView(String viewName) {
+        this.view = viewName;
+    }
+
     public ModelAndView(View view) {
         this.view = view;
     }

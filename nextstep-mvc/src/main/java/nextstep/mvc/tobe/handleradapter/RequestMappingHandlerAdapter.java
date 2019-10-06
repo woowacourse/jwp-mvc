@@ -1,0 +1,20 @@
+package nextstep.mvc.tobe.handleradapter;
+
+import nextstep.mvc.tobe.HandlerExecution;
+import nextstep.mvc.tobe.view.ModelAndView;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+public class RequestMappingHandlerAdapter implements HandlerAdapter {
+
+    @Override
+    public boolean supports(Object handler) {
+        return handler instanceof HandlerExecution;
+    }
+
+    @Override
+    public ModelAndView handler(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object handler) throws Exception {
+        return null;
+    }
+}
