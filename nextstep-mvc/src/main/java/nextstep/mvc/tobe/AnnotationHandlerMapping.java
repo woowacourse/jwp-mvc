@@ -2,13 +2,16 @@ package nextstep.mvc.tobe;
 
 import com.google.common.collect.Maps;
 import nextstep.mvc.HandlerMapping;
+import nextstep.mvc.tobe.utils.PathUtils;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.util.pattern.PathPattern;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 public class AnnotationHandlerMapping implements HandlerMapping {
@@ -45,7 +48,18 @@ public class AnnotationHandlerMapping implements HandlerMapping {
                 });
     }
 
-    public HandlerExecution getHandler(HttpServletRequest request) {
-        return handlerExecutions.get(new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod())));
+    public HandlerExecution getHandler(final HttpServletRequest request) {
+        final String requestUri = request.getRequestURI();
+        final RequestMethod rm = RequestMethod.valueOf(request.getMethod());
+        final Optional<HandlerKey> handlerKey = handlerExecutions.keySet().stream()
+                .filter(key -> {
+                    final PathPattern pathPattern = PathUtils.parse(key.getUrl());
+                    return pathPattern.matches(PathUtils.toPathContainer(requestUri));
+                })
+                .findAny();
+
+        return handlerKey
+                .map(key-> handlerExecutions.get(new HandlerKey(key.getUrl(), rm)))
+                .orElse(null);
     }
 }

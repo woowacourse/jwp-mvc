@@ -47,16 +47,9 @@ public class DispatcherServlet extends HttpServlet {
         try {
             logger.debug("Method : {}, Request URI : {}", req.getMethod(), req.getRequestURI());
 
-            final Object handler = handlerMappings.stream()
-                    .map(handlerMapping -> handlerMapping.getHandler(req))
-                    .filter(Objects::nonNull)
-                    .findFirst()
-                    .orElseThrow(HandlerNotFoundException::new);
+            final Object handler = getHandler(req);
 
-            final HandlerAdapter handlerAdapter = handlerAdapters.stream()
-                    .filter(adapter -> adapter.supports(handler))
-                    .findAny()
-                    .orElseThrow(HandlerAdapterNotSupportedException::new);
+            final HandlerAdapter handlerAdapter = getHandlerAdapter(handler);
 
             final ModelAndView mav = handlerAdapter.handle(req, resp, handler);
 
@@ -64,12 +57,27 @@ public class DispatcherServlet extends HttpServlet {
             move(mav, req, resp);
 
         } catch (HandlerNotFoundException e) {
-            logger.debug("not support uri: {} ", req.getRequestURI());
+            logger.error("not support uri: {} ", req.getRequestURI());
             resp.sendError(SC_NOT_FOUND);
         } catch (Exception e) {
             logger.error(e.getMessage());
             resp.sendError(SC_INTERNAL_SERVER_ERROR, e.getMessage());
         }
+    }
+
+    private Object getHandler(final HttpServletRequest req) {
+        return handlerMappings.stream()
+                .map(handlerMapping -> handlerMapping.getHandler(req))
+                .filter(Objects::nonNull)
+                .findAny()
+                .orElseThrow(HandlerNotFoundException::new);
+    }
+
+    private HandlerAdapter getHandlerAdapter(final Object handler) {
+        return handlerAdapters.stream()
+                .filter(adapter -> adapter.supports(handler))
+                .findAny()
+                .orElseThrow(HandlerAdapterNotSupportedException::new);
     }
 
     private void move(ModelAndView mav, HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

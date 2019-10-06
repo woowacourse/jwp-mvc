@@ -1,5 +1,6 @@
 package nextstep.mvc.tobe;
 
+import nextstep.mvc.tobe.utils.PathUtils;
 import nextstep.web.annotation.PathVariable;
 import org.springframework.http.server.PathContainer;
 import org.springframework.web.util.pattern.PathPattern;
@@ -19,24 +20,11 @@ public class PathVariableHandlerMethodArgumentResolver implements HandlerMethodA
     @Override
     public Object resolveArgument(final HttpServletRequest request, final MethodParameter methodParameter) {
         final String uri = request.getRequestURI();
-        final PathPattern pp = parse("/users/{id}");
+        final PathPattern pp = PathUtils.parse("/users/{id}");
         final Map<String, String> uriVariables = pp
-                .matchAndExtract(toPathContainer(uri))
+                .matchAndExtract(PathUtils.toPathContainer(uri))
                 .getUriVariables();
 
         return Long.parseLong(uriVariables.get(methodParameter.getName()));
-    }
-
-    private PathPattern parse(final String path) {
-        PathPatternParser pp = new PathPatternParser();
-        pp.setMatchOptionalTrailingSeparator(true);
-        return pp.parse(path);
-    }
-
-    private static PathContainer toPathContainer(final String path) {
-        if (path == null) {
-            return null;
-        }
-        return PathContainer.parsePath(path);
     }
 }
