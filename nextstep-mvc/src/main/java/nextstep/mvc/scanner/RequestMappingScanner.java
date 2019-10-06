@@ -8,7 +8,13 @@ import java.util.Set;
 
 public class RequestMappingScanner {
 
-    public static Set<Method> getMethods(Class<?> clazz) {
-        return ReflectionUtils.getAllMethods(clazz, ReflectionUtils.withAnnotation(RequestMapping.class));
+    private Set<Method> methods;
+
+    public RequestMappingScanner(final Class<?> clazz) {
+        this.methods = ReflectionUtils.getAllMethods(clazz, ReflectionUtils.withAnnotation(RequestMapping.class));
+    }
+
+    public Set<Method> getMethods() {
+        return methods;
     }
 }
