@@ -1,6 +1,7 @@
 package nextstep.mvc.tobe;
 
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import nextstep.mvc.HandlerMapping;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
@@ -8,7 +9,6 @@ import nextstep.web.annotation.RequestMethod;
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -25,20 +25,31 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     @Override
     public void initialize() {
         Map<Class<?>, Object> controllers = new ControllerScanner(basePackage).getControllers();
-        Map<Class<?>, Set<Method>> requestMappingMethods = getRequestMappingMethods(controllers.keySet());
+        Set<Method> methods = getRequestMappingMethods(controllers.keySet());
 
-        requestMappingMethods.keySet().forEach(clazz -> {
-            for (Method method : requestMappingMethods.get(clazz)) {
-                createHandlerKeys(method.getAnnotation(RequestMapping.class)).forEach(handlerKey ->
-                        handlerExecutions.put(handlerKey, new HandlerExecution(method, controllers.get(clazz))));
-            }
-        });
+        methods.forEach(method -> addHandlerExecution(controllers, method));
     }
 
-    private Map<Class<?>, Set<Method>> getRequestMappingMethods(Set<Class<?>> clazzes) {
-        Map<Class<?>, Set<Method>> methods = Maps.newHashMap();
+    private void addHandlerExecution(Map<Class<?>, Object> controllers, Method method) {
+        RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+        RequestMethod[] requestMethods = requestMapping.method();
+
+        if (requestMethods.length == EMPTY_REQUEST_METHOD_COUNT) {
+            requestMethods = RequestMethod.values();
+        }
+
+        Arrays.stream(requestMethods)
+                .forEach(requestMethod -> {
+                    HandlerKey handlerKey = new HandlerKey(requestMapping.value(), requestMethod);
+                    Object clazz = controllers.get(method.getDeclaringClass());
+                    handlerExecutions.put(handlerKey, new HandlerExecution(method, clazz));
+                });
+    }
+
+    private Set<Method> getRequestMappingMethods(Set<Class<?>> clazzes) {
+        Set<Method> methods = Sets.newHashSet();
         clazzes.forEach(clazz ->
-                methods.put(clazz, getRequestMappingAnnotations(clazz.getDeclaredMethods())));
+                methods.addAll(getRequestMappingAnnotations(clazz.getDeclaredMethods())));
         return methods;
     }
 
@@ -46,17 +57,6 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         return Arrays.stream(methods)
                 .filter(method -> method.isAnnotationPresent(RequestMapping.class))
                 .collect(Collectors.toSet());
-    }
-
-    private List<HandlerKey> createHandlerKeys(RequestMapping requestMapping) {
-        RequestMethod[] requestMethods = requestMapping.method();
-        if (requestMethods.length == EMPTY_REQUEST_METHOD_COUNT) {
-            requestMethods = RequestMethod.values();
-        }
-
-        return Arrays.stream(requestMethods)
-                .map(requestMethod -> new HandlerKey(requestMapping.value(), requestMethod))
-                .collect(Collectors.toList());
     }
 
     @Override
