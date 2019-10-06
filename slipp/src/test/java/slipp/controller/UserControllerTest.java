@@ -5,9 +5,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import slipp.domain.User;
 import slipp.dto.UserCreatedDto;
-import slipp.dto.UserUpdatedDto;
 import support.test.WebTestClient;
 
 import java.nio.charset.StandardCharsets;
@@ -18,8 +16,6 @@ import java.util.Objects;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class UserControllerTest {
-    private static final Logger logger = LoggerFactory.getLogger(UserAcceptanceTest.class);
-
     private WebTestClient client;
 
     @BeforeEach
@@ -43,12 +39,12 @@ class UserControllerTest {
                     assertThat(location).isEqualTo("/");
                 });
 
-       client.getResource("/users/profile?userId=pobi")
-               .expectBody()
-               .consumeWith(result -> {
-                   String body = new String(Objects.requireNonNull(result.getResponseBody()), StandardCharsets.UTF_8);
-                   assertThat(body).contains(expected.get("name"));
-                   assertThat(body).contains(expected.get("email"));
-               });
+        client.getResource("/users/profile?userId=pobi")
+                .expectBody()
+                .consumeWith(result -> {
+                    String body = new String(Objects.requireNonNull(result.getResponseBody()), StandardCharsets.UTF_8);
+                    assertThat(body).contains(expected.get("name"));
+                    assertThat(body).contains(expected.get("email"));
+                });
     }
 }
