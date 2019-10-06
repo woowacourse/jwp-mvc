@@ -29,12 +29,12 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     @Override
-    public void init() throws ServletException {
+    public void init() {
         handlerMappings.forEach(HandlerMapping::initialize);
     }
 
     @Override
-    protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException {
+    protected void service(HttpServletRequest req, HttpServletResponse resp) {
         String requestUri = req.getRequestURI();
         log.debug("Method : {}, Request URI : {}", req.getMethod(), requestUri);
 
