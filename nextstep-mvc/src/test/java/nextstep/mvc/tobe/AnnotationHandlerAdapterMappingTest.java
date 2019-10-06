@@ -8,7 +8,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class AnnotationHandlerMappingTest {
+public class AnnotationHandlerAdapterMappingTest {
     private AnnotationHandlerMapping handlerMapping;
 
     @BeforeEach
