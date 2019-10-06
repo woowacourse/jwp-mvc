@@ -13,6 +13,7 @@ public class HandlerMethodArgumentResolverComposite implements HandlerMethodArgu
 
     }
 
+    @Override
     public Object resolveArgument(final HttpServletRequest request, final MethodParameter methodParameter) {
         final HandlerMethodArgumentResolver resolver = resolvers.stream()
                 .filter(x -> x.supports(methodParameter))
@@ -25,5 +26,9 @@ public class HandlerMethodArgumentResolverComposite implements HandlerMethodArgu
     @Override
     public boolean supports(final MethodParameter methodParameter) {
         return true;
+    }
+
+    public void addHandlerMethodArgumentResolver(final HandlerMethodArgumentResolver resolver) {
+        resolvers.add(resolver);
     }
 }

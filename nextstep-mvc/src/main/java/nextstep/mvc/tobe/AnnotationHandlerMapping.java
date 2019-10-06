@@ -39,7 +39,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
                     final RequestMethod[] requestMethods = rm.method().length == 0 ? RequestMethod.values() : rm.method();
                     for (final RequestMethod requestMethod : requestMethods) {
                         final HandlerKey handlerKey = new HandlerKey(rm.value(), requestMethod);
-                        final HandlerExecution handlerExecution = (req, resp) -> (ModelAndView) method.invoke(instance, req, resp);
+                        final HandlerExecution handlerExecution = new HandlerExecution(instance, method);
                         handlerExecutions.put(handlerKey, handlerExecution);
                     }
                 });

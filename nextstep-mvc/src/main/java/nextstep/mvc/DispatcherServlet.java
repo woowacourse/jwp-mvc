@@ -3,9 +3,9 @@ package nextstep.mvc;
 import nextstep.mvc.exception.HandlerAdapterNotSupportedException;
 import nextstep.mvc.exception.HandlerNotFoundException;
 import nextstep.mvc.tobe.DefaultHandlerAdapter;
-import nextstep.mvc.tobe.Handler;
 import nextstep.mvc.tobe.HandlerAdapter;
 import nextstep.mvc.tobe.ModelAndView;
+import nextstep.mvc.tobe.SimpleControllerAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,7 +34,7 @@ public class DispatcherServlet extends HttpServlet {
 
     public DispatcherServlet(HandlerMapping... handlerMappings) {
         this.handlerMappings = Arrays.asList(handlerMappings);
-        this.handlerAdapters = Arrays.asList(new DefaultHandlerAdapter());
+        this.handlerAdapters = Arrays.asList(new SimpleControllerAdapter(), new DefaultHandlerAdapter());
     }
 
     @Override
@@ -47,7 +47,7 @@ public class DispatcherServlet extends HttpServlet {
         try {
             logger.debug("Method : {}, Request URI : {}", req.getMethod(), req.getRequestURI());
 
-            final Handler handler = handlerMappings.stream()
+            final Object handler = handlerMappings.stream()
                     .map(handlerMapping -> handlerMapping.getHandler(req))
                     .filter(Objects::nonNull)
                     .findFirst()
@@ -62,6 +62,7 @@ public class DispatcherServlet extends HttpServlet {
 
             // TODO ViewResolver (2단계)
             move(mav, req, resp);
+
         } catch (HandlerNotFoundException e) {
             logger.debug("not support uri: {} ", req.getRequestURI());
             resp.sendError(SC_NOT_FOUND);

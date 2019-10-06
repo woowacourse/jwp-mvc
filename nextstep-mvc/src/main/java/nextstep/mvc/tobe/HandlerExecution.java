@@ -1,9 +1,27 @@
 package nextstep.mvc.tobe;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
 
-public interface HandlerExecution extends Handler {
-    Object execute(HttpServletRequest request, HttpServletResponse response) throws InvocationTargetException, IllegalAccessException;
+public class HandlerExecution {
+    private final Object instance;
+    private final Method method;
+
+    public HandlerExecution(final Object instance, final Method method) {
+        this.instance = instance;
+        this.method = method;
+    }
+
+    Object execute(Object... objects) throws InvocationTargetException, IllegalAccessException {
+        return method.invoke(instance, objects);
+    }
+
+    Parameter[] getParameters() {
+        return method.getParameters();
+    }
+
+    public Method getMethod() {
+        return method;
+    }
 }

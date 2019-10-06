@@ -16,9 +16,7 @@ import javax.servlet.http.HttpSession;
 public class LoginController {
 
     @RequestMapping(value = "/users/login", method = RequestMethod.POST)
-    public ModelAndView login(final HttpServletRequest req, final HttpServletResponse resp) {
-        String userId = req.getParameter("userId");
-        String password = req.getParameter("password");
+    public ModelAndView login(final HttpServletRequest req, final String userId, final String password) {
         User user = DataBase.findUserById(userId);
         if (user == null) {
             req.setAttribute("loginFailed", true);
@@ -33,7 +31,6 @@ public class LoginController {
             return new ModelAndView("/user/login.jsp");
         }
     }
-
     @RequestMapping(value = "/users/logout", method = RequestMethod.GET)
     public ModelAndView logout(HttpServletRequest req, HttpServletResponse resp) throws Exception {
         HttpSession session = req.getSession();
@@ -42,7 +39,7 @@ public class LoginController {
     }
 
     @RequestMapping(value = "/users/loginForm", method = RequestMethod.GET)
-    public ModelAndView form(final HttpServletRequest req, final HttpServletResponse resp) {
-        return new ModelAndView("/user/login.jsp");
+    public String form() {
+        return "/user/login.jsp";
     }
 }
