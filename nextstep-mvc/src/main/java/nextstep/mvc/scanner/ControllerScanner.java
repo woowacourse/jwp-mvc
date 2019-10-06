@@ -12,26 +12,25 @@ import java.util.Set;
 public class ControllerScanner {
 
     private static final Logger log = LoggerFactory.getLogger(ControllerScanner.class);
-    private Map<Class<?>,Object> controllers = new HashMap<>();
+    private final Map<Class<?>, Object> instanceOfClazz = new HashMap<>();
 
-    public ControllerScanner(final String classPath) {
-        this.initialize(new Reflections(classPath));
-    }
-
-    private void initialize(Reflections reflections) {
-        Set<Class<?>> classes = reflections.getTypesAnnotatedWith(Controller.class);
-        classes.forEach(clazz -> {
+    public ControllerScanner(final Object[] basePackage) {
+        Reflections reflections = new Reflections(basePackage);
+        Set<Class<?>> controllerClazz = reflections.getTypesAnnotatedWith(Controller.class);
+        controllerClazz.forEach(clazz -> {
             try {
-                controllers.put(clazz, clazz.getDeclaredConstructor().newInstance());
+                instanceOfClazz.put(clazz, clazz.getConstructor().newInstance());
             } catch (Exception e) {
                 log.error(e.getMessage());
             }
         });
     }
 
-    public Map<Class<?>, Object> getControllers() {
-        return controllers;
+    public Object getInstance(Class<?> clazz) {
+        return instanceOfClazz.get(clazz);
     }
 
-
+    public Map<Class<?>, Object> getInstanceOfClazz() {
+        return instanceOfClazz;
+    }
 }
