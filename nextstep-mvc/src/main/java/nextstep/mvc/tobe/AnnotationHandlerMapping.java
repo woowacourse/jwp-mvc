@@ -37,8 +37,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
             List<Method> methods = generateMethods(clazz);
             methods.forEach(method -> addHandlerExecutions(clazz, method));
         }
-        handlerExecutions.entrySet().forEach(entry ->
-            logger.debug("handlerExecutions key : {}, value : {}", entry.getKey(), entry.getValue()));
+        handlerExecutions.forEach((key, value) -> logger.debug("handlerExecutions key : {}, value : {}", key, value));
     }
 
     private List<Method> generateMethods(Class<?> clazz) {
