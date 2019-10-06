@@ -29,12 +29,12 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     @Override
     public void initialize() {
         Reflections reflections = new Reflections(basePackage);
-        Set<Class<?>> clazz = reflections.getTypesAnnotatedWith(Controller.class);
+        Set<Class<?>> classes = reflections.getTypesAnnotatedWith(Controller.class);
 
         try {
-            for (Class<?> claz : clazz) {
-                Object object = claz.newInstance();
-                Method[] methods = claz.getMethods();
+            for (Class<?> clazz : classes) {
+                Object object = clazz.newInstance();
+                Method[] methods = clazz.getMethods();
                 collectHandlerExecutions(object, methods);
             }
         } catch (IllegalAccessException | InstantiationException e) {
