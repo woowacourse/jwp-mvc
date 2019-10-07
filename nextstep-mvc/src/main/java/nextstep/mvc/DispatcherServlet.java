@@ -75,17 +75,17 @@ public class DispatcherServlet extends HttpServlet {
         }
     }
 
-    private HandlerAdapter findHandlerAdapter(Object handler) {
-        return handlerAdapters.stream()
-                .filter(handlerAdapter -> handlerAdapter.isSupport(handler))
-                .findAny()
-                .orElseThrow(IllegalArgumentException::new);
-    }
-
     private Object findHandler(HttpServletRequest req) {
         return handlerMappings.stream()
                 .map(handlerMapping -> handlerMapping.getHandler(req))
                 .filter(Objects::nonNull)
+                .findAny()
+                .orElseThrow(IllegalArgumentException::new);
+    }
+
+    private HandlerAdapter findHandlerAdapter(Object handler) {
+        return handlerAdapters.stream()
+                .filter(handlerAdapter -> handlerAdapter.isSupport(handler))
                 .findAny()
                 .orElseThrow(IllegalArgumentException::new);
     }
