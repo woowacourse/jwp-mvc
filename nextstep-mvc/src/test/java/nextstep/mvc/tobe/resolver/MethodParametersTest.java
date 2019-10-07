@@ -1,4 +1,4 @@
-package nextstep.mvc.tobe.method;
+package nextstep.mvc.tobe.resolver;
 
 import org.junit.jupiter.api.Test;
 

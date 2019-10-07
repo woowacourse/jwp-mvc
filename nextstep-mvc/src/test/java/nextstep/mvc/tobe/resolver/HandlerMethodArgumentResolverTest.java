@@ -1,4 +1,4 @@
-package nextstep.mvc.tobe.method;
+package nextstep.mvc.tobe.resolver;
 
 import nextstep.mvc.tobe.ModelAndView;
 import nextstep.mvc.tobe.TestUserController;

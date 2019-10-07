@@ -1,4 +1,4 @@
-package nextstep.mvc.tobe.method;
+package nextstep.mvc.tobe.resolver;
 
 import nextstep.web.annotation.PathVariable;
 import nextstep.web.annotation.RequestMapping;

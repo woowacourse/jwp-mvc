@@ -1,11 +1,8 @@
-package nextstep.mvc.tobe.method;
+package nextstep.mvc.tobe.resolver;
 
 import nextstep.mvc.tobe.ModelAndView;
 import nextstep.mvc.tobe.TestUser;
 import nextstep.mvc.tobe.TestUserController;
-import nextstep.mvc.tobe.method.HandlerMethodArgumentResolver;
-import nextstep.mvc.tobe.method.HandlerMethodArgumentResolverComposite;
-import nextstep.mvc.tobe.method.MethodParameters;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;

@@ -1,6 +1,5 @@
-package nextstep.mvc.tobe.method;
+package nextstep.mvc.tobe.resolver;
 
-import nextstep.mvc.tobe.method.MethodParameter;
 import org.springframework.core.LocalVariableTableParameterNameDiscoverer;
 import org.springframework.core.ParameterNameDiscoverer;
 

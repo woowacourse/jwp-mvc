@@ -2,8 +2,8 @@ package nextstep.mvc.tobe.adapter;
 
 import nextstep.mvc.tobe.ModelAndView;
 import nextstep.mvc.tobe.handler.HandlerExecution;
-import nextstep.mvc.tobe.method.HandlerMethodArgumentResolverComposite;
-import nextstep.mvc.tobe.method.MethodParameters;
+import nextstep.mvc.tobe.resolver.HandlerMethodArgumentResolverComposite;
+import nextstep.mvc.tobe.resolver.MethodParameters;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
