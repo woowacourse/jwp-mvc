@@ -11,8 +11,12 @@ public class ModelAndView {
     public ModelAndView() {
     }
 
-    public ModelAndView(View view) {
+    private ModelAndView(View view) {
         this.view = view;
+    }
+
+    public static ModelAndView of(String uri) {
+        return new ModelAndView(new JspView(uri));
     }
 
     public ModelAndView addObject(String attributeName, Object attributeValue) {
