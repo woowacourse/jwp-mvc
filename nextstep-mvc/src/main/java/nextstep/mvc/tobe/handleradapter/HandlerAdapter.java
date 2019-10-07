@@ -11,7 +11,7 @@ public interface HandlerAdapter {
 
     boolean hasArgumentResolvers();
 
-    ModelAndView handle(RequestContext requestContext, Object handler) throws Exception;
+    ModelAndView handle(RequestContext requestContext, Object handler);
 
     void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers);
 }

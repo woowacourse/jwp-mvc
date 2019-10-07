@@ -27,7 +27,7 @@ public class RequestMappingHandlerAdapter implements HandlerAdapter {
     }
 
     @Override
-    public ModelAndView handle(RequestContext requestContext, Object handler) throws Exception {
+    public ModelAndView handle(RequestContext requestContext, Object handler) {
         HandlerMethod handlerMethod = (HandlerMethod) handler;
 
         List<MethodParameter> methodParameters = handlerMethod.getMethodParameters();
@@ -63,7 +63,7 @@ public class RequestMappingHandlerAdapter implements HandlerAdapter {
         HandlerMethodArgumentResolver argumentResolver = argumentResolvers.stream()
                 .filter(resolver -> resolver.supports(methodParameter))
                 .findAny()
-                .orElseThrow();
+                .orElseThrow(ArgumentResolverNotFoundException::new);
 
         return argumentResolver.resolve(requestContext, methodParameter);
     }
