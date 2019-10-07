@@ -14,6 +14,7 @@ public class RequestContext {
         attributes.put(RequestContextKey.REQUEST.getKey(), request);
         attributes.put(RequestContextKey.RESPONSE.getKey(), response);
         attributes.put(RequestContextKey.MODEL.getKey(), new Model());
+        attributes.put(RequestContextKey.HTTP_SESSION.getKey(), request.getSession());
     }
 
     public HttpServletRequest getHttpServletRequest() {

@@ -4,12 +4,14 @@ import nextstep.mvc.tobe.view.Model;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.util.Arrays;
 
 public enum RequestContextKey {
     REQUEST(HttpServletRequest.class.getName(), HttpServletRequest.class),
     RESPONSE(HttpServletResponse.class.getName(), HttpServletResponse.class),
-    MODEL(Model.class.getName(), Model.class);
+    MODEL(Model.class.getName(), Model.class),
+    HTTP_SESSION(HttpSession.class.getName(), HttpSession.class);
 
     private String key;
     private Class<?> type;

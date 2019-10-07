@@ -1,22 +1,28 @@
 package slipp.controller;
 
+import nextstep.mvc.tobe.view.ModelAndView;
+import nextstep.web.annotation.Controller;
+import nextstep.web.annotation.RequestMapping;
+import nextstep.web.annotation.RequestParam;
 import slipp.domain.User;
 import slipp.support.db.DataBase;
-import nextstep.mvc.asis.Controller;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
-public class UpdateFormUserController implements Controller {
+import static nextstep.web.annotation.RequestMethod.GET;
 
-    @Override
-    public String execute(HttpServletRequest req, HttpServletResponse resp) throws Exception {
-        String userId = req.getParameter("userId");
+@Controller
+public class UpdateFormUserController {
+
+    @RequestMapping(value = "/users/updateForm", method = GET)
+    public ModelAndView execute(@RequestParam("userId") String userId, HttpSession session) {
         User user = DataBase.findUserById(userId);
-        if (!UserSessionUtils.isSameUser(req.getSession(), user)) {
+        if (!UserSessionUtils.isSameUser(session, user)) {
             throw new IllegalStateException("다른 사용자의 정보를 수정할 수 없습니다.");
         }
-        req.setAttribute("user", user);
-        return "/user/updateForm.jsp";
+
+        ModelAndView modelAndView = new ModelAndView("/user/updateForm.jsp");
+        modelAndView.addObject("user", user);
+        return modelAndView;
     }
 }
