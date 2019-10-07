@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-public class Scanner {
+public class ControllerScanner {
 
     public static Map<Class<?>, Object> scan(Class<? extends Annotation> annotation, Object[] basePackage) {
         Reflections reflections = new Reflections(basePackage);
