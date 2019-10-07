@@ -9,6 +9,7 @@ import nextstep.web.annotation.RequestMethod;
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 public class AnnotationHandlerMapping implements HandlerMapping {
@@ -30,10 +31,18 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     private void putHandlerExecution(Class<?> controller, Method method) {
         RequestMapping annotation = method.getAnnotation(RequestMapping.class);
-        HandlerKey handlerKey = new HandlerKey(annotation.value(), annotation.method());
-        HandlerExecution handlerExecution = new HandlerExecution(controller, method);
+        List<RequestMethod> requestMethods = Arrays.asList(annotation.method());
 
-        handlerExecutions.put(handlerKey, handlerExecution);
+        if (requestMethods.isEmpty()) {
+            requestMethods = Arrays.asList(RequestMethod.values());
+        }
+
+        requestMethods.forEach(requestMethod -> {
+            HandlerKey handlerKey = new HandlerKey(annotation.value(), requestMethod);
+            HandlerExecution handlerExecution = new HandlerExecution(controller, method);
+
+            handlerExecutions.put(handlerKey, handlerExecution);
+        });
     }
 
     public static HandlerKey createKey(HttpServletRequest request) {
