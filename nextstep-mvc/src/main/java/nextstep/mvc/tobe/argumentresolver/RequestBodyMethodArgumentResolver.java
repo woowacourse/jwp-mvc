@@ -4,11 +4,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import nextstep.mvc.tobe.MethodParameter;
 import nextstep.mvc.tobe.RequestContext;
 import nextstep.web.annotation.RequestBody;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
 public class RequestBodyMethodArgumentResolver implements HandlerMethodArgumentResolver {
+    private static final Logger logger = LoggerFactory.getLogger(RequestBodyMethodArgumentResolver.class);
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     @Override
@@ -22,8 +25,8 @@ public class RequestBodyMethodArgumentResolver implements HandlerMethodArgumentR
         try {
             return OBJECT_MAPPER.readValue(request.getInputStream(), methodParameter.getType());
         } catch (IOException e) {
-            e.printStackTrace();
-            return null;
+            logger.error("Exception : {}", e);
+            throw new RequestBodyParsingFailedException();
         }
     }
 }
