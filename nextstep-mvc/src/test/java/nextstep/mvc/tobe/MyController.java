@@ -2,6 +2,7 @@ package nextstep.mvc.tobe;
 
 import nextstep.db.DataBase;
 import nextstep.web.annotation.Controller;
+import nextstep.web.annotation.PathVariable;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
 import org.slf4j.Logger;
@@ -14,7 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 public class MyController {
     private static final Logger logger = LoggerFactory.getLogger(MyController.class);
 
-    @RequestMapping(value = "/users", method = RequestMethod.GET)
+    @RequestMapping(value = "/users", method = {RequestMethod.GET, RequestMethod.OPTIONS})
     public ModelAndView findUserId(HttpServletRequest request, HttpServletResponse response) {
         String userId = request.getParameter("userId");
         logger.debug("Find UserId : {}", userId);
@@ -33,5 +34,19 @@ public class MyController {
         logger.debug("User : {}", user);
         DataBase.addUser(user);
         return null;
+    }
+
+    @RequestMapping(value = "/users/nothing")
+    public ModelAndView nothing(HttpServletRequest request, HttpServletResponse response) {
+        return null;
+    }
+
+    @RequestMapping(value = "/users/{id}/{userId}", method = RequestMethod.GET)
+    public ModelAndView testMethod(@PathVariable long id, @PathVariable long userId) {
+        logger.debug("id: {},userId: {}", id, userId);
+        final ModelAndView modelAndView = new ModelAndView();
+        modelAndView.addObject("id", id);
+        modelAndView.addObject("userId", userId);
+        return modelAndView;
     }
 }

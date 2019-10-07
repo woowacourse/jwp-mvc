@@ -15,6 +15,8 @@ public class Question {
 
     private int countOfComment;
 
+    private boolean aBoolean;
+
     public Question(String writer, String title, String contents) {
         this(0, writer, title, contents, new Date(), 0);
     }
@@ -27,6 +29,16 @@ public class Question {
         this.contents = contents;
         this.createdDate = createdDate;
         this.countOfComment = countOfComment;
+    }
+
+    public Question(final long questionId, final String writer, final String title, final String contents, final Date createdDate, final int countOfComment, final boolean aBoolean) {
+        this.questionId = questionId;
+        this.writer = writer;
+        this.title = title;
+        this.contents = contents;
+        this.createdDate = createdDate;
+        this.countOfComment = countOfComment;
+        this.aBoolean = aBoolean;
     }
 
     public long getQuestionId() {

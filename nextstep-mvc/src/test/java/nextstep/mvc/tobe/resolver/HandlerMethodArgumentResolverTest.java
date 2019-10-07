@@ -1,5 +1,7 @@
-package nextstep.mvc.tobe;
+package nextstep.mvc.tobe.resolver;
 
+import nextstep.mvc.tobe.ModelAndView;
+import nextstep.mvc.tobe.TestUserController;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -1,6 +1,12 @@
 package nextstep.mvc;
 
-import nextstep.mvc.asis.Controller;
+import nextstep.mvc.tobe.exception.HandlerAdapterNotSupportedException;
+import nextstep.mvc.tobe.exception.HandlerNotFoundException;
+import nextstep.mvc.tobe.adapter.HandlerAdapter;
+import nextstep.mvc.tobe.adapter.HandlerExecutionAdapter;
+import nextstep.mvc.tobe.ModelAndView;
+import nextstep.mvc.tobe.adapter.SimpleControllerAdapter;
+import nextstep.mvc.tobe.mapping.HandlerMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,6 +17,12 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+
+import static javax.servlet.http.HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
+import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
 
 @WebServlet(name = "dispatcher", urlPatterns = "/", loadOnStartup = 1)
 public class DispatcherServlet extends HttpServlet {
@@ -18,39 +30,63 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger logger = LoggerFactory.getLogger(DispatcherServlet.class);
     private static final String DEFAULT_REDIRECT_PREFIX = "redirect:";
 
-    private HandlerMapping rm;
+    private List<HandlerMapping> handlerMappings;
+    private List<HandlerAdapter> handlerAdapters;
 
-    public DispatcherServlet(HandlerMapping rm) {
-        this.rm = rm;
+    public DispatcherServlet(HandlerMapping... handlerMappings) {
+        this.handlerMappings = Arrays.asList(handlerMappings);
+        this.handlerAdapters = Arrays.asList(new SimpleControllerAdapter(), new HandlerExecutionAdapter());
     }
 
     @Override
     public void init() throws ServletException {
-        rm.initialize();
+        handlerMappings.forEach(HandlerMapping::initialize);
     }
 
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String requestUri = req.getRequestURI();
-        logger.debug("Method : {}, Request URI : {}", req.getMethod(), requestUri);
-
-        Controller controller = rm.getHandler(requestUri);
         try {
-            String viewName = controller.execute(req, resp);
-            move(viewName, req, resp);
-        } catch (Throwable e) {
-            logger.error("Exception : {}", e);
-            throw new ServletException(e.getMessage());
+            logger.debug("Method : {}, Request URI : {}", req.getMethod(), req.getRequestURI());
+
+            final Object handler = getHandler(req);
+
+            final HandlerAdapter handlerAdapter = getHandlerAdapter(handler);
+
+            final ModelAndView mav = handlerAdapter.handle(req, resp, handler);
+
+            // TODO ViewResolver (2단계)
+            move(mav, req, resp);
+
+        } catch (HandlerNotFoundException e) {
+            logger.error("not support uri: {} ", req.getRequestURI());
+            resp.sendError(SC_NOT_FOUND);
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+            resp.sendError(SC_INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
 
-    private void move(String viewName, HttpServletRequest req, HttpServletResponse resp)
-            throws ServletException, IOException {
+    private Object getHandler(final HttpServletRequest req) {
+        return handlerMappings.stream()
+                .map(handlerMapping -> handlerMapping.getHandler(req))
+                .filter(Objects::nonNull)
+                .findAny()
+                .orElseThrow(HandlerNotFoundException::new);
+    }
+
+    private HandlerAdapter getHandlerAdapter(final Object handler) {
+        return handlerAdapters.stream()
+                .filter(adapter -> adapter.supports(handler))
+                .findAny()
+                .orElseThrow(HandlerAdapterNotSupportedException::new);
+    }
+
+    private void move(ModelAndView mav, HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        final String viewName = mav.getViewName();
         if (viewName.startsWith(DEFAULT_REDIRECT_PREFIX)) {
             resp.sendRedirect(viewName.substring(DEFAULT_REDIRECT_PREFIX.length()));
             return;
         }
-
         RequestDispatcher rd = req.getRequestDispatcher(viewName);
         rd.forward(req, resp);
     }
