@@ -1,18 +1,19 @@
 package slipp.controller;
 
-import slipp.domain.User;
-import slipp.support.db.DataBase;
-import nextstep.mvc.asis.Controller;
+import nextstep.web.annotation.RequestMapping;
+import nextstep.web.annotation.RequestMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import slipp.domain.User;
+import slipp.support.db.DataBase;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public class UpdateUserController implements Controller {
+public class UpdateUserController {
     private static final Logger log = LoggerFactory.getLogger(UpdateUserController.class);
 
-    @Override
+    @RequestMapping(method = RequestMethod.PUT, value = "/users/update")
     public String execute(HttpServletRequest req, HttpServletResponse resp) throws Exception {
         User user = DataBase.findUserById(req.getParameter("userId"));
         if (!UserSessionUtils.isSameUser(req.getSession(), user)) {

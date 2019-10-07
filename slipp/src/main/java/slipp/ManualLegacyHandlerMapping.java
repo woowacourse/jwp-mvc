@@ -6,7 +6,10 @@ import nextstep.mvc.asis.Controller;
 import nextstep.mvc.asis.ForwardController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import slipp.controller.*;
+import slipp.controller.LoginController;
+import slipp.controller.LogoutController;
+import slipp.controller.ProfileController;
+import slipp.controller.UpdateFormUserController;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -23,7 +26,6 @@ public class ManualLegacyHandlerMapping implements LegacyHandlerMapping {
         mappings.put("/users/profile", new ProfileController());
         mappings.put("/users/logout", new LogoutController());
         mappings.put("/users/updateForm", new UpdateFormUserController());
-        mappings.put("/users/update", new UpdateUserController());
 
         logger.info("Initialized Request Mapping!");
         mappings.keySet().forEach(path -> {
