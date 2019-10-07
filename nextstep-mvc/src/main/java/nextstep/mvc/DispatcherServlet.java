@@ -2,7 +2,7 @@ package nextstep.mvc;
 
 import javassist.NotFoundException;
 import nextstep.mvc.tobe.HandlerResolver;
-import nextstep.mvc.tobe.ViewResolver;
+import nextstep.mvc.tobe.ModelAndView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,7 +12,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
-import java.util.Map;
 
 @WebServlet(name = "dispatcher", urlPatterns = "/", loadOnStartup = 1)
 public class DispatcherServlet extends HttpServlet {
@@ -20,11 +19,9 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger logger = LoggerFactory.getLogger(DispatcherServlet.class);
 
     private final List<HandlerMapping> handlerMappings;
-    private Map<Class, ViewResolver> viewResolvers;
 
-    public DispatcherServlet(List<HandlerMapping> handlerMappings, Map<Class, ViewResolver> viewResolvers) {
+    public DispatcherServlet(List<HandlerMapping> handlerMappings) {
         this.handlerMappings = handlerMappings;
-        this.viewResolvers = viewResolvers;
     }
 
     @Override
@@ -37,8 +34,8 @@ public class DispatcherServlet extends HttpServlet {
         try {
             HandlerMapping handler = getHandler(req);
             HandlerResolver handlerExecution = (HandlerResolver) handler.getHandler(req);
-            Object view = handlerExecution.execute(req, resp);
-            viewResolvers.get(view.getClass()).resolve(req, resp, view);
+            ModelAndView mv = handlerExecution.resolve(req, resp);
+            mv.render(req, resp);
         } catch (Throwable e) {
             logger.error("Exception : {}", e);
             throw new ServletException(e.getMessage());

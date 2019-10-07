@@ -14,8 +14,13 @@ import java.util.Map;
 import java.util.Set;
 
 public class AnnotationHandlerMapping implements HandlerMapping {
-    private Object[] basePackage;
+    private static Map<Class, ViewResolver> viewResolvers = Maps.newHashMap();
 
+    static {
+        viewResolvers.put(String.class, new JspViewResolver());
+    }
+
+    private Object[] basePackage;
     private Map<HandlerKey, HandlerExecution> handlerExecutions = Maps.newHashMap();
 
     public AnnotationHandlerMapping(Object... basePackage) {
@@ -26,6 +31,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     public void initialize() {
         Reflections reflections = new Reflections(basePackage);
         Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
+
 
         controllers.forEach(this::fillHandlerExecutions);
     }
@@ -38,7 +44,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     private void fillHandlerExecution(Method method, Class clazz) {
         RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-        handlerExecutions.put(new HandlerKey(requestMapping.value(), requestMapping.method()), new HandlerExecution(method, clazz));
+        handlerExecutions.put(new HandlerKey(requestMapping.value(), requestMapping.method()), new HandlerExecution(method, clazz, viewResolvers.get(method.getReturnType())));
     }
 
     @Override

@@ -7,14 +7,18 @@ import java.lang.reflect.Method;
 public class HandlerExecution implements HandlerResolver {
     private final Method method;
     private final Class<?> clazz;
+    private final ViewResolver viewResolver;
 
-    public HandlerExecution(Method method, Class<?> clazz) {
+    public HandlerExecution(Method method, Class<?> clazz, ViewResolver viewResolver) {
         this.method = method;
         this.clazz = clazz;
+        this.viewResolver = viewResolver;
     }
 
     @Override
-    public Object execute(HttpServletRequest req, HttpServletResponse resp) throws Exception {
-        return method.invoke(clazz.getDeclaredConstructor().newInstance(), req, resp);
+    public ModelAndView resolve(HttpServletRequest req, HttpServletResponse resp) throws Exception {
+        Object result = method.invoke(clazz.getDeclaredConstructor().newInstance(), req, resp);
+        View view = viewResolver.resolve(result);
+        return new ModelAndView(view);
     }
 }

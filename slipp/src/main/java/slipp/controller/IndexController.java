@@ -1,6 +1,5 @@
 package slipp.controller;
 
-import nextstep.mvc.tobe.ModelAndView;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
@@ -13,8 +12,8 @@ import javax.servlet.http.HttpServletResponse;
 public class IndexController {
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
-    public ModelAndView index(HttpServletRequest req, HttpServletResponse resp) throws Exception {
+    public String index(HttpServletRequest req, HttpServletResponse resp) throws Exception {
         req.setAttribute("users", DataBase.findAll());
-        return ModelAndView.of("home.jsp");
+        return "home.jsp";
     }
 }
