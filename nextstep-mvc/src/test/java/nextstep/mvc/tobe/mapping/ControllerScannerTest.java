@@ -1,6 +1,5 @@
 package nextstep.mvc.tobe.mapping;
 
-import nextstep.mvc.tobe.mapping.ControllerScanner;
 import nextstep.web.annotation.Controller;
 import org.junit.jupiter.api.Test;
 
@@ -10,7 +9,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class ControllerScannerTest {
     private final ControllerScanner controllerScanner = new ControllerScanner("nextstep.mvc.tobe");
-    final Set<Class<?>> classes = controllerScanner.getClasses();
+    final Set<Class<?>> classes = controllerScanner.keySet();
 
     @Test
     void 컨트롤러_스캔_확인() {
