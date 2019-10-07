@@ -11,20 +11,26 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
 
 @WebServlet(name = "dispatcher", urlPatterns = "/", loadOnStartup = 1)
 public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger logger = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private HandlerAdapter[] handlerAdapters;
+    private List<HandlerMapping> handlerMappings;
+    private List<HandlerAdapter> handlerAdapters;
 
-    public DispatcherServlet(HandlerAdapter[] handlerAdapters) {
+    public DispatcherServlet(List<HandlerMapping> handlerMappings, List<HandlerAdapter> handlerAdapters) {
+        this.handlerMappings = handlerMappings;
         this.handlerAdapters = handlerAdapters;
     }
 
     @Override
     public void init() throws ServletException {
+        for (HandlerMapping handlerMapping : handlerMappings) {
+            handlerMapping.initialize();
+        }
     }
 
     @Override
@@ -37,9 +43,10 @@ public class DispatcherServlet extends HttpServlet {
 
     private ModelAndView getModelAndView(HttpServletRequest req, HttpServletResponse resp) {
         for (HandlerAdapter adapter : handlerAdapters) {
-            if (adapter.isSupported(req)) {
+            Object handler = getHandler(req);
+            if (adapter.isSupported(handler)) {
                 try {
-                    return adapter.execute(req, resp);
+                    return adapter.handle(req, resp, handler);
                 } catch (Exception e) {
                     logger.error(e.getMessage());
                     throw new DispatcherServletException();
@@ -48,5 +55,16 @@ public class DispatcherServlet extends HttpServlet {
         }
 
         return new ModelAndView(new JspView("/404.jsp"));
+    }
+
+    private Object getHandler(HttpServletRequest req) {
+        for (HandlerMapping handlerMapping : handlerMappings) {
+            Object handler = handlerMapping.getHandler(req);
+            if (handler != null) {
+                return handler;
+            }
+        }
+
+        throw new NotFoundHandlerException();
     }
 }
