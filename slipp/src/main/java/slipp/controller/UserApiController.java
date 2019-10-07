@@ -55,7 +55,7 @@ public class UserApiController {
 
     private <T> T parseBody(HttpServletRequest req, Class<T> clazz) {
         try {
-            return JsonUtils.toObject(req.getReader().lines().collect(Collectors.joining()), clazz);
+            return JsonUtils.toObject(req.getInputStream(), clazz);
         } catch (IOException e) {
             logger.error("Error on parsing json body", e);
             throw new MessageParseException(e);
