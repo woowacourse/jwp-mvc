@@ -33,7 +33,7 @@ public class ManualHandlerMapping implements HandlerMapping {
     }
 
     @Override
-    public Object getHandler(HttpServletRequest request) {
+    public Controller getHandler(HttpServletRequest request) {
         return mappings.get(request.getRequestURI());
     }
 
