@@ -4,8 +4,9 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.function.Consumer;
 
 public class Junit4TestRunner {
     private static final Logger log = LoggerFactory.getLogger(Junit4TestRunner.class);
@@ -16,12 +17,21 @@ public class Junit4TestRunner {
 
         Arrays.stream(clazz.getDeclaredMethods())
                 .filter(method -> method.isAnnotationPresent(MyTest.class))
-                .forEach(method -> {
-                    try {
-                        method.invoke(clazz.newInstance());
-                    } catch (IllegalAccessException | InvocationTargetException | InstantiationException e) {
-                        log.error("error: {}", e.getMessage());
-                    }
-                });
+                .forEach(wrapper(arg -> arg.invoke(clazz.newInstance())));
+    }
+
+    private <T extends Method, E extends Exception> Consumer<T> wrapper(FunctionWithException<T, E> fe) {
+        return arg -> {
+            try {
+                fe.apply(arg);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        };
+    }
+
+    @FunctionalInterface
+    public interface FunctionWithException<T extends Method, E extends Exception> {
+        void apply(T t) throws E;
     }
 }

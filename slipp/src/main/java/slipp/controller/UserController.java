@@ -9,6 +9,7 @@ import nextstep.web.annotation.RequestMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import slipp.domain.User;
+import slipp.exception.UserNotFoundException;
 import slipp.support.db.DataBase;
 
 import javax.servlet.http.HttpServletRequest;
@@ -33,7 +34,7 @@ public class UserController {
         String userId = req.getParameter("userId");
         User user = DataBase.findUserById(userId);
         if (user == null) {
-            throw new NullPointerException("사용자를 찾을 수 없습니다.");
+            throw new UserNotFoundException("사용자를 찾을 수 없습니다.");
         }
         req.setAttribute("user", user);
         return new ModelAndView(new JspView("/user/profile.jsp"));
