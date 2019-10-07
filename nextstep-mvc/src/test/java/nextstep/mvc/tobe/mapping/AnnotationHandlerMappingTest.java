@@ -1,6 +1,8 @@
 package nextstep.mvc.tobe.mapping;
 
 import nextstep.db.DataBase;
+import nextstep.mvc.DispatcherServlet;
+import nextstep.mvc.tobe.ModelAndView;
 import nextstep.mvc.tobe.User;
 import nextstep.mvc.tobe.handler.HandlerExecution;
 import nextstep.mvc.tobe.mapping.AnnotationHandlerMapping;
@@ -11,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -48,6 +51,22 @@ public class AnnotationHandlerMappingTest {
         MockHttpServletResponse response = new MockHttpServletResponse();
         HandlerExecution execution = handlerMapping.getHandler(request);
         execution.execute(request, response);
+    }
+
+    @Test
+    void PathVariable_두개인_경우() throws InvocationTargetException, IllegalAccessException {
+        // given
+        final long id = 1;
+        final long userId = 2;
+        MockHttpServletRequest request = new MockHttpServletRequest("GET", "/users/1/2");
+
+        // when
+        final HandlerExecution execution = handlerMapping.getHandler(request);
+        final ModelAndView mav = (ModelAndView) execution.execute(1, 2);
+
+        // then
+        assertThat(mav.getObject("id")).isEqualTo(id);
+        assertThat(mav.getObject("userId")).isEqualTo(userId);
     }
 
     @Test

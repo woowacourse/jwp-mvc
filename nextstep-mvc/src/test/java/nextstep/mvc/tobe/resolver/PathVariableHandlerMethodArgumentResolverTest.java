@@ -2,6 +2,7 @@ package nextstep.mvc.tobe.resolver;
 
 import nextstep.web.annotation.PathVariable;
 import nextstep.web.annotation.RequestMapping;
+import nextstep.web.annotation.RequestMethod;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -63,8 +64,35 @@ public class PathVariableHandlerMethodArgumentResolverTest {
         assertThat(actual).isEqualTo(10L);
     }
 
+    @Test
+    void pathVariable_이_두개일_경우() {
+        // given
+        final Method method = Stream.of(clazz.getDeclaredMethods())
+                .filter(x -> x.getName().equals("foo2"))
+                .findAny()
+                .get();
+        final Parameter[] parameters = method.getParameters();
+
+        final MethodParameter methodParameter = new MethodParameter(parameters[0], "id", 1);
+        final MethodParameter methodParameter2 = new MethodParameter(parameters[1], "userId", 1);
+        request.setRequestURI("/users/10/12");
+
+        // when
+        final Object id = resolver.resolveArgument(request, methodParameter, method);
+        final Object userId = resolver.resolveArgument(request, methodParameter2, method);
+
+        // then
+        assertThat(id).isEqualTo(10L);
+        assertThat(userId).isEqualTo(12L);
+    }
+
     @RequestMapping(value = "/users/{id}")
     Long foo(@PathVariable Long args1, String args2) {
         return args1;
+    }
+
+    @RequestMapping(value = "/users/{id}/{userId}", method = RequestMethod.GET)
+    public long[] foo2(@PathVariable long id, @PathVariable long userId) {
+        return new long[]{id, userId};
     }
 }

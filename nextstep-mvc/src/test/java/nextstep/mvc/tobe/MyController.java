@@ -2,6 +2,7 @@ package nextstep.mvc.tobe;
 
 import nextstep.db.DataBase;
 import nextstep.web.annotation.Controller;
+import nextstep.web.annotation.PathVariable;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
 import org.slf4j.Logger;
@@ -38,5 +39,14 @@ public class MyController {
     @RequestMapping(value = "/users/nothing")
     public ModelAndView nothing(HttpServletRequest request, HttpServletResponse response) {
         return null;
+    }
+
+    @RequestMapping(value = "/users/{id}/{userId}", method = RequestMethod.GET)
+    public ModelAndView testMethod(@PathVariable long id, @PathVariable long userId) {
+        logger.debug("id: {},userId: {}", id, userId);
+        final ModelAndView modelAndView = new ModelAndView();
+        modelAndView.addObject("id", id);
+        modelAndView.addObject("userId", userId);
+        return modelAndView;
     }
 }
