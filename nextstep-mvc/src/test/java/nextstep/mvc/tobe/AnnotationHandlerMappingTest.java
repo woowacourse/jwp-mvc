@@ -31,7 +31,7 @@ public class AnnotationHandlerMappingTest {
         MockHttpServletRequest request = new MockHttpServletRequest("GET", "/users");
         request.setParameter("userId", user.getUserId());
         MockHttpServletResponse response = new MockHttpServletResponse();
-        HandlerExecution execution = handlerMapping.getHandler(request);
+        Handler execution = handlerMapping.getHandler(request);
         execution.handle(request, response);
 
         assertThat(request.getAttribute("user")).isEqualTo(user);
@@ -44,7 +44,7 @@ public class AnnotationHandlerMappingTest {
         request.setParameter("name", user.getName());
         request.setParameter("email", user.getEmail());
         MockHttpServletResponse response = new MockHttpServletResponse();
-        HandlerExecution execution = handlerMapping.getHandler(request);
+        Handler execution = handlerMapping.getHandler(request);
         execution.handle(request, response);
     }
 
@@ -52,7 +52,7 @@ public class AnnotationHandlerMappingTest {
     void test_no_request_mapping_method_get() throws Exception {
         MockHttpServletRequest getRequest = new MockHttpServletRequest("GET", "/test");
         MockHttpServletResponse response = new MockHttpServletResponse();
-        HandlerExecution execution = handlerMapping.getHandler(getRequest);
+        Handler execution = handlerMapping.getHandler(getRequest);
         execution.handle(getRequest, response);
 
         assertThat(getRequest.getAttribute("test")).isEqualTo(true);
@@ -62,7 +62,7 @@ public class AnnotationHandlerMappingTest {
     void test_no_request_mapping_method_post() throws Exception {
         MockHttpServletRequest postRequest = new MockHttpServletRequest("POST", "/test");
         MockHttpServletResponse response = new MockHttpServletResponse();
-        HandlerExecution execution = handlerMapping.getHandler(postRequest);
+        Handler execution = handlerMapping.getHandler(postRequest);
         execution.handle(postRequest, response);
 
         assertThat(postRequest.getAttribute("test")).isEqualTo(true);
@@ -72,7 +72,7 @@ public class AnnotationHandlerMappingTest {
     void test_no_request_mapping_attribute_name() throws Exception {
         MockHttpServletRequest postRequest = new MockHttpServletRequest("POST", "/no_name");
         MockHttpServletResponse response = new MockHttpServletResponse();
-        HandlerExecution execution = handlerMapping.getHandler(postRequest);
+        Handler execution = handlerMapping.getHandler(postRequest);
         execution.handle(postRequest, response);
 
         assertThat(postRequest.getAttribute("test_no_value_name")).isEqualTo(true);
@@ -82,7 +82,7 @@ public class AnnotationHandlerMappingTest {
     void test_empty_request_mapping_url() {
         MockHttpServletRequest postRequest = new MockHttpServletRequest("POST", "");
         MockHttpServletResponse response = new MockHttpServletResponse();
-        HandlerExecution execution = handlerMapping.getHandler(postRequest);
+        Handler execution = handlerMapping.getHandler(postRequest);
 
         assertThrows(NullPointerException.class, () -> execution.handle(postRequest, response));
     }

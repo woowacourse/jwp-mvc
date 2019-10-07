@@ -1,7 +1,7 @@
 package nextstep.mvc;
 
 import nextstep.exception.NotMatchHandlerException;
-import nextstep.mvc.tobe.HandlerAdapter;
+import nextstep.mvc.tobe.Handler;
 import nextstep.mvc.tobe.ModelAndView;
 import nextstep.mvc.tobe.ViewAdapter;
 import org.slf4j.Logger;
@@ -38,9 +38,9 @@ public class DispatcherServlet extends HttpServlet {
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         logger.debug("Method : {}, Request URI : {}", req.getMethod(), req.getRequestURI());
         try {
-            Object handler = getHandlerFromMapping(req);
-            HandlerAdapter handlerAdapter = new HandlerAdapter(handler);
-            ModelAndView modelAndView = ViewAdapter.render(handlerAdapter.run(req, resp));
+            Handler handler = getHandlerFromMapping(req);
+            Object view = handler.handle(req, resp);
+            ModelAndView modelAndView = ViewAdapter.render(view);
             modelAndView.render(req, resp);
         } catch (Exception e) {
             e.printStackTrace();
@@ -49,7 +49,7 @@ public class DispatcherServlet extends HttpServlet {
         }
     }
 
-    private Object getHandlerFromMapping(HttpServletRequest request) throws NotMatchHandlerException {
+    private Handler getHandlerFromMapping(HttpServletRequest request) throws NotMatchHandlerException {
         return handlerMappings.stream()
             .filter(handlerMapping -> handlerMapping.getHandler(request) != null)
             .map(handlerMapping -> handlerMapping.getHandler(request))

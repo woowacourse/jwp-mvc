@@ -4,7 +4,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
 
-public class HandlerExecution {
+public class HandlerExecution implements Handler {
     private final Object instance;
     private final Method method;
 
@@ -13,6 +13,7 @@ public class HandlerExecution {
         this.method = method;
     }
 
+    @Override
     public Object handle(HttpServletRequest request, HttpServletResponse response) throws Exception {
         return method.invoke(instance, request, response);
     }

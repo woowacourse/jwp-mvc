@@ -35,8 +35,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
             List<Method> methods = generateMethods(controllerSet.getKey());
             methods.forEach(method -> addHandlerExecutions(controllerSet.getValue(), method));
         }
-        handlerExecutions.entrySet().forEach(entry ->
-            logger.debug("handlerExecutions key : {}, value : {}", entry.getKey(), entry.getValue()));
+        handlerExecutions.forEach((key, value) -> logger.debug("handlerExecutions key : {}, value : {}", key, value));
     }
 
     private Map<Class<?>, Object> scanController() throws ServletException {
@@ -69,7 +68,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     @Override
-    public HandlerExecution getHandler(HttpServletRequest request) {
+    public Handler getHandler(HttpServletRequest request) {
         return handlerExecutions.get(new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod())));
     }
 }
