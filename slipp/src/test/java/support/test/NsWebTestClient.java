@@ -4,8 +4,8 @@ import org.springframework.http.HttpMethod;
 import org.springframework.test.web.reactive.server.EntityExchangeResult;
 import org.springframework.test.web.reactive.server.StatusAssertions;
 import org.springframework.test.web.reactive.server.WebTestClient;
+import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.reactive.function.BodyInserter;
 import org.springframework.web.reactive.function.BodyInserters;
 import reactor.core.publisher.Mono;
 
@@ -43,7 +43,7 @@ public class NsWebTestClient {
     }
 
     public StatusAssertions sendRequest(HttpMethod method, String path) {
-        return sendRequest(method, path, null);
+        return sendRequest(method, path, new LinkedMultiValueMap<>());
     }
 
     public <T> URI createResource(String url, T body, Class<T> clazz) {
