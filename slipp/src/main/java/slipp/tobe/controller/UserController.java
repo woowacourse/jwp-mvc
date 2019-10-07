@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import slipp.domain.User;
 import slipp.support.db.DataBase;
+import slipp.tobe.UserNotFoundException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -22,7 +23,7 @@ public class UserController {
         String userId = req.getParameter("userId");
         User user = DataBase.findUserById(userId);
         if (user == null) {
-            throw new NullPointerException("사용자를 찾을 수 없습니다.");
+            throw new UserNotFoundException();
         }
         req.setAttribute("user", user);
         return new ModelAndView(new JSPView("/user/profile.jsp"));
