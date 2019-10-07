@@ -63,7 +63,8 @@ public class DispatcherServlet extends HttpServlet {
         return handlerMappings.stream()
                 .map(handlerMapping -> handlerMapping.getHandler(request))
                 .filter(Objects::nonNull)
-                .findFirst();
+                .findFirst()
+                .orElseThrow(NullPointerException::new);
     }
 
     private void move(String viewName, HttpServletRequest req, HttpServletResponse resp)
