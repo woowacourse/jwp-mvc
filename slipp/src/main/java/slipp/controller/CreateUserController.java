@@ -1,3 +1,4 @@
+
 package slipp.controller;
 
 import nextstep.mvc.asis.Controller;
@@ -13,11 +14,14 @@ public class CreateUserController implements Controller {
     private static final Logger log = LoggerFactory.getLogger(CreateUserController.class);
 
     @Override
-    public String execute(HttpServletRequest req, HttpServletResponse resp) throws Exception {
-        User user = new User(req.getParameter("userId"), req.getParameter("password"), req.getParameter("name"),
-                req.getParameter("email"));
+    public String handle(HttpServletRequest req, HttpServletResponse resp) throws Exception {
+        final User user = new User(
+                req.getParameter("userId"),
+                req.getParameter("password"),
+                req.getParameter("name"),
+                req.getParameter("email")
+        );
         log.debug("User : {}", user);
-
         DataBase.addUser(user);
         return "redirect:/";
     }

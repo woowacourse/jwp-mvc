@@ -28,7 +28,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         (new Reflections(this.basePackage)).getTypesAnnotatedWith(Controller.class).forEach(controller -> {
             try {
                 final Object instance = controller.getDeclaredConstructor().newInstance();
-                controllers.add(instance);
+                this.controllers.add(instance);
                 Stream.of(controller.getDeclaredMethods()).filter(x ->
                         x.isAnnotationPresent(RequestMapping.class)
                 ).forEach(method -> {
@@ -54,11 +54,10 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     public HandlerExecution getHandler(HttpServletRequest request) {
-        return handlerExecutions.get(
+        return this.handlerExecutions.get(
                 new HandlerKey(
                         request.getRequestURI(),
-                        RequestMethod.valueOf(request.getMethod().toUpperCase())
-                )
-        );
+                        RequestMethod.valueOf(request.getMethod())
+                ));
     }
 }

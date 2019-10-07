@@ -11,18 +11,20 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRegistration;
 
 public class SlippWebApplicationInitializer  implements WebApplicationInitializer {
-    private static final Logger log = LoggerFactory.getLogger(SlippWebApplicationInitializer.class);
+    private static final Logger logger = LoggerFactory.getLogger(SlippWebApplicationInitializer.class);
 
     @Override
     public void onStartup(ServletContext servletContext) throws ServletException {
-//        DispatcherServlet dispatcherServlet1 = new DispatcherServlet(new ManualHandlerMapping());
-        DispatcherServlet dispatcherServlet1 = new DispatcherServlet(new AnnotationHandlerMapping("slipp"));
+        final DispatcherServlet dispatcherServlet = new DispatcherServlet(
+                new ManualHandlerMapping(),
+                new AnnotationHandlerMapping("slipp")
+        );
 
-        ServletRegistration.Dynamic dispatcher1 = servletContext.addServlet("dispatcher", dispatcherServlet1);
+        final ServletRegistration.Dynamic dispatcher = servletContext.addServlet("dispatcher", dispatcherServlet);
 
-        dispatcher1.setLoadOnStartup(1);
-        dispatcher1.addMapping("/");
+        dispatcher.setLoadOnStartup(1);
+        dispatcher.addMapping("/");
 
-        log.info("Start MyWebApplication Initializer");
+        logger.info("Start MyWebApplication Initializer");
     }
 }

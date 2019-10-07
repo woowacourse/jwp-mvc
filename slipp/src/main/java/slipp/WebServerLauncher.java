@@ -10,8 +10,8 @@ public class WebServerLauncher {
     private static final Logger logger = LoggerFactory.getLogger(WebServerLauncher.class);
 
     public static void main(String[] args) throws Exception {
-        String webappDirLocation = "./slipp/webapp/";
-        Tomcat tomcat = new Tomcat();
+        final String webappDirLocation = "./slipp/webapp/";
+        final Tomcat tomcat = new Tomcat();
         tomcat.setPort(8080);
 
         tomcat.addWebapp("/", new File(webappDirLocation).getAbsolutePath());
