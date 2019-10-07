@@ -44,13 +44,20 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     private List<Method> generateMethods(Class<?> clazz) {
         return Arrays.stream(clazz.getMethods())
                 .filter(method -> method.isAnnotationPresent(RequestMapping.class))
-                .filter(method -> StringUtils.isNotBlank(method.getAnnotation(RequestMapping.class).value().trim()))
+                .filter(method -> isNotBlank(method.getAnnotation(RequestMapping.class)))
                 .collect(Collectors.toList());
     }
 
+    private boolean isNotBlank(RequestMapping requestMapping) {
+        final String trimMethod = requestMapping.value().trim();
+        return StringUtils.isNotBlank(trimMethod);
+    }
+
     private void addHandlerExecutions(Class clazz, Method method) {
-        String url = method.getAnnotation(RequestMapping.class).value();
-        RequestMethod[] requestMethods = method.getAnnotation(RequestMapping.class).method();
+        RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+        String url = requestMapping.value();
+        RequestMethod[] requestMethods = requestMapping.method();
+
         if (requestMethods.length == 0) {
             requestMethods = RequestMethod.values();
         }
@@ -61,7 +68,9 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     @Override
     @Nullable
     public HandlerExecution getHandler(HttpServletRequest request) {
-        HandlerKey key = new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod()));
+        final String uri = request.getRequestURI();
+        final RequestMethod method = RequestMethod.valueOf(request.getMethod());
+        final HandlerKey key = new HandlerKey(uri, method);
         return handlerExecutions.get(key);
     }
 }
