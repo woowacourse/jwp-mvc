@@ -30,4 +30,8 @@ public class MethodParameter {
     public Class<?> getType() {
         return parameter.getType();
     }
+
+    public Annotation getAnnotation(Class<? extends Annotation> annotation) {
+        return parameter.getAnnotation(annotation);
+    }
 }

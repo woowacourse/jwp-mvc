@@ -5,13 +5,13 @@ import nextstep.mvc.tobe.view.ModelAndView;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestBody;
 import nextstep.web.annotation.RequestMapping;
+import nextstep.web.annotation.RequestParam;
 import slipp.domain.User;
 import slipp.dto.UserCreatedDto;
+import slipp.dto.UserUpdatedDto;
 import slipp.support.db.DataBase;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 
 import static nextstep.web.annotation.RequestMethod.*;
 
@@ -33,8 +33,7 @@ public class UserApiController {
     }
 
     @RequestMapping(value = "/api/users", method = GET)
-    public ModelAndView read(HttpServletRequest request) {
-        String userId = request.getParameter("userId");
+    public ModelAndView read(@RequestParam("userId") String userId) {
         User user = DataBase.findUserById(userId);
 
         ModelAndView modelAndView = new ModelAndView("jsonView");
@@ -43,14 +42,13 @@ public class UserApiController {
     }
 
     @RequestMapping(value = "/api/users", method = PUT)
-    public ModelAndView update(HttpServletRequest request, HttpServletResponse response) {
-        try {
-            User user = OBJECT_MAPPER.readValue(request.getInputStream(), User.class);
-            DataBase.findUserById(request.getParameter("userId")).update(user);
-            return new ModelAndView("jsonView");
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
+    public ModelAndView update(@RequestBody UserUpdatedDto userUpdatedDto, @RequestParam("userId") String userId) {
+        User user = new User(userId,
+                userUpdatedDto.getPassword(),
+                userUpdatedDto.getName(),
+                userUpdatedDto.getEmail());
+        DataBase.findUserById(userId).update(user);
+
+        return new ModelAndView("jsonView");
     }
 }

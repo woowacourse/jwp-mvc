@@ -1,6 +1,5 @@
 package nextstep.mvc.tobe.handleradapter;
 
-import nextstep.mvc.tobe.HandlerExecution;
 import nextstep.mvc.tobe.HandlerMethod;
 import nextstep.mvc.tobe.MethodParameter;
 import nextstep.mvc.tobe.RequestContext;
@@ -9,7 +8,6 @@ import nextstep.mvc.tobe.view.ModelAndView;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class RequestMappingHandlerAdapter implements HandlerAdapter {
     private List<HandlerMethodArgumentResolver> argumentResolvers = new ArrayList<>();
@@ -30,11 +28,11 @@ public class RequestMappingHandlerAdapter implements HandlerAdapter {
 
         List<MethodParameter> methodParameters = handlerMethod.getMethodParameters();
 
-        List<Object> resolvedArguments = methodParameters.stream()
+        Object[] resolvedArguments = methodParameters.stream()
                 .map(methodParameter -> resolveParameter(methodParameter, requestContext))
-                .collect(Collectors.toList());
+                .toArray();
 
-        Object returnValue = handlerMethod.invoke(resolvedArguments.toArray());
+        Object returnValue = handlerMethod.invoke(resolvedArguments);
 
         if (returnValue instanceof String) {
             return new ModelAndView((String) returnValue);
