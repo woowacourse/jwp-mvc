@@ -4,10 +4,10 @@ import org.springframework.http.server.PathContainer;
 import org.springframework.web.util.pattern.PathPattern;
 import org.springframework.web.util.pattern.PathPatternParser;
 
-public class PathUtils {
+public class PathPatternUtils {
     public static final PathPatternParser PATH_PATTERN_PARSER = new PathPatternParser();
 
-    private PathUtils() {
+    private PathPatternUtils() {
     }
 
     public static PathPattern parse(String path) {

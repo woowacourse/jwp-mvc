@@ -2,7 +2,7 @@ package nextstep.mvc.tobe.mapping;
 
 import com.google.common.collect.Maps;
 import nextstep.mvc.tobe.handler.HandlerExecution;
-import nextstep.utils.PathUtils;
+import nextstep.utils.PathPatternUtils;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
 import org.slf4j.Logger;
@@ -53,8 +53,8 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         final RequestMethod rm = RequestMethod.valueOf(request.getMethod());
         final Optional<HandlerKey> handlerKey = handlerExecutions.keySet().stream()
                 .filter(key -> {
-                    final PathPattern pathPattern = PathUtils.parse(key.getUrl());
-                    return pathPattern.matches(PathUtils.toPathContainer(requestUri));
+                    final PathPattern pathPattern = PathPatternUtils.parse(key.getUrl());
+                    return pathPattern.matches(PathPatternUtils.toPathContainer(requestUri));
                 })
                 .findAny();
 

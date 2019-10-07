@@ -1,6 +1,6 @@
 package nextstep.mvc.tobe.resolver;
 
-import nextstep.utils.PathUtils;
+import nextstep.utils.PathPatternUtils;
 import nextstep.web.annotation.PathVariable;
 import nextstep.web.annotation.RequestMapping;
 import org.springframework.web.util.pattern.PathPattern;
@@ -20,9 +20,9 @@ public class PathVariableHandlerMethodArgumentResolver implements HandlerMethodA
         final String uri = request.getRequestURI();
         final String path = method.getAnnotation(RequestMapping.class).value();
 
-        final PathPattern pp = PathUtils.parse(path);
+        final PathPattern pp = PathPatternUtils.parse(path);
         final Map<String, String> uriVariables = pp
-                .matchAndExtract(PathUtils.toPathContainer(uri))
+                .matchAndExtract(PathPatternUtils.toPathContainer(uri))
                 .getUriVariables();
 
         return Long.parseLong(uriVariables.get(methodParameter.getName()));
