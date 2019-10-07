@@ -56,9 +56,16 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     private void addHandlerExcution(Object controllerInstance, Method method) {
         RequestMapping annotation = method.getAnnotation(RequestMapping.class);
         String url = annotation.value();
-        RequestMethod requestMethod = annotation.method();
-        HandlerKey key = new HandlerKey(url, requestMethod);
-        handlerExecutions.put(key, (req, res) -> (ModelAndView) method.invoke(controllerInstance, req, res));
+        RequestMethod[] requestMethods = annotation.method();
+
+        addHandlerKey(controllerInstance, method, url, requestMethods);
+    }
+
+    private void addHandlerKey(Object controllerInstance, Method method, String url, RequestMethod[] requestMethods) {
+        for (RequestMethod requestMethod : requestMethods) {
+            HandlerKey key = new HandlerKey(url, requestMethod);
+            handlerExecutions.put(key, (req, res) -> (ModelAndView) method.invoke(controllerInstance, req, res));
+        }
     }
 
     @Override
