@@ -47,3 +47,6 @@ https://gist.github.com/joshbuchea/6f47e86d2510bce28f8e7f42ae84c716
 - [x] ```HandlerExecution```에서 ```view```를 만드는데, ```String```을 가지고 ```view```를 만드는 부분이 겹친다. 한번 중복을 제거해보자.
 - [x] ```AnnotationHandlerMapping```에서 컨트롤러를 스캔하는 부분을 다른 클래스로 분리.
 - [x] ```nextstep-mvc.src.test.java.nextstep.mvc.tobe```에 있는 실제 테스트 클래스 이외의 학습을 위한 테스트들은 따로 패키지 분리하기
+- [x] ```DispatcherServlet``` 생성자에서 ```HandlerMapping```를 리스트로 받아서 ```foreach```하며 ```init()```하기
+- [ ] ```handlerAdapter``` 리팩토링
+- [ ] ```AnnotationHandlerMapping``` 리팩토링 (한줄에 점 하나만 찍기)
