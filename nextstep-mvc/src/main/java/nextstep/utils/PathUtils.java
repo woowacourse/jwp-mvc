@@ -5,13 +5,14 @@ import org.springframework.web.util.pattern.PathPattern;
 import org.springframework.web.util.pattern.PathPatternParser;
 
 public class PathUtils {
+    public static final PathPatternParser PATH_PATTERN_PARSER = new PathPatternParser();
+
     private PathUtils() {
     }
 
     public static PathPattern parse(String path) {
-        PathPatternParser pp = new PathPatternParser();
-        pp.setMatchOptionalTrailingSeparator(true);
-        return pp.parse(path);
+        PATH_PATTERN_PARSER.setMatchOptionalTrailingSeparator(true);
+        return PATH_PATTERN_PARSER.parse(path);
     }
 
     public static PathContainer toPathContainer(String path) {
