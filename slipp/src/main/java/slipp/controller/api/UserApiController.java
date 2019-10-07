@@ -3,8 +3,10 @@ package slipp.controller.api;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import nextstep.mvc.tobe.view.ModelAndView;
 import nextstep.web.annotation.Controller;
+import nextstep.web.annotation.RequestBody;
 import nextstep.web.annotation.RequestMapping;
 import slipp.domain.User;
+import slipp.dto.UserCreatedDto;
 import slipp.support.db.DataBase;
 
 import javax.servlet.http.HttpServletRequest;
@@ -18,21 +20,20 @@ public class UserApiController {
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     @RequestMapping(value = "/api/users", method = POST)
-    public ModelAndView create(HttpServletRequest request, HttpServletResponse response) {
-        try {
-            User user = OBJECT_MAPPER.readValue(request.getInputStream(), User.class);
-            DataBase.addUser(user);
-            response.setHeader("Location", "/api/users?userId=" + user.getUserId());
-            response.setStatus(HttpServletResponse.SC_CREATED);
-            return new ModelAndView("jsonView");
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
+    public ModelAndView create(@RequestBody UserCreatedDto userCreatedDto, HttpServletResponse response) {
+        User user = new User(userCreatedDto.getUserId(),
+                userCreatedDto.getPassword(),
+                userCreatedDto.getName(),
+                userCreatedDto.getEmail());
+
+        DataBase.addUser(user);
+        response.setHeader("Location", "/api/users?userId=" + user.getUserId());
+        response.setStatus(HttpServletResponse.SC_CREATED);
+        return new ModelAndView("jsonView");
     }
 
     @RequestMapping(value = "/api/users", method = GET)
-    public ModelAndView read(HttpServletRequest request, HttpServletResponse response) {
+    public ModelAndView read(HttpServletRequest request) {
         String userId = request.getParameter("userId");
         User user = DataBase.findUserById(userId);
 

@@ -7,9 +7,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Arrays;
 
 public enum RequestContextKey {
-    REQUEST("request", HttpServletRequest.class),
-    RESPONSE("response", HttpServletResponse.class),
-    MODEL("model", Model.class);
+    REQUEST(HttpServletRequest.class.getName(), HttpServletRequest.class),
+    RESPONSE(HttpServletResponse.class.getName(), HttpServletResponse.class),
+    MODEL(Model.class.getName(), Model.class);
 
     private String key;
     private Class<?> type;
@@ -19,16 +19,16 @@ public enum RequestContextKey {
         this.type = type;
     }
 
-    public String getKey(){
+    public String getKey() {
         return key;
     }
 
-    public Class<?> getType(){
+    public Class<?> getType() {
         return type;
     }
 
-    public boolean hasType(Class<?> type){
+    public static boolean hasType(Class<?> type) {
         return Arrays.stream(values())
-                .anyMatch(requestContextKey -> type.isAssignableFrom(this.type));
+                .anyMatch(requestContextKey -> type.isAssignableFrom(requestContextKey.type));
     }
 }

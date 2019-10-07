@@ -1,6 +1,7 @@
 package nextstep.mvc;
 
 import nextstep.mvc.tobe.RequestContext;
+import nextstep.mvc.tobe.argumentresolver.HandlerMethodArgumentResolver;
 import nextstep.mvc.tobe.handleradapter.HandlerAdapter;
 import nextstep.mvc.tobe.view.ModelAndView;
 import nextstep.mvc.tobe.view.View;
@@ -27,16 +28,21 @@ public class DispatcherServlet extends HttpServlet {
     private List<HandlerMapping> handlerMappings;
     private List<HandlerAdapter> handlerAdapters;
     private List<ViewResolver> viewResolvers;
+    private List<HandlerMethodArgumentResolver> argumentResolvers;
 
     public DispatcherServlet(HandlerMapping... handlerMappings) {
         this.handlerMappings = Arrays.asList(handlerMappings);
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void init() {
         handlerMappings.forEach(HandlerMapping::initialize);
+        this.argumentResolvers = (List<HandlerMethodArgumentResolver>) detectSubTypesOf(HandlerMethodArgumentResolver.class);
         this.handlerAdapters = (List<HandlerAdapter>) detectSubTypesOf(HandlerAdapter.class);
         this.viewResolvers = (List<ViewResolver>) detectSubTypesOf(ViewResolver.class);
+
+        addArgumentResolvers();
     }
 
     @Override
@@ -53,6 +59,12 @@ public class DispatcherServlet extends HttpServlet {
             logger.error("Exception : {}", e);
             e.printStackTrace();
         }
+    }
+
+    private void addArgumentResolvers() {
+        handlerAdapters.stream()
+                .filter(HandlerAdapter::hasArgumentResolvers)
+                .forEach(handlerAdapter -> handlerAdapter.addArgumentResolvers(argumentResolvers));
     }
 
     private List<?> detectSubTypesOf(Class<?> clazz) {

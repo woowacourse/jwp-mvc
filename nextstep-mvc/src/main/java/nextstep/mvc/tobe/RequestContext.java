@@ -8,10 +8,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 
 public class RequestContext {
-    private static final String REQUEST = "request";
-    private static final String RESPONSE = "response";
-    private static final String MODEL = "model";
-
     private Map<String, Object> attributes = Maps.newHashMap();
 
     public RequestContext(HttpServletRequest request, HttpServletResponse response) {
@@ -29,7 +25,7 @@ public class RequestContext {
     }
 
     public void addAttribute(String name, Object attribute) {
-        attributes.put(name, attribute);
+        attributes.putIfAbsent(name, attribute);
     }
 
     public Object getAttribute(String name) {
