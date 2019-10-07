@@ -6,13 +6,17 @@ import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
 import org.reflections.Reflections;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.Set;
 
 public class AnnotationHandlerMapping implements HandlerMapping {
+    private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
     private static final int DEFAULT_REQUEST_METHODS_LENGTH = 0;
 
     private Object[] basePackage;
@@ -32,31 +36,35 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     private void filterMethods(Class<?> clazz) {
         Method[] methods = clazz.getDeclaredMethods();
-        for (Method method : methods) {
-            filterRequestMapping(method);
+        try {
+            Object handler = clazz.getDeclaredConstructor().newInstance();
+            for (Method method : methods) {
+                filterRequestMapping(handler, method);
+            }
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            log.error(e.getMessage());
         }
     }
 
-    private void filterRequestMapping(Method method) {
+    private void filterRequestMapping(Object handler, Method method) {
         if (method.isAnnotationPresent(RequestMapping.class)) {
             RequestMapping annotation = method.getAnnotation(RequestMapping.class);
-            putHandlers(method, annotation, getMethods(annotation));
+            putHandlers(handler, method, annotation);
         }
     }
 
-    private RequestMethod[] getMethods(RequestMapping annotation) {
+    private void putHandlers(Object handler, Method method, RequestMapping annotation) {
+        for (RequestMethod requestMethod : getRequestMethods(annotation)) {
+            HandlerKey handlerKey = new HandlerKey(annotation.value(), requestMethod);
+            handlerExecutions.put(handlerKey, new HandlerExecution(method, handler));
+        }
+    }
+
+    private RequestMethod[] getRequestMethods(RequestMapping annotation) {
         RequestMethod[] methods = annotation.method();
         return (methods.length == DEFAULT_REQUEST_METHODS_LENGTH)
                 ? RequestMethod.values()
                 : methods;
-    }
-
-    private void putHandlers(Method method, RequestMapping annotation, RequestMethod[] requestMethods) {
-        for (RequestMethod requestMethod : requestMethods) {
-            HandlerKey handlerKey = new HandlerKey(annotation.value(), requestMethod);
-
-            handlerExecutions.put(handlerKey, new HandlerExecution(method));
-        }
     }
 
     @Override
