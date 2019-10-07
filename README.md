@@ -50,3 +50,4 @@ https://gist.github.com/joshbuchea/6f47e86d2510bce28f8e7f42ae84c716
 - [x] ```DispatcherServlet``` 생성자에서 ```HandlerMapping```를 리스트로 받아서 ```foreach```하며 ```init()```하기
 - [x] ```handlerAdapter``` 리팩토링
 - [x] ```AnnotationHandlerMapping``` 리팩토링 (한줄에 점 하나만 찍기)
+- [x] ```Handler```의 ```handle()```의 리턴값을 ```Object```에서 ```ModelAndView```로 바꾸기(```DispatcherServlet```에서는 ```view```를 모르게 하기)

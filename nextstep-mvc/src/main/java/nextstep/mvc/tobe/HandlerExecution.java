@@ -14,8 +14,8 @@ public class HandlerExecution implements Handler {
     }
 
     @Override
-    public Object handle(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        return method.invoke(instance, request, response);
+    public ModelAndView handle(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        return ViewAdapter.render(method.invoke(instance, request, response));
     }
 
     @Override

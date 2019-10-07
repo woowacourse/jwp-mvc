@@ -3,7 +3,6 @@ package nextstep.mvc;
 import nextstep.exception.NotMatchHandlerException;
 import nextstep.mvc.tobe.Handler;
 import nextstep.mvc.tobe.ModelAndView;
-import nextstep.mvc.tobe.ViewAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,8 +38,7 @@ public class DispatcherServlet extends HttpServlet {
         logger.debug("Method : {}, Request URI : {}", req.getMethod(), req.getRequestURI());
         try {
             Handler handler = getHandlerFromMapping(req);
-            Object view = handler.handle(req, resp);
-            ModelAndView modelAndView = ViewAdapter.render(view);
+            ModelAndView modelAndView = handler.handle(req, resp);
             modelAndView.render(req, resp);
         } catch (Exception e) {
             e.printStackTrace();
