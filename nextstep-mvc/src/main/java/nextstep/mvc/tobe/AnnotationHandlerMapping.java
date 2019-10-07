@@ -29,6 +29,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     @Override
     public void initialize() throws ServletException {
+        logger.info("Initialized Request Mapping!");
         Map<Class<?>, Object> controllerInstanceMap = scanController();
         for (Map.Entry<Class<?>, Object> controllerSet : controllerInstanceMap.entrySet()) {
             List<Method> methods = generateMethods(controllerSet.getKey());

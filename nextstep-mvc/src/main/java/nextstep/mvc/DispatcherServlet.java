@@ -1,8 +1,7 @@
 package nextstep.mvc;
 
-import nextstep.mvc.asis.Controller;
 import nextstep.mvc.tobe.AnnotationHandlerMapping;
-import nextstep.mvc.tobe.HandlerExecution;
+import nextstep.mvc.tobe.HandlerAdapter;
 import nextstep.mvc.tobe.ModelAndView;
 import nextstep.mvc.tobe.ViewAdapter;
 import org.slf4j.Logger;
@@ -36,19 +35,12 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String requestUri = req.getRequestURI();
-        logger.debug("Method : {}, Request URI : {}", req.getMethod(), requestUri);
+        logger.debug("Method : {}, Request URI : {}", req.getMethod(), req.getRequestURI());
         Object handler = getHandlerFromMapping(req);
         try {
-            if (handler instanceof Controller) {
-                ModelAndView modelAndView = ViewAdapter.render(((Controller) handler).execute(req, resp));
-                modelAndView.render(req, resp);
-            } else if (handler instanceof HandlerExecution) {
-                ModelAndView modelAndView = ViewAdapter.render(((HandlerExecution) handler).handle(req, resp));
-                modelAndView.render(req, resp);
-            } else {
-                throw new Exception();
-            }
+            HandlerAdapter handlerAdapter = new HandlerAdapter(handler);
+            ModelAndView modelAndView = ViewAdapter.render(handlerAdapter.run(req, resp));
+            modelAndView.render(req, resp);
         } catch (Exception e) {
             e.printStackTrace();
             logger.error("Exception : {}", e.getMessage());

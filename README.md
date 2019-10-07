@@ -42,7 +42,7 @@ https://gist.github.com/joshbuchea/6f47e86d2510bce28f8e7f42ae84c716
 
 ---
 ### 피드백
-- [ ] ```DispatcherServlet```에 있는 ```getHandlerFromMapping()```에서 하는 ```handler``` 매핑 과정을 좀 더 유연하게 리팩토링 하기(지금은 ```if```로 하고있음.)
+- [x] ```DispatcherServlet```에 있는 ```getHandlerFromMapping()```에서 하는 ```handler``` 매핑 과정을 좀 더 유연하게 리팩토링 하기(지금은 ```if```로 하고있음.)
 - [ ] ```DispatcherServlet```에서 ```mapping```되는 ```handler```가 없을 때 나는 에러 생성하기(지금은 그냥 ```Exception``` 던짐)
 - [x] ```HandlerExecution```에서 ```view```를 만드는데, ```String```을 가지고 ```view```를 만드는 부분이 겹친다. 한번 중복을 제거해보자.
 - [x] ```AnnotationHandlerMapping```에서 컨트롤러를 스캔하는 부분을 다른 클래스로 분리.
