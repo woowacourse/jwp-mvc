@@ -1,7 +1,6 @@
 package nextstep.mvc.tobe.resolver;
 
 import javax.servlet.http.HttpServletRequest;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,13 +14,13 @@ public class HandlerMethodArgumentResolverComposite implements HandlerMethodArgu
     }
 
     @Override
-    public Object resolveArgument(final HttpServletRequest request, final MethodParameter methodParameter, final Method method) {
+    public Object resolveArgument(final HttpServletRequest request, final MethodParameter methodParameter) {
         final HandlerMethodArgumentResolver resolver = resolvers.stream()
                 .filter(x -> x.supports(methodParameter))
                 .findAny()
                 .orElse(defaultResolver);
 
-        return resolver.resolveArgument(request, methodParameter, method);
+        return resolver.resolveArgument(request, methodParameter);
     }
 
     @Override

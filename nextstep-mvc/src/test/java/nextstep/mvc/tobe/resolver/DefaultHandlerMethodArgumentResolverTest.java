@@ -49,10 +49,10 @@ class DefaultHandlerMethodArgumentResolverTest {
     @Test
     void 모든_필드_생성자_javaBean_매핑() {
         // given
-        final MethodParameter methodParameter = new MethodParameter(params.get(TestUser.class), "testUser", 1);
+        final MethodParameter methodParameter = new MethodParameter(params.get(TestUser.class), "testUser", 1, method);
 
         // when
-        final TestUser actual = (TestUser) resolver.resolveArgument(request, methodParameter, method);
+        final TestUser actual = (TestUser) resolver.resolveArgument(request, methodParameter);
 
         // then
         assertThat(actual.getUserId()).isEqualTo(userId);
@@ -63,10 +63,10 @@ class DefaultHandlerMethodArgumentResolverTest {
     @Test
     void 기본생성자만_있는_javaBean_매핑() {
         // given
-        final MethodParameter methodParameter = new MethodParameter(params.get(OnlyDefaultConstructorJavaBean.class), "javaBean", 1);
+        final MethodParameter methodParameter = new MethodParameter(params.get(OnlyDefaultConstructorJavaBean.class), "javaBean", 1, method);
 
         // when
-        final OnlyDefaultConstructorJavaBean actual = (OnlyDefaultConstructorJavaBean) resolver.resolveArgument(request, methodParameter, method);
+        final OnlyDefaultConstructorJavaBean actual = (OnlyDefaultConstructorJavaBean) resolver.resolveArgument(request, methodParameter);
 
         // then
         assertThat(actual.getUserId()).isEqualTo(userId);
@@ -77,10 +77,10 @@ class DefaultHandlerMethodArgumentResolverTest {
     @Test
     void long_매핑() {
         // given
-        final MethodParameter methodParameter = new MethodParameter(params.get(long.class), "id", 1);
+        final MethodParameter methodParameter = new MethodParameter(params.get(long.class), "id", 1, method);
 
         // when
-        final Object actual = resolver.resolveArgument(request, methodParameter, method);
+        final Object actual = resolver.resolveArgument(request, methodParameter);
 
         // then
         assertThat(actual).isEqualTo(Long.parseLong(id));
@@ -89,10 +89,10 @@ class DefaultHandlerMethodArgumentResolverTest {
     @Test
     void int_매핑() {
         // given
-        final MethodParameter methodParameter = new MethodParameter(params.get(int.class), "age", 1);
+        final MethodParameter methodParameter = new MethodParameter(params.get(int.class), "age", 1, method);
 
         // when
-        final Object actual = resolver.resolveArgument(request, methodParameter, method);
+        final Object actual = resolver.resolveArgument(request, methodParameter);
 
         // then
         assertThat(actual).isEqualTo(Integer.parseInt(age));
@@ -101,9 +101,9 @@ class DefaultHandlerMethodArgumentResolverTest {
     @Test
     void boolean_매핑() {
         // given
-        final MethodParameter methodParameter = new MethodParameter(params.get(boolean.class), "bool", 1);
+        final MethodParameter methodParameter = new MethodParameter(params.get(boolean.class), "bool", 1, method);
         // when
-        final Object actual = resolver.resolveArgument(request, methodParameter, method);
+        final Object actual = resolver.resolveArgument(request, methodParameter);
 
         // then
         assertThat(actual).isEqualTo(Boolean.parseBoolean(bool));
@@ -112,10 +112,10 @@ class DefaultHandlerMethodArgumentResolverTest {
     @Test
     void Long_매핑() {
         // given
-        final MethodParameter methodParameter = new MethodParameter(params.get(Long.class), "id", 1);
+        final MethodParameter methodParameter = new MethodParameter(params.get(Long.class), "id", 1, method);
 
         // when
-        final Object actual = resolver.resolveArgument(request, methodParameter, method);
+        final Object actual = resolver.resolveArgument(request, methodParameter);
 
         // then
         assertThat(actual).isEqualTo(Long.parseLong(id));
@@ -124,10 +124,10 @@ class DefaultHandlerMethodArgumentResolverTest {
     @Test
     void Integer_매핑() {
         // given
-        final MethodParameter methodParameter = new MethodParameter(params.get(Integer.class), "id", 1);
+        final MethodParameter methodParameter = new MethodParameter(params.get(Integer.class), "id", 1, method);
 
         // when
-        final Object actual = resolver.resolveArgument(request, methodParameter, method);
+        final Object actual = resolver.resolveArgument(request, methodParameter);
 
         // then
         assertThat(actual).isEqualTo(Integer.parseInt(id));
@@ -136,10 +136,10 @@ class DefaultHandlerMethodArgumentResolverTest {
     @Test
     void String_매핑() {
         // given
-        final MethodParameter methodParameter = new MethodParameter(params.get(String.class), "userId", 1);
+        final MethodParameter methodParameter = new MethodParameter(params.get(String.class), "userId", 1, method);
 
         // when
-        final Object actual = resolver.resolveArgument(request, methodParameter, method);
+        final Object actual = resolver.resolveArgument(request, methodParameter);
 
         // then
         assertThat(actual).isEqualTo(userId);

@@ -28,7 +28,7 @@ public class HandlerExecutionAdapter implements HandlerAdapter {
                     if (parameter.isSameType(HttpServletResponse.class)) {
                         return resp;
                     }
-                    return argumentResolvers.resolveArgument(req, parameter, handlerExecution.getMethod());
+                    return argumentResolvers.resolveArgument(req, parameter);
                 })
                 .toArray();
 

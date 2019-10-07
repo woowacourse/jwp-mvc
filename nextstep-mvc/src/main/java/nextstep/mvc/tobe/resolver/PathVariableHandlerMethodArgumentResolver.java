@@ -6,7 +6,6 @@ import nextstep.web.annotation.RequestMapping;
 import org.springframework.web.util.pattern.PathPattern;
 
 import javax.servlet.http.HttpServletRequest;
-import java.lang.reflect.Method;
 import java.util.Map;
 
 public class PathVariableHandlerMethodArgumentResolver implements HandlerMethodArgumentResolver {
@@ -16,12 +15,12 @@ public class PathVariableHandlerMethodArgumentResolver implements HandlerMethodA
     }
 
     @Override
-    public Object resolveArgument(final HttpServletRequest request, final MethodParameter methodParameter, final Method method) {
+    public Object resolveArgument(final HttpServletRequest request, final MethodParameter methodParameter) {
         final String uri = request.getRequestURI();
-        final String path = method.getAnnotation(RequestMapping.class).value();
+        final String path = methodParameter.getMethod().getAnnotation(RequestMapping.class).value();
 
-        final PathPattern pp = PathPatternUtils.parse(path);
-        final Map<String, String> uriVariables = pp
+        final PathPattern pathPattern = PathPatternUtils.parse(path);
+        final Map<String, String> uriVariables = pathPattern
                 .matchAndExtract(PathPatternUtils.toPathContainer(uri))
                 .getUriVariables();
 

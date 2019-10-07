@@ -17,7 +17,7 @@ public class DefaultHandlerMethodArgumentResolver implements HandlerMethodArgume
     }
 
     @Override
-    public Object resolveArgument(final HttpServletRequest request, final MethodParameter methodParameter, final Method method) {
+    public Object resolveArgument(final HttpServletRequest request, final MethodParameter methodParameter) {
         final String value = request.getParameter(methodParameter.getName());
         final Parameter parameter = methodParameter.getParameter();
 

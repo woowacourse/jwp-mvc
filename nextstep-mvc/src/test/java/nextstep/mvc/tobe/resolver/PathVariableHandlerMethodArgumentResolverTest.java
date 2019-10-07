@@ -36,7 +36,7 @@ public class PathVariableHandlerMethodArgumentResolverTest {
     @Test
     void supports_PathVariable_일_경우_true() {
         // given
-        final MethodParameter methodParameter = new MethodParameter(parameters[0], "name", 1);
+        final MethodParameter methodParameter = new MethodParameter(parameters[0], "name", 1, method);
 
         // when & then
         assertThat(resolver.supports(methodParameter)).isTrue();
@@ -45,7 +45,7 @@ public class PathVariableHandlerMethodArgumentResolverTest {
     @Test
     void supports_PathVariable_아닌_경우_false() {
         // given
-        final MethodParameter methodParameter = new MethodParameter(parameters[1], "name", 1);
+        final MethodParameter methodParameter = new MethodParameter(parameters[1], "name", 1, method);
 
         // when & then
         assertThat(resolver.supports(methodParameter)).isFalse();
@@ -54,11 +54,11 @@ public class PathVariableHandlerMethodArgumentResolverTest {
     @Test
     void resolveArgument_추출_성공() {
         // given
-        final MethodParameter methodParameter = new MethodParameter(parameters[0], "id", 1);
+        final MethodParameter methodParameter = new MethodParameter(parameters[0], "id", 1,method);
         request.setRequestURI("/users/10");
 
         // when
-        final Object actual = resolver.resolveArgument(request, methodParameter, method);
+        final Object actual = resolver.resolveArgument(request, methodParameter);
 
         // then
         assertThat(actual).isEqualTo(10L);
@@ -73,13 +73,13 @@ public class PathVariableHandlerMethodArgumentResolverTest {
                 .get();
         final Parameter[] parameters = method.getParameters();
 
-        final MethodParameter methodParameter = new MethodParameter(parameters[0], "id", 1);
-        final MethodParameter methodParameter2 = new MethodParameter(parameters[1], "userId", 1);
+        final MethodParameter methodParameter = new MethodParameter(parameters[0], "id", 1,method);
+        final MethodParameter methodParameter2 = new MethodParameter(parameters[1], "userId", 1,method);
         request.setRequestURI("/users/10/12");
 
         // when
-        final Object id = resolver.resolveArgument(request, methodParameter, method);
-        final Object userId = resolver.resolveArgument(request, methodParameter2, method);
+        final Object id = resolver.resolveArgument(request, methodParameter);
+        final Object userId = resolver.resolveArgument(request, methodParameter2);
 
         // then
         assertThat(id).isEqualTo(10L);
