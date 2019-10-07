@@ -3,10 +3,8 @@ package nextstep.mvc.tobe;
 import com.google.common.collect.Maps;
 import nextstep.mvc.HandlerMapping;
 import nextstep.mvc.tobe.view.ModelAndView;
-import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,7 +13,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class AnnotationHandlerMapping implements HandlerMapping {
@@ -29,7 +26,8 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     public void initialize() {
-        Set<Class<?>> controllerReflections = collectControllerReflections();
+        ControllerScanner controllerScanner = new ControllerScanner(basePackage);
+        Set<Class<?>> controllerReflections = controllerScanner.collectControllerReflections();
         log.info("Initialized Annotation Request Mapping!");
 
         for (Class<?> controllerReflection : controllerReflections) {
@@ -50,12 +48,6 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         }
     }
 
-    private Set<Class<?>> collectControllerReflections() {
-        return Stream.of(basePackage)
-                .map(Reflections::new)
-                .flatMap(reflections -> reflections.getTypesAnnotatedWith(Controller.class).stream())
-                .collect(Collectors.toSet());
-    }
 
     private void addHandlerExecution(Object controller, Method method) {
         RequestMapping requestMapping = method.getDeclaredAnnotation(RequestMapping.class);
