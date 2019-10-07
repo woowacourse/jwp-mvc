@@ -21,16 +21,16 @@ public enum RequestContextKey {
         this.type = type;
     }
 
+    public static boolean hasType(Class<?> type) {
+        return Arrays.stream(values())
+                .anyMatch(requestContextKey -> type.isAssignableFrom(requestContextKey.type));
+    }
+
     public String getKey() {
         return key;
     }
 
     public Class<?> getType() {
         return type;
-    }
-
-    public static boolean hasType(Class<?> type) {
-        return Arrays.stream(values())
-                .anyMatch(requestContextKey -> type.isAssignableFrom(requestContextKey.type));
     }
 }

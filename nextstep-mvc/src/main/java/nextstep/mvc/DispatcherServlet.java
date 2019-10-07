@@ -57,7 +57,6 @@ public class DispatcherServlet extends HttpServlet {
             view.render(modelAndView.getModelMap(), requestContext);
         } catch (Exception e) {
             logger.error("Exception : {}", e);
-            e.printStackTrace();
         }
     }
 

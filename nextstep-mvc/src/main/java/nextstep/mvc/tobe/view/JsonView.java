@@ -26,7 +26,7 @@ public class JsonView implements View {
     }
 
     private String convertData(Map<String, ?> model) throws JsonProcessingException {
-        if(model.isEmpty()) {
+        if (model.isEmpty()) {
             return StringUtils.EMPTY;
         }
 
