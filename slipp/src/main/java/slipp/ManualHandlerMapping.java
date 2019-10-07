@@ -28,7 +28,7 @@ public class ManualHandlerMapping implements HandlerMapping {
         mappings.put("/users/updateForm", new UpdateFormUserController());
         mappings.put("/users/update", new UpdateUserController());
 
-        logger.info("Initialized Request Mapping!");
+        logger.info("Initialized Manual Request Mapping!");
         mappings.keySet().forEach(path -> {
             logger.info("Path : {}, Controller : {}", path, mappings.get(path).getClass());
         });

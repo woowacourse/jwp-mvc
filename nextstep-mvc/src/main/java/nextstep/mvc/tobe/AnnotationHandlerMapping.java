@@ -6,6 +6,8 @@ import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
 import org.reflections.Reflections;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.InvocationTargetException;
@@ -16,6 +18,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class AnnotationHandlerMapping implements HandlerMapping {
+    private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
     private Object[] basePackage;
 
     private Map<HandlerKey, HandlerExecution> handlerExecutions = Maps.newHashMap();
@@ -25,7 +28,10 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     public void initialize() {
-        for (Class<?> controllerReflection : collectControllerReflections()) {
+        Set<Class<?>> controllerReflections = collectControllerReflections();
+        log.info("Initialized Annotation Request Mapping!");
+
+        for (Class<?> controllerReflection : controllerReflections) {
             Object controller = createController(controllerReflection);
 
             Stream.of(controllerReflection.getDeclaredMethods())
@@ -57,6 +63,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
             HandlerKey handlerKey = new HandlerKey(requestMapping.value(), requestMethod);
             HandlerExecution handlerExecution = (req, res) -> (String) method.invoke(controller, req, res);
             handlerExecutions.put(handlerKey, handlerExecution);
+            log.info("path : {}, controller: {}", requestMapping.value(), controller.getClass());
         }
     }
 
