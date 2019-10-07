@@ -5,5 +5,5 @@ import nextstep.mvc.tobe.RequestContext;
 import java.util.Map;
 
 public interface View {
-    void render(Map<String, ?> model, RequestContext requestContext) throws Exception;
+    void render(Map<String, ?> model, RequestContext requestContext);
 }
