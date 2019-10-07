@@ -1,5 +1,6 @@
 package nextstep.mvc.tobe;
 
+import nextstep.mvc.tobe.view.JspView;
 import nextstep.mvc.tobe.view.View;
 
 import javax.servlet.http.HttpServletRequest;
@@ -17,6 +18,10 @@ public class ModelAndView {
 
     public ModelAndView(View view) {
         this.view = view;
+    }
+
+    public ModelAndView(String viewName) {
+        view = new JspView(viewName);
     }
 
     public ModelAndView addObject(String attributeName, Object attributeValue) {
