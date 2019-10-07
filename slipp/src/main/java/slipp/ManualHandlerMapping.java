@@ -1,7 +1,6 @@
 package slipp;
 
 import nextstep.mvc.DispatcherServlet;
-import nextstep.mvc.HandlerMapping;
 import nextstep.mvc.asis.Controller;
 import nextstep.mvc.asis.ForwardController;
 import org.slf4j.Logger;
@@ -11,12 +10,11 @@ import slipp.controller.*;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ManualHandlerMapping implements HandlerMapping {
+public class ManualHandlerMapping {
     private static final Logger logger = LoggerFactory.getLogger(DispatcherServlet.class);
     private Map<String, Controller> mappings = new HashMap<>();
 
-    @Override
-    public void initialize() {
+    void initialize() {
         mappings.put("/", new HomeController());
         mappings.put("/users/form", new ForwardController("/user/form.jsp"));
         mappings.put("/users/loginForm", new ForwardController("/user/login.jsp"));
@@ -34,8 +32,7 @@ public class ManualHandlerMapping implements HandlerMapping {
         });
     }
 
-    @Override
-    public Controller getHandler(String requestUri) {
+    Controller getHandler(String requestUri) {
         return mappings.get(requestUri);
     }
 
