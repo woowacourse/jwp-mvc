@@ -27,13 +27,6 @@ public class HandlerExecution {
             return new ModelAndView(new JspView((String) view));
         }
         return (ModelAndView) view;
-    }
 
-    @Override
-    public String toString() {
-        return "HandlerExecution{" +
-            "clazz=" + clazz +
-            ", method=" + method +
-            '}';
     }
 }

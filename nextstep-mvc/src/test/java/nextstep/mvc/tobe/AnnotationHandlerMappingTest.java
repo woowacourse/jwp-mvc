@@ -14,7 +14,8 @@ public class AnnotationHandlerMappingTest {
 
     @BeforeEach
     public void setup() {
-        handlerMapping = new AnnotationHandlerMapping("nextstep.mvc.tobe");
+        ControllerScanner controllerScanner = new ControllerScanner("nextstep.mvc.tobe");
+        handlerMapping = new AnnotationHandlerMapping(controllerScanner.scan());
         handlerMapping.initialize();
     }
 

@@ -15,7 +15,6 @@ public class ControllerAdapter implements HandlerAdapter {
         return Controller.class.isAssignableFrom(handler.getClass());
     }
 
-    // @TODO Exception 처리
     @Override
     public ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         String viewName = ((Controller) handler).execute(request, response);

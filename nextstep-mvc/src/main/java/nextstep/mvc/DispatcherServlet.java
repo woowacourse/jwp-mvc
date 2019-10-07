@@ -36,7 +36,6 @@ public class DispatcherServlet extends HttpServlet {
         handlerMappings.forEach(HandlerMapping::initialize);
     }
 
-    // @TODO refactoring
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String requestUri = req.getRequestURI();
@@ -53,7 +52,6 @@ public class DispatcherServlet extends HttpServlet {
         }
     }
 
-    // @TODO Exception 처리
     private HandlerAdapter getHandlerAdapter(final Object handler) {
         return handlerAdapters.stream()
                 .filter(handlerAdapter -> handlerAdapter.isHandle(handler))
