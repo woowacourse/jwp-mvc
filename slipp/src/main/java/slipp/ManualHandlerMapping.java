@@ -8,13 +8,7 @@ import nextstep.mvc.tobe.ControllerAdaptor;
 import nextstep.mvc.tobe.HandlerExecution;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import slipp.asis.controller.CreateUserController;
-import slipp.asis.controller.HomeController;
-import slipp.asis.controller.LoginController;
-import slipp.asis.controller.LogoutController;
-import slipp.asis.controller.ProfileController;
-import slipp.asis.controller.UpdateFormUserController;
-import slipp.asis.controller.UpdateUserController;
+import slipp.asis.controller.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
