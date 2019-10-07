@@ -1,5 +1,6 @@
 package reflection;
 
+import nextstep.ConsumerWithException;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,10 +18,10 @@ public class Junit4TestRunner {
 
         Arrays.stream(clazz.getDeclaredMethods())
                 .filter(method -> method.isAnnotationPresent(MyTest.class))
-                .forEach(wrapper(arg -> arg.invoke(clazz.newInstance())));
+                .forEach(wrapper(method -> method.invoke(clazz.newInstance())));
     }
 
-    private <T extends Method, E extends Exception> Consumer<T> wrapper(FunctionWithException<T, E> fe) {
+    private <T extends Method, E extends Exception> Consumer<T> wrapper(ConsumerWithException<T, E> fe) {
         return arg -> {
             try {
                 fe.apply(arg);
@@ -28,10 +29,5 @@ public class Junit4TestRunner {
                 throw new RuntimeException(e);
             }
         };
-    }
-
-    @FunctionalInterface
-    public interface FunctionWithException<T extends Method, E extends Exception> {
-        void apply(T t) throws E;
     }
 }
