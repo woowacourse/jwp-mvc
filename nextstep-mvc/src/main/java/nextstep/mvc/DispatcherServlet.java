@@ -27,6 +27,7 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger logger = LoggerFactory.getLogger(DispatcherServlet.class);
 
+    private final Reflections reflections;
     private List<HandlerMapping> handlerMappings;
     private List<HandlerAdapter> handlerAdapters;
     private List<ViewResolver> viewResolvers;
@@ -34,6 +35,7 @@ public class DispatcherServlet extends HttpServlet {
 
     public DispatcherServlet(HandlerMapping... handlerMappings) {
         this.handlerMappings = Arrays.asList(handlerMappings);
+        this.reflections = new Reflections(this.getClass().getPackage().getName());
     }
 
     @Override
@@ -72,8 +74,7 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private List<?> detectSubTypesOf(Class<?> clazz) {
-        return new Reflections(this.getClass().getPackage().getName())
-                .getSubTypesOf(clazz).stream()
+        return reflections.getSubTypesOf(clazz).stream()
                 .map(ClassUtils::newInstance)
                 .map(clazz::cast)
                 .collect(Collectors.toList());
