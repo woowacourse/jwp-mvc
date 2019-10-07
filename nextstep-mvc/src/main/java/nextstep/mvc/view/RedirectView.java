@@ -1,4 +1,6 @@
-package nextstep.mvc;
+package nextstep.mvc.view;
+
+import nextstep.mvc.View;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

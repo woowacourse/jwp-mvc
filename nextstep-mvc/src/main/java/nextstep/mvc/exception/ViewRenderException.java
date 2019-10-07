@@ -1,4 +1,6 @@
-package nextstep.mvc;
+package nextstep.mvc.exception;
+
+import nextstep.mvc.View;
 
 public class ViewRenderException extends RuntimeException {
 

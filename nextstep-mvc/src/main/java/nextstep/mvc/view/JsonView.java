@@ -1,6 +1,8 @@
-package nextstep.mvc;
+package nextstep.mvc.view;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import nextstep.mvc.View;
+import nextstep.mvc.exception.ViewRenderException;
 import nextstep.web.support.MediaType;
 
 import javax.servlet.http.HttpServletRequest;

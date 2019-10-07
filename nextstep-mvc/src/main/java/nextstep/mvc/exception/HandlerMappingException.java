@@ -1,4 +1,4 @@
-package nextstep.mvc;
+package nextstep.mvc.exception;
 
 public class HandlerMappingException extends RuntimeException {
 

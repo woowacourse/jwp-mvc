@@ -1,6 +1,6 @@
 package slipp.controller;
 
-import nextstep.mvc.JspView;
+import nextstep.mvc.view.JspView;
 import nextstep.mvc.ModelAndView;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;

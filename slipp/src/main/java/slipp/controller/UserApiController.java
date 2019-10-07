@@ -1,6 +1,6 @@
 package slipp.controller;
 
-import nextstep.mvc.JsonView;
+import nextstep.mvc.view.JsonView;
 import nextstep.mvc.ModelAndView;
 import nextstep.utils.JsonUtils;
 import nextstep.web.annotation.Controller;

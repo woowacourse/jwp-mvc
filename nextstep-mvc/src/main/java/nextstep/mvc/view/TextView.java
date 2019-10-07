@@ -1,5 +1,6 @@
-package nextstep.mvc;
+package nextstep.mvc.view;
 
+import nextstep.mvc.View;
 import nextstep.web.support.MediaType;
 
 import javax.servlet.http.HttpServletRequest;
