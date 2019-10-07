@@ -4,8 +4,7 @@ import nextstep.mvc.tobe.view.JspView;
 import nextstep.mvc.tobe.view.View;
 
 public class JspViewResolver implements ViewResolver {
-
-    public static final String JSP_VIEW_NAME_SUFFIX = ".jsp";
+    private static final String JSP_VIEW_NAME_SUFFIX = ".jsp";
 
     @Override
     public boolean supports(String viewName) {
