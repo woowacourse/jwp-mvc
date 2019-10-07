@@ -19,7 +19,11 @@ public class AnnotationHandlerAdapter implements HandlerAdapter {
     @Override
     public ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         HandlerExecution castHandler = (HandlerExecution) handler;
-        String viewName = (String) castHandler.handle(request, response);
+        Object result = castHandler.handle(request, response);
+        if(result instanceof ModelAndView) {
+            return (ModelAndView) result;
+        }
+        String viewName = (String) result;
         if (viewName.startsWith(DEFAULT_REDIRECT_PREFIX)) {
             return new ModelAndView(new RedirectView(viewName));
         }
