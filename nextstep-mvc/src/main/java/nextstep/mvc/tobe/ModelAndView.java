@@ -11,8 +11,16 @@ public class ModelAndView {
     public ModelAndView() {
     }
 
-    public ModelAndView(View view) {
+    private ModelAndView(View view) {
         this.view = view;
+    }
+
+    public static ModelAndView of(View view) {
+        return new ModelAndView(view);
+    }
+
+    public static ModelAndView redirect(String redirectUrl) {
+        return new ModelAndView(new RedirectView(redirectUrl));
     }
 
     public ModelAndView addObject(String attributeName, Object attributeValue) {
