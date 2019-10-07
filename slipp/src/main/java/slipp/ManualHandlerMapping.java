@@ -19,7 +19,8 @@ import java.util.Map;
 
 public class ManualHandlerMapping implements HandlerMapping {
     private static final Logger logger = LoggerFactory.getLogger(DispatcherServlet.class);
-    private Map<String, Controller> mappings = new HashMap<>();
+
+    private final Map<String, Controller> mappings = new HashMap<>();
 
     @Override
     public void initialize() {

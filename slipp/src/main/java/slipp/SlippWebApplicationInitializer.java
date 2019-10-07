@@ -28,7 +28,7 @@ public class SlippWebApplicationInitializer implements WebApplicationInitializer
                 new ControllerAdapter(),
                 new HandlerExecutionAdapter()
         );
-        
+
         DispatcherServlet dispatcherServlet = new DispatcherServlet(handlerMappings, handlerAdapters);
 
         ServletRegistration.Dynamic dispatcher = servletContext.addServlet("dispatcher", dispatcherServlet);
