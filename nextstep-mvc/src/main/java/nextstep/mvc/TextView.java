@@ -1,6 +1,5 @@
-package nextstep.mvc.tobe.view;
+package nextstep.mvc;
 
-import nextstep.mvc.tobe.View;
 import nextstep.web.support.MediaType;
 
 import javax.servlet.http.HttpServletRequest;

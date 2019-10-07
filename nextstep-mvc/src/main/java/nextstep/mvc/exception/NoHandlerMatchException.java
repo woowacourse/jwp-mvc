@@ -1,4 +1,4 @@
-package nextstep.mvc.tobe.exception;
+package nextstep.mvc.exception;
 
 import javax.servlet.http.HttpServletRequest;
 

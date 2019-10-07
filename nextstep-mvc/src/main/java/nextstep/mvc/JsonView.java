@@ -1,8 +1,6 @@
-package nextstep.mvc.tobe.view;
+package nextstep.mvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import nextstep.mvc.tobe.View;
-import nextstep.mvc.tobe.ViewRenderException;
 import nextstep.web.support.MediaType;
 
 import javax.servlet.http.HttpServletRequest;

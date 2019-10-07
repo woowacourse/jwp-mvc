@@ -1,7 +1,6 @@
-package nextstep.mvc.tobe;
+package nextstep.mvc;
 
 import com.google.common.collect.Maps;
-import nextstep.mvc.HandlerMapping;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
 import org.slf4j.Logger;

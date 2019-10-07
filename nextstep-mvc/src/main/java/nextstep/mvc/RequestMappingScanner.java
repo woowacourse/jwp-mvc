@@ -1,13 +1,10 @@
-package nextstep.mvc.tobe;
+package nextstep.mvc;
 
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
