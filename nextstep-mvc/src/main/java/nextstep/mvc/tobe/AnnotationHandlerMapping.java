@@ -55,8 +55,9 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     private void addHandlerExecutions(Object clazzInstance, Method method) {
-        String url = method.getAnnotation(RequestMapping.class).value();
-        RequestMethod[] requestMethods = method.getAnnotation(RequestMapping.class).method();
+        RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+        String url = requestMapping.value();
+        RequestMethod[] requestMethods = requestMapping.method();
         if (requestMethods.length == 0) {
             requestMethods = RequestMethod.values();
         }
