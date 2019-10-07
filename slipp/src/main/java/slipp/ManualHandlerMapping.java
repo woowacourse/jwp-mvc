@@ -1,6 +1,5 @@
 package slipp;
 
-import nextstep.mvc.DispatcherServlet;
 import nextstep.mvc.HandlerMapping;
 import nextstep.mvc.asis.Controller;
 import nextstep.mvc.asis.ForwardController;
@@ -13,7 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ManualHandlerMapping implements HandlerMapping {
-    private static final Logger logger = LoggerFactory.getLogger(DispatcherServlet.class);
+    private static final Logger logger = LoggerFactory.getLogger(ManualHandlerMapping.class);
     private Map<String, Controller> mappings = new HashMap<>();
 
     @Override
@@ -36,8 +35,13 @@ public class ManualHandlerMapping implements HandlerMapping {
     }
 
     @Override
-    public Object getHandler(HttpServletRequest request) {
-        return mappings.get(request.getRequestURI());
+    public Controller getHandler(HttpServletRequest req) {
+        return mappings.get(req.getRequestURI());
+    }
+
+    @Override
+    public boolean supports(HttpServletRequest req) {
+        return getHandler(req) != null;
     }
 
     void put(String url, Controller controller) {

@@ -27,7 +27,7 @@ public class AnnotationHandlerMappingTest {
         request.setParameter("userId", user.getUserId());
         MockHttpServletResponse response = new MockHttpServletResponse();
         HandlerExecution execution = handlerMapping.getHandler(request);
-        execution.excute(request, response);
+        execution.execute(request, response);
 
         assertThat(request.getAttribute("user")).isEqualTo(user);
     }
@@ -40,6 +40,6 @@ public class AnnotationHandlerMappingTest {
         request.setParameter("email", user.getEmail());
         MockHttpServletResponse response = new MockHttpServletResponse();
         HandlerExecution execution = handlerMapping.getHandler(request);
-        execution.excute(request, response);
+        execution.execute(request, response);
     }
 }

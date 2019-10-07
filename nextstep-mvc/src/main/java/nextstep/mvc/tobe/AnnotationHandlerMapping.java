@@ -42,8 +42,8 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     @Override
-    public HandlerExecution getHandler(HttpServletRequest request) {
-        return handlerExecutions.get(createHandlerKey(request));
+    public HandlerExecution getHandler(HttpServletRequest req) {
+        return handlerExecutions.get(createHandlerKey(req));
     }
 
     private HandlerKey createHandlerKey(HttpServletRequest request) {
@@ -52,7 +52,8 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         return new HandlerKey(url, RequestMethod.valueOf(method));
     }
 
-    public boolean hasControllerAnnotation(HttpServletRequest req) {
+    @Override
+    public boolean supports(HttpServletRequest req) {
         return getHandler(req) != null;
     }
 }
