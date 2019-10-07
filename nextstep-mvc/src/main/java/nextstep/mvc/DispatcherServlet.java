@@ -1,7 +1,8 @@
 package nextstep.mvc;
 
 import com.google.common.collect.Lists;
-import nextstep.mvc.asis.Controller;
+import nextstep.mvc.asis.ControllerHandlerAdapter;
+import nextstep.mvc.tobe.HandlerExecutionHandlerAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,9 +39,10 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException {
-        Controller controller = findHandler(req);
+        Object handler = findHandler(req);
+        HandlerAdapter handlerAdapter = getHandlerAdapter(handler);
         try {
-            String viewName = (String) controller.execute(req, resp);
+            String viewName = (String) handlerAdapter.handle(req, resp, handler);
             move(viewName, req, resp);
         } catch (Throwable e) {
             logger.error("Exception : {}", e);
@@ -48,12 +50,24 @@ public class DispatcherServlet extends HttpServlet {
         }
     }
 
-    private Controller findHandler(HttpServletRequest request) {
+    private Object findHandler(HttpServletRequest request) {
         return handlerMappings.stream()
                 .map(handlerMapping -> handlerMapping.getHandler(request))
                 .filter(Objects::nonNull)
                 .findFirst()
                 .orElseThrow(IllegalArgumentException::new);
+    }
+
+    private HandlerAdapter getHandlerAdapter(Object handler) {
+        if (new ControllerHandlerAdapter().supports(handler)) {
+            return new ControllerHandlerAdapter();
+        }
+
+        if (new HandlerExecutionHandlerAdapter().supports(handler)) {
+            return new HandlerExecutionHandlerAdapter();
+        }
+
+        throw new IllegalArgumentException();
     }
 
     private void move(String viewName, HttpServletRequest req, HttpServletResponse resp)

@@ -17,7 +17,7 @@ import java.util.Set;
 public class AnnotationHandlerMapping implements HandlerMapping {
     private Object[] basePackage;
 
-    private Map<HandlerKey, nextstep.mvc.asis.Controller> handlerExecutions = Maps.newHashMap();
+    private Map<HandlerKey, HandlerExecution> handlerExecutions = Maps.newHashMap();
 
     public AnnotationHandlerMapping(Object... basePackage) {
         this.basePackage = basePackage;
@@ -63,7 +63,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     @Override
-    public nextstep.mvc.asis.Controller getHandler(HttpServletRequest request) {
+    public Object getHandler(HttpServletRequest request) {
         HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), RequestMethod.of(request.getMethod()));
         return handlerExecutions.get(handlerKey);
     }
