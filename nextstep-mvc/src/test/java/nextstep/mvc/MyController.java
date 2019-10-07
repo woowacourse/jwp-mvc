@@ -1,7 +1,6 @@
-package nextstep.mvc.tobe;
+package nextstep.mvc;
 
 import nextstep.db.DataBase;
-import nextstep.mvc.ModelAndView;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
