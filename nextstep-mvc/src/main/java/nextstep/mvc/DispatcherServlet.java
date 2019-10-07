@@ -1,9 +1,7 @@
 package nextstep.mvc;
 
 import com.google.common.collect.Lists;
-import nextstep.ControllerHandlerAdapter;
 import nextstep.HandlerAdapter;
-import nextstep.HandlerExecutionHandlerAdapter;
 import nextstep.exception.PageNotFoundException;
 import nextstep.mvc.tobe.ErrorView;
 import nextstep.mvc.tobe.ModelAndView;
@@ -26,7 +24,7 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger logger = LoggerFactory.getLogger(DispatcherServlet.class);
 
     private List<HandlerMapping> hms = Lists.newArrayList();
-    private List<HandlerAdapter> adapters;
+    private List<HandlerAdapter> adapters = Lists.newArrayList();
 
     public DispatcherServlet(HandlerMapping... hm) {
         this.hms.addAll(Arrays.asList(hm));
@@ -34,8 +32,10 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     public void init() {
-        hms.forEach(HandlerMapping::initialize);
-        adapters = Arrays.asList(new ControllerHandlerAdapter(), new HandlerExecutionHandlerAdapter());
+        hms.forEach(handlerMapping -> {
+            handlerMapping.initialize();
+            adapters.add(handlerMapping.getHandlerAdapter());
+        });
     }
 
     @Override
