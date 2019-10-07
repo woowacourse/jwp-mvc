@@ -3,11 +3,14 @@ package slipp;
 import nextstep.mvc.DispatcherServlet;
 import nextstep.mvc.HandlerMapping;
 import nextstep.mvc.asis.Controller;
-import nextstep.mvc.asis.ForwardController;
+import nextstep.mvc.tobe.HandlerExecution;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import slipp.controller.*;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,12 +21,8 @@ public class ManualHandlerMapping implements HandlerMapping {
     @Override
     public void initialize() {
         mappings.put("/", new HomeController());
-        mappings.put("/users/form", new ForwardController("/user/form.jsp"));
-        mappings.put("/users/loginForm", new ForwardController("/user/login.jsp"));
         mappings.put("/users", new ListUserController());
-        mappings.put("/users/login", new LoginController());
         mappings.put("/users/profile", new ProfileController());
-        mappings.put("/users/logout", new LogoutController());
         mappings.put("/users/create", new CreateUserController());
         mappings.put("/users/updateForm", new UpdateFormUserController());
         mappings.put("/users/update", new UpdateUserController());
@@ -34,12 +33,24 @@ public class ManualHandlerMapping implements HandlerMapping {
         });
     }
 
-    @Override
-    public Controller getHandler(String requestUri) {
-        return mappings.get(requestUri);
-    }
-
     void put(String url, Controller controller) {
         mappings.put(url, controller);
+    }
+
+    @Override
+    public boolean containsKey(HttpServletRequest request) {
+        return mappings.containsKey(request.getRequestURI());
+    }
+
+    @Override
+    public HandlerExecution getHandler(HttpServletRequest request) {
+        try {
+            Class clazz = mappings.get(request.getRequestURI()).getClass();
+            Method method = clazz.getMethod("execute", HttpServletRequest.class, HttpServletResponse.class);
+            return new HandlerExecution(clazz, method);
+        } catch (NoSuchMethodException e) {
+            logger.debug(e.getMessage());
+            return null;
+        }
     }
 }
