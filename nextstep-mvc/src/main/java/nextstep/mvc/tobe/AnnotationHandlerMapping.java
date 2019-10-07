@@ -2,21 +2,18 @@ package nextstep.mvc.tobe;
 
 import java.lang.reflect.Method;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import com.google.common.collect.Maps;
-import nextstep.mvc.ModelAndViewHandlerMapping;
+import nextstep.mvc.HandlerMapping;
 import nextstep.mvc.tobe.exception.DuplicateRequestMappingException;
-import nextstep.mvc.tobe.exception.RenderFailedException;
 import nextstep.mvc.tobe.scanner.ControllerScanner;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
 import org.reflections.ReflectionUtils;
 
-public class AnnotationHandlerMapping implements ModelAndViewHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
     private Object[] basePackage;
 
     private Map<HandlerKey, HandlerExecution> handlerExecutions = Maps.newHashMap();
@@ -61,27 +58,6 @@ public class AnnotationHandlerMapping implements ModelAndViewHandlerMapping {
         }
     }
 
-    @Override
-    public boolean handle(final HttpServletRequest req, final HttpServletResponse resp) {
-        HandlerExecution execution = getHandler(req);
-        if (doesNotExistsExecution(execution)) {
-            return false;
-        }
-
-        try {
-            ModelAndView modelAndView = execution.handle(req, resp);
-            modelAndView.render(req, resp);
-        } catch (Exception e) {
-            throw new RenderFailedException();
-        }
-        return true;
-    }
-
-    private boolean doesNotExistsExecution(final HandlerExecution execution) {
-        return Objects.isNull(execution);
-    }
-
-    @Override
     public HandlerExecution getHandler(HttpServletRequest request) {
         String requestURI = request.getRequestURI();
         String method = request.getMethod();
