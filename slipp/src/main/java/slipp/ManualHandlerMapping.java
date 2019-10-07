@@ -4,7 +4,6 @@ import nextstep.mvc.DispatcherServlet;
 import nextstep.mvc.HandlerMapping;
 import nextstep.mvc.asis.Controller;
 import nextstep.mvc.asis.ForwardController;
-import nextstep.mvc.tobe.HandlerExecution;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import slipp.controller.*;
@@ -35,7 +34,7 @@ public class ManualHandlerMapping implements HandlerMapping {
     }
 
     @Override
-    public HandlerExecution getHandler(HttpServletRequest httpServletRequest) {
+    public Controller getHandler(HttpServletRequest httpServletRequest) {
         return mappings.get(httpServletRequest.getRequestURI());
     }
 
