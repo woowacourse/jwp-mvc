@@ -1,5 +1,6 @@
 package nextstep.mvc.tobe;
 
+import nextstep.mvc.Handler;
 import nextstep.mvc.HandlerMapping;
 import nextstep.mvc.tobe.exception.NotFoundException;
 
@@ -18,9 +19,9 @@ public class HandlerMappingManager {
         handlerMappings.forEach(HandlerMapping::initialize);
     }
 
-    public Object getHandler(HttpServletRequest request) {
+    public Handler getHandler(HttpServletRequest request) {
         for (HandlerMapping handlerMapping : handlerMappings) {
-            Object handler = handlerMapping.getHandler(request);
+            Handler handler = handlerMapping.getHandler(request);
             if (handler != null) {
                 return handler;
             }

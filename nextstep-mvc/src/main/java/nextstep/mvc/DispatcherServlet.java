@@ -41,7 +41,7 @@ public class DispatcherServlet extends HttpServlet {
         String requestUri = req.getRequestURI();
         logger.debug("Method : {}, Request URI : {}", req.getMethod(), requestUri);
 
-        Object handler = handlerMappingManager.getHandler(req);
+        Handler handler = handlerMappingManager.getHandler(req);
         try {
             if (handler instanceof Controller) {
                 String viewName = ((Controller) handler).handle(req, resp);
