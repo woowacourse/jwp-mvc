@@ -1,15 +1,12 @@
 package nextstep.mvc;
 
-import nextstep.mvc.asis.Controller;
-import nextstep.mvc.tobe.HandlerAdapter;
+import nextstep.mvc.tobe.HandlerAdaptor;
 import nextstep.mvc.tobe.HandlerAdapterNotFoundException;
-import nextstep.mvc.tobe.HandlerExecution;
 import nextstep.mvc.tobe.HandlerNotExistException;
 import nextstep.mvc.tobe.ModelAndView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -23,11 +20,11 @@ import java.util.Objects;
 public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger logger = LoggerFactory.getLogger(DispatcherServlet.class);
-    private final List<HandlerAdapter> handlerAdapters;
+    private final List<HandlerAdaptor> handlerAdaptors;
     private final List<HandlerMapping> handlerMappings;
 
-    public DispatcherServlet(List<HandlerAdapter> handlerAdapters, List<HandlerMapping> handlerMappings) {
-        this.handlerAdapters = handlerAdapters;
+    public DispatcherServlet(List<HandlerAdaptor> handlerAdaptors, List<HandlerMapping> handlerMappings) {
+        this.handlerAdaptors = handlerAdaptors;
         this.handlerMappings = handlerMappings;
     }
 
@@ -42,10 +39,10 @@ public class DispatcherServlet extends HttpServlet {
         logger.debug("Method : {}, Request URI : {}", req.getMethod(), requestUri);
 
         Object handler = getHandler(req);
-        HandlerAdapter handlerAdapter = findHandlerAdapter(handler);
+        HandlerAdaptor handlerAdaptor = findHandlerAdapter(handler);
         try {
-            ModelAndView view = handlerAdapter.handle(req, resp, handler);
-            view.render(req,resp);
+            ModelAndView view = handlerAdaptor.handle(req, resp, handler);
+            view.render(req, resp);
 
         } catch (Exception e) {
             logger.error("Exception : {}", e);
@@ -53,9 +50,9 @@ public class DispatcherServlet extends HttpServlet {
         }
     }
 
-    private HandlerAdapter findHandlerAdapter(Object handler) {
-        return handlerAdapters.stream()
-            .filter(handlerAdapter -> handlerAdapter.supports(handler))
+    private HandlerAdaptor findHandlerAdapter(Object handler) {
+        return handlerAdaptors.stream()
+            .filter(handlerAdaptor -> handlerAdaptor.supports(handler))
             .findFirst()
             .orElseThrow(HandlerAdapterNotFoundException::new);
     }

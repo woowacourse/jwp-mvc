@@ -3,17 +3,14 @@ package slipp;
 import nextstep.mvc.DispatcherServlet;
 import nextstep.mvc.HandlerMapping;
 import nextstep.mvc.tobe.AnnotationHandlerMapping;
-import nextstep.mvc.tobe.ControllerHandlerAdapter;
-import nextstep.mvc.tobe.HandlerAdapter;
+import nextstep.mvc.tobe.ControllerHandlerAdaptor;
+import nextstep.mvc.tobe.HandlerAdaptor;
 import nextstep.mvc.tobe.HandlerAdapterNotFoundException;
 import nextstep.mvc.tobe.HandlerExecutionAdaptor;
 import nextstep.mvc.tobe.HandlerNotExistException;
-import nextstep.mvc.tobe.HandlerNotFoundException;
 import nextstep.web.annotation.RequestMethod;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
@@ -40,7 +37,7 @@ public class DispatcherServletTests {
 
     @Test
     void service() throws ServletException, IOException {
-        dispatcherServlet = new DispatcherServlet(Arrays.asList(new ControllerHandlerAdapter(), new HandlerExecutionAdaptor()),
+        dispatcherServlet = new DispatcherServlet(Arrays.asList(new ControllerHandlerAdaptor(), new HandlerExecutionAdaptor()),
             Arrays.asList(new ManualHandlerMapping(), new AnnotationHandlerMapping("slipp")));
         dispatcherServlet.init();
 
@@ -50,7 +47,7 @@ public class DispatcherServletTests {
 
     @Test
     void HandlerAdapterNotFound() {
-        List<HandlerAdapter> list = new ArrayList<>();
+        List<HandlerAdaptor> list = new ArrayList<>();
         dispatcherServlet = new DispatcherServlet(list,
             Arrays.asList(new ManualHandlerMapping(), new AnnotationHandlerMapping("slipp")));
         dispatcherServlet.init();
@@ -64,7 +61,7 @@ public class DispatcherServletTests {
     @Test
     void HandlerNotFound() {
         List<HandlerMapping> list = new ArrayList<>();
-        dispatcherServlet = new DispatcherServlet(Arrays.asList(new ControllerHandlerAdapter(), new HandlerExecutionAdaptor()), list);
+        dispatcherServlet = new DispatcherServlet(Arrays.asList(new ControllerHandlerAdaptor(), new HandlerExecutionAdaptor()), list);
         dispatcherServlet.init();
         makeRequest();
 

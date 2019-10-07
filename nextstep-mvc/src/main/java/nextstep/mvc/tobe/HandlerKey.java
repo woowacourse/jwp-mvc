@@ -2,7 +2,6 @@ package nextstep.mvc.tobe;
 
 import nextstep.web.annotation.RequestMethod;
 
-import java.util.Arrays;
 import java.util.Objects;
 
 public class HandlerKey {

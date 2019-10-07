@@ -1,11 +1,11 @@
 package nextstep.mvc.tobe;
 
-import nextstep.mvc.HandlerMapping;
 import nextstep.mvc.asis.Controller;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public class ControllerHandlerAdapter implements HandlerAdapter {
+public class ControllerHandlerAdaptor implements HandlerAdaptor {
     @Override
     public boolean supports(Object handler) {
         return handler instanceof Controller;
