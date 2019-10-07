@@ -11,10 +11,10 @@ import com.google.common.collect.Maps;
 import nextstep.mvc.ModelAndViewHandlerMapping;
 import nextstep.mvc.tobe.exception.DuplicateRequestMappingException;
 import nextstep.mvc.tobe.exception.RenderFailedException;
-import nextstep.mvc.tobe.exception.RequestUrlNotFoundException;
 import nextstep.mvc.tobe.scanner.ControllerScanner;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
+import org.reflections.ReflectionUtils;
 
 public class AnnotationHandlerMapping implements ModelAndViewHandlerMapping {
     private Object[] basePackage;
@@ -35,17 +35,16 @@ public class AnnotationHandlerMapping implements ModelAndViewHandlerMapping {
     }
 
     private void appendHandlerExecutions(final Class<?> clazz) {
-        Method[] methods = clazz.getDeclaredMethods();
+        Set<Method> methods = ReflectionUtils.getAllMethods(clazz, ReflectionUtils.withAnnotation(RequestMapping.class));
+
         for (Method method : methods) {
-            if (method.isAnnotationPresent(RequestMapping.class)) {
-                HandlerKey handlerKey = createHandlerKey(method);
+            HandlerKey handlerKey = createHandlerKey(method);
 
-                HandlerExecution handlerExecution
-                        = (request, response) -> (ModelAndView) method.invoke(clazz.newInstance(), request, response);
+            HandlerExecution handlerExecution
+                    = (request, response) -> (ModelAndView) method.invoke(clazz.newInstance(), request, response);
 
-                checkDuplicateRequestMapping(handlerKey);
-                handlerExecutions.put(handlerKey, handlerExecution);
-            }
+            checkDuplicateRequestMapping(handlerKey);
+            handlerExecutions.put(handlerKey, handlerExecution);
         }
     }
 
