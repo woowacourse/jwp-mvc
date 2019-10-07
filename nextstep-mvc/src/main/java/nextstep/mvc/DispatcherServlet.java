@@ -47,13 +47,7 @@ public class DispatcherServlet extends HttpServlet {
 
     private String getViewName(HttpServletRequest request, HttpServletResponse response) throws Exception {
         Object handler = getHandler(request);
-        if (handler instanceof Controller) {
-            return ((Controller) handler).execute(request, response);
-        }
-        if (handler instanceof HandlerExecution) {
-            return ((HandlerExecution) handler).handle(request, response);
-        }
-        return "/err/404.jsp";
+        return ((Controller) handler).handle(request, response);
     }
 
     private Object getHandler(HttpServletRequest request) {
