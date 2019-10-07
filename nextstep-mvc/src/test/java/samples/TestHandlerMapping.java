@@ -3,7 +3,6 @@ package samples;
 import nextstep.mvc.DispatcherServlet;
 import nextstep.mvc.HandlerMapping;
 import nextstep.mvc.asis.Controller;
-import nextstep.mvc.asis.ForwardController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,14 +36,14 @@ public class TestHandlerMapping implements HandlerMapping {
 
     static class FirstTestController implements Controller {
         @Override
-        public String execute(HttpServletRequest req, HttpServletResponse resp) throws Exception {
+        public String handle(HttpServletRequest req, HttpServletResponse resp) throws Exception {
             return "test1";
         }
     }
 
     static class SecondTestController implements Controller {
         @Override
-        public String execute(HttpServletRequest req, HttpServletResponse resp) throws Exception {
+        public String handle(HttpServletRequest req, HttpServletResponse resp) throws Exception {
             return "test2";
         }
     }

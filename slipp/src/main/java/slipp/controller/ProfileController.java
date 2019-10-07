@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 
 public class ProfileController implements Controller {
     @Override
-    public String execute(HttpServletRequest req, HttpServletResponse resp) throws Exception {
+    public String handle(HttpServletRequest req, HttpServletResponse resp) throws Exception {
         String userId = req.getParameter("userId");
         User user = DataBase.findUserById(userId);
         if (user == null) {

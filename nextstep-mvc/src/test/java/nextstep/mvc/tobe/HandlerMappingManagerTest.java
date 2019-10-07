@@ -43,7 +43,7 @@ public class HandlerMappingManagerTest {
         response = new MockHttpServletResponse();
         Controller handler = (Controller) manager.getHandler(request);
 
-        assertThat(handler.execute(request, response)).isEqualTo("test1");
+        assertThat(handler.handle(request, response)).isEqualTo("test1");
     }
 
     @Test
@@ -53,7 +53,7 @@ public class HandlerMappingManagerTest {
         response = new MockHttpServletResponse();
         Controller handler = (Controller) manager.getHandler(request);
 
-        assertThat(handler.execute(request, response)).isEqualTo("test2");
+        assertThat(handler.handle(request, response)).isEqualTo("test2");
     }
 
     @Test
