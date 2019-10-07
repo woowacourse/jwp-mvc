@@ -1,8 +1,6 @@
 package nextstep.mvc;
 
-import nextstep.mvc.tobe.ControllerAdapter;
 import nextstep.mvc.tobe.HandlerAdapter;
-import nextstep.mvc.tobe.HandlerExecutionAdapter;
 import nextstep.mvc.tobe.ModelAndView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,7 +11,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -23,12 +20,11 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger logger = LoggerFactory.getLogger(DispatcherServlet.class);
 
     private final List<HandlerMapping> handlerMappings;
-    private final List<HandlerAdapter> handlerAdapters = new ArrayList<>();
+    private final List<HandlerAdapter> handlerAdapters;
 
-    public DispatcherServlet(final List<HandlerMapping> handlerMappings) {
+    public DispatcherServlet(final List<HandlerMapping> handlerMappings, final List<HandlerAdapter> handlerAdapters) {
         this.handlerMappings = handlerMappings;
-        handlerAdapters.add(new ControllerAdapter());
-        handlerAdapters.add(new HandlerExecutionAdapter());
+        this.handlerAdapters = handlerAdapters;
     }
 
     @Override

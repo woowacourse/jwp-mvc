@@ -2,8 +2,7 @@ package slipp;
 
 import nextstep.mvc.DispatcherServlet;
 import nextstep.mvc.HandlerMapping;
-import nextstep.mvc.tobe.AnnotationHandlerMapping;
-import nextstep.mvc.tobe.ControllerScanner;
+import nextstep.mvc.tobe.*;
 import nextstep.web.WebApplicationInitializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,11 +19,17 @@ public class SlippWebApplicationInitializer implements WebApplicationInitializer
     @Override
     public void onStartup(ServletContext servletContext) throws ServletException {
         ControllerScanner scanner = new ControllerScanner("slipp.controller");
-        List<HandlerMapping> handlerMappings = Arrays.asList(
+        final List<HandlerMapping> handlerMappings = Arrays.asList(
                 new ManualHandlerMapping(),
                 new AnnotationHandlerMapping(scanner.scan())
         );
-        DispatcherServlet dispatcherServlet = new DispatcherServlet(handlerMappings);
+
+        final List<HandlerAdapter> handlerAdapters = Arrays.asList(
+                new ControllerAdapter(),
+                new HandlerExecutionAdapter()
+        );
+        
+        DispatcherServlet dispatcherServlet = new DispatcherServlet(handlerMappings, handlerAdapters);
 
         ServletRegistration.Dynamic dispatcher = servletContext.addServlet("dispatcher", dispatcherServlet);
         dispatcher.setLoadOnStartup(1);
