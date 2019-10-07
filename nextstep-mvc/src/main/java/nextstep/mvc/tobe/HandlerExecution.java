@@ -14,10 +14,10 @@ public class HandlerExecution implements Controller {
     }
 
     @Override
-    public String handle(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public Object handle(HttpServletRequest request, HttpServletResponse response) throws Exception {
         InstancePool instancePool = InstancePool.getInstance();
         Object instance = instancePool.instanceOf(method.getDeclaringClass());
-        return (String) method.invoke(instance, request, response);
+        return method.invoke(instance, request, response);
     }
 
     @Override

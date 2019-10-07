@@ -1,5 +1,8 @@
 package slipp.controller.tobe;
 
+import nextstep.mvc.tobe.JspView;
+import nextstep.mvc.tobe.RedirectView;
+import nextstep.mvc.tobe.View;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
@@ -14,21 +17,21 @@ import javax.servlet.http.HttpSession;
 @Controller
 public class LoginController {
     @RequestMapping(value = "/users/login", method = RequestMethod.POST)
-    public String login(HttpServletRequest req, HttpServletResponse resp) {
+    public View login(HttpServletRequest req, HttpServletResponse resp) {
         String userId = req.getParameter("userId");
         String password = req.getParameter("password");
         User user = DataBase.findUserById(userId);
         if (user == null) {
             req.setAttribute("loginFailed", true);
-            return "/user/login.jsp";
+            return new JspView( "/user/login.jsp");
         }
         if (user.matchPassword(password)) {
             HttpSession session = req.getSession();
             session.setAttribute(UserSessionUtils.USER_SESSION_KEY, user);
-            return "redirect:/";
+            return new RedirectView("/");
         } else {
             req.setAttribute("loginFailed", true);
-            return "/user/login.jsp";
+            return new JspView("/user/login.jsp");
         }
     }
 }
