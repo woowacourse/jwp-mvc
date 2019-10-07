@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
+import java.util.Objects;
 
 @WebServlet(name = "dispatcher", urlPatterns = "/", loadOnStartup = 1)
 public class DispatcherServlet extends HttpServlet {
@@ -45,9 +46,9 @@ public class DispatcherServlet extends HttpServlet {
 
     private HandlerExecution getHandler(HttpServletRequest req) {
         return handlerMappings.stream()
-                .filter(handlerMapping -> handlerMapping.getHandler(req) != null)
+                .map(handlerMapping -> handlerMapping.getHandler(req))
+                .filter(Objects::nonNull)
                 .findFirst()
-                .orElseThrow(HandlerNotExistException::new)
-                .getHandler(req);
+                .orElseThrow(HandlerNotExistException::new);
     }
 }

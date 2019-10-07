@@ -44,8 +44,10 @@ public class ControllerScanner {
     private void addHandlerExecution(Object controllerInstance, Method method) {
         RequestMapping annotation = method.getAnnotation(RequestMapping.class);
         String url = annotation.value();
-        RequestMethod requestMethod = annotation.method();
-        HandlerKey key = new HandlerKey(url, requestMethod);
-        handlerExecutions.put(key, (req, res) -> (ModelAndView) method.invoke(controllerInstance, req, res));
+        RequestMethod[] requestMethods = annotation.method();
+        for (RequestMethod rm : requestMethods) {
+            HandlerKey key = new HandlerKey(url, rm);
+            handlerExecutions.put(key, (req, res) -> (ModelAndView) method.invoke(controllerInstance, req, res));
+        }
     }
 }

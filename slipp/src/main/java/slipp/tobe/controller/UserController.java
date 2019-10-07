@@ -22,7 +22,7 @@ public class UserController {
         String userId = req.getParameter("userId");
         User user = DataBase.findUserById(userId);
         if (user == null) {
-            throw new NullPointerException("사용자를 찾을 수 없습니다.");
+            throw new UserNotFoundException();
         }
         req.setAttribute("user", user);
         return new ModelAndView(new JSPView("/user/profile.jsp"));

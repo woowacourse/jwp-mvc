@@ -10,10 +10,17 @@
 
 
 ## To do
-1. Annotation Scan 하는 부분을 AnnotationHandlerMapping 클래스에서 분리, 별도의
+- [x] Annotation Scan 하는 부분을 AnnotationHandlerMapping 클래스에서 분리, 별도의
 객체로 책임을 위임한다.
 
-2. Dispatcher Servlet 의 입장에서, ManualHandlerMapping 의 리턴 타입(Controller)과
+- [x] Dispatcher Servlet 의 입장에서, ManualHandlerMapping 의 리턴 타입(Controller)과
 AnnotationHandlerMapping 의 리턴 타입(HandlerExecution)이 맞지 않아 분기문이 발생한다.
 이를 방지하기 위해 ControllerAdaptor 를 만들고, HandlerExecution 을 구현하도록 만든다.
 ManualHandlerMapping 은 Controller 가 아니라 ControllerAdaptor 를 리턴한다.
+
+- [x] RequestMethod 를 하나만 받는게 아니라 여러 개 받을 수 있도록 리팩토링
+    - method 가 설정되어있지 않으면 모든 메서드 지원 (GET/POST/PUT/DELETE)
+    - HandlerKey 는 건드리지 않고 RequestMapping 만 건드린다. 
+    - ControllerScanner 에서 RequestMethod[] 를 처리하는 로직을 추가한다.
+
+- [ ] DispatcherServlet 테스트 코드 작성 (MockHttpServletRequest, MockHttpServletResponse)
