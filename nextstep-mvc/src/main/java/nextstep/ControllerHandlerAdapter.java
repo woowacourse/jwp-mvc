@@ -1,12 +1,13 @@
 package nextstep;
 
-import com.sun.deploy.net.HttpRequest;
 import nextstep.mvc.asis.Controller;
-import nextstep.mvc.tobe.*;
+import nextstep.mvc.tobe.JspView;
+import nextstep.mvc.tobe.ModelAndView;
+import nextstep.mvc.tobe.RedirectView;
+import nextstep.mvc.tobe.View;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Map;
 
 public class ControllerHandlerAdapter implements HandlerAdapter {
     private static final String DEFAULT_REDIRECT_PREFIX = "redirect:";
@@ -19,7 +20,7 @@ public class ControllerHandlerAdapter implements HandlerAdapter {
     @Override
     public ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         if (supports(handler)) {
-            String  viewName = ((Controller) handler).execute(request, response);
+            String viewName = ((Controller) handler).execute(request, response);
             View view = createView(viewName);
             return new ModelAndView(view);
         }
