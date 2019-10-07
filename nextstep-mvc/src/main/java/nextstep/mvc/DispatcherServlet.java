@@ -2,10 +2,9 @@ package nextstep.mvc;
 
 import nextstep.mvc.asis.Controller;
 import nextstep.mvc.tobe.HandlerMappingManager;
-import nextstep.mvc.tobe.ModelAndView;
+import nextstep.mvc.tobe.view.ModelAndView;
 import nextstep.mvc.tobe.View;
 import nextstep.mvc.tobe.exception.BadRequestException;
-import nextstep.mvc.tobe.handlermapping.AnnotationHandlerMapping;
 import nextstep.mvc.tobe.handlermapping.HandlerExecution;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,9 +16,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 
 @WebServlet(name = "dispatcher", urlPatterns = "/", loadOnStartup = 1)
@@ -47,7 +44,7 @@ public class DispatcherServlet extends HttpServlet {
         Object handler = handlerMappingManager.getHandler(req);
         try {
             if (handler instanceof Controller) {
-                String viewName = ((Controller) handler).execute(req, resp);
+                String viewName = ((Controller) handler).handle(req, resp);
                 move(viewName, req, resp);
             } else if (handler instanceof HandlerExecution) {
                 ModelAndView mav = ((HandlerExecution) handler).handle(req, resp);
