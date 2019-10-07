@@ -1,6 +1,7 @@
 package nextstep.mvc.tobe.resolver;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.Objects;
 
@@ -8,11 +9,13 @@ public class MethodParameter {
     private final Parameter parameter;
     private final String name;
     private final int index;
+    private Method method;
 
-    public MethodParameter(final Parameter parameter, final String name, final int index) {
+    public MethodParameter(final Parameter parameter, final String name, final int index, final Method method) {
         this.parameter = parameter;
         this.name = name;
         this.index = index;
+        this.method = method;
     }
 
     public boolean isAnnotationPresent(final Class<? extends Annotation> annotation) {
@@ -33,6 +36,10 @@ public class MethodParameter {
 
     public int getIndex() {
         return index;
+    }
+
+    public Method getMethod() {
+        return method;
     }
 
     public boolean isSameType(final Class<?> classType) {

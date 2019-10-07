@@ -18,7 +18,7 @@ public class MethodParameters {
         final Parameter[] params = method.getParameters();
 
         for (int i = 0; i < params.length; i++) {
-            methodParams.add(new MethodParameter(params[i], names[i], i));
+            methodParams.add(new MethodParameter(params[i], names[i], i, method));
         }
     }
 
