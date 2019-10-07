@@ -1,4 +1,4 @@
-package slipp.controller;
+package slipp.controller.exception;
 
 public class MessageParseException extends RuntimeException {
 

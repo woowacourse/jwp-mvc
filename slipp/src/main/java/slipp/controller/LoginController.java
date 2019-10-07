@@ -6,6 +6,7 @@ import nextstep.mvc.view.RedirectView;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
+import slipp.controller.exception.LoginFailedException;
 import slipp.domain.User;
 import slipp.support.db.DataBase;
 
