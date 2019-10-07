@@ -22,18 +22,39 @@ public class AnnotationApiController {
     private static final Logger log = LoggerFactory.getLogger(AnnotationApiController.class);
 
     @RequestMapping(value = "/api/users", method = RequestMethod.POST)
-    public ModelAndView createUser(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public ModelAndView create(HttpServletRequest request, HttpServletResponse response) throws IOException {
         User user = extractPostRequestBody(request);
         log.debug("User : {}", user);
 
         DataBase.addUser(user);
         response.setStatus(201);
-        response.addHeader("Location", "/api/user?userId="+user.getUserId());
+        response.addHeader("Location", "/api/users?userId="+user.getUserId());
+        return new ModelAndView(new JsonView());
+    }
+
+    @RequestMapping(value = "/api/users", method = RequestMethod.GET)
+    public ModelAndView show(HttpServletRequest request, HttpServletResponse response) {
+        String userId = request.getParameter("userId");
+        User user = DataBase.findUserById(userId);
+        log.debug("User: {}", user);
+        ModelAndView modelAndView = new ModelAndView(new JsonView());
+        modelAndView.addObject("user", user);
+
+        return modelAndView;
+    }
+
+    @RequestMapping(value = "/api/users", method = RequestMethod.PUT)
+    public ModelAndView update(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        User userForUpdate = extractPostRequestBody(request);
+        String userId = request.getParameter("userId");
+        User user = DataBase.findUserById(userId);
+        user.update(userForUpdate);
+
         return new ModelAndView(new JsonView());
     }
 
     User extractPostRequestBody(HttpServletRequest request) throws IOException {
-        if ("POST".equalsIgnoreCase(request.getMethod())) {
+        if ("POST".equalsIgnoreCase(request.getMethod()) || "PUT".equalsIgnoreCase(request.getMethod())) {
             Scanner s = new Scanner(request.getInputStream(), "UTF-8").useDelimiter("\\A");
             return s.hasNext() ? JsonUtils.toObject(s.next(), User.class) : null;
         }
