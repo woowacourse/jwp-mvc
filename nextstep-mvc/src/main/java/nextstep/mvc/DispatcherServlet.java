@@ -61,7 +61,7 @@ public class DispatcherServlet extends HttpServlet {
             view.render(modelAndView.getModelMap(), requestContext);
         } catch (HttpServletRequestException e) {
             View errorView = ErrorView.defaultErrorView();
-            errorView.render(Collections.singletonMap("status", e.getHttpStatus()), requestContext);
+            errorView.render(Collections.singletonMap("httpStatus", e.getHttpStatus()), requestContext);
         } catch (Exception e) {
             logger.error("Internal Server Exception : ", e);
         }
