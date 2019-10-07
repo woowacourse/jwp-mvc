@@ -15,7 +15,7 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class JsonViewTest {
-    private static final Logger logger = LoggerFactory.getLogger( JsonViewTest.class );
+    private static final Logger logger = LoggerFactory.getLogger(JsonViewTest.class);
     private MockHttpServletRequest request;
     private MockHttpServletResponse response;
     private View view;
@@ -53,6 +53,20 @@ public class JsonViewTest {
         Car expected = new Car("Black", "Sonata");
         model.put("car", expected);
         model.put("name", "포비");
+
+        view.render(model, request, response);
+
+        assertThat(response.getContentType()).isEqualTo(MediaType.APPLICATION_JSON_UTF8_VALUE);
+        logger.debug("response body : {}", response.getContentAsString());
+    }
+
+    @Test
+    void render_over_three_element() throws Exception {
+        Map<String, Object> model = new HashMap<>();
+        Car expected = new Car("Black", "Sonata");
+        model.put("car", expected);
+        model.put("name", "포비");
+        model.put("this", "what");
 
         view.render(model, request, response);
 
