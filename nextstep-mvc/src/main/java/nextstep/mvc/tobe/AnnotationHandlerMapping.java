@@ -10,6 +10,7 @@ import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -61,7 +62,9 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     @Override
+    @Nullable
     public HandlerExecution getHandler(HttpServletRequest request) {
-        return handlerExecutions.get(new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod())));
+        HandlerKey key = new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod()));
+        return handlerExecutions.get(key);
     }
 }

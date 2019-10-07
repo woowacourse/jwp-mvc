@@ -1,8 +1,8 @@
 package nextstep.mvc;
 
-import nextstep.mvc.asis.Controller;
-import nextstep.mvc.tobe.AnnotationHandlerMapping;
-import nextstep.mvc.tobe.HandlerExecution;
+import nextstep.mvc.tobe.ControllerAdapter;
+import nextstep.mvc.tobe.HandlerAdapter;
+import nextstep.mvc.tobe.HandlerExecutionAdapter;
 import nextstep.mvc.tobe.ModelAndView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,10 +14,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @WebServlet(name = "dispatcher", urlPatterns = "/", loadOnStartup = 1)
 public class DispatcherServlet extends HttpServlet {
@@ -26,9 +25,12 @@ public class DispatcherServlet extends HttpServlet {
     private static final String DEFAULT_REDIRECT_PREFIX = "redirect:";
 
     private List<HandlerMapping> handlerMappings;
+    private final List<HandlerAdapter> handlerAdapters = new ArrayList<>();
 
     public DispatcherServlet(final List<HandlerMapping> handlerMappings) {
         this.handlerMappings = handlerMappings;
+        handlerAdapters.add(new ControllerAdapter());
+        handlerAdapters.add(new HandlerExecutionAdapter());
     }
 
     @Override
@@ -43,20 +45,22 @@ public class DispatcherServlet extends HttpServlet {
         logger.debug("Method : {}, Request URI : {}", req.getMethod(), requestUri);
         try {
             Object handler = getHandlerFromMapping(req);
-            if (handler instanceof Controller) {
-                String viewName = ((Controller) handler).execute(req, resp);
-                move(viewName, req, resp);
-            } else if (handler instanceof HandlerExecution) {
-                ModelAndView modelAndView = ((HandlerExecution) handler).handle(req, resp);
-                modelAndView.render(req, resp);
-            } else {
-                throw new Exception();
-            }
+            HandlerAdapter handlerAdapter = getHandlerAdapter(handler);
+            ModelAndView modelAndView = handlerAdapter.handle(req, resp, handler);
+            modelAndView.render(req, resp);
         } catch (Exception e) {
             e.printStackTrace();
             logger.error("Exception : {}", e.getMessage());
             throw new ServletException();
         }
+    }
+
+    // @TODO Exception 처리
+    private HandlerAdapter getHandlerAdapter(final Object handler) {
+        return handlerAdapters.stream()
+                .filter(handlerAdapter -> handlerAdapter.isHandle(handler))
+                .findFirst()
+                .orElseThrow(NullPointerException::new);
     }
 
     private Object getHandlerFromMapping(HttpServletRequest request) {
@@ -65,6 +69,8 @@ public class DispatcherServlet extends HttpServlet {
                 .filter(Objects::nonNull)
                 .findFirst()
                 .orElseThrow(NullPointerException::new);
+
+
     }
 
     private void move(String viewName, HttpServletRequest req, HttpServletResponse resp)

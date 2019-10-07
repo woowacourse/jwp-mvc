@@ -12,6 +12,7 @@ import slipp.controller.ProfileController;
 import slipp.controller.UpdateFormUserController;
 import slipp.controller.UpdateUserController;
 
+import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
@@ -36,6 +37,7 @@ public class ManualHandlerMapping implements HandlerMapping {
     }
 
     @Override
+    @Nullable
     public Object getHandler(HttpServletRequest request) {
         return mappings.get(request.getRequestURI());
     }
