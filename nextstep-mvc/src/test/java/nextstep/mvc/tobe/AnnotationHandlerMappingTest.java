@@ -1,6 +1,7 @@
 package nextstep.mvc.tobe;
 
 import nextstep.db.DataBase;
+import nextstep.mvc.HandlerAdapter;
 import nextstep.mvc.asis.Controller;
 import nextstep.mvc.exception.MappingException;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,8 +30,9 @@ public class AnnotationHandlerMappingTest {
         MockHttpServletRequest request = new MockHttpServletRequest("GET", "/users");
         request.setParameter("userId", user.getUserId());
         MockHttpServletResponse response = new MockHttpServletResponse();
-        Controller execution = handlerMapping.getHandler(request);
-        execution.execute(request, response);
+        Object handler = handlerMapping.getHandler(request);
+        HandlerAdapter adapter = new HandlerExecutionHandlerAdapter();
+        adapter.handle(request, response, handler);
 
         assertThat(request.getAttribute("user")).isEqualTo(user);
     }
@@ -48,7 +50,8 @@ public class AnnotationHandlerMappingTest {
         request.setParameter("name", user.getName());
         request.setParameter("email", user.getEmail());
         MockHttpServletResponse response = new MockHttpServletResponse();
-        Controller execution = handlerMapping.getHandler(request);
-        execution.execute(request, response);
+        Object handler = handlerMapping.getHandler(request);
+        HandlerAdapter adapter = new HandlerExecutionHandlerAdapter();
+        adapter.handle(request, response, handler);
     }
 }
