@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Consumer;
 
 public class ControllerScanner {
     private static final Logger log = LoggerFactory.getLogger(ControllerScanner.class);
@@ -20,17 +21,27 @@ public class ControllerScanner {
     }
 
     private void initialize() {
-        reflections.getTypesAnnotatedWith(Controller.class).forEach(controllerClazz -> {
-            log.debug("controllerClazz : {}", controllerClazz);
+        reflections.getTypesAnnotatedWith(Controller.class).forEach(
+                wrapper(clazz -> controllers.put(clazz, clazz.newInstance()))
+        );
+    }
+
+    private <T extends Class, E extends Exception> Consumer<Class<?>> wrapper(FunctionWithException<T, E> fe) {
+        return arg -> {
             try {
-                controllers.put(controllerClazz, controllerClazz.newInstance());
-            } catch (InstantiationException | IllegalAccessException e) {
-                log.error(e.getMessage());
+                fe.apply((T) arg);
+            } catch (Exception e) {
+                throw new RuntimeException();
             }
-        });
+        };
     }
 
     Map<Class<?>, Object> getControllers() {
         return controllers;
+    }
+
+    @FunctionalInterface
+    public interface FunctionWithException<T, E extends Exception> {
+        void apply(T t) throws E;
     }
 }
