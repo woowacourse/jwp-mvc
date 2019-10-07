@@ -2,31 +2,14 @@ package nextstep.mvc.tobe.resolver;
 
 
 import nextstep.mvc.tobe.exception.HandlerMethodArgumentResolverException;
+import nextstep.utils.TypeConverter;
 
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.*;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
-import java.util.function.Function;
 import java.util.stream.Stream;
 
 public class DefaultHandlerMethodArgumentResolver implements HandlerMethodArgumentResolver {
-    private Map<Class<?>, Function<String, Object>> map = new HashMap<>();
-
-    {
-        map.put(int.class, Integer::parseInt);
-        map.put(long.class, Long::parseLong);
-        map.put(boolean.class, Boolean::parseBoolean);
-        map.put(float.class, Float::parseFloat);
-        map.put(double.class, Double::parseDouble);
-        map.put(Long.class, Long::parseLong);
-        map.put(Integer.class, Integer::parseInt);
-        map.put(Boolean.class, Boolean::parseBoolean);
-        map.put(Float.class, Float::parseFloat);
-        map.put(Double.class, Double::parseDouble);
-        map.put(String.class, x -> x);
-    }
 
     @Override
     public boolean supports(final MethodParameter methodParameter) {
@@ -38,8 +21,8 @@ public class DefaultHandlerMethodArgumentResolver implements HandlerMethodArgume
         final String value = request.getParameter(methodParameter.getName());
         final Parameter parameter = methodParameter.getParameter();
 
-        if (map.containsKey(parameter.getType())) {
-            return map.get(parameter.getType()).apply(value);
+        if (TypeConverter.contains(parameter.getType())) {
+            return TypeConverter.to(parameter.getType()).apply(value);
         }
 
         return javaBean(request, methodParameter);
@@ -80,6 +63,6 @@ public class DefaultHandlerMethodArgumentResolver implements HandlerMethodArgume
 
     private Object parseValue(final Field field, final HttpServletRequest request) {
         final String value = request.getParameter(field.getName());
-        return map.get(field.getType()).apply(value);
+        return TypeConverter.to(field.getType()).apply(value);
     }
 }
