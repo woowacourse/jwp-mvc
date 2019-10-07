@@ -1,7 +1,10 @@
 package support.test;
 
 import org.springframework.test.web.reactive.server.EntityExchangeResult;
+import org.springframework.test.web.reactive.server.StatusAssertions;
 import org.springframework.test.web.reactive.server.WebTestClient;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.reactive.function.BodyInserters;
 import reactor.core.publisher.Mono;
 
 import java.net.URI;
@@ -21,6 +24,14 @@ public class NsWebTestClient {
         this.testClientBuilder = WebTestClient
                 .bindToServer()
                 .baseUrl(baseUrl + ":" + port);
+    }
+
+    public static NsWebTestClient of(int port) {
+        return of(BASE_URL, port);
+    }
+
+    public static NsWebTestClient of(String baseUrl, int port) {
+        return new NsWebTestClient(baseUrl, port);
     }
 
     public NsWebTestClient basicAuth(String username, String password) {
@@ -59,11 +70,29 @@ public class NsWebTestClient {
                 .returnResult().getResponseBody();
     }
 
-    public static NsWebTestClient of(int port) {
-        return of(BASE_URL, port);
+    public StatusAssertions getRequest(URI location) {
+        return testClientBuilder.build()
+                .get()
+                .uri(location.toString())
+                .exchange()
+                .expectStatus();
     }
 
-    public static NsWebTestClient of(String baseUrl, int port) {
-        return new NsWebTestClient(baseUrl, port);
+    public StatusAssertions getRequest(URI location, String cookie) {
+        return testClientBuilder.build()
+                .get()
+                .uri(location.toString())
+                .header("Cookie", cookie)
+                .exchange()
+                .expectStatus();
+    }
+
+    public StatusAssertions postRequest(URI location, MultiValueMap<String, String> body) {
+        return testClientBuilder.build()
+                .post()
+                .uri(location.toString())
+                .body(BodyInserters.fromFormData(body))
+                .exchange()
+                .expectStatus();
     }
 }

@@ -1,12 +1,32 @@
 package reflection;
 
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.Arrays;
 
 public class Junit4TestRunner {
+
+    private static final Logger logger = LoggerFactory.getLogger(Junit3TestRunner.class);
+
     @Test
     public void run() throws Exception {
         Class<Junit4Test> clazz = Junit4Test.class;
+        Method[] methods = clazz.getMethods();
 
-        // TODO Junit4Test에서 @MyTest 애노테이션이 있는 메소드 실행
+        Arrays.stream(methods)
+                .filter(method -> method.isAnnotationPresent(MyTest.class))
+                .forEach(this::invoke);
+    }
+
+    private void invoke(Method method) {
+        try {
+            method.invoke(method.getDeclaringClass().getConstructor().newInstance());
+        } catch (IllegalAccessException | NoSuchMethodException | InstantiationException | InvocationTargetException e) {
+            logger.error(e.getMessage());
+        }
     }
 }
