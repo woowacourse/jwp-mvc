@@ -1,6 +1,7 @@
 package nextstep.utils;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import nextstep.mvc.tobe.exception.ObjectMapperException;
 
@@ -16,6 +17,15 @@ public class JsonUtils {
                     .withSetterVisibility(JsonAutoDetect.Visibility.NONE));
             return objectMapper.readValue(json, clazz);
         } catch (IOException e) {
+            throw new ObjectMapperException(e);
+        }
+    }
+
+    public static String toJson(Object object) {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            return objectMapper.writeValueAsString(object);
+        } catch (JsonProcessingException e) {
             throw new ObjectMapperException(e);
         }
     }
