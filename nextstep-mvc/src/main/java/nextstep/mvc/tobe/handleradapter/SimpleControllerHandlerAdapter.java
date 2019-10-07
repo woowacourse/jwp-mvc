@@ -28,7 +28,7 @@ public class SimpleControllerHandlerAdapter implements HandlerAdapter {
         try {
             return new ModelAndView(controller.execute(requestContext.getHttpServletRequest(), requestContext.getHttpServletResponse()));
         } catch (Exception e) {
-            logger.error("Exception : {}", e);
+            logger.error("Http Request Exception : ", e);
             throw new HandlerExecutionFailedException();
         }
     }

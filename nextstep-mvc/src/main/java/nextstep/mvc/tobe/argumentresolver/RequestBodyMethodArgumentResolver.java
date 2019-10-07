@@ -25,7 +25,7 @@ public class RequestBodyMethodArgumentResolver implements HandlerMethodArgumentR
         try {
             return OBJECT_MAPPER.readValue(request.getInputStream(), methodParameter.getType());
         } catch (IOException e) {
-            logger.error("Exception : {}", e);
+            logger.error("Http Request Exception : ", e);
             throw new RequestBodyParsingFailedException();
         }
     }

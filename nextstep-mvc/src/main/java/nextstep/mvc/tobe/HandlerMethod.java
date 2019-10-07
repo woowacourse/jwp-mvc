@@ -33,7 +33,7 @@ public class HandlerMethod {
         try {
             return handlerMethod.invoke(handler, arguments);
         } catch (IllegalAccessException | InvocationTargetException e) {
-            logger.error("Exception : {}", e);
+            logger.error("Http Request Exception : ", e);
             throw new HandlerMethodInvocationFailedException();
         }
     }

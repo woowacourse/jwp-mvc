@@ -31,7 +31,7 @@ public class ModelAttributeMethodArgumentResolver implements HandlerMethodArgume
             }
             return argument;
         } catch (IllegalAccessException | InstanceCreationFailedException e) {
-            logger.error("Exception : {}", e);
+            logger.error("Http Request Exception : ", e);
             throw new ObjectFieldSettingFailedException();
         }
     }

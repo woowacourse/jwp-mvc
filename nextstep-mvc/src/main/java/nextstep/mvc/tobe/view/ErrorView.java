@@ -32,7 +32,7 @@ public class ErrorView implements View {
         try {
             requestDispatcher.forward(request, requestContext.getHttpServletResponse());
         } catch (ServletException | IOException e) {
-            logger.error("Exception : {}", e);
+            logger.error("Internal Server Exception : ", e);
             throw new ErrorViewRenderingFailedException();
         }
     }

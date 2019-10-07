@@ -21,7 +21,7 @@ public class RedirectView implements View {
         try {
             requestContext.getHttpServletResponse().sendRedirect(viewName);
         } catch (IOException | IllegalStateException e) {
-            logger.error("Exception : {}", e);
+            logger.error("Http Request Exception : ", e);
             throw new RedirectionFailedException();
         }
     }

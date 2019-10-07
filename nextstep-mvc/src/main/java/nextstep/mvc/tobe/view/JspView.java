@@ -31,7 +31,7 @@ public class JspView implements View {
         try {
             requestDispatcher.forward(request, response);
         } catch (ServletException | IOException | IllegalStateException e) {
-            logger.error("Exception : {}", e);
+            logger.error("Http Request Exception : ", e);
             throw new RequestForwardingFailedException();
         }
     }

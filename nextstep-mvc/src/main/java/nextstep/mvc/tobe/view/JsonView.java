@@ -28,7 +28,7 @@ public class JsonView implements View {
             printWriter.flush();
             printWriter.close();
         } catch (IOException e) {
-            logger.error("Exception : {}", e);
+            logger.error("Http Request Exception : ", e);
             throw new JsonWritingFailedException();
         }
     }
