@@ -10,6 +10,7 @@ public class ModelAndView {
     private Map<String, Object> model = new HashMap<>();
 
     public ModelAndView() {
+        view = TextView.emptyView();
     }
 
     public ModelAndView(View view) {
@@ -17,9 +18,6 @@ public class ModelAndView {
     }
 
     public void renderView(HttpServletRequest req, HttpServletResponse resp) throws Exception {
-        if (view == null) {
-            view = new TextView("");
-        }
         view.render(model, req, resp);
     }
 

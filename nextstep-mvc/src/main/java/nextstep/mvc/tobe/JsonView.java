@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
 import java.util.Map;
+import java.util.function.Supplier;
 
 public class JsonView implements View {
 
@@ -20,15 +21,19 @@ public class JsonView implements View {
     public void render(Map<String, ?> model, HttpServletRequest request, HttpServletResponse response) throws Exception {
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
         PrintWriter writer = response.getWriter();
-        if (model.isEmpty()) {
-            writer.print("");
-            return;
+        writeOnCondition(writer, model::isEmpty, () -> "");
+        writeOnCondition(writer, () -> model.size() == 1, () -> tryWriteValueAsString(getFirstValue(model)));
+        writeOnCondition(writer, () -> model.size() > 1, () -> tryWriteValueAsString(model));
+    }
+
+    private void writeOnCondition(PrintWriter writer, Supplier<Boolean> condition, Supplier<String> valueSupplier) {
+        if (condition.get()) {
+            writer.print(valueSupplier.get());
         }
-        if (model.size() == 1) {
-            writer.print(tryWriteValueAsString(model.values().toArray()[0]));
-            return;
-        }
-        writer.print(tryWriteValueAsString(model));
+    }
+
+    private Object getFirstValue(Map<String, ?> model) {
+        return model.values().toArray()[0];
     }
 
     private String tryWriteValueAsString(Object obj) {

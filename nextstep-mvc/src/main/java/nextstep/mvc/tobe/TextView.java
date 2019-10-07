@@ -8,10 +8,16 @@ import java.util.Map;
 
 public class TextView implements View {
 
+    private static final TextView EMPTY_VIEW = new TextView("");
+
     private final String content;
 
     public TextView(String content) {
         this.content = content;
+    }
+
+    public static final TextView emptyView() {
+        return EMPTY_VIEW;
     }
 
     @Override
