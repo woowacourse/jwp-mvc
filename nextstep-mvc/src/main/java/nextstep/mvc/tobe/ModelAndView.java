@@ -1,8 +1,7 @@
 package nextstep.mvc.tobe;
 
-import nextstep.mvc.tobe.view.JspView;
-import nextstep.mvc.tobe.view.RedirectView;
 import nextstep.mvc.tobe.view.View;
+import nextstep.mvc.tobe.view.ViewResolver;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -10,8 +9,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ModelAndView {
-    private static final String DEFAULT_REDIRECT_PREFIX = "redirect:";
-
     private View view;
     private Map<String, Object> model = new HashMap<String, Object>();
 
@@ -19,11 +16,7 @@ public class ModelAndView {
     }
 
     public ModelAndView(final String viewName) {
-        if (viewName.startsWith(DEFAULT_REDIRECT_PREFIX)) {
-            view = new RedirectView(viewName.substring(DEFAULT_REDIRECT_PREFIX.length()));
-            return;
-        }
-        view = new JspView(viewName);
+        this.view = ViewResolver.resolve(viewName);
     }
 
     public ModelAndView addObject(String attributeName, Object attributeValue) {
