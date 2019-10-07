@@ -14,8 +14,8 @@ import java.net.URI;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class UserAcceptanceTest {
-    private static final Logger logger = LoggerFactory.getLogger(UserAcceptanceTest.class);
+public class UserApiControllerTest {
+    private static final Logger logger = LoggerFactory.getLogger(UserApiControllerTest.class);
 
     private NsWebTestClient client;
 
@@ -25,7 +25,7 @@ public class UserAcceptanceTest {
     }
 
     @Test
-    @DisplayName("사용자 회원가입/조회/수정/삭제")
+    @DisplayName("사용자 회원가입/조회/수정")
     void crud() {
         // 회원가입
         UserCreatedDto expected =

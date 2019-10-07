@@ -15,7 +15,6 @@ import slipp.support.db.DataBase;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.stream.Collectors;
 
 @Controller
 public class UserApiController {
@@ -35,7 +34,8 @@ public class UserApiController {
     @RequestMapping(value = "/api/users", method = RequestMethod.GET)
     public ModelAndView find(HttpServletRequest req, HttpServletResponse resp) {
         String userId = req.getParameter("userId");
-        User user = DataBase.findUserById(userId);
+        User user = DataBase.findUserById(userId)
+                .orElseThrow(() -> new UserNotFoundException(userId));
 
         resp.setStatus(HttpServletResponse.SC_OK);
         return new ModelAndView(new JsonView()).addObject("user", user);
@@ -45,7 +45,8 @@ public class UserApiController {
     public ModelAndView update(HttpServletRequest req, HttpServletResponse resp) {
         UserUpdatedDto userUpdatedDto = parseBody(req, UserUpdatedDto.class);
         String userId = req.getParameter("userId");
-        User user = DataBase.findUserById(userId);
+        User user = DataBase.findUserById(userId)
+                .orElseThrow(() -> new UserNotFoundException(userId));
         user.update(new User(userId, userUpdatedDto.getPassword(), userUpdatedDto.getName(), userUpdatedDto.getEmail()));
 
         resp.setStatus(HttpServletResponse.SC_OK);

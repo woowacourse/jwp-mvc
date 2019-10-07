@@ -20,19 +20,24 @@ public class LoginController {
     public ModelAndView login(HttpServletRequest req, HttpServletResponse resp) {
         String userId = req.getParameter("userId");
         String password = req.getParameter("password");
-        User user = DataBase.findUserById(userId);
-        if (user == null) {
+
+        try {
+            return loginUser(req, userId, password);
+        } catch (LoginFailedException e) {
             req.setAttribute("loginFailed", true);
             return new ModelAndView(new JspView("/user/login.jsp"));
         }
+    }
+
+    private ModelAndView loginUser(HttpServletRequest req, String userId, String password) {
+        User user = DataBase.findUserById(userId)
+                .orElseThrow(LoginFailedException::new);
         if (user.matchPassword(password)) {
             HttpSession session = req.getSession();
             session.setAttribute(UserSessionUtils.USER_SESSION_KEY, user);
             return new ModelAndView(new RedirectView("/"));
-        } else {
-            req.setAttribute("loginFailed", true);
-            return new ModelAndView(new JspView("/user/login.jsp"));
         }
+        throw new LoginFailedException();
     }
 
     @RequestMapping(value = "/users/logout", method = RequestMethod.GET)
