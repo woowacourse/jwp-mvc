@@ -1,6 +1,5 @@
 package slipp.controller.api;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import nextstep.mvc.tobe.view.ModelAndView;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestBody;
@@ -17,8 +16,6 @@ import static nextstep.web.annotation.RequestMethod.*;
 
 @Controller
 public class UserApiController {
-    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
-
     @RequestMapping(value = "/api/users", method = POST)
     public ModelAndView create(@RequestBody UserCreatedDto userCreatedDto, HttpServletResponse response) {
         User user = new User(userCreatedDto.getUserId(),
