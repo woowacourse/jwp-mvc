@@ -1,5 +1,6 @@
 package support.test;
 
+import org.springframework.http.HttpMethod;
 import org.springframework.test.web.reactive.server.EntityExchangeResult;
 import org.springframework.test.web.reactive.server.StatusAssertions;
 import org.springframework.test.web.reactive.server.WebTestClient;
@@ -8,6 +9,7 @@ import org.springframework.web.reactive.function.BodyInserters;
 import reactor.core.publisher.Mono;
 
 import java.net.URI;
+import java.util.Objects;
 
 import static org.springframework.web.reactive.function.client.ExchangeFilterFunctions.basicAuthentication;
 
@@ -46,6 +48,35 @@ public class NsWebTestClient {
                 .body(BodyInserters.fromFormData(data))
                 .exchange()
                 .expectStatus();
+    }
+
+    public StatusAssertions loginRequest(String url, HttpMethod method, MultiValueMap<String, String> loginData) {
+        return testClientBuilder.build()
+                .method(method)
+                .uri(url)
+                .cookie("JSESSIONID", getLoginSessionId(loginData))
+                .exchange()
+                .expectStatus();
+    }
+
+    public StatusAssertions loginAndBodyRequest(String url, HttpMethod method, MultiValueMap<String, String> loginData,
+                                                MultiValueMap<String, String> requestData) {
+        return testClientBuilder.build()
+                .method(method)
+                .uri(url)
+                .cookie("JSESSIONID", getLoginSessionId(loginData))
+                .body(BodyInserters.fromFormData(requestData))
+                .exchange()
+                .expectStatus();
+    }
+
+    public String getLoginSessionId(MultiValueMap<String, String> data) {
+        return Objects.requireNonNull(postRequest("/users/login", data)
+                    .isFound()
+                    .returnResult(String.class)
+                    .getResponseCookies()
+                    .getFirst("JSESSIONID"))
+                    .getValue();
     }
 
     public <T> URI createResource(String url, T body, Class<T> clazz) {
