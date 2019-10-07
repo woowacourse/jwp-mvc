@@ -1,7 +1,7 @@
 package nextstep.mvc;
 
 import nextstep.mvc.asis.Controller;
-import nextstep.mvc.tobe.ModelAndView;
+import nextstep.mvc.tobe.view.ModelAndView;
 import nextstep.mvc.tobe.ViewHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
