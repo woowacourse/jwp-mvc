@@ -6,11 +6,8 @@ import nextstep.mvc.tobe.RequestContext;
 import nextstep.web.support.MediaType;
 import org.apache.commons.lang3.StringUtils;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Map;
 
 public class JsonView implements View {
