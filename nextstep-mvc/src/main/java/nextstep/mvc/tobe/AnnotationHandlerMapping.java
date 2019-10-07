@@ -43,9 +43,9 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     private List<Method> generateMethods(Class<?> clazz) {
         return Arrays.stream(clazz.getMethods())
-            .filter(method -> method.isAnnotationPresent(RequestMapping.class))
-            .filter(method -> StringUtils.isNotBlank(method.getAnnotation(RequestMapping.class).value().trim()))
-            .collect(Collectors.toList());
+                .filter(method -> method.isAnnotationPresent(RequestMapping.class))
+                .filter(method -> StringUtils.isNotBlank(method.getAnnotation(RequestMapping.class).value().trim()))
+                .collect(Collectors.toList());
     }
 
     private void addHandlerExecutions(Class clazz, Method method) {
@@ -54,11 +54,8 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         if (requestMethods.length == 0) {
             requestMethods = RequestMethod.values();
         }
-        Arrays.stream(requestMethods).forEach(m -> {
-            handlerExecutions.put(
-                new HandlerKey(url, m),
-                new HandlerExecution(clazz, method));
-        });
+        Arrays.stream(requestMethods)
+                .forEach(m -> handlerExecutions.put(new HandlerKey(url, m), new HandlerExecution(clazz, method)));
     }
 
     @Override
