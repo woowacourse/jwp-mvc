@@ -1,14 +1,25 @@
 package nextstep.mvc.tobe;
 
 import com.google.common.collect.Maps;
+import nextstep.mvc.HandlerMapping;
+import nextstep.web.annotation.Controller;
+import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
+import org.reflections.Reflections;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Map;
+import java.util.Set;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
+    private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
+    private static final int DEFAULT_REQUEST_METHODS_LENGTH = 0;
+
     private Object[] basePackage;
-
     private Map<HandlerKey, HandlerExecution> handlerExecutions = Maps.newHashMap();
 
     public AnnotationHandlerMapping(Object... basePackage) {
@@ -16,10 +27,50 @@ public class AnnotationHandlerMapping {
     }
 
     public void initialize() {
-
+        Reflections reflections = new Reflections(basePackage);
+        Set<Class<?>> classes = reflections.getTypesAnnotatedWith(Controller.class);
+        for (Class<?> clazz : classes) {
+            filterMethods(clazz);
+        }
     }
 
-    public HandlerExecution getHandler(HttpServletRequest request) {
-        return null;
+    private void filterMethods(Class<?> clazz) {
+        Method[] methods = clazz.getDeclaredMethods();
+        try {
+            Object handler = clazz.getDeclaredConstructor().newInstance();
+            for (Method method : methods) {
+                filterRequestMapping(handler, method);
+            }
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            log.error(e.getMessage());
+        }
+    }
+
+    private void filterRequestMapping(Object handler, Method method) {
+        if (method.isAnnotationPresent(RequestMapping.class)) {
+            RequestMapping annotation = method.getAnnotation(RequestMapping.class);
+            putHandlers(handler, method, annotation);
+        }
+    }
+
+    private void putHandlers(Object handler, Method method, RequestMapping annotation) {
+        for (RequestMethod requestMethod : getRequestMethods(annotation)) {
+            HandlerKey handlerKey = new HandlerKey(annotation.value(), requestMethod);
+            handlerExecutions.put(handlerKey, new HandlerExecution(method, handler));
+        }
+    }
+
+    private RequestMethod[] getRequestMethods(RequestMapping annotation) {
+        RequestMethod[] methods = annotation.method();
+        return (methods.length == DEFAULT_REQUEST_METHODS_LENGTH)
+                ? RequestMethod.values()
+                : methods;
+    }
+
+    @Override
+    public Object getHandler(HttpServletRequest request) {
+        HandlerKey handlerKey = new HandlerKey(request.getRequestURI(),
+                RequestMethod.valueOf(request.getMethod().toUpperCase()));
+        return handlerExecutions.get(handlerKey);
     }
 }
