@@ -8,7 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Map;
 
@@ -25,27 +25,27 @@ public class AnnotationHandlerMapping {
 
     public void initialize() {
         Arrays.stream(basePackage).forEach(basePackage -> {
-            mappingMethod(new Reflections(basePackage, new MethodAnnotationsScanner()));
+            mappingHandler(new Reflections(basePackage, new MethodAnnotationsScanner()));
         });
     }
 
-    private void mappingMethod(Reflections reflections) {
-
+    private void mappingHandler(Reflections reflections) {
         reflections.getMethodsAnnotatedWith(RequestMapping.class).stream()
-                .filter(method -> Arrays.stream(method.getParameterTypes())
-                        .allMatch(x -> x.equals(HttpServletRequest.class) || x.equals(HttpServletResponse.class)))
-                .forEach(method -> {
-                    RequestMapping mapping = method.getDeclaredAnnotation(RequestMapping.class);
-                    HandlerExecution handlerExecution = null;
-                    try {
-                        handlerExecution = new HandlerExecution(method, method.getDeclaringClass().newInstance());
-                    } catch (InstantiationException | IllegalAccessException e) {
-                        logger.debug(e.getMessage(), e.getCause());
-                        throw new RuntimeException(e);
-                    }
+                .filter(method -> method.isAnnotationPresent(RequestMapping.class))
+                .forEach(this::mapping);
+    }
 
-                    handlerExecutions.put(new HandlerKey(mapping.value(), mapping.method()), handlerExecution);
-                });
+    private void mapping(Method method) {
+        RequestMapping mapping = method.getDeclaredAnnotation(RequestMapping.class);
+        HandlerKey handlerKey = new HandlerKey(mapping.value(), mapping.method());
+        HandlerExecution handlerExecution;
+        try {
+            handlerExecution = new HandlerExecution(method, method.getDeclaringClass().newInstance());
+        } catch (InstantiationException | IllegalAccessException e) {
+            logger.debug(e.getMessage(), e.getCause());
+            throw new RuntimeException(e);
+        }
+        handlerExecutions.put(handlerKey, handlerExecution);
     }
 
     public HandlerExecution getHandler(HttpServletRequest request) {
