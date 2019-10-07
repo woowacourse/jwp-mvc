@@ -1,5 +1,8 @@
 package nextstep.mvc.tobe;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -8,6 +11,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class HandlerMethod {
+    private static final Logger logger = LoggerFactory.getLogger(HandlerMethod.class);
+
     private final Object handler;
     private final Method handlerMethod;
     private final List<MethodParameter> methodParameters;
@@ -24,8 +29,13 @@ public class HandlerMethod {
                 .collect(Collectors.toList());
     }
 
-    public Object invoke(Object... arguments) throws InvocationTargetException, IllegalAccessException {
-        return handlerMethod.invoke(handler, arguments);
+    public Object invoke(Object... arguments) {
+        try {
+            return handlerMethod.invoke(handler, arguments);
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            logger.error("Exception : {}", e);
+            throw new HandlerMethodInvocationFailedException();
+        }
     }
 
     public List<MethodParameter> getMethodParameters() {
