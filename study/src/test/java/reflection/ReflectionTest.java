@@ -65,16 +65,13 @@ public class ReflectionTest {
         Constructor<Student> constructor = clazz.getConstructor();
         Student student = constructor.newInstance();
 
-        Field[] fields = clazz.getDeclaredFields();
-        for (Field field : fields) {
-            field.setAccessible(true);
-            String fieldName = field.getName();
-            if ("name".equals(fieldName)) {
-                field.set(student, "뚱이");
-            } else {
-                field.set(student, 27);
-            }
-        }
+        Field nameField = clazz.getDeclaredField("name");
+        nameField.setAccessible(true);
+        nameField.set(student, "뚱이");
+        Field ageField = clazz.getDeclaredField("age");
+        ageField.setAccessible(true);
+        ageField.set(student, 27);
+
         assertThat(student.getName()).isEqualTo("뚱이");
         assertThat(student.getAge()).isEqualTo(27);
     }
