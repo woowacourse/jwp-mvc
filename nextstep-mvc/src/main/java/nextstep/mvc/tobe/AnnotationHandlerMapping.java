@@ -44,11 +44,11 @@ public class AnnotationHandlerMapping {
                         throw new RuntimeException(e);
                     }
 
-                    handlerExecutions.put(HandlerKey.of(mapping.value(), mapping.method()), handlerExecution);
+                    handlerExecutions.put(new HandlerKey(mapping.value(), mapping.method()), handlerExecution);
                 });
     }
 
     public HandlerExecution getHandler(HttpServletRequest request) {
-        return handlerExecutions.get(HandlerKey.of(request));
+        return handlerExecutions.get(new HandlerKey(request));
     }
 }

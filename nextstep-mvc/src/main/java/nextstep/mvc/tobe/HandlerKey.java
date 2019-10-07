@@ -8,17 +8,14 @@ public class HandlerKey {
     private String url;
     private RequestMethod requestMethod;
 
-    private HandlerKey(String url, RequestMethod requestMethod) {
+    public HandlerKey(String url, RequestMethod requestMethod) {
         this.url = url;
         this.requestMethod = requestMethod;
     }
 
-    public static HandlerKey of(String url, RequestMethod requestMethod) {
-        return new HandlerKey(url, requestMethod);
-    }
-
-    public static HandlerKey of(HttpServletRequest request) {
-        return new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod()));
+    public HandlerKey(HttpServletRequest request) {
+        this.url = request.getRequestURI();
+        this.requestMethod = RequestMethod.valueOf(request.getMethod());
     }
 
     @Override
