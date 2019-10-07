@@ -3,9 +3,9 @@ package nextstep.mvc;
 import com.google.common.collect.Lists;
 import nextstep.ControllerHandlerAdapter;
 import nextstep.HandlerAdapter;
+import nextstep.HandlerExecutionHandlerAdapter;
 import nextstep.exception.PageNotFoundException;
 import nextstep.mvc.tobe.ErrorView;
-import nextstep.mvc.tobe.HandlerExecution;
 import nextstep.mvc.tobe.ModelAndView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +26,7 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger logger = LoggerFactory.getLogger(DispatcherServlet.class);
 
     private List<HandlerMapping> hms = Lists.newArrayList();
+    private List<HandlerAdapter> adapters;
 
     public DispatcherServlet(HandlerMapping... hm) {
         this.hms.addAll(Arrays.asList(hm));
@@ -34,6 +35,7 @@ public class DispatcherServlet extends HttpServlet {
     @Override
     public void init() {
         hms.forEach(HandlerMapping::initialize);
+        adapters = Arrays.asList(new ControllerHandlerAdapter(), new HandlerExecutionHandlerAdapter());
     }
 
     @Override
@@ -62,11 +64,10 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private ModelAndView getModelAndView(HttpServletRequest req, HttpServletResponse resp, Object handler) throws Exception {
-        HandlerAdapter handlerAdapter = new ControllerHandlerAdapter();
-        if (handlerAdapter.supports(handler)) {
-            return handlerAdapter.handle(req, resp, handler);
-        }
-        return ((HandlerExecution) handler).handle(req, resp);
+        return adapters.stream()
+                .filter(handlerAdapter -> handlerAdapter.supports(handler))
+                .findFirst().orElseThrow(() -> new IllegalArgumentException("해당하는 어댑터가 없습니다."))
+                .handle(req, resp, handler);
     }
 
     private Object getHandler(HttpServletRequest req) throws Exception {
