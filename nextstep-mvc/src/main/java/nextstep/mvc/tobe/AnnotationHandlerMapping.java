@@ -41,23 +41,19 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     private List<Method> generateMethods(Class<?> clazz) {
         return Arrays.stream(clazz.getMethods())
                 .filter(method -> method.isAnnotationPresent(RequestMapping.class))
-                .filter(method -> isNotBlank(method.getAnnotation(RequestMapping.class)))
                 .collect(Collectors.toList());
-    }
-
-    private boolean isNotBlank(RequestMapping requestMapping) {
-        final String trimMethod = requestMapping.value().trim();
-        return StringUtils.isNotBlank(trimMethod);
     }
 
     private void addHandlerExecutions(Class clazz, Method method) {
         RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-        String url = requestMapping.value();
+        String url = requestMapping.value()
+                .trim();
         RequestMethod[] requestMethods = requestMapping.method();
 
         if (requestMethods.length == 0) {
             requestMethods = RequestMethod.values();
         }
+
         Arrays.stream(requestMethods)
                 .forEach(m -> handlerExecutions.put(new HandlerKey(url, m), new HandlerExecution(clazz, method)));
     }

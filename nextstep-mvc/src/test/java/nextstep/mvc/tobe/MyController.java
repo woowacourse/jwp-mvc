@@ -47,9 +47,9 @@ public class MyController {
         return new ModelAndView("/home.jsp");
     }
 
-    @RequestMapping
+    @RequestMapping(method = RequestMethod.POST)
     public ModelAndView test_empty_url(HttpServletRequest request, HttpServletResponse response) {
-        request.setAttribute("test_emtpy_url", true);
+        request.setAttribute("test_empty_url", true);
         return new ModelAndView("/home.jsp");
     }
 }

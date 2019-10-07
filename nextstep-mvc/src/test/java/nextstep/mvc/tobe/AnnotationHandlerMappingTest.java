@@ -7,7 +7,6 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class AnnotationHandlerMappingTest {
     private AnnotationHandlerMapping handlerMapping;
@@ -76,11 +75,12 @@ public class AnnotationHandlerMappingTest {
     }
 
     @Test
-    void test_empty_request_mapping_url() {
+    void test_empty_request_mapping_url() throws Exception {
         MockHttpServletRequest postRequest = new MockHttpServletRequest("POST", "");
         MockHttpServletResponse response = new MockHttpServletResponse();
         HandlerExecution execution = handlerMapping.getHandler(postRequest);
+        execution.handle(postRequest, response);
 
-        assertThrows(NullPointerException.class, () -> execution.handle(postRequest, response));
+        assertThat(postRequest.getAttribute("test_empty_url")).isEqualTo(true);
     }
 }
