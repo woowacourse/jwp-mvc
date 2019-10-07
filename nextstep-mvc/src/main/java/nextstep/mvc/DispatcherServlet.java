@@ -1,57 +1,71 @@
 package nextstep.mvc;
 
 import nextstep.mvc.asis.Controller;
+import nextstep.mvc.handler.AnnotationHandler;
+import nextstep.mvc.handler.HandlerAdapter;
+import nextstep.mvc.handler.LegacyHandler;
+import nextstep.mvc.tobe.HandlerExecution;
+import nextstep.mvc.view.ModelAndView;
+import nextstep.mvc.view.View;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 @WebServlet(name = "dispatcher", urlPatterns = "/", loadOnStartup = 1)
 public class DispatcherServlet extends HttpServlet {
+    private static final int STATUS_CODE_FORBIDDEN = 405;
     private static final long serialVersionUID = 1L;
     private static final Logger logger = LoggerFactory.getLogger(DispatcherServlet.class);
-    private static final String DEFAULT_REDIRECT_PREFIX = "redirect:";
 
-    private HandlerMapping rm;
+    private final List<HandlerMapping> hms;
+    private final List<HandlerAdapter> adapters;
 
-    public DispatcherServlet(HandlerMapping rm) {
-        this.rm = rm;
+    public DispatcherServlet(HandlerMapping... hm) {
+        this.hms = Arrays.asList(hm);
+        this.adapters = Arrays.asList(
+                new LegacyHandler(Controller.class),
+                new AnnotationHandler(HandlerExecution.class)
+        );
     }
 
     @Override
-    public void init() throws ServletException {
-        rm.initialize();
+    public void init() {
+        hms.forEach(HandlerMapping::initialize);
     }
 
     @Override
-    protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String requestUri = req.getRequestURI();
-        logger.debug("Method : {}, Request URI : {}", req.getMethod(), requestUri);
-
-        Controller controller = rm.getHandler(requestUri);
+    protected void service(HttpServletRequest req, HttpServletResponse resp) {
+        logger.debug("Method : {}, Request URI : {}", req.getMethod(), req.getRequestURI());
         try {
-            String viewName = controller.execute(req, resp);
-            move(viewName, req, resp);
-        } catch (Throwable e) {
-            logger.error("Exception : {}", e);
-            throw new ServletException(e.getMessage());
+            ModelAndView modelAndView = handle(req, resp);
+            View view = modelAndView.getView();
+            view.render(modelAndView.getModel(), req, resp);
+        } catch (Exception e) {
+            logger.error("Exception : {}", e.getMessage());
+            resp.setStatus(STATUS_CODE_FORBIDDEN);
         }
     }
 
-    private void move(String viewName, HttpServletRequest req, HttpServletResponse resp)
-            throws ServletException, IOException {
-        if (viewName.startsWith(DEFAULT_REDIRECT_PREFIX)) {
-            resp.sendRedirect(viewName.substring(DEFAULT_REDIRECT_PREFIX.length()));
-            return;
-        }
+    private ModelAndView handle(HttpServletRequest req, HttpServletResponse resp) throws Exception {
+        Object handler = getHandler(req);
+        return adapters.stream()
+                .filter(adapter -> adapter.apply(handler))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("지원하지 않는 형식입니다."))
+                .handle(req, resp, handler);
+    }
 
-        RequestDispatcher rd = req.getRequestDispatcher(viewName);
-        rd.forward(req, resp);
+    private Object getHandler(HttpServletRequest req) {
+        return hms.stream()
+                .filter(hm -> hm.getHandler(req) != null)
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("URL이 없습니다."))
+                .getHandler(req);
     }
 }
