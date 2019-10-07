@@ -40,21 +40,25 @@ public class DispatcherServlet extends HttpServlet {
         logger.debug("Method : {}, Request URI : {}", req.getMethod(), requestUri);
 
         try {
-            Object found = findHandler(req);
-            if (found instanceof Controller) {
-                String viewName = ((Controller) found).execute(req, resp);
-                move(viewName, req, resp);
-            }
-            if (found instanceof HandlerExecution) {
-                ModelAndView modelAndView = ((HandlerExecution) found).execute(req, resp);
-                modelAndView.getView().render(modelAndView.getModel(), req, resp);
-            }
+            Object handler = findHandler(req);
+            render(req, resp, handler);
         } catch (HandlerNotFoundException e) {
             logger.error("Exception : {}", e);
             resp.sendError(404);
         } catch (Throwable e) {
             logger.error("Exception : {}", e);
             throw new ServletException(e.getMessage());
+        }
+    }
+
+    private void render(HttpServletRequest req, HttpServletResponse resp, Object handler) throws Exception {
+        if (handler instanceof Controller) {
+            String viewName = ((Controller) handler).execute(req, resp);
+            move(viewName, req, resp);
+        }
+        if (handler instanceof HandlerExecution) {
+            ModelAndView modelAndView = ((HandlerExecution) handler).execute(req, resp);
+            modelAndView.getView().render(modelAndView.getModel(), req, resp);
         }
     }
 
