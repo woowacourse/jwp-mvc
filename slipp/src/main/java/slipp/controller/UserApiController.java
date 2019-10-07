@@ -1,6 +1,6 @@
 package slipp.controller;
 
-import nextstep.mvc.tobe.JsonView;
+import nextstep.mvc.tobe.view.JsonView;
 import nextstep.mvc.tobe.ModelAndView;
 import nextstep.utils.JsonUtils;
 import nextstep.web.annotation.Controller;
@@ -37,7 +37,6 @@ public class UserApiController {
         User user = DataBase.findUserById(userId)
                 .orElseThrow(() -> new UserNotFoundException(userId));
 
-        resp.setStatus(HttpServletResponse.SC_OK);
         return new ModelAndView(new JsonView()).addObject("user", user);
     }
 
@@ -49,7 +48,6 @@ public class UserApiController {
                 .orElseThrow(() -> new UserNotFoundException(userId));
         user.update(new User(userId, userUpdatedDto.getPassword(), userUpdatedDto.getName(), userUpdatedDto.getEmail()));
 
-        resp.setStatus(HttpServletResponse.SC_OK);
         resp.addHeader("Location", "/api/users?userId=" + user.getUserId());
         return new ModelAndView();
     }

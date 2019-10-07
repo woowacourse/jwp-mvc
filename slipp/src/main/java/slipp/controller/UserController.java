@@ -1,8 +1,8 @@
 package slipp.controller;
 
-import nextstep.mvc.tobe.JspView;
+import nextstep.mvc.tobe.view.JspView;
 import nextstep.mvc.tobe.ModelAndView;
-import nextstep.mvc.tobe.RedirectView;
+import nextstep.mvc.tobe.view.RedirectView;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
@@ -43,7 +43,7 @@ public class UserController {
         User user = DataBase.findUserById(userId)
                 .orElseThrow(() -> new UserNotFoundException(userId));
         if (!UserSessionUtils.isSameUser(req.getSession(), user)) {
-            throw new IllegalStateException("다른 사용자의 정보를 수정할 수 없습니다.");
+            throw new IllegalRequestException("다른 사용자의 정보를 수정할 수 없습니다.");
         }
         req.setAttribute("user", user);
         return new ModelAndView(new JspView("/user/updateForm.jsp"));
@@ -55,7 +55,7 @@ public class UserController {
         User user = DataBase.findUserById(userId)
                 .orElseThrow(() -> new UserNotFoundException(userId));
         if (!UserSessionUtils.isSameUser(req.getSession(), user)) {
-            throw new IllegalStateException("다른 사용자의 정보를 수정할 수 없습니다.");
+            throw new IllegalRequestException("다른 사용자의 정보를 수정할 수 없습니다.");
         }
 
         User updateUser = new User(req.getParameter("userId"), req.getParameter("password"), req.getParameter("name"),

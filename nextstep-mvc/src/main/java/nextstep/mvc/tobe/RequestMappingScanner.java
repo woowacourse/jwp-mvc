@@ -11,33 +11,19 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class RequestMappingScanner {
+class RequestMappingScanner {
 
     private final ComponentScanner componentScanner;
-    private final Map<Class<?>, Object> instances;
 
-    public RequestMappingScanner(ComponentScanner componentScanner) {
+    RequestMappingScanner(ComponentScanner componentScanner) {
         this.componentScanner = componentScanner;
-        instances = new HashMap<>();
     }
 
-    public Set<Method> getRequestMappingMethods() {
+    Set<Method> getRequestMappingMethods() {
         return componentScanner.getClassesAnnotated(Controller.class).stream()
-                .peek(cls -> instances.put(cls, instantiate(cls)))
+                .peek(Instances::putIfAbsent)
                 .flatMap(clazz -> Arrays.stream(clazz.getDeclaredMethods())
                         .filter(method -> method.isAnnotationPresent(RequestMapping.class)))
                 .collect(Collectors.toSet());
-    }
-
-    public Object instanceFromMethod(Method method) {
-        return instances.get(method.getDeclaringClass());
-    }
-
-    private Object instantiate(Class<?> cls) {
-        try {
-            return cls.getDeclaredConstructor().newInstance();
-        } catch (IllegalAccessException | InstantiationException | InvocationTargetException | NoSuchMethodException e) {
-            throw new ComponentScanException(e);
-        }
     }
 }

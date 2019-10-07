@@ -1,4 +1,6 @@
-package nextstep.mvc.tobe;
+package nextstep.mvc.tobe.view;
+
+import nextstep.mvc.tobe.View;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;

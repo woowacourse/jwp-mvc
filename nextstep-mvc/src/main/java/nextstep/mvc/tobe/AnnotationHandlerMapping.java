@@ -41,7 +41,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         }
         Arrays.stream(methods)
                 .map(requestMethod -> new HandlerKey(mapping.value(), requestMethod))
-                .forEach(key -> handlerExecutions.put(key, executeController(method, requestMappingScanner.instanceFromMethod(method))));
+                .forEach(key -> handlerExecutions.put(key, executeController(method, Instances.getFromMethod(method))));
     }
 
     private HandlerExecution executeController(Method method, Object instance) {

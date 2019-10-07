@@ -1,6 +1,8 @@
-package nextstep.mvc.tobe;
+package nextstep.mvc.tobe.view;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import nextstep.mvc.tobe.View;
+import nextstep.mvc.tobe.ViewRenderException;
 import nextstep.web.support.MediaType;
 
 import javax.servlet.http.HttpServletRequest;
@@ -21,18 +23,18 @@ public class JsonView implements View {
     public void render(Map<String, ?> model, HttpServletRequest request, HttpServletResponse response) throws Exception {
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
         PrintWriter writer = response.getWriter();
-        writeOnCondition(writer, model::isEmpty, () -> "");
-        writeOnCondition(writer, () -> model.size() == 1, () -> tryWriteValueAsString(getFirstValue(model)));
-        writeOnCondition(writer, () -> model.size() > 1, () -> tryWriteValueAsString(model));
+        writeOnCondition(writer, model.isEmpty(), () -> "");
+        writeOnCondition(writer, model.size() == 1, () -> tryWriteValueAsString(firstValueOf(model)));
+        writeOnCondition(writer, model.size() > 1, () -> tryWriteValueAsString(model));
     }
 
-    private void writeOnCondition(PrintWriter writer, Supplier<Boolean> condition, Supplier<String> valueSupplier) {
-        if (condition.get()) {
+    private void writeOnCondition(PrintWriter writer, boolean condition, Supplier<String> valueSupplier) {
+        if (condition) {
             writer.print(valueSupplier.get());
         }
     }
 
-    private Object getFirstValue(Map<String, ?> model) {
+    private Object firstValueOf(Map<String, ?> model) {
         return model.values().toArray()[0];
     }
 
