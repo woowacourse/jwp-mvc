@@ -1,6 +1,8 @@
 package nextstep.mvc;
 
 import nextstep.mvc.asis.Controller;
+import nextstep.mvc.tobe.HandlerAdapter;
+import nextstep.mvc.tobe.HandlerAdapterNotFoundException;
 import nextstep.mvc.tobe.HandlerExecution;
 import nextstep.mvc.tobe.HandlerNotExistException;
 import nextstep.mvc.tobe.ModelAndView;
@@ -15,20 +17,22 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 
 @WebServlet(name = "dispatcher", urlPatterns = "/", loadOnStartup = 1)
 public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger logger = LoggerFactory.getLogger(DispatcherServlet.class);
-    private static final String DEFAULT_REDIRECT_PREFIX = "redirect:";
+    private final List<HandlerAdapter> handlerAdapters;
     private final List<HandlerMapping> handlerMappings;
 
-    public DispatcherServlet(List<HandlerMapping> handlerMappings) {
+    public DispatcherServlet(List<HandlerAdapter> handlerAdapters, List<HandlerMapping> handlerMappings) {
+        this.handlerAdapters = handlerAdapters;
         this.handlerMappings = handlerMappings;
     }
 
     @Override
-    public void init() throws ServletException {
+    public void init() {
         handlerMappings.forEach(HandlerMapping::initialize);
     }
 
@@ -38,9 +42,10 @@ public class DispatcherServlet extends HttpServlet {
         logger.debug("Method : {}, Request URI : {}", req.getMethod(), requestUri);
 
         Object handler = getHandler(req);
-
+        HandlerAdapter handlerAdapter = findHandlerAdapter(handler);
         try {
-            handle(req, resp, handler);
+            ModelAndView view = handlerAdapter.handle(req, resp, handler);
+            view.render(req,resp);
 
         } catch (Exception e) {
             logger.error("Exception : {}", e);
@@ -48,46 +53,18 @@ public class DispatcherServlet extends HttpServlet {
         }
     }
 
+    private HandlerAdapter findHandlerAdapter(Object handler) {
+        return handlerAdapters.stream()
+            .filter(handlerAdapter -> handlerAdapter.supports(handler))
+            .findFirst()
+            .orElseThrow(HandlerAdapterNotFoundException::new);
+    }
+
     private Object getHandler(HttpServletRequest req) {
         return handlerMappings.stream()
-            .filter(handlerMapping -> handlerMapping.getHandler(req) != null)
+            .map(handlerMapping -> handlerMapping.getHandler(req))
+            .filter(Objects::nonNull)
             .findFirst()
-            .orElseThrow(HandlerNotExistException::new)
-            .getHandler(req);
-    }
-
-    private void handle(HttpServletRequest req, HttpServletResponse resp, Object handler) throws Exception {
-        if (handler instanceof Controller) {
-            handleLegacy(req, resp, (Controller) handler);
-            return;
-        }
-
-        if (handler instanceof HandlerExecution) {
-            handleAnnotation(req, resp, (HandlerExecution) handler);
-            return;
-        }
-
-        throw new UnsupportedHandlerTypeException();
-    }
-
-    private void handleAnnotation(HttpServletRequest req, HttpServletResponse resp, HandlerExecution handler) throws Exception {
-        ModelAndView view = handler.handle(req, resp);
-        view.render(req, resp);
-    }
-
-    private void handleLegacy(HttpServletRequest req, HttpServletResponse resp, Controller handler) throws Exception {
-        String viewName = handler.execute(req, resp);
-        move(viewName, req, resp);
-    }
-
-    private void move(String viewName, HttpServletRequest req, HttpServletResponse resp)
-        throws ServletException, IOException {
-        if (viewName.startsWith(DEFAULT_REDIRECT_PREFIX)) {
-            resp.sendRedirect(viewName.substring(DEFAULT_REDIRECT_PREFIX.length()));
-            return;
-        }
-
-        RequestDispatcher rd = req.getRequestDispatcher(viewName);
-        rd.forward(req, resp);
+            .orElseThrow(HandlerNotExistException::new);
     }
 }
