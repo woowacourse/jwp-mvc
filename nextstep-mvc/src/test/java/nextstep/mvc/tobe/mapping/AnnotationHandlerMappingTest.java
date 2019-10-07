@@ -51,6 +51,20 @@ public class AnnotationHandlerMappingTest {
     }
 
     @Test
+    void 여러_RequestMapping_지원_하는지_확인() throws Exception {
+        // given
+        MockHttpServletRequest get = new MockHttpServletRequest("GET", "/users");
+        MockHttpServletRequest options = new MockHttpServletRequest("OPTIONS", "/users");
+
+        // when
+        HandlerExecution getHandler = handlerMapping.getHandler(get);
+        HandlerExecution optionHandler = handlerMapping.getHandler(options);
+
+        // then
+        assertThat(getHandler == optionHandler).isTrue();
+    }
+
+    @Test
     @DisplayName("RequsetMapping의 method가 없는 경우 모든 Method 지원")
     void requestMapping_method_가_없는_경우() {
         Stream.of(RequestMethod.values())
