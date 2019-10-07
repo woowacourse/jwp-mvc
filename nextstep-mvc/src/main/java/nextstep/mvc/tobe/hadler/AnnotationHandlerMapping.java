@@ -7,6 +7,7 @@ import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
 
 import javax.servlet.http.HttpServletRequest;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Map;
@@ -41,14 +42,24 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         if (method.isAnnotationPresent(RequestMapping.class)) {
             RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
             RequestMethod[] requestMethods = getRequestMethods(requestMapping);
+            HandlerExecution handlerExecution = new HandlerExecution(createInstance(clazz), method);
 
             Arrays.stream(requestMethods)
                     .map(value -> new HandlerKey(requestMapping.value(), value))
-                    .forEach(key -> handlerExecutions.put(key, new HandlerExecution(clazz, method)));
+                    .forEach(key -> handlerExecutions.put(key, handlerExecution));
         }
     }
 
-    private RequestMethod[] getRequestMethods(final RequestMapping requestMapping) {
+    private Object createInstance(Class<?> clazz) {
+        try {
+            Constructor<?> constructor = clazz.getConstructor();
+            return constructor.newInstance();
+        } catch (Exception e) {
+            throw new IllegalArgumentException("class has not no-arg constructor");
+        }
+    }
+
+    private RequestMethod[] getRequestMethods(RequestMapping requestMapping) {
         RequestMethod[] requestMethods = requestMapping.method();
 
         if (requestMapping.method().length == 0) {
