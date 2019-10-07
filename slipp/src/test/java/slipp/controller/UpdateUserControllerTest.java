@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockHttpSession;
-import slipp.ManualLegacyHandlerMapping;
+import slipp.ManualHandlerMapping;
 import slipp.domain.User;
 import slipp.support.db.DataBase;
 
@@ -22,7 +22,7 @@ class UpdateUserControllerTest {
 
     @BeforeEach
     void setUp() {
-        mappings = new RequestMappingHandlerMapping(new ManualLegacyHandlerMapping());
+        mappings = new RequestMappingHandlerMapping(new ManualHandlerMapping());
         mappings.initialize();
     }
 

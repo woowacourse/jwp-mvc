@@ -1,6 +1,6 @@
 package nextstep.mvc.tobe;
 
-import nextstep.mvc.LegacyHandlerMapping;
+import nextstep.mvc.HandlerMapping;
 import nextstep.mvc.asis.Controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,9 +11,9 @@ import javax.servlet.http.HttpServletResponse;
 public class RequestMappingHandlerMapping {
     private static final Logger logger = LoggerFactory.getLogger(RequestMappingHandlerMapping.class);
     private AnnotationHandlerMapping annotationMapping;
-    private LegacyHandlerMapping legacyMapping;
+    private HandlerMapping legacyMapping;
 
-    public RequestMappingHandlerMapping(LegacyHandlerMapping legacyMapping) {
+    public RequestMappingHandlerMapping(HandlerMapping legacyMapping) {
         this.annotationMapping = new AnnotationHandlerMapping("slipp.controller");
         this.legacyMapping = legacyMapping;
     }

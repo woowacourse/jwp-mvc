@@ -1,7 +1,7 @@
 package slipp;
 
 import nextstep.mvc.DispatcherServlet;
-import nextstep.mvc.LegacyHandlerMapping;
+import nextstep.mvc.HandlerMapping;
 import nextstep.mvc.asis.Controller;
 import nextstep.mvc.asis.ForwardController;
 import org.slf4j.Logger;
@@ -14,7 +14,7 @@ import slipp.controller.UpdateFormUserController;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ManualLegacyHandlerMapping implements LegacyHandlerMapping {
+public class ManualHandlerMapping implements HandlerMapping {
     private static final Logger logger = LoggerFactory.getLogger(DispatcherServlet.class);
     private Map<String, Controller> mappings = new HashMap<>();
 
