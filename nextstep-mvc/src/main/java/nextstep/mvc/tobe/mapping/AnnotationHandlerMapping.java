@@ -39,7 +39,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
                 .forEach(method -> {
                     logger.debug("controller: {}, method: {}", clazz.getName(), method.getName());
                     final RequestMapping rm = method.getAnnotation(RequestMapping.class);
-                    final RequestMethod[] requestMethods = rm.method().length == 0 ? RequestMethod.values() : rm.method();
+                    final RequestMethod[] requestMethods = rm.method();
                     final HandlerExecution handlerExecution = new HandlerExecution(instance, method);
                     for (final RequestMethod requestMethod : requestMethods) {
                         final HandlerKey handlerKey = new HandlerKey(rm.value(), requestMethod);
