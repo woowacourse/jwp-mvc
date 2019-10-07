@@ -21,4 +21,8 @@ public enum HttpStatus {
     public String getPhrase() {
         return phrase;
     }
+
+    public int getStatus() {
+        return status;
+    }
 }

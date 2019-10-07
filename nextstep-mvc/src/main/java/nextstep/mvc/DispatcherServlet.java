@@ -3,6 +3,7 @@ package nextstep.mvc;
 import nextstep.mvc.tobe.RequestContext;
 import nextstep.mvc.tobe.argumentresolver.HandlerMethodArgumentResolver;
 import nextstep.mvc.tobe.handleradapter.HandlerAdapter;
+import nextstep.mvc.tobe.view.ErrorView;
 import nextstep.mvc.tobe.view.ModelAndView;
 import nextstep.mvc.tobe.view.View;
 import nextstep.mvc.tobe.viewresolver.ViewResolver;
@@ -16,6 +17,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -55,6 +57,9 @@ public class DispatcherServlet extends HttpServlet {
             ModelAndView modelAndView = handlerAdapter.handle(requestContext, handler);
             View view = findView(modelAndView);
             view.render(modelAndView.getModelMap(), requestContext);
+        } catch (HttpServletRequestException e) {
+            View errorView = ErrorView.defaultErrorView();
+            errorView.render(Collections.singletonMap("status", e.getHttpStatus()), requestContext);
         } catch (Exception e) {
             logger.error("Exception : {}", e);
         }
