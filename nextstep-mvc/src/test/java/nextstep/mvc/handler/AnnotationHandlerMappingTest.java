@@ -1,4 +1,4 @@
-package nextstep.mvc.tobe.handler;
+package nextstep.mvc.handler;
 
 import nextstep.db.DataBase;
 import nextstep.mvc.tobe.User;

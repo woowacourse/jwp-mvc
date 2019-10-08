@@ -1,4 +1,4 @@
-package nextstep.mvc.tobe.view;
+package nextstep.mvc.view;
 
 import nextstep.mvc.tobe.Car;
 import nextstep.utils.JsonUtils;
