@@ -2,7 +2,6 @@ package nextstep.mvc.tobe.handleradapter;
 
 import nextstep.mvc.tobe.HandlerExecution;
 import nextstep.mvc.tobe.ModelAndView;
-import nextstep.mvc.tobe.view.View;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -19,9 +18,6 @@ public class RequestMappingHandlerAdapter implements HandlerAdapter {
         if (view instanceof ModelAndView) {
             return (ModelAndView) view;
         }
-        if (view instanceof String || view instanceof View) {
-            return new ModelAndView(view);
-        }
-        return null;
+        return new ModelAndView(view);
     }
 }

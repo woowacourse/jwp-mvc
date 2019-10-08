@@ -1,8 +1,8 @@
 package slipp.controller.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import nextstep.mvc.tobe.view.RedirectView;
 import nextstep.utils.JsonUtils;
+import nextstep.web.annotation.PathVariable;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
 import nextstep.web.annotation.RestController;
@@ -15,16 +15,24 @@ import slipp.support.db.DataBase;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Optional;
+
+import static slipp.controller.api.UserApiController.DEFAULT_MAPPING_VALUE;
 
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping(DEFAULT_MAPPING_VALUE)
 public class UserApiController {
     private static final Logger log = LoggerFactory.getLogger(UserApiController.class);
+    private static final String LOCATION = "Location";
+    static final String DEFAULT_MAPPING_VALUE = "/api/users";
 
-    @RequestMapping(method = RequestMethod.GET)
-    public Object get(HttpServletRequest request, HttpServletResponse response) {
-        log.debug("hello");
-        return new RedirectView("/");
+    @RequestMapping(value = "/{userId}", method = RequestMethod.GET)
+    public Object findUser(@PathVariable(value = "userId") String userId,
+                           HttpServletRequest request, HttpServletResponse response) {
+        Optional<User> maybeUser = Optional.ofNullable(DataBase.findUserById(userId));
+        log.debug("find User");
+
+        return maybeUser.orElseThrow(() -> new IllegalArgumentException("유저가 존재하지 않습니다."));
     }
 
     @RequestMapping(method = RequestMethod.POST)
@@ -36,6 +44,7 @@ public class UserApiController {
         log.debug("user created {}", user);
 
         response.setStatus(HttpServletResponse.SC_CREATED);
+        response.setHeader(LOCATION, DEFAULT_MAPPING_VALUE + "/" + user.getUserId());
         return user;
     }
 

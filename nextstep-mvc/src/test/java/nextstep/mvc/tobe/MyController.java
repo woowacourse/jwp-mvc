@@ -4,11 +4,13 @@ import nextstep.db.DataBase;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
+import nextstep.web.annotation.RequestParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Optional;
 
 @Controller
 public class MyController {
@@ -33,5 +35,14 @@ public class MyController {
         logger.debug("User : {}", user);
         DataBase.addUser(user);
         return null;
+    }
+
+    @RequestMapping(value = "/api/users", method = RequestMethod.GET)
+    public Object findUser(@RequestParam(value = "userId") String userId,
+                           HttpServletRequest request, HttpServletResponse response) {
+        Optional<User> maybeUser = Optional.ofNullable(DataBase.findUserById(userId));
+        logger.debug("find User");
+
+        return maybeUser.orElseThrow(() -> new IllegalArgumentException("유저가 존재하지 않습니다."));
     }
 }
