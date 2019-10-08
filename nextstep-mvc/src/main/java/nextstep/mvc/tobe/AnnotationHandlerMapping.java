@@ -1,23 +1,18 @@
 package nextstep.mvc.tobe;
 
+import java.lang.reflect.Method;
+import java.util.*;
+import javax.servlet.http.HttpServletRequest;
+
 import com.google.common.collect.Maps;
-import nextstep.mvc.ModelAndViewHandlerMapping;
+import nextstep.mvc.HandlerMapping;
 import nextstep.mvc.tobe.exception.DuplicateRequestMappingException;
-import nextstep.mvc.tobe.exception.RenderFailedException;
-import nextstep.mvc.tobe.exception.RequestUrlNotFoundException;
-import nextstep.web.annotation.Controller;
+import nextstep.mvc.tobe.scanner.ControllerScanner;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
-import org.reflections.Reflections;
+import org.reflections.ReflectionUtils;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.lang.reflect.Method;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-
-public class AnnotationHandlerMapping implements ModelAndViewHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
     private Object[] basePackage;
 
     private Map<HandlerKey, HandlerExecution> handlerExecutions = Maps.newHashMap();
@@ -28,34 +23,62 @@ public class AnnotationHandlerMapping implements ModelAndViewHandlerMapping {
 
     @Override
     public void initialize() {
-        Reflections reflections = new Reflections(basePackage);
-        Set<Class<?>> controllerClazz = reflections.getTypesAnnotatedWith(Controller.class);
+        Set<Class<?>> controllerClazz = ControllerScanner.scanController(basePackage);
 
         for (Class<?> clazz : controllerClazz) {
             appendHandlerExecutions(clazz);
         }
     }
 
-    private void appendHandlerExecutions(final Class<?> clazz) {
-        Method[] methods = clazz.getDeclaredMethods();
-        for (Method method : methods) {
-            if (method.isAnnotationPresent(RequestMapping.class)) {
-                HandlerKey handlerKey = createHandlerKey(method);
+    @Override
+    public boolean isSupports(HttpServletRequest request) {
+        return handlerExecutions.keySet()
+                .stream()
+                .anyMatch(key -> key.isSameUrl(request.getRequestURI()));
+    }
 
+
+    private void appendHandlerExecutions(final Class<?> clazz) {
+        Set<Method> methods = ReflectionUtils.getAllMethods(clazz, ReflectionUtils.withAnnotation(RequestMapping.class));
+
+        for (Method method : methods) {
+            List<HandlerKey> handlerKeys = createHandlerKeys(method);
+
+            for (HandlerKey key : handlerKeys) {
                 HandlerExecution handlerExecution
                         = (request, response) -> (ModelAndView) method.invoke(clazz.newInstance(), request, response);
 
-                checkDuplicateRequestMapping(handlerKey);
-                handlerExecutions.put(handlerKey, handlerExecution);
+                checkDuplicateRequestMapping(key);
+                handlerExecutions.put(key, handlerExecution);
             }
         }
     }
 
-    private HandlerKey createHandlerKey(final Method method) {
+    private List<HandlerKey> createHandlerKeys(final Method method) {
         RequestMapping annotation = method.getAnnotation(RequestMapping.class);
         String url = annotation.value();
-        RequestMethod requestMethod = annotation.method();
-        return new HandlerKey(url, requestMethod);
+        RequestMethod[] requestMethods = annotation.method();
+
+        if (doseNotExistsRequestMethod(requestMethods)) {
+            return addAllRequestMethod(url);
+        }
+
+        List<HandlerKey> handlerKeys = new ArrayList<>();
+        for (RequestMethod requestMethod : requestMethods) {
+            handlerKeys.add(new HandlerKey(url, requestMethod));
+        }
+        return handlerKeys;
+    }
+
+    private boolean doseNotExistsRequestMethod(RequestMethod[] requestMethods) {
+        return requestMethods.length == 0;
+    }
+
+    private List<HandlerKey> addAllRequestMethod(String url) {
+        List<HandlerKey> handlerKeys = new ArrayList<>();
+        Arrays.stream(RequestMethod.values())
+                .forEach(method -> handlerKeys.add(new HandlerKey(url, method)));
+        return handlerKeys;
     }
 
     private void checkDuplicateRequestMapping(final HandlerKey handlerKey) {
@@ -64,46 +87,10 @@ public class AnnotationHandlerMapping implements ModelAndViewHandlerMapping {
         }
     }
 
-    @Override
-    public boolean handle(final HttpServletRequest req, final HttpServletResponse resp) {
-        HandlerExecution execution = getHandler(req);
-        if (doesNotExistsExecution(execution)) {
-            return false;
-        }
-
-        try {
-            ModelAndView modelAndView = execution.handle(req, resp);
-            modelAndView.render(req, resp);
-        } catch (Exception e) {
-            throw new RenderFailedException();
-        }
-        return true;
-    }
-
-    private boolean doesNotExistsExecution(final HandlerExecution execution) {
-        return Objects.isNull(execution);
-    }
-
-    @Override
     public HandlerExecution getHandler(HttpServletRequest request) {
         String requestURI = request.getRequestURI();
         String method = request.getMethod();
 
-        HandlerKey handlerKey = new HandlerKey(requestURI, RequestMethod.valueOf(method));
-        if (doesNotExistsKey(handlerKey)) {
-            handlerKey = findHandlerKeyByUrl(requestURI);
-        }
-        return handlerExecutions.get(handlerKey);
-    }
-
-    private boolean doesNotExistsKey(final HandlerKey handlerKey) {
-        return !handlerExecutions.containsKey(handlerKey);
-    }
-
-    private HandlerKey findHandlerKeyByUrl(final String requestURI) {
-        return handlerExecutions.keySet().stream()
-                .filter(handlerKey -> handlerKey.isSameUrl(requestURI))
-                .findFirst()
-                .orElseThrow(RequestUrlNotFoundException::new);
+        return handlerExecutions.get(new HandlerKey(requestURI, RequestMethod.valueOf(method)));
     }
 }
