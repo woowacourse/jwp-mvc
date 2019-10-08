@@ -14,13 +14,13 @@ import javax.servlet.http.HttpServletResponse;
 public class MyController {
     private static final Logger logger = LoggerFactory.getLogger(MyController.class);
 
-    @RequestMapping(value = "/users", method = RequestMethod.GET)
-    public ModelAndView findUserId(HttpServletRequest request, HttpServletResponse response) {
+    @RequestMapping(value = "/users", method = {RequestMethod.GET, RequestMethod.DELETE})
+    public String findUserId(HttpServletRequest request, HttpServletResponse response) {
         String userId = request.getParameter("userId");
         logger.debug("Find UserId : {}", userId);
         User user = DataBase.findUserById(userId);
         request.setAttribute("user", user);
-        return null;
+        return "/user/profile.jsp";
     }
 
     @RequestMapping(value = "/users", method = RequestMethod.POST)

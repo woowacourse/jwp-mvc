@@ -38,12 +38,8 @@ public class ManualHandlerMapping implements HandlerMapping {
     }
 
     @Override
-    public HandlerExecution getHandler(HttpServletRequest request) {
-        Controller controller = mappings.get(request.getRequestURI());
-        if (controller != null) {
-            return new ControllerAdaptor(mappings.get(request.getRequestURI()));
-        }
-        return null;
+    public Object getHandler(HttpServletRequest request) {
+        return mappings.get(request.getRequestURI());
     }
 
     void put(String url, Controller controller) {

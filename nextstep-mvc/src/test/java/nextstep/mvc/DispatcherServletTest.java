@@ -1,6 +1,8 @@
 package nextstep.mvc;
 
 import nextstep.mvc.tobe.AnnotationHandlerMapping;
+import nextstep.mvc.tobe.ControllerAdaptor;
+import nextstep.mvc.tobe.HandlerExecutionAdapter;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMethod;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,6 +13,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 import javax.servlet.ServletException;
+import java.util.Arrays;
 import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -22,17 +25,19 @@ class DispatcherServletTest {
 
     @BeforeEach
     void setUp() {
-        dispatcherServlet = new DispatcherServlet(Collections.singletonList(
-                new AnnotationHandlerMapping("slipp.tobe.controller")));
+        dispatcherServlet = new DispatcherServlet(
+                Collections.singletonList(new AnnotationHandlerMapping("nextstep")),
+                Arrays.asList(new ControllerAdaptor(), new HandlerExecutionAdapter()));
         dispatcherServlet.init();
         request = new MockHttpServletRequest();
         response = new MockHttpServletResponse();
     }
 
     @Test
-    void 핸들러가_존재하지_않을_경우() throws ServletException {
+    void MyController_get() throws ServletException {
         request.setMethod(RequestMethod.GET.toString());
-        request.setPathInfo("/");
+        request.setRequestURI("/users");
+        request.setParameter("userId", "admin");
         request.setProtocol("HTTP/1.1");
         request.addHeader("Host", "localhost:8080");
         request.addHeader("Connection", "keep-alive");

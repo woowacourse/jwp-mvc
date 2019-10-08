@@ -1,7 +1,8 @@
 package nextstep.mvc;
 
-import nextstep.mvc.tobe.HandlerExecution;
+import nextstep.mvc.tobe.HandlerAdapter;
 import nextstep.mvc.tobe.ModelAndView;
+import nextstep.mvc.tobe.exception.AdapterNotExistException;
 import nextstep.mvc.tobe.exception.HandlerNotExistException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,9 +20,11 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger logger = LoggerFactory.getLogger(DispatcherServlet.class);
     private final List<HandlerMapping> handlerMappings;
+    private final List<HandlerAdapter> handlerAdapters;
 
-    public DispatcherServlet(List<HandlerMapping> handlerMappings) {
+    public DispatcherServlet(List<HandlerMapping> handlerMappings, List<HandlerAdapter> handlerAdapters) {
         this.handlerMappings = handlerMappings;
+        this.handlerAdapters = handlerAdapters;
     }
 
     @Override
@@ -34,9 +37,13 @@ public class DispatcherServlet extends HttpServlet {
         String requestUri = req.getRequestURI();
         logger.debug("Method : {}, Request URI : {}", req.getMethod(), requestUri);
 
-        HandlerExecution handler = getHandler(req);
+        Object handler = getHandler(req);
         try {
-            ModelAndView mav = handler.handle(req, resp);
+            HandlerAdapter foundAdapter = handlerAdapters.stream()
+                    .filter(adapter -> adapter.supports(handler))
+                    .findFirst()
+                    .orElseThrow(AdapterNotExistException::new);
+            ModelAndView mav =foundAdapter.handle(req, resp, handler);
             mav.render(req, resp);
         } catch (Exception e) {
             logger.error("Exception : {}", e);
@@ -44,7 +51,7 @@ public class DispatcherServlet extends HttpServlet {
         }
     }
 
-    private HandlerExecution getHandler(HttpServletRequest req) {
+    private Object getHandler(HttpServletRequest req) {
         return handlerMappings.stream()
                 .map(handlerMapping -> handlerMapping.getHandler(req))
                 .filter(Objects::nonNull)

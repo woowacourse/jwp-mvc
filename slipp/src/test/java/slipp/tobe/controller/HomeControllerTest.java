@@ -9,6 +9,8 @@ import org.springframework.test.web.reactive.server.EntityExchangeResult;
 import support.test.NsWebTestClient;
 import support.test.NsWebTestServer;
 
+import java.util.HashMap;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class HomeControllerTest {
@@ -21,6 +23,7 @@ public class HomeControllerTest {
         nsWebTestServer.start();
         nsWebTestClient = NsWebTestClient.of(8080);
     }
+
     @Test
     void index() {
         EntityExchangeResult response = nsWebTestClient.getResponse("/");

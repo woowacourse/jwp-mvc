@@ -18,14 +18,14 @@ public class UserController {
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
     @RequestMapping(value = "/users", method = RequestMethod.GET)
-    public ModelAndView get(HttpServletRequest req, HttpServletResponse res) {
+    public String get(HttpServletRequest req, HttpServletResponse res) {
         String userId = req.getParameter("userId");
         User user = DataBase.findUserById(userId);
         if (user == null) {
             throw new UserNotFoundException();
         }
         req.setAttribute("user", user);
-        return new ModelAndView(new JSPView("/user/profile.jsp"));
+        return "/user/profile.jsp";
     }
 
     @RequestMapping(value = "/users", method = RequestMethod.POST)
