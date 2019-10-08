@@ -1,4 +1,4 @@
-package slipp.controller.tobe;
+package slipp.controller;
 
 import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
@@ -6,7 +6,6 @@ import nextstep.mvc.view.RedirectView;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
-import slipp.controller.UserSessionUtils;
 import slipp.domain.User;
 import slipp.support.db.DataBase;
 

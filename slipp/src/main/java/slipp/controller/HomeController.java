@@ -1,4 +1,4 @@
-package slipp.controller.tobe;
+package slipp.controller;
 
 import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;

@@ -18,7 +18,7 @@ public class SlippWebApplicationInitializer implements WebApplicationInitializer
     public void onStartup(ServletContext servletContext) throws ServletException {
         DispatcherServlet dispatcherServlet = new DispatcherServlet(
                 Collections.singletonList(
-                        new AnnotationHandlerMapping("slipp.controller.tobe")
+                        new AnnotationHandlerMapping("slipp.controller")
                 )
         );
 
