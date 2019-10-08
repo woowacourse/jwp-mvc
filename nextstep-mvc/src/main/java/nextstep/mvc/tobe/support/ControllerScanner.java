@@ -11,11 +11,10 @@ import java.util.Set;
 
 public class ControllerScanner {
     private final Map<Class<?>, Object> controllers = new HashMap<>();
-    private final Reflections reflections;
 
     public ControllerScanner(Object... basePackages)
             throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
-        reflections = new Reflections(Arrays.asList(basePackages));
+        Reflections reflections = new Reflections(Arrays.asList(basePackages));
         Set<Class<?>> classes = reflections.getTypesAnnotatedWith(Controller.class);
         for (final Class<?> clazz : classes) {
             controllers.put(clazz, clazz.getDeclaredConstructor().newInstance());
