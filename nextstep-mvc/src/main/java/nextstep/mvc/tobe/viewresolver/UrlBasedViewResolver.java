@@ -18,9 +18,9 @@ public class UrlBasedViewResolver implements ViewResolver {
                 return new RedirectView((String) view);
             }
         }
-//        if (view instanceof View) {
-//            return (View) view;
-//        }
+        if (view instanceof View) {
+            return (View) view;
+        }
         return new JsonView();
     }
 }
