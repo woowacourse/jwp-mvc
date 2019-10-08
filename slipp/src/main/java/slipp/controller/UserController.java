@@ -28,22 +28,22 @@ public class UserController {
     public ModelAndView showProfile(HttpServletRequest req, HttpServletResponse resp) {
         String userId = req.getParameter("userId");
         User user = DataBase.findUserById(userId);
-        if (user == null) {
-            throw new IllegalArgumentException("사용자를 찾을 수 없습니다.");
-        }
+        checkUserExists(user);
 
         ModelAndView modelAndView = new ModelAndView(new JspView("/user/profile.jsp"));
         modelAndView.addObject("user", user);
         return modelAndView;
     }
 
+    private void checkUserExists(final User user) {
+        if (user == null) {
+            throw new IllegalStateException("사용자를 찾을 수 없습니다.");
+        }
+    }
+
     @RequestMapping(value = "/users/updateForm", method = RequestMethod.GET)
     public ModelAndView showUpdateForm(HttpServletRequest req, HttpServletResponse resp) {
-        String userId = req.getParameter("userId");
-        User user = DataBase.findUserById(userId);
-        if (!UserSessionUtils.isSameUser(req.getSession(), user)) {
-            throw new IllegalStateException("다른 사용자의 정보를 수정할 수 없습니다.");
-        }
+        User user = findAuthorizedUser(req);
 
         ModelAndView modelAndView = new ModelAndView(new JspView("/user/updateForm.jsp"));
         modelAndView.addObject("user", user);
@@ -73,10 +73,7 @@ public class UserController {
 
     @RequestMapping(value = "/users/update", method = RequestMethod.POST)
     public ModelAndView updateUser(HttpServletRequest req, HttpServletResponse resp) {
-        User user = DataBase.findUserById(req.getParameter("userId"));
-        if (!UserSessionUtils.isSameUser(req.getSession(), user)) {
-            throw new IllegalStateException("다른 사용자의 정보를 수정할 수 없습니다.");
-        }
+        User user = findAuthorizedUser(req);
 
         User updateUser = new User(req.getParameter("userId"), req.getParameter("password"), req.getParameter("name"),
                 req.getParameter("email"));
@@ -84,5 +81,18 @@ public class UserController {
         user.update(updateUser);
 
         return new ModelAndView(new RedirectView("/"));
+    }
+
+    private User findAuthorizedUser(final HttpServletRequest req) {
+        String userId = req.getParameter("userId");
+        User user = DataBase.findUserById(userId);
+        if (isAuthorizedUser(req, user)) {
+            throw new IllegalStateException("다른 사용자의 정보를 수정할 수 없습니다.");
+        }
+        return user;
+    }
+
+    private boolean isAuthorizedUser(final HttpServletRequest req, final User user) {
+        return !UserSessionUtils.isSameUser(req.getSession(), user);
     }
 }
