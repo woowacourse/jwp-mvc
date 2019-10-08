@@ -10,7 +10,7 @@ public abstract class AbstractHandlerAdapter implements HandlerAdapter {
     }
 
     @Override
-    public boolean apply(Object handler) {
+    public boolean supports(Object handler) {
         Optional.ofNullable(handler)
                 .orElseThrow(() -> new IllegalArgumentException("지원하지 않는 핸들러 입니다."));
         return clazz.isInstance(handler);

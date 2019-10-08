@@ -55,7 +55,7 @@ public class DispatcherServlet extends HttpServlet {
     private ModelAndView handle(HttpServletRequest req, HttpServletResponse resp) throws Exception {
         Object handler = getHandler(req);
         return adapters.stream()
-                .filter(adapter -> adapter.apply(handler))
+                .filter(adapter -> adapter.supports(handler))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("지원하지 않는 형식입니다."))
                 .handle(req, resp, handler);
