@@ -26,8 +26,9 @@ class AnnotationHandlerMappingTest {
         MockHttpServletRequest request = new MockHttpServletRequest("GET", "/users");
         request.setParameter("userId", user.getUserId());
         MockHttpServletResponse response = new MockHttpServletResponse();
-        handlerMapping.execute(request, response);
+        ModelAndView mav = handlerMapping.execute(request, response);
 
+        assertThat(mav.getView()).isEqualTo(new JspView("/user/form"));
         assertThat(request.getAttribute("user")).isEqualTo(user);
     }
 
@@ -38,6 +39,8 @@ class AnnotationHandlerMappingTest {
         request.setParameter("name", user.getName());
         request.setParameter("email", user.getEmail());
         MockHttpServletResponse response = new MockHttpServletResponse();
-        handlerMapping.execute(request, response);
+        ModelAndView mav = handlerMapping.execute(request, response);
+
+        assertThat(mav.getView()).isEqualTo(new RedirectView("/"));
     }
 }
