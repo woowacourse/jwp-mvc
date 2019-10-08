@@ -22,6 +22,14 @@ public class WebTestClient {
                 .baseUrl(baseUrl + ":" + port);
     }
 
+    public static WebTestClient of(int port) {
+        return of(BASE_URL, port);
+    }
+
+    private static WebTestClient of(String baseUrl, int port) {
+        return new WebTestClient(baseUrl, port);
+    }
+
     public WebTestClient basicAuth(String username, String password) {
         this.testClientBuilder = testClientBuilder.filter(basicAuthentication(username, password));
         return this;
@@ -40,14 +48,6 @@ public class WebTestClient {
                 .get()
                 .uri(url)
                 .exchange();
-    }
-
-    public static WebTestClient of(int port) {
-        return of(BASE_URL, port);
-    }
-
-    private static WebTestClient of(String baseUrl, int port) {
-        return new WebTestClient(baseUrl, port);
     }
 
     private <T> BodyInserters.FormInserter<String> createFormData(Class<T> classType, Map<String, String> parameters) {

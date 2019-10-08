@@ -2,7 +2,6 @@ package nextstep.mvc;
 
 import nextstep.mvc.tobe.HandlerExecution;
 import nextstep.mvc.view.ModelAndView;
-import nextstep.mvc.view.View;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
