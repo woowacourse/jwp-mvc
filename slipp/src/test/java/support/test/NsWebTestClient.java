@@ -2,7 +2,6 @@ package support.test;
 
 import org.springframework.test.web.reactive.server.EntityExchangeResult;
 import org.springframework.test.web.reactive.server.WebTestClient;
-import org.springframework.web.reactive.function.BodyInserters;
 import reactor.core.publisher.Mono;
 
 import java.net.URI;
@@ -60,71 +59,11 @@ public class NsWebTestClient {
                 .returnResult().getResponseBody();
     }
 
-    public String getPageResource(String location, String cookie) {
-        byte[] result = testClientBuilder.build()
-                .get()
-                .uri(location)
-                .header("Cookie", cookie)
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody().returnResult().getResponseBody();
-
-        return new String(result);
-    }
-
-    public void signUp() {
-        testClientBuilder.build()
-                .post()
-                .uri("/users/create")
-                .body(BodyInserters.fromFormData("userId", "kjm")
-                .with("password", "password")
-                .with("name", "김정민")
-                .with("email", "kjm@gmail.com"))
-                .exchange()
-                .expectStatus().is3xxRedirection();
-    }
-
     public static NsWebTestClient of(int port) {
         return of(BASE_URL, port);
     }
 
     public static NsWebTestClient of(String baseUrl, int port) {
         return new NsWebTestClient(baseUrl, port);
-    }
-
-    public String logIn(String id, String password) {
-        return testClientBuilder.build()
-                .post()
-                .uri("/users/login")
-                .body(BodyInserters.fromFormData("userId", id)
-                .with("password", password))
-                .exchange()
-                .expectStatus().is3xxRedirection()
-                .returnResult(String.class)
-                .getResponseHeaders()
-                .getFirst("Set-Cookie");
-    }
-
-    public byte[] logInFail(String id, String password) {
-        return testClientBuilder.build()
-                .post()
-                .uri("/users/login")
-                .body(BodyInserters.fromFormData("userId", id)
-                        .with("password", password))
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody()
-                .returnResult()
-                .getResponseBody();
-    }
-
-    public void getFailedPageResource(String location, String cookie) {
-        byte[] result = testClientBuilder.build()
-                .get()
-                .uri(location)
-                .header("Cookie", cookie)
-                .exchange()
-                .expectStatus().is3xxRedirection()
-                .expectBody().returnResult().getResponseBody();
     }
 }
