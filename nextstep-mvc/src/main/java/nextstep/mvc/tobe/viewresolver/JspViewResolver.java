@@ -7,7 +7,8 @@ import nextstep.mvc.tobe.view.View;
 import nextstep.mvc.tobe.viewresolver.exception.ViewNameNotInitializedException;
 
 public class JspViewResolver implements ViewResolver {
-    public static final String JSP_SUFFIX = ".jsp";
+    private static final String JSP_SUFFIX = ".jsp";
+
     private String viewName;
 
     @Override
