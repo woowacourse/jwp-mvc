@@ -8,6 +8,10 @@ import nextstep.mvc.tobe.exception.ObjectMapperException;
 import java.io.IOException;
 
 public class JsonUtils {
+
+    private JsonUtils() {
+    }
+
     public static <T> T toObject(String json, Class<T> clazz) throws ObjectMapperException {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
