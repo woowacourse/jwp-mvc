@@ -5,6 +5,7 @@ import nextstep.mvc.tobe.WebRequest;
 import nextstep.mvc.tobe.WebRequestContext;
 import nextstep.mvc.tobe.adapter.HandlerAdapter;
 import nextstep.mvc.tobe.adapter.HandlerExecutionAdapter;
+import nextstep.mvc.tobe.adapter.ResponseBodyAdapter;
 import nextstep.mvc.tobe.adapter.SimpleControllerAdapter;
 import nextstep.mvc.tobe.exception.HandlerAdapterNotSupportedException;
 import nextstep.mvc.tobe.exception.HandlerNotFoundException;
@@ -37,7 +38,7 @@ public class DispatcherServlet extends HttpServlet {
 
     public DispatcherServlet(HandlerMapping... handlerMappings) {
         this.handlerMappings = Arrays.asList(handlerMappings);
-        this.handlerAdapters = Arrays.asList(new SimpleControllerAdapter(), new HandlerExecutionAdapter());
+        this.handlerAdapters = Arrays.asList(new SimpleControllerAdapter(), new ResponseBodyAdapter(), new HandlerExecutionAdapter());
     }
 
     @Override
@@ -65,7 +66,7 @@ public class DispatcherServlet extends HttpServlet {
             logger.error("not support uri: {} ", req.getRequestURI());
             resp.sendError(SC_NOT_FOUND);
         } catch (Exception e) {
-            logger.error(e.getMessage());
+            logger.error("Exception: {}", e.getMessage());
             resp.sendError(SC_INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
@@ -85,8 +86,12 @@ public class DispatcherServlet extends HttpServlet {
                 .orElseThrow(HandlerAdapterNotSupportedException::new);
     }
 
-    private void move(ModelAndView mav, HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    private void move(ModelAndView mav, HttpServletRequest req, HttpServletResponse resp) throws Exception {
         final String viewName = mav.getViewName();
+        if (viewName == null) {
+            mav.getView().render(mav.getModel(), req, resp);
+            return;
+        }
         if (viewName.startsWith(DEFAULT_REDIRECT_PREFIX)) {
             resp.sendRedirect(viewName.substring(DEFAULT_REDIRECT_PREFIX.length()));
             return;
