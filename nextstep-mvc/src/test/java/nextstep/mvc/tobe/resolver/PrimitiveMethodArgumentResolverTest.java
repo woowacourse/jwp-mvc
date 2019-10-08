@@ -1,8 +1,8 @@
 package nextstep.mvc.tobe.resolver;
 
-import nextstep.mvc.tobe.TestUser;
 import nextstep.mvc.tobe.WebRequest;
 import nextstep.mvc.tobe.WebRequestContext;
+import org.assertj.core.api.Java6Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -15,11 +15,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static org.assertj.core.api.Java6Assertions.assertThat;
-
-class DefaultHandlerMethodArgumentResolverTest {
-    private DefaultHandlerMethodArgumentResolver resolver = new DefaultHandlerMethodArgumentResolver();
-    private Class clazz = DefaultHandlerMethodArgumentResolverTest.class;
+class PrimitiveMethodArgumentResolverTest {
+    private PrimitiveMethodArgumentResolver resolver = new PrimitiveMethodArgumentResolver();
     private Map<Class<?>, Parameter> params;
     private MockHttpServletRequest request;
     private WebRequest webRequest;
@@ -33,9 +30,9 @@ class DefaultHandlerMethodArgumentResolverTest {
 
     @BeforeEach
     void setUp() throws NoSuchMethodException {
-        method = clazz.getDeclaredMethod("sampleWrappers", Long.class, Integer.class, String.class);
+        method = this.getClass().getDeclaredMethod("sampleWrappers", Long.class, Integer.class, String.class);
 
-        params = Stream.of(clazz.getDeclaredMethods())
+        params = Stream.of(this.getClass().getDeclaredMethods())
                 .filter(method -> method.getName().startsWith("sample"))
                 .map(Executable::getParameters)
                 .flatMap(Arrays::stream)
@@ -52,34 +49,6 @@ class DefaultHandlerMethodArgumentResolverTest {
     }
 
     @Test
-    void 모든_필드_생성자_javaBean_매핑() {
-        // given
-        final MethodParameter methodParameter = new MethodParameter(params.get(TestUser.class), "testUser", 1, method);
-
-        // when
-        final TestUser actual = (TestUser) resolver.resolveArgument(webRequest, methodParameter);
-
-        // then
-        assertThat(actual.getUserId()).isEqualTo(userId);
-        assertThat(actual.getPassword()).isEqualTo(password);
-        assertThat(actual.getAge()).isEqualTo(Long.parseLong(age));
-    }
-
-    @Test
-    void 기본생성자만_있는_javaBean_매핑() {
-        // given
-        final MethodParameter methodParameter = new MethodParameter(params.get(OnlyDefaultConstructorJavaBean.class), "javaBean", 1, method);
-
-        // when
-        final OnlyDefaultConstructorJavaBean actual = (OnlyDefaultConstructorJavaBean) resolver.resolveArgument(webRequest, methodParameter);
-
-        // then
-        assertThat(actual.getUserId()).isEqualTo(userId);
-        assertThat(actual.getPassword()).isEqualTo(password);
-        assertThat(actual.getAge()).isEqualTo(Long.parseLong(age));
-    }
-
-    @Test
     void long_매핑() {
         // given
         final MethodParameter methodParameter = new MethodParameter(params.get(long.class), "id", 1, method);
@@ -88,7 +57,7 @@ class DefaultHandlerMethodArgumentResolverTest {
         final Object actual = resolver.resolveArgument(webRequest, methodParameter);
 
         // then
-        assertThat(actual).isEqualTo(Long.parseLong(id));
+        Java6Assertions.assertThat(actual).isEqualTo(Long.parseLong(id));
     }
 
     @Test
@@ -100,7 +69,7 @@ class DefaultHandlerMethodArgumentResolverTest {
         final Object actual = resolver.resolveArgument(webRequest, methodParameter);
 
         // then
-        assertThat(actual).isEqualTo(Integer.parseInt(age));
+        Java6Assertions.assertThat(actual).isEqualTo(Integer.parseInt(age));
     }
 
     @Test
@@ -111,7 +80,7 @@ class DefaultHandlerMethodArgumentResolverTest {
         final Object actual = resolver.resolveArgument(webRequest, methodParameter);
 
         // then
-        assertThat(actual).isEqualTo(Boolean.parseBoolean(bool));
+        Java6Assertions.assertThat(actual).isEqualTo(Boolean.parseBoolean(bool));
     }
 
     @Test
@@ -123,7 +92,7 @@ class DefaultHandlerMethodArgumentResolverTest {
         final Object actual = resolver.resolveArgument(webRequest, methodParameter);
 
         // then
-        assertThat(actual).isEqualTo(Long.parseLong(id));
+        Java6Assertions.assertThat(actual).isEqualTo(Long.parseLong(id));
     }
 
     @Test
@@ -135,7 +104,7 @@ class DefaultHandlerMethodArgumentResolverTest {
         final Object actual = resolver.resolveArgument(webRequest, methodParameter);
 
         // then
-        assertThat(actual).isEqualTo(Integer.parseInt(id));
+        Java6Assertions.assertThat(actual).isEqualTo(Integer.parseInt(id));
     }
 
     @Test
@@ -147,36 +116,13 @@ class DefaultHandlerMethodArgumentResolverTest {
         final Object actual = resolver.resolveArgument(webRequest, methodParameter);
 
         // then
-        assertThat(actual).isEqualTo(userId);
+        Java6Assertions.assertThat(actual).isEqualTo(userId);
     }
 
     void samplePrimitive(final long id, final int age, final boolean bool) {
     }
 
-    void sampleJavaBean(final TestUser testUser, final OnlyDefaultConstructorJavaBean javaBean) {
-    }
 
     void sampleWrappers(final Long id, final Integer age, final String userId) {
-    }
-}
-
-class OnlyDefaultConstructorJavaBean {
-    private String userId;
-    private String password;
-    private int age;
-
-    public OnlyDefaultConstructorJavaBean() {
-    }
-
-    public String getUserId() {
-        return userId;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public int getAge() {
-        return age;
     }
 }

@@ -7,12 +7,13 @@ import java.util.List;
 
 public class HandlerMethodArgumentResolverComposite implements HandlerMethodArgumentResolver {
     private final List<HandlerMethodArgumentResolver> resolvers = new ArrayList<>();
-    private final HandlerMethodArgumentResolver defaultResolver = new DefaultHandlerMethodArgumentResolver();
+    private final HandlerMethodArgumentResolver defaultResolver = new ObjectMethodArgumentResolver();
 
     private HandlerMethodArgumentResolverComposite() {
         resolvers.add(new PathVariableHandlerMethodArgumentResolver());
         resolvers.add(new HttpServletMethodArgumentResolver());
         resolvers.add(new RequestBodyMethodArgumentResolver());
+        resolvers.add(new PrimitiveMethodArgumentResolver());
     }
 
     @Override
@@ -34,7 +35,7 @@ public class HandlerMethodArgumentResolverComposite implements HandlerMethodArgu
         resolvers.add(resolver);
     }
 
-    public static HandlerMethodArgumentResolverComposite getInstance(){
+    public static HandlerMethodArgumentResolverComposite getInstance() {
         return LazyHolder.INSTANCE;
     }
 

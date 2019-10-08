@@ -9,55 +9,46 @@ import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Parameter;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-// todo primitive - javabean 나누기
-public class DefaultHandlerMethodArgumentResolver implements HandlerMethodArgumentResolver {
+public class ObjectMethodArgumentResolver implements HandlerMethodArgumentResolver {
 
     @Override
     public boolean supports(final MethodParameter methodParameter) {
-        return true;
+        return methodParameter.isSameType(Object.class);
     }
 
     @Override
     public Object resolveArgument(final WebRequest webRequest, final MethodParameter methodParameter) {
-        final HttpServletRequest request = webRequest.getRequest();
-        final String value = request.getParameter(methodParameter.getName());
-        final Parameter parameter = methodParameter.getParameter();
-
-        if (TypeConverter.contains(parameter.getType())) {
-            return TypeConverter.to(parameter.getType()).apply(value);
-        }
-
-        return javaBean(request, methodParameter);
-    }
-
-    private Object javaBean(final HttpServletRequest request, final MethodParameter methodParameter) {
         try {
+            final HttpServletRequest request = webRequest.getRequest();
             final Field[] fields = methodParameter.getType().getDeclaredFields();
+            final Optional<Constructor<?>> allArgsConstructor = getAllArgsConstructor(methodParameter, fields);
 
-            final Optional<Constructor<?>> allArgsConstructor = Stream.of(methodParameter.getType().getConstructors())
-                    .filter(x -> x.getParameterCount() == fields.length)
-                    .findAny();
-
-            return allArgsConstructor.isPresent() ?
-                    createAllArgsConstructor(request, fields, allArgsConstructor.get())
-                    : createDefaultConstructor(request, fields, methodParameter);
+            if (allArgsConstructor.isPresent()) {
+                return createByAllArgsConstructor(request, fields, allArgsConstructor.get());
+            }
+            return createByDefaultConstructor(request, fields, methodParameter);
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
             throw new HandlerMethodArgumentResolverException(e.getMessage());
         }
     }
 
-    private Object createAllArgsConstructor(final HttpServletRequest request, final Field[] fields, final Constructor<?> constructor) throws IllegalAccessException, InvocationTargetException, InstantiationException {
+    private Optional<Constructor<?>> getAllArgsConstructor(final MethodParameter methodParameter, final Field[] fields) {
+        return Stream.of(methodParameter.getType().getConstructors())
+                .filter(x -> x.getParameterCount() == fields.length)
+                .findAny();
+    }
+
+    private Object createByAllArgsConstructor(final HttpServletRequest request, final Field[] fields, final Constructor<?> constructor) throws IllegalAccessException, InvocationTargetException, InstantiationException {
         final Object[] values = Stream.of(fields)
                 .map(field -> parseValue(field, request))
                 .toArray();
         return constructor.newInstance(values);
     }
 
-    private Object createDefaultConstructor(final HttpServletRequest request, final Field[] fields, final MethodParameter methodParameter) throws InstantiationException, IllegalAccessException {
+    private Object createByDefaultConstructor(final HttpServletRequest request, final Field[] fields, final MethodParameter methodParameter) throws InstantiationException, IllegalAccessException {
         final Object instance = methodParameter.getType().newInstance();
         for (final Field field : fields) {
             final Object value = parseValue(field, request);
