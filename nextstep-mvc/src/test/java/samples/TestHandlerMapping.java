@@ -1,6 +1,7 @@
 package samples;
 
 import nextstep.mvc.DispatcherServlet;
+import nextstep.mvc.Handler;
 import nextstep.mvc.HandlerMapping;
 import nextstep.mvc.asis.Controller;
 import org.slf4j.Logger;
@@ -26,7 +27,7 @@ public class TestHandlerMapping implements HandlerMapping {
     }
 
     @Override
-    public Object getHandler(HttpServletRequest request) {
+    public Handler getHandler(HttpServletRequest request) {
         return mappings.get(request.getRequestURI());
     }
 

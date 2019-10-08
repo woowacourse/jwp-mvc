@@ -1,6 +1,7 @@
 package slipp;
 
 import nextstep.mvc.DispatcherServlet;
+import nextstep.mvc.Handler;
 import nextstep.mvc.HandlerMapping;
 import nextstep.mvc.asis.Controller;
 import nextstep.mvc.asis.ForwardController;
@@ -36,7 +37,7 @@ public class ManualHandlerMapping implements HandlerMapping {
     }
 
     @Override
-    public Object getHandler(HttpServletRequest request) {
+    public Handler getHandler(HttpServletRequest request) {
         return mappings.get(request.getRequestURI());
     }
 
