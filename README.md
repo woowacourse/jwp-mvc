@@ -23,6 +23,7 @@ ManualHandlerMapping 은 Controller 가 아니라 ControllerAdaptor 를 리턴�
     - HandlerKey 는 건드리지 않고 RequestMapping 만 건드린다. 
     - ControllerScanner 에서 RequestMethod[] 를 처리하는 로직을 추가한다.
 
-- [ ] 컨트롤러의 메서드가 반드시 ModelAndView 를 리턴하진 않아도 된다. String 을 리턴할수도 있고 Object 를 리턴할 수도 있는데 어떻게 대응할 것인지?
+- [x] 컨트롤러의 메서드가 반드시 ModelAndView 를 리턴하진 않아도 된다. String 을 리턴할수도 있고 Object 를 리턴할 수도 있는데 어떻게 대응할 것인지?
     - AnnotationHandlerMapping 이 value 로 HandlerExecution 을 받는데, 이것의 리턴 타입이 ModelAndView 라서 확장이 불가능. Object 로 바꿔야할듯.
+
 - [ ] DispatcherServlet 테스트 코드 작성 (MockHttpServletRequest, MockHttpServletResponse)
