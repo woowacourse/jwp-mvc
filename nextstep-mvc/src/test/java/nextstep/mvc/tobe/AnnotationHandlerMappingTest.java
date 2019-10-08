@@ -3,10 +3,13 @@ package nextstep.mvc.tobe;
 import nextstep.db.DataBase;
 import nextstep.mvc.tobe.handler.HandlerExecution;
 import nextstep.mvc.tobe.mapping.AnnotationHandlerMapping;
+import nextstep.mvc.tobe.support.ControllerScanner;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+
+import java.lang.reflect.InvocationTargetException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -14,7 +17,8 @@ public class AnnotationHandlerMappingTest {
     private AnnotationHandlerMapping handlerMapping;
 
     @BeforeEach
-    public void setup() {
+    public void setup()
+            throws NoSuchMethodException, IllegalAccessException, InstantiationException, InvocationTargetException {
         ControllerScanner controllerScanner = new ControllerScanner("nextstep.mvc.tobe");
         handlerMapping = new AnnotationHandlerMapping(controllerScanner.scan());
         handlerMapping.initialize();
