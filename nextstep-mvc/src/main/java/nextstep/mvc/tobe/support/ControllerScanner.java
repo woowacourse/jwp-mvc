@@ -22,10 +22,6 @@ public class ControllerScanner {
         }
     }
 
-    public Set<Class<?>> scan() {
-        return reflections.getTypesAnnotatedWith(Controller.class);
-    }
-
     public Set<Class<?>> getControllers() {
         return controllers.keySet();
     }

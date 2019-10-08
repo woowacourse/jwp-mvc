@@ -20,7 +20,7 @@ public class AnnotationHandlerMappingTest {
     public void setup()
             throws NoSuchMethodException, IllegalAccessException, InstantiationException, InvocationTargetException {
         ControllerScanner controllerScanner = new ControllerScanner("nextstep.mvc.tobe");
-        handlerMapping = new AnnotationHandlerMapping(controllerScanner.scan());
+        handlerMapping = new AnnotationHandlerMapping(controllerScanner);
         handlerMapping.initialize();
     }
 

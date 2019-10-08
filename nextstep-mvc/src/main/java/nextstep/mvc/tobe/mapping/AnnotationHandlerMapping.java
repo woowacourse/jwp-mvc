@@ -4,6 +4,7 @@ import com.google.common.collect.Maps;
 import nextstep.mvc.HandlerMapping;
 import nextstep.mvc.tobe.handler.HandlerExecution;
 import nextstep.mvc.tobe.handler.HandlerKey;
+import nextstep.mvc.tobe.support.ControllerScanner;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
 import org.slf4j.Logger;
@@ -21,15 +22,17 @@ import java.util.stream.Collectors;
 public class AnnotationHandlerMapping implements HandlerMapping {
     private static final Logger logger = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
-    private final Set<Class<?>> controllers;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions = Maps.newHashMap();
+    private final ControllerScanner scanner;
 
-    public AnnotationHandlerMapping(final Set<Class<?>> controllers) {
-        this.controllers = controllers;
+    public AnnotationHandlerMapping(final ControllerScanner scanner) {
+        this.scanner = scanner;
     }
 
     @Override
     public void initialize() {
+        Set<Class<?>> controllers = scanner.getControllers();
+
         for (final Class clazz : controllers) {
             List<Method> methods = generateMethods(clazz);
             methods.forEach(method -> addHandlerExecutions(clazz, method));
@@ -43,18 +46,20 @@ public class AnnotationHandlerMapping implements HandlerMapping {
                 .collect(Collectors.toList());
     }
 
-    private void addHandlerExecutions(Class clazz, Method method) {
+    private void addHandlerExecutions(Class<?> clazz, Method method) {
         RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
         String url = requestMapping.value()
                 .trim();
         RequestMethod[] requestMethods = requestMapping.method();
+        Object instance = scanner.instantiate(clazz);
 
         if (requestMethods.length == 0) {
             requestMethods = RequestMethod.values();
         }
 
-        Arrays.stream(requestMethods)
-                .forEach(m -> handlerExecutions.put(new HandlerKey(url, m), new HandlerExecution(clazz, method)));
+        for (final RequestMethod requestMethod : requestMethods) {
+            handlerExecutions.put(new HandlerKey(url, requestMethod), new HandlerExecution(instance, method));
+        }
     }
 
     @Override
