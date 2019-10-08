@@ -37,7 +37,9 @@
      - [x] DispatcherServlet 에 적용하기
 - [ ] 성능 측정 ServletFilter 구현해보기
 - [x] /users/{id} - url 요청 가능하게 하기   
-
+- [ ] handlerMappings, adapters 등.. 포장하기
+- [x] 모든 클래스 이름 점검 (ex. HandlerMethodArgumentResolver)
+- [ ] ResponseEntity 직접 구현하기
 ## 추가 미션
 - [ ] 다른 템플릿 엔진 지원하기
 - [ ] 인터셉터 구현하기
