@@ -12,6 +12,7 @@ import slipp.support.db.DataBase;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.util.Objects;
 
 @Controller
 public class LoginController {
@@ -33,13 +34,13 @@ public class LoginController {
             return new ModelAndView(new RedirectView("/"));
         }
 
-        ModelAndView modelAndView = new ModelAndView(new JspView("/user/login.jsp"));
-        modelAndView.addObject("loginFailed", true);
-        return modelAndView;
+        return ModelAndView.ModelAndViewBuilder.of(new JspView("/user/login.jsp"))
+                .append("loginFailed", true)
+                .build();
     }
 
     private boolean isLoginSuccessful(final User user, final String password) {
-        return user != null && user.matchPassword(password);
+        return Objects.nonNull(user) && user.matchPassword(password);
     }
 
     @RequestMapping(value = "/users/logout", method = RequestMethod.GET)

@@ -13,6 +13,7 @@ import slipp.support.db.DataBase;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Objects;
 
 @Controller
 public class UserController {
@@ -30,13 +31,13 @@ public class UserController {
         User user = DataBase.findUserById(userId);
         checkUserExists(user);
 
-        ModelAndView modelAndView = new ModelAndView(new JspView("/user/profile.jsp"));
-        modelAndView.addObject("user", user);
-        return modelAndView;
+        return ModelAndView.ModelAndViewBuilder.of(new JspView("/user/profile.jsp"))
+                .append("user", user)
+                .build();
     }
 
     private void checkUserExists(final User user) {
-        if (user == null) {
+        if (Objects.nonNull(user)) {
             throw new IllegalStateException("사용자를 찾을 수 없습니다.");
         }
     }
@@ -45,9 +46,9 @@ public class UserController {
     public ModelAndView showUpdateForm(HttpServletRequest req, HttpServletResponse resp) {
         User user = findAuthorizedUser(req);
 
-        ModelAndView modelAndView = new ModelAndView(new JspView("/user/updateForm.jsp"));
-        modelAndView.addObject("user", user);
-        return modelAndView;
+        return ModelAndView.ModelAndViewBuilder.of(new JspView("/user/updateForm.jsp"))
+                .append("user", user)
+                .build();
     }
 
     @RequestMapping(value = "/users/create", method = RequestMethod.POST)
@@ -66,9 +67,9 @@ public class UserController {
             return new ModelAndView(new RedirectView("/users/loginForm"));
         }
 
-        ModelAndView modelAndView = new ModelAndView(new JspView("/user/list.jsp"));
-        modelAndView.addObject("users", DataBase.findAll());
-        return modelAndView;
+        return ModelAndView.ModelAndViewBuilder.of(new JspView("/user/list.jsp"))
+                .append("users", DataBase.findAll())
+                .build();
     }
 
     @RequestMapping(value = "/users/update", method = RequestMethod.POST)

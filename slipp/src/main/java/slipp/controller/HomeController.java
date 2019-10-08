@@ -15,8 +15,8 @@ public class HomeController {
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public ModelAndView execute(HttpServletRequest req, HttpServletResponse resp) throws Exception {
-        ModelAndView modelAndView = new ModelAndView(new JspView("home.jsp"));
-        modelAndView.addObject("users", DataBase.findAll());
-        return modelAndView;
+        return ModelAndView.ModelAndViewBuilder.of(new JspView("home.jsp"))
+                .append("users", DataBase.findAll())
+                .build();
     }
 }
