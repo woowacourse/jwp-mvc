@@ -6,25 +6,54 @@ import nextstep.web.support.MediaType;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.Map;
 
 public class JsonView implements View {
     private static final int EMPTY_MODEL_SIZE = 0;
     private static final int SINGLE_DATA_MODEL_SIZE = 1;
 
+    private int status;
+    private String location;
+
     @Override
     public void render(Map<String, ?> model, HttpServletRequest request, HttpServletResponse response) throws Exception {
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
-        ObjectMapper objectMapper = new ObjectMapper();
+        response.setStatus(status);
+
+        setLocation(response);
+        setBody(model, response);
+    }
+
+    public JsonView ok() {
+        this.status = 200;
+        this.location = null;
+        return this;
+    }
+
+    public JsonView created(String location) {
+        this.status = 201;
+        this.location = location;
+        return this;
+    }
+
+    private void setLocation(HttpServletResponse response) {
+        if (location != null) {
+            response.setHeader("Location", location);
+        }
+    }
+
+    private void setBody(Map<String, ?> model, HttpServletResponse response) throws IOException {
         if (model.size() != EMPTY_MODEL_SIZE) {
-            String content = objectToJson(model, objectMapper);
+            String content = objectToJson(model);
             response.getWriter().write(content);
             response.getWriter().flush();
             response.getWriter().close();
         }
     }
 
-    private String objectToJson(Map<String, ?> model, ObjectMapper objectMapper) throws JsonProcessingException {
+    private String objectToJson(Map<String, ?> model) throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
         return model.size() == SINGLE_DATA_MODEL_SIZE ?
                 objectMapper.writeValueAsString(getSingleData(model)) : objectMapper.writeValueAsString(model);
     }
