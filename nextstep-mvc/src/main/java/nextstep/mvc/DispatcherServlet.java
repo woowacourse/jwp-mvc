@@ -2,7 +2,7 @@ package nextstep.mvc;
 
 import javassist.NotFoundException;
 import nextstep.mvc.tobe.HandlerResolver;
-import nextstep.mvc.tobe.ModelAndView;
+import nextstep.mvc.tobe.view.ModelAndView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
