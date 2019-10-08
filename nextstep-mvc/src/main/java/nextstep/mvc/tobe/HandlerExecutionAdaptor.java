@@ -11,6 +11,16 @@ public class HandlerExecutionAdaptor implements HandlerAdaptor {
 
     @Override
     public ModelAndView handle(HttpServletRequest req, HttpServletResponse resp, Object handler) throws Exception {
-        return ((HandlerExecution) handler).handle(req, resp);
+        Object view = ((HandlerExecution) handler).handle(req, resp);
+
+        if(view instanceof String) {
+            return new ModelAndView(new JSPView((String)view));
+        }
+
+        if(view instanceof ModelAndView) {
+            return (ModelAndView) view;
+        }
+
+        throw new UnsupportedViewException();
     }
 }

@@ -5,5 +5,5 @@ import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.InvocationTargetException;
 
 public interface HandlerExecution {
-    ModelAndView handle(HttpServletRequest request, HttpServletResponse response) throws InvocationTargetException, IllegalAccessException;
+    Object handle(HttpServletRequest request, HttpServletResponse response) throws InvocationTargetException, IllegalAccessException;
 }
