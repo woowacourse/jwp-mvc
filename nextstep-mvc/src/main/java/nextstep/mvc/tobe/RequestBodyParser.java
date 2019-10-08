@@ -17,6 +17,8 @@ public class RequestBodyParser {
     private static final String DELIMITER_OF_REQUEST_KEY_AND_VALUE = ":";
     private static final String START_BRACKET = "{";
     private static final String END_BRACKET = "}";
+    private static final String DOUBLE_QUOTATION = "\"";
+    private static final String EMPTY = "";
 
     public static Map<String, String> parse(HttpServletRequest request) {
         Map<String, String> body = Maps.newHashMap();
@@ -36,7 +38,7 @@ public class RequestBodyParser {
     }
 
     private static String extractBody(String body) {
-        body = body.replaceAll("\"", "");
+        body = body.replaceAll(DOUBLE_QUOTATION, EMPTY);
         int startIndex = body.indexOf(START_BRACKET);
         int endIndex = body.indexOf(END_BRACKET);
 
