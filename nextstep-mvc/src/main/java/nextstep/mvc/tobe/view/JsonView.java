@@ -8,15 +8,26 @@ import org.springframework.http.MediaType;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
+import java.util.HashMap;
 import java.util.Map;
 
 public class JsonView implements View {
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+    private final Map<String, Object> model;
+
+    public JsonView() {
+        model = new HashMap<>();
+    }
+
+    public JsonView(final Object body) {
+        model = OBJECT_MAPPER.convertValue(body, Map.class);
+    }
 
     @Override
     public void render(final Map<String, ?> model, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
 
+        this.model.putAll(model);
         final PrintWriter writer = response.getWriter();
         writer.println(convert(model));
         writer.flush();
