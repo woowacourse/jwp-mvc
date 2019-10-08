@@ -3,7 +3,7 @@ package slipp.controller;
 import nextstep.mvc.asis.Controller;
 import nextstep.mvc.tobe.view.JspView;
 import nextstep.mvc.tobe.ModelAndView;
-import nextstep.mvc.tobe.RedirectView;
+import nextstep.mvc.tobe.view.RedirectView;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
 import slipp.domain.User;

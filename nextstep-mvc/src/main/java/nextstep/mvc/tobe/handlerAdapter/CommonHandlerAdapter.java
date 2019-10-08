@@ -1,10 +1,20 @@
 package nextstep.mvc.tobe.handlerAdapter;
 
 import nextstep.mvc.tobe.HandlerExecution;
+import nextstep.mvc.tobe.ModelAndView;
 
-public class CommonHandlerAdapter implements HandlerAdapter{
-    public boolean canAdapt(Object handler){
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+public class CommonHandlerAdapter implements HandlerAdapter {
+    @Override
+    public boolean canAdapt(Object handler) {
         return handler instanceof HandlerExecution;
+    }
+
+    @Override
+    public ModelAndView adapt(Object handler, HttpServletRequest req, HttpServletResponse resp) throws Exception {
+        return (ModelAndView) handler;
     }
 }
 
