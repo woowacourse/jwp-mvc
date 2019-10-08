@@ -22,7 +22,7 @@ public class UserController {
 
     @RequestMapping(value = "/users/form", method = RequestMethod.GET)
     public String createForm() {
-        return "/user/form.jsp";
+        return "/user/form";
     }
 
     @RequestMapping(value = "/users/create", method = RequestMethod.POST)
@@ -41,7 +41,7 @@ public class UserController {
         if (user == null) {
             throw new NullPointerException("사용자를 찾을 수 없습니다.");
         }
-        return new ModelAndView("/user/profile.jsp").addObject("user", user);
+        return new ModelAndView("/user/profile").addObject("user", user);
     }
 
     @RequestMapping(value = "/users", method = RequestMethod.GET)
@@ -51,7 +51,7 @@ public class UserController {
         }
 
         final Collection<User> users = DataBase.findAll();
-        return new ModelAndView("/user/list.jsp").addObject("users", users);
+        return new ModelAndView("/user/list").addObject("users", users);
     }
 
     @RequestMapping(value = "/users/updateForm", method = RequestMethod.GET)
@@ -60,7 +60,7 @@ public class UserController {
         if (!UserSessionUtils.isSameUser(req.getSession(), user)) {
             throw new IllegalStateException("다른 사용자의 정보를 수정할 수 없습니다.");
         }
-        return new ModelAndView("/user/updateForm.jsp").addObject("user", user);
+        return new ModelAndView("/user/updateForm").addObject("user", user);
     }
 
     @RequestMapping(value = "/users/update", method = RequestMethod.PUT)

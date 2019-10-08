@@ -14,6 +14,6 @@ public class HomeControllerr {
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public String index(HttpServletRequest req, HttpServletResponse resp) throws Exception {
         req.setAttribute("users", DataBase.findAll());
-        return "home.jsp";
+        return "home";
     }
 }
