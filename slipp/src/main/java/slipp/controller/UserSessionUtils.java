@@ -1,4 +1,4 @@
-package slipp.annotationcontroller;
+package slipp.controller;
 
 import slipp.domain.User;
 
