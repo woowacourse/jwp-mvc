@@ -1,6 +1,5 @@
 package slipp.controller;
 
-import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
@@ -16,6 +15,6 @@ public class LogoutController {
     public ModelAndView execute(HttpServletRequest req, HttpServletResponse resp) {
         HttpSession session = req.getSession();
         session.removeAttribute(UserSessionUtils.USER_SESSION_KEY);
-        return new ModelAndView(new JspView("redirect:/"));
+        return new ModelAndView("redirect:/");
     }
 }

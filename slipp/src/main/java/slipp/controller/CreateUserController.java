@@ -1,6 +1,5 @@
 package slipp.controller;
 
-import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
@@ -19,11 +18,11 @@ public class CreateUserController {
 
     @RequestMapping(value = "/users/create", method = RequestMethod.POST)
     public ModelAndView execute(HttpServletRequest req, HttpServletResponse resp) {
+        ModelAndView modelAndView = new ModelAndView("redirect:/");
         User user = new User(req.getParameter("userId"), req.getParameter("password"), req.getParameter("name"),
                 req.getParameter("email"));
         log.debug("User : {}", user);
-
         DataBase.addUser(user);
-        return new ModelAndView(new JspView("redirect:/"));
+        return modelAndView;
     }
 }

@@ -1,6 +1,5 @@
 package slipp.controller;
 
-import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
@@ -21,6 +20,6 @@ public class ProfileController {
             throw new NullPointerException("사용자를 찾을 수 없습니다.");
         }
         req.setAttribute("user", user);
-        return new ModelAndView(new JspView("/user/profile.jsp"));
+        return new ModelAndView("/user/profile.jsp");
     }
 }

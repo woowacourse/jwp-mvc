@@ -1,6 +1,5 @@
 package slipp.controller;
 
-import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
@@ -13,11 +12,11 @@ import javax.servlet.http.HttpServletResponse;
 public class UserController {
     @RequestMapping(value = "/users/form", method = RequestMethod.GET)
     public ModelAndView showUserForm(HttpServletRequest req, HttpServletResponse resp) {
-        return new ModelAndView(new JspView("/user/form.jsp"));
+        return new ModelAndView("/user/form.jsp");
     }
 
     @RequestMapping(value = "/users/loginForm", method = RequestMethod.GET)
     public ModelAndView showLoginForm(HttpServletRequest req, HttpServletResponse resp) {
-        return new ModelAndView(new JspView("/user/login.jsp"));
+        return new ModelAndView("/user/login.jsp");
     }
 }

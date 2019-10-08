@@ -1,6 +1,5 @@
 package slipp.controller;
 
-import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
@@ -28,6 +27,6 @@ public class UpdateUserController {
                 req.getParameter("email"));
         log.debug("Update User : {}", updateUser);
         user.update(updateUser);
-        return new ModelAndView(new JspView("redirect:/"));
+        return new ModelAndView("redirect:/");
     }
 }
