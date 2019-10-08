@@ -1,11 +1,13 @@
 package nextstep.mvc;
 
-import nextstep.mvc.tobe.exception.HandlerAdapterNotSupportedException;
-import nextstep.mvc.tobe.exception.HandlerNotFoundException;
+import nextstep.mvc.tobe.ModelAndView;
+import nextstep.mvc.tobe.WebRequest;
+import nextstep.mvc.tobe.WebRequestContext;
 import nextstep.mvc.tobe.adapter.HandlerAdapter;
 import nextstep.mvc.tobe.adapter.HandlerExecutionAdapter;
-import nextstep.mvc.tobe.ModelAndView;
 import nextstep.mvc.tobe.adapter.SimpleControllerAdapter;
+import nextstep.mvc.tobe.exception.HandlerAdapterNotSupportedException;
+import nextstep.mvc.tobe.exception.HandlerNotFoundException;
 import nextstep.mvc.tobe.mapping.HandlerMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,14 +49,16 @@ public class DispatcherServlet extends HttpServlet {
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
             logger.debug("Method : {}, Request URI : {}", req.getMethod(), req.getRequestURI());
+            final WebRequest webRequest = new WebRequestContext(req, resp);
 
             final Object handler = getHandler(req);
 
             final HandlerAdapter handlerAdapter = getHandlerAdapter(handler);
 
-            final ModelAndView mav = handlerAdapter.handle(req, resp, handler);
+            final ModelAndView mav = handlerAdapter.handle(webRequest, handler);
 
             // TODO ViewResolver (2단계)
+
             move(mav, req, resp);
 
         } catch (HandlerNotFoundException e) {
@@ -89,5 +93,13 @@ public class DispatcherServlet extends HttpServlet {
         }
         RequestDispatcher rd = req.getRequestDispatcher(viewName);
         rd.forward(req, resp);
+    }
+
+    public void addHandlerMapping(final HandlerMapping handlerMapping) {
+        handlerMappings.add(handlerMapping);
+    }
+
+    public void addHandlerAdapter(final HandlerAdapter handlerAdapter) {
+        handlerAdapters.add(handlerAdapter);
     }
 }

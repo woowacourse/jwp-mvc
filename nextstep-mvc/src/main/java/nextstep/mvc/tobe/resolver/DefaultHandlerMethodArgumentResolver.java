@@ -1,14 +1,19 @@
 package nextstep.mvc.tobe.resolver;
 
 
+import nextstep.mvc.tobe.WebRequest;
 import nextstep.mvc.tobe.exception.HandlerMethodArgumentResolverException;
 import nextstep.utils.TypeConverter;
 
 import javax.servlet.http.HttpServletRequest;
-import java.lang.reflect.*;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Parameter;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+// todo primitive - javabean 나누기
 public class DefaultHandlerMethodArgumentResolver implements HandlerMethodArgumentResolver {
 
     @Override
@@ -17,7 +22,8 @@ public class DefaultHandlerMethodArgumentResolver implements HandlerMethodArgume
     }
 
     @Override
-    public Object resolveArgument(final HttpServletRequest request, final MethodParameter methodParameter) {
+    public Object resolveArgument(final WebRequest webRequest, final MethodParameter methodParameter) {
+        final HttpServletRequest request = webRequest.getRequest();
         final String value = request.getParameter(methodParameter.getName());
         final Parameter parameter = methodParameter.getParameter();
 

@@ -2,16 +2,14 @@ package nextstep.mvc.tobe.adapter;
 
 import nextstep.mvc.asis.Controller;
 import nextstep.mvc.tobe.ModelAndView;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import nextstep.mvc.tobe.WebRequest;
 
 public class SimpleControllerAdapter implements HandlerAdapter {
 
     @Override
-    public ModelAndView handle(final HttpServletRequest req, final HttpServletResponse resp, final Object handler) throws Exception {
+    public ModelAndView handle(final WebRequest webRequest, final Object handler) throws Exception {
         final Controller controller = (Controller) handler;
-        final String viewName = String.valueOf((controller.execute(req, resp)));
+        final String viewName = String.valueOf((controller.execute(webRequest.getRequest(), webRequest.getResponse())));
         return new ModelAndView(viewName);
     }
 

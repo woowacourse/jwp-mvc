@@ -1,6 +1,8 @@
 package nextstep.mvc.tobe.resolver;
 
 import nextstep.mvc.tobe.TestUser;
+import nextstep.mvc.tobe.WebRequest;
+import nextstep.mvc.tobe.WebRequestContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -20,6 +22,7 @@ class DefaultHandlerMethodArgumentResolverTest {
     private Class clazz = DefaultHandlerMethodArgumentResolverTest.class;
     private Map<Class<?>, Parameter> params;
     private MockHttpServletRequest request;
+    private WebRequest webRequest;
     private Method method;
 
     private String id = "1";
@@ -44,6 +47,8 @@ class DefaultHandlerMethodArgumentResolverTest {
         request.addParameter("id", id);
         request.addParameter("age", age);
         request.addParameter("bool", bool);
+
+        webRequest = new WebRequestContext(request, null);
     }
 
     @Test
@@ -52,7 +57,7 @@ class DefaultHandlerMethodArgumentResolverTest {
         final MethodParameter methodParameter = new MethodParameter(params.get(TestUser.class), "testUser", 1, method);
 
         // when
-        final TestUser actual = (TestUser) resolver.resolveArgument(request, methodParameter);
+        final TestUser actual = (TestUser) resolver.resolveArgument(webRequest, methodParameter);
 
         // then
         assertThat(actual.getUserId()).isEqualTo(userId);
@@ -66,7 +71,7 @@ class DefaultHandlerMethodArgumentResolverTest {
         final MethodParameter methodParameter = new MethodParameter(params.get(OnlyDefaultConstructorJavaBean.class), "javaBean", 1, method);
 
         // when
-        final OnlyDefaultConstructorJavaBean actual = (OnlyDefaultConstructorJavaBean) resolver.resolveArgument(request, methodParameter);
+        final OnlyDefaultConstructorJavaBean actual = (OnlyDefaultConstructorJavaBean) resolver.resolveArgument(webRequest, methodParameter);
 
         // then
         assertThat(actual.getUserId()).isEqualTo(userId);
@@ -80,7 +85,7 @@ class DefaultHandlerMethodArgumentResolverTest {
         final MethodParameter methodParameter = new MethodParameter(params.get(long.class), "id", 1, method);
 
         // when
-        final Object actual = resolver.resolveArgument(request, methodParameter);
+        final Object actual = resolver.resolveArgument(webRequest, methodParameter);
 
         // then
         assertThat(actual).isEqualTo(Long.parseLong(id));
@@ -92,7 +97,7 @@ class DefaultHandlerMethodArgumentResolverTest {
         final MethodParameter methodParameter = new MethodParameter(params.get(int.class), "age", 1, method);
 
         // when
-        final Object actual = resolver.resolveArgument(request, methodParameter);
+        final Object actual = resolver.resolveArgument(webRequest, methodParameter);
 
         // then
         assertThat(actual).isEqualTo(Integer.parseInt(age));
@@ -103,7 +108,7 @@ class DefaultHandlerMethodArgumentResolverTest {
         // given
         final MethodParameter methodParameter = new MethodParameter(params.get(boolean.class), "bool", 1, method);
         // when
-        final Object actual = resolver.resolveArgument(request, methodParameter);
+        final Object actual = resolver.resolveArgument(webRequest, methodParameter);
 
         // then
         assertThat(actual).isEqualTo(Boolean.parseBoolean(bool));
@@ -115,7 +120,7 @@ class DefaultHandlerMethodArgumentResolverTest {
         final MethodParameter methodParameter = new MethodParameter(params.get(Long.class), "id", 1, method);
 
         // when
-        final Object actual = resolver.resolveArgument(request, methodParameter);
+        final Object actual = resolver.resolveArgument(webRequest, methodParameter);
 
         // then
         assertThat(actual).isEqualTo(Long.parseLong(id));
@@ -127,7 +132,7 @@ class DefaultHandlerMethodArgumentResolverTest {
         final MethodParameter methodParameter = new MethodParameter(params.get(Integer.class), "id", 1, method);
 
         // when
-        final Object actual = resolver.resolveArgument(request, methodParameter);
+        final Object actual = resolver.resolveArgument(webRequest, methodParameter);
 
         // then
         assertThat(actual).isEqualTo(Integer.parseInt(id));
@@ -139,7 +144,7 @@ class DefaultHandlerMethodArgumentResolverTest {
         final MethodParameter methodParameter = new MethodParameter(params.get(String.class), "userId", 1, method);
 
         // when
-        final Object actual = resolver.resolveArgument(request, methodParameter);
+        final Object actual = resolver.resolveArgument(webRequest, methodParameter);
 
         // then
         assertThat(actual).isEqualTo(userId);
