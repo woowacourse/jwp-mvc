@@ -14,18 +14,20 @@ import slipp.support.db.DataBase;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
+import java.util.Objects;
 
 @Controller
 public class UserController {
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
 
     @RequestMapping(value = "/users/create", method = RequestMethod.POST)
-    public ModelAndView save(HttpServletRequest req, HttpServletResponse res) {
+    public ModelAndView save(HttpServletRequest request, HttpServletResponse response) {
+        Map<String, String> body = RequestBodyParser.parse(request);
         User user = new User(
-                req.getParameter("userId"),
-                req.getParameter("password"),
-                req.getParameter("name"),
-                req.getParameter("email"));
+                body.get("userId"),
+                body.get("password"),
+                body.get("name"),
+                body.get("email"));
 
         DataBase.addUser(user);
         return new ModelAndView(new JspView("redirect:/"));
@@ -66,19 +68,18 @@ public class UserController {
 
     @RequestMapping(value = "/users/update", method = RequestMethod.POST)
     public ModelAndView update(HttpServletRequest request, HttpServletResponse response) {
-        String userId = request.getParameter("userId");
-        User user = DataBase.findUserById(userId);
         Map<String, String> body = RequestBodyParser.parse(request);
+        User user = DataBase.findUserById(body.get("userId"));
 
         if (!UserSessionUtils.isSameUser(request.getSession(), user)) {
             throw new IllegalStateException("다른 사용자의 정보를 수정할 수 없습니다.");
         }
 
         User updatedUser = new User(
-                userId,
-                body.get("password"),
-                body.get("name"),
-                body.get("email"));
+                body.get("userId"),
+                Objects.isNull(body.get("password")) ? user.getPassword() : body.get("password"),
+                Objects.isNull(body.get("name")) ? user.getName() : body.get("name"),
+                Objects.isNull(body.get("email")) ? user.getEmail() : body.get("email"));
 
         log.debug("Update User : {}", updatedUser);
         user.update(updatedUser);

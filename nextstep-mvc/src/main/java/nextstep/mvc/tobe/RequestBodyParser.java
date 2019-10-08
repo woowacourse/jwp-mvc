@@ -13,8 +13,8 @@ import java.util.Map;
 
 public class RequestBodyParser {
     private static final Logger logger = LoggerFactory.getLogger(RequestBodyParser.class);
-    private static final String DELIMITER_OF_REQUEST_BODY = ",";
-    private static final String DELIMITER_OF_REQUEST_KEY_AND_VALUE = ":";
+    private static final String DELIMITER_OF_REQUEST_BODY = "&";
+    private static final String DELIMITER_OF_REQUEST_KEY_AND_VALUE = "=";
     private static final String START_BRACKET = "{";
     private static final String END_BRACKET = "}";
     private static final String DOUBLE_QUOTATION = "\"";
@@ -29,7 +29,9 @@ public class RequestBodyParser {
 
             for (String token : tokens) {
                 String[] split = token.split(DELIMITER_OF_REQUEST_KEY_AND_VALUE);
-                body.put(split[0], split[1]);
+                if (split.length == 2) {
+                    body.put(split[0], split[1]);
+                }
             }
         } catch (IOException e) {
             logger.debug(e.getMessage());
@@ -38,10 +40,6 @@ public class RequestBodyParser {
     }
 
     private static String extractBody(String body) {
-        body = body.replaceAll(DOUBLE_QUOTATION, EMPTY);
-        int startIndex = body.indexOf(START_BRACKET);
-        int endIndex = body.indexOf(END_BRACKET);
-
-        return body.substring(startIndex + 1, endIndex);
+        return body.replaceAll(DOUBLE_QUOTATION, EMPTY);
     }
 }
