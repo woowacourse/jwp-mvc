@@ -1,11 +1,15 @@
 package slipp.controller;
 
+import org.apache.catalina.LifecycleException;
+import org.apache.catalina.startup.Tomcat;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import support.test.NsWebTestClient;
+
+import java.io.File;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -16,6 +20,22 @@ public class AnnotatedControllerAcceptanceTest {
 
     @BeforeEach
     void setUp() {
+        new Thread(() -> {
+            String webappDirLocation = "webapp/";
+            Tomcat tomcat = new Tomcat();
+            tomcat.setPort(8080);
+
+            tomcat.addWebapp("/", new File(webappDirLocation).getAbsolutePath());
+            logger.info("configuring app with basedir: {}", new File("./" + webappDirLocation).getAbsolutePath());
+
+            try {
+                tomcat.start();
+            } catch (LifecycleException e) {
+                e.printStackTrace();
+            }
+            tomcat.getServer().await();
+        }).start();
+
         client = NsWebTestClient.of(8080);
     }
 
