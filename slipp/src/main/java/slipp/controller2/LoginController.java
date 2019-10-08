@@ -4,7 +4,6 @@ import nextstep.mvc.tobe.ModelAndView;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
-import slipp.controller.UserSessionUtils;
 import slipp.domain.User;
 import slipp.support.db.DataBase;
 

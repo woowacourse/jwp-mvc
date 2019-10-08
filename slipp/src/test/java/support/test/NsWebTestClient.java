@@ -11,7 +11,7 @@ import static org.springframework.web.reactive.function.client.ExchangeFilterFun
 
 public class NsWebTestClient {
     private static final String BASE_URL = "http://localhost";
-    private static final String JSESSIONID = "JSESSIONID";
+    public static final String JSESSIONID = "JSESSIONID";
 
     private String baseUrl = BASE_URL;
     private int port;
@@ -75,6 +75,22 @@ public class NsWebTestClient {
                 .expectBody()
                 .returnResult()
                 .getResponseCookies().get(JSESSIONID).get(0).getValue();
+    }
+
+    public WebTestClient.RequestBodyUriSpec post() {
+        return testClientBuilder.build().post();
+    }
+
+    public WebTestClient.RequestHeadersUriSpec<?> get() {
+        return testClientBuilder.build().get();
+    }
+
+    public WebTestClient.RequestBodyUriSpec put() {
+        return testClientBuilder.build().put();
+    }
+
+    public WebTestClient.RequestHeadersUriSpec<?> delete() {
+        return testClientBuilder.build().delete();
     }
 
     public static NsWebTestClient of(int port) {

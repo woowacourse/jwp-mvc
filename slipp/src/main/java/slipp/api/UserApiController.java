@@ -4,7 +4,7 @@ import nextstep.web.annotation.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
-import slipp.controller.UserSessionUtils;
+import slipp.controller2.UserSessionUtils;
 import slipp.domain.User;
 import slipp.dto.UserCreatedDto;
 import slipp.dto.UserUpdatedDto;
