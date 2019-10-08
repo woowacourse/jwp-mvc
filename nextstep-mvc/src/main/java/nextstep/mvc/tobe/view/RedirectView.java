@@ -10,11 +10,15 @@ public class RedirectView implements View {
     private String viewName;
 
     public RedirectView(String viewName) {
+        if (viewName.startsWith(DEFAULT_REDIRECT_PREFIX)) {
+            this.viewName = viewName.substring(DEFAULT_REDIRECT_PREFIX.length());
+            return;
+        }
         this.viewName = viewName;
     }
 
     @Override
     public void render(Map<String, ?> model, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        response.sendRedirect(viewName.substring(DEFAULT_REDIRECT_PREFIX.length()));
+        response.sendRedirect(viewName);
     }
 }
