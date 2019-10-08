@@ -2,6 +2,7 @@ package nextstep.mvc.tobe;
 
 import com.google.common.collect.Maps;
 import nextstep.mvc.HandlerMapping;
+import nextstep.mvc.exception.AnnotationScanFailException;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
@@ -64,7 +65,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     private void addHandlerKey(Object controllerInstance, Method method, String url, RequestMethod[] requestMethods) {
         for (RequestMethod requestMethod : requestMethods) {
             HandlerKey key = new HandlerKey(url, requestMethod);
-            handlerExecutions.put(key, (req, res) ->  method.invoke(controllerInstance, req, res));
+            handlerExecutions.put(key, (req, res) -> method.invoke(controllerInstance, req, res));
         }
     }
 

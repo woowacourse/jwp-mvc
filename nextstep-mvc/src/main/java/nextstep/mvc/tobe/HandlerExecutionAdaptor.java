@@ -1,5 +1,7 @@
 package nextstep.mvc.tobe;
 
+import nextstep.mvc.exception.UnsupportedViewException;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -13,11 +15,11 @@ public class HandlerExecutionAdaptor implements HandlerAdaptor {
     public ModelAndView handle(HttpServletRequest req, HttpServletResponse resp, Object handler) throws Exception {
         Object view = ((HandlerExecution) handler).handle(req, resp);
 
-        if(view instanceof String) {
-            return new ModelAndView(new JSPView((String)view));
+        if (view instanceof String) {
+            return new ModelAndView(new JSPView((String) view));
         }
 
-        if(view instanceof ModelAndView) {
+        if (view instanceof ModelAndView) {
             return (ModelAndView) view;
         }
 

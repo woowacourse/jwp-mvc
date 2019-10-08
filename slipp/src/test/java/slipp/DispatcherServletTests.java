@@ -5,9 +5,9 @@ import nextstep.mvc.HandlerMapping;
 import nextstep.mvc.tobe.AnnotationHandlerMapping;
 import nextstep.mvc.tobe.ControllerHandlerAdaptor;
 import nextstep.mvc.tobe.HandlerAdaptor;
-import nextstep.mvc.tobe.HandlerAdapterNotFoundException;
+import nextstep.mvc.exception.HandlerAdapterNotFoundException;
 import nextstep.mvc.tobe.HandlerExecutionAdaptor;
-import nextstep.mvc.tobe.HandlerNotExistException;
+import nextstep.mvc.exception.HandlerNotExistException;
 import nextstep.web.annotation.RequestMethod;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.assertj.core.api.Java6Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
@@ -34,7 +35,6 @@ public class DispatcherServletTests {
         mockHttpServletResponse = new MockHttpServletResponse();
     }
 
-
     @Test
     void service() throws ServletException, IOException {
         dispatcherServlet = new DispatcherServlet(Arrays.asList(new ControllerHandlerAdaptor(), new HandlerExecutionAdaptor()),
@@ -43,6 +43,7 @@ public class DispatcherServletTests {
 
         makeRequest();
         dispatcherServlet.service(mockHttpServletRequest, mockHttpServletResponse);
+        assertThat(mockHttpServletResponse.getStatus()).isEqualTo(200);
     }
 
     @Test
