@@ -2,6 +2,7 @@ package slipp;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import javax.servlet.http.HttpServletRequest;
 
 import nextstep.mvc.HandlerMapping;
@@ -29,6 +30,11 @@ public class ManualHandlerMapping implements HandlerMapping {
         mappings.keySet().forEach(path -> {
             logger.info("Path : {}, Controller : {}", path, mappings.get(path).getClass());
         });
+    }
+
+    @Override
+    public boolean isSupports(HttpServletRequest request) {
+        return Objects.nonNull(mappings.get(request.getRequestURI()));
     }
 
     @Override

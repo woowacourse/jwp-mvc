@@ -31,6 +31,14 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         }
     }
 
+    @Override
+    public boolean isSupports(HttpServletRequest request) {
+       return handlerExecutions.keySet()
+                .stream()
+                .anyMatch(key -> key.isSameUrl(request.getRequestURI()));
+    }
+
+
     private void appendHandlerExecutions(final Class<?> clazz) {
         Set<Method> methods = ReflectionUtils.getAllMethods(clazz, ReflectionUtils.withAnnotation(RequestMapping.class));
 
