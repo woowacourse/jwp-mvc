@@ -1,6 +1,5 @@
 package nextstep.mvc.tobe;
 
-import nextstep.mvc.Handler;
 import nextstep.mvc.HandlerAdapter;
 import nextstep.mvc.tobe.handlermapping.HandlerExecution;
 import nextstep.mvc.tobe.view.ModelAndView;

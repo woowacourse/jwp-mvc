@@ -1,23 +1,17 @@
 package nextstep.mvc;
 
-import nextstep.mvc.asis.Controller;
 import nextstep.mvc.tobe.HandlerAdapterManager;
 import nextstep.mvc.tobe.HandlerMappingManager;
-import nextstep.mvc.tobe.view.ModelAndView;
 import nextstep.mvc.tobe.View;
-import nextstep.mvc.tobe.exception.BadRequestException;
-import nextstep.mvc.tobe.handlermapping.HandlerExecution;
+import nextstep.mvc.tobe.view.ModelAndView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
