@@ -1,8 +1,7 @@
 package nextstep.mvc.tobe;
 
 import java.lang.reflect.Method;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import javax.servlet.http.HttpServletRequest;
 
 import com.google.common.collect.Maps;
@@ -33,7 +32,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     @Override
     public boolean isSupports(HttpServletRequest request) {
-       return handlerExecutions.keySet()
+        return handlerExecutions.keySet()
                 .stream()
                 .anyMatch(key -> key.isSameUrl(request.getRequestURI()));
     }
@@ -43,21 +42,43 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         Set<Method> methods = ReflectionUtils.getAllMethods(clazz, ReflectionUtils.withAnnotation(RequestMapping.class));
 
         for (Method method : methods) {
-            HandlerKey handlerKey = createHandlerKey(method);
+            List<HandlerKey> handlerKeys = createHandlerKeys(method);
 
-            HandlerExecution handlerExecution
-                    = (request, response) -> (ModelAndView) method.invoke(clazz.newInstance(), request, response);
+            for (HandlerKey key : handlerKeys) {
+                HandlerExecution handlerExecution
+                        = (request, response) -> (ModelAndView) method.invoke(clazz.newInstance(), request, response);
 
-            checkDuplicateRequestMapping(handlerKey);
-            handlerExecutions.put(handlerKey, handlerExecution);
+                checkDuplicateRequestMapping(key);
+                handlerExecutions.put(key, handlerExecution);
+            }
         }
     }
 
-    private HandlerKey createHandlerKey(final Method method) {
+    private List<HandlerKey> createHandlerKeys(final Method method) {
         RequestMapping annotation = method.getAnnotation(RequestMapping.class);
         String url = annotation.value();
-        RequestMethod requestMethod = annotation.method();
-        return new HandlerKey(url, requestMethod);
+        RequestMethod[] requestMethods = annotation.method();
+
+        if (doseNotExistsRequestMethod(requestMethods)) {
+            return addAllRequestMethod(url);
+        }
+
+        List<HandlerKey> handlerKeys = new ArrayList<>();
+        for (RequestMethod requestMethod : requestMethods) {
+            handlerKeys.add(new HandlerKey(url, requestMethod));
+        }
+        return handlerKeys;
+    }
+
+    private boolean doseNotExistsRequestMethod(RequestMethod[] requestMethods) {
+        return requestMethods.length == 0;
+    }
+
+    private List<HandlerKey> addAllRequestMethod(String url) {
+        List<HandlerKey> handlerKeys = new ArrayList<>();
+        Arrays.stream(RequestMethod.values())
+                .forEach(method -> handlerKeys.add(new HandlerKey(url, method)));
+        return handlerKeys;
     }
 
     private void checkDuplicateRequestMapping(final HandlerKey handlerKey) {
