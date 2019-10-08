@@ -39,9 +39,8 @@ public class UserApiController {
         String userId = request.getParameter("userId");
         User user = DataBase.findUserById(userId);
 
-        ModelAndView modelAndView = new ModelAndView(new JsonView());
-        modelAndView.addObject("user", user);
-        return modelAndView;
+        return new ModelAndView(new JsonView())
+                .addObject("user", user);
     }
 
     @RequestMapping(value = "/api/users", method = RequestMethod.PUT)
@@ -55,8 +54,7 @@ public class UserApiController {
 
         DataBase.addUser(updatedUser);
 
-        ModelAndView modelAndView = new ModelAndView(new JsonView());
-        modelAndView.addObject("user", updatedUser);
-        return modelAndView;
+        return new ModelAndView(new JsonView())
+                .addObject("user", updatedUser);
     }
 }
