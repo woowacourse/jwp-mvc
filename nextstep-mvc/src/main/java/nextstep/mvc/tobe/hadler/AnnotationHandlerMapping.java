@@ -28,25 +28,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
         for (Class<?> clazz : annotatedWithController) {
             Method[] methods = clazz.getDeclaredMethods();
-            checkMethod(clazz, methods);
-        }
-    }
-
-    private void checkMethod(Class<?> clazz, Method[] methods) {
-        for (Method method : methods) {
-            addHandlerExecution(clazz, method);
-        }
-    }
-
-    private void addHandlerExecution(Class<?> clazz, Method method) {
-        if (method.isAnnotationPresent(RequestMapping.class)) {
-            RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-            RequestMethod[] requestMethods = getRequestMethods(requestMapping);
-            HandlerExecution handlerExecution = new HandlerExecution(createInstance(clazz), method);
-
-            Arrays.stream(requestMethods)
-                    .map(value -> new HandlerKey(requestMapping.value(), value))
-                    .forEach(key -> handlerExecutions.put(key, handlerExecution));
+            checkMethod(createInstance(clazz), methods);
         }
     }
 
@@ -56,6 +38,24 @@ public class AnnotationHandlerMapping implements HandlerMapping {
             return constructor.newInstance();
         } catch (Exception e) {
             throw new IllegalArgumentException("class has not no-arg constructor");
+        }
+    }
+
+    private void checkMethod(Object object, Method[] methods) {
+        for (Method method : methods) {
+            addHandlerExecution(object, method);
+        }
+    }
+
+    private void addHandlerExecution(Object object, Method method) {
+        if (method.isAnnotationPresent(RequestMapping.class)) {
+            RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+            RequestMethod[] requestMethods = getRequestMethods(requestMapping);
+            HandlerExecution handlerExecution = new HandlerExecution(object, method);
+
+            Arrays.stream(requestMethods)
+                    .map(value -> new HandlerKey(requestMapping.value(), value))
+                    .forEach(key -> handlerExecutions.put(key, handlerExecution));
         }
     }
 
