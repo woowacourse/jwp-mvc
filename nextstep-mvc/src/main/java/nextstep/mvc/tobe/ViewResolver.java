@@ -5,11 +5,11 @@ import nextstep.mvc.tobe.view.ModelAndView;
 import nextstep.mvc.tobe.view.RedirectView;
 import nextstep.mvc.tobe.view.View;
 
-public class ViewHandler {
+public class ViewResolver {
 
     private static final String DEFAULT_REDIRECT_PREFIX = "redirect:";
 
-    public static ModelAndView handle(Object view) throws Exception {
+    public static ModelAndView resolve(Object view) throws Exception {
         if (view instanceof View) {
             return new ModelAndView(conversion(view));
         }

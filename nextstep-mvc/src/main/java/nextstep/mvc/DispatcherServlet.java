@@ -1,8 +1,8 @@
 package nextstep.mvc;
 
 import nextstep.mvc.asis.Controller;
+import nextstep.mvc.tobe.ViewResolver;
 import nextstep.mvc.tobe.view.ModelAndView;
-import nextstep.mvc.tobe.ViewHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,7 +37,7 @@ public class DispatcherServlet extends HttpServlet {
         try {
             Object handler = getHandler(req);
             Object view =  ((Controller) handler).handle(req, resp);
-            ModelAndView mav = ViewHandler.handle(view);
+            ModelAndView mav = ViewResolver.resolve(view);
             mav.render(req, resp);
         } catch (Exception e) {
             logger.error("Exception : {}", e);
