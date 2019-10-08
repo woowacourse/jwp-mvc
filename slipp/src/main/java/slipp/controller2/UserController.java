@@ -65,8 +65,8 @@ public class UserController {
 
     @RequestMapping(value = "/users/update", method = RequestMethod.PUT)
     public String update(@PathVariable String userId,
-                               UserUpdatedDto userUpdatedDto,
-                               HttpServletRequest req) {
+                         UserUpdatedDto userUpdatedDto,
+                         HttpServletRequest req) {
         final User user = DataBase.findUserById(userId);
 
         if (!UserSessionUtils.isSameUser(req.getSession(), user)) {

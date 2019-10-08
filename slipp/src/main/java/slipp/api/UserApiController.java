@@ -28,6 +28,7 @@ public class UserApiController {
         final URI uri = URI.create("/api/users/" + user.getUserId());
         return ResponseEntity.created(uri).body(user);
     }
+
     @ResponseBody
     @RequestMapping(value = "/api/users/{userId}", method = RequestMethod.GET)
     public ResponseEntity<User> show(@PathVariable String userId) {

@@ -33,7 +33,6 @@ import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
 public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger logger = LoggerFactory.getLogger(DispatcherServlet.class);
-    private static final String DEFAULT_REDIRECT_PREFIX = "redirect:";
 
     private List<HandlerMapping> handlerMappings;
     private List<HandlerAdapter> handlerAdapters;
@@ -65,7 +64,6 @@ public class DispatcherServlet extends HttpServlet {
 
             final ModelAndView mav = handlerAdapter.handle(webRequest, handler);
 
-            // TODO ViewResolver (2단계)
             final View view = viewResolverManager.resolveView(mav.getView());
 
             view.render(mav.getModel(), req, resp);

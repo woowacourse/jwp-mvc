@@ -26,7 +26,7 @@ public class HandlerExecution {
         return method;
     }
 
-    public boolean isAnnotationPresent(final Class<? extends Annotation> annotation){
+    public boolean isAnnotationPresent(final Class<? extends Annotation> annotation) {
         return method.isAnnotationPresent(annotation);
     }
 }

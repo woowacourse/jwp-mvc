@@ -30,6 +30,7 @@ public class LoginController {
             return new ModelAndView("/user/login");
         }
     }
+
     @RequestMapping(value = "/users/logout", method = RequestMethod.GET)
     public ModelAndView logout(HttpServletRequest req, HttpServletResponse resp) throws Exception {
         HttpSession session = req.getSession();
