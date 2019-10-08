@@ -51,3 +51,8 @@ https://gist.github.com/joshbuchea/6f47e86d2510bce28f8e7f42ae84c716
 - [x] ```handlerAdapter``` 리팩토링
 - [x] ```AnnotationHandlerMapping``` 리팩토링 (한줄에 점 하나만 찍기)
 - [x] ```Handler```의 ```handle()```의 리턴값을 ```Object```에서 ```ModelAndView```로 바꾸기(```DispatcherServlet```에서는 ```view```를 모르게 하기)
+
+---
+### 2단계 요구사항
+- [ ] JsonView.render 구현 (JsonViewTest 성공하게 바꾸기)
+- [ ] post의 body값 읽어오는 controller 생성 (UserAcceptanceTest 성공하게 변경)
