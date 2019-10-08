@@ -14,8 +14,8 @@ public class HandlerExecution implements Execution {
     }
 
     @Override
-    public String execute(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        return (String) method.invoke(instance, request, response);
+    public Object execute(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        return method.invoke(instance, request, response);
     }
 
     @Override
