@@ -58,4 +58,17 @@ public class AnnotationHandlerMappingTest {
         HandlerExecution execution = handlerMapping.getHandler(request);
         execution.execute(request, response);
     }
+
+    @Test
+    void RequestBodyTest() throws Exception {
+        User user = new User("pobi", "password", "포비", "pobi@nextstep.camp");
+        MockHttpServletRequest request = new MockHttpServletRequest("POST", "/api/users");
+        request.setParameter("userId", user.getUserId());
+        request.setParameter("password", user.getPassword());
+        request.setParameter("name", user.getName());
+        request.setParameter("email", user.getEmail());
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        HandlerExecution execution = handlerMapping.getHandler(request);
+        execution.execute(request, response);
+    }
 }

@@ -1,10 +1,7 @@
 package nextstep.mvc.tobe;
 
 import nextstep.db.DataBase;
-import nextstep.web.annotation.Controller;
-import nextstep.web.annotation.RequestMapping;
-import nextstep.web.annotation.RequestMethod;
-import nextstep.web.annotation.RequestParam;
+import nextstep.web.annotation.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,5 +41,11 @@ public class MyController {
         logger.debug("find User");
 
         return maybeUser.orElseThrow(() -> new IllegalArgumentException("유저가 존재하지 않습니다."));
+    }
+
+    @RequestMapping(value = "/api/users", method = RequestMethod.POST)
+    public Object createUser(@RequestBody User user, HttpServletResponse response) {
+        DataBase.addUser(user);
+        return null;
     }
 }

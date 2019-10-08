@@ -1,13 +1,14 @@
 package nextstep.mvc.tobe;
 
+import nextstep.web.annotation.RequestBody;
 import nextstep.web.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
+import java.lang.reflect.*;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class HandlerExecution {
@@ -33,6 +34,9 @@ public class HandlerExecution {
                     if (parameter.isAnnotationPresent(RequestParam.class)) {
                         return getRequestParam(request, parameter);
                     }
+                    if (parameter.isAnnotationPresent(RequestBody.class)) {
+                        return getRequestBody(request, parameter);
+                    }
                     return null;
                 })
                 .collect(Collectors.toList());
@@ -44,14 +48,26 @@ public class HandlerExecution {
         return request.getParameter(value);
     }
 
-    private List<Object> getRequestParam(HttpServletRequest request) {
-        List<Object> parameters = Arrays.stream(method.getParameters())
-                .filter(parameter -> parameter.isAnnotationPresent(RequestParam.class))
-                .map(parameter -> {
-                    String value = parameter.getAnnotation(RequestParam.class).value();
-                    return request.getParameter(value);
-                })
+    //Todo: Constructor가 여러개일 때 어떤걸 해주는게 좋을까?
+    private Object getRequestBody(HttpServletRequest request, Parameter parameter) {
+        List<Constructor> constructors = Arrays.asList(parameter.getType().getConstructors());
+
+        List<Field> fields = Arrays.asList(parameter.getType().getDeclaredFields());
+
+        List<Object> params = fields.stream()
+                .map(field -> request.getParameter(field.getName()))
+                .filter(Objects::nonNull)
                 .collect(Collectors.toList());
-        return parameters;
+
+        Constructor constructor = constructors.stream()
+                .filter(con -> con.getParameterCount() == params.size())
+                .findAny()
+                .orElseThrow(IllegalArgumentException::new);
+
+        try {
+            return constructor.newInstance(params.toArray());
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
+            throw new IllegalArgumentException();
+        }
     }
 }
