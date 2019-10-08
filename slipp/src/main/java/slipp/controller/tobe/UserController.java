@@ -1,8 +1,8 @@
 package slipp.controller.tobe;
 
 import nextstep.mvc.tobe.view.JspView;
+import nextstep.mvc.tobe.view.ModelAndView;
 import nextstep.mvc.tobe.view.RedirectView;
-import nextstep.mvc.tobe.view.View;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
@@ -20,21 +20,21 @@ public class UserController {
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
 
     @RequestMapping(value = "/users", method = RequestMethod.GET)
-    public View userList(HttpServletRequest req, HttpServletResponse resp) {
+    public ModelAndView userList(HttpServletRequest req, HttpServletResponse resp) {
         if (!UserSessionUtils.isLogined(req.getSession())) {
-            return new RedirectView("/users/loginForm");
+            return new ModelAndView(new RedirectView("/users/loginForm"));
         }
         req.setAttribute("users", DataBase.findAll());
-        return new JspView("/user/list.jsp");
+        return new ModelAndView(new JspView("/user/list.jsp"));
     }
 
     @RequestMapping(value = "/users/form", method = RequestMethod.GET)
-    public View userForm(HttpServletRequest req, HttpServletResponse resp) {
-        return new JspView("/user/form.jsp");
+    public ModelAndView userForm(HttpServletRequest req, HttpServletResponse resp) {
+        return new ModelAndView(new JspView("/user/form.jsp"));
     }
 
     @RequestMapping(value = "/users/update", method = RequestMethod.PUT)
-    public View userUpdate(HttpServletRequest req, HttpServletResponse resp) throws Exception {
+    public ModelAndView userUpdate(HttpServletRequest req, HttpServletResponse resp) throws Exception {
         User user = DataBase.findUserById(req.getParameter("userId"));
         if (!UserSessionUtils.isSameUser(req.getSession(), user)) {
             throw new IllegalStateException("다른 사용자의 정보를 수정할 수 없습니다.");
@@ -48,6 +48,6 @@ public class UserController {
         );
         log.debug("Update User : {}", updateUser);
         user.update(updateUser);
-        return new RedirectView("/");
+        return new ModelAndView(new RedirectView("/"));
     }
 }

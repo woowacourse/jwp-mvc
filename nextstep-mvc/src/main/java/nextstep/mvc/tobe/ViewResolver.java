@@ -16,7 +16,7 @@ public class ViewResolver {
         if (view instanceof String) {
             return new ModelAndView(processing(view));
         }
-        return new ModelAndView(new JspView("/err/404.jsp"));
+        return (ModelAndView) view;
     }
 
     private static View conversion(Object view) {
