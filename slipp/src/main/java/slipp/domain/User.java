@@ -1,10 +1,19 @@
 package slipp.domain;
 
+import slipp.dto.UserCreatedDto;
+
 public class User {
     private String userId;
     private String password;
     private String name;
     private String email;
+
+    public User(UserCreatedDto userCreatedDto) {
+        this.userId = userCreatedDto.getUserId();
+        this.password = userCreatedDto.getPassword();
+        this.name = userCreatedDto.getName();
+        this.email = userCreatedDto.getEmail();
+    }
 
     public User(String userId, String password, String name, String email) {
         this.userId = userId;
