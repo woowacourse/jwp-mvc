@@ -16,7 +16,6 @@ import org.slf4j.LoggerFactory;
 @WebServlet(name = "dispatcher", urlPatterns = "/", loadOnStartup = 1)
 public class DispatcherServlet extends HttpServlet {
     private static final Logger logger = LoggerFactory.getLogger(DispatcherServlet.class);
-    private static final String DEFAULT_REDIRECT_PREFIX = "redirect:";
     private static final long serialVersionUID = 1L;
     private List<HandlerMapping> handlerMappings;
     private List<HandlerAdapter> handlerAdapters;
@@ -38,9 +37,11 @@ public class DispatcherServlet extends HttpServlet {
         try {
             HandlerMapping handlerMapping = findHandlerMapping(req);
 
-            HandlerAdapter handlerAdapter = findHandlerAdapter(handlerMapping);
+            Object result = handlerMapping.getHandler(req);
 
-            ModelAndView modelAndView = handlerAdapter.handle(handlerMapping, req, resp);
+            HandlerAdapter handlerAdapter = findHandlerAdapter(result);
+
+            ModelAndView modelAndView = handlerAdapter.handle(result, req, resp);
             modelAndView.render(req, resp);
         } catch (Exception e) {
             logger.error("Exception : {}", e);
@@ -48,9 +49,9 @@ public class DispatcherServlet extends HttpServlet {
         }
     }
 
-    private HandlerAdapter findHandlerAdapter(HandlerMapping handlerMapping) {
+    private HandlerAdapter findHandlerAdapter(Object result) {
         return handlerAdapters.stream()
-                .filter(handlerAdapter -> handlerAdapter.isSupports(handlerMapping))
+                .filter(adapter -> adapter.supports(result))
                 .findFirst()
                 .orElseThrow(RequestUrlNotFoundException::new);
     }
