@@ -8,6 +8,7 @@ import nextstep.web.annotation.RequestMethod;
 import org.reflections.Reflections;
 
 import javax.servlet.http.HttpServletRequest;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.Set;
@@ -32,20 +33,29 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     private void filterMethods(Class<?> clazz) {
         Method[] methods = clazz.getDeclaredMethods();
+        Object handler = getHandler(clazz);
         for (Method method : methods) {
-            filterRequestMapping(method);
+            filterRequestMapping(handler, method);
         }
     }
 
-    private void filterRequestMapping(Method method) {
+    private Object getHandler(Class<?> clazz) {
+        try {
+            return clazz.getDeclaredConstructor().newInstance();
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private void filterRequestMapping(Object handler, Method method) {
         if (method.isAnnotationPresent(RequestMapping.class)) {
             RequestMapping annotation = method.getAnnotation(RequestMapping.class);
             RequestMethod[] requestMethods = annotation.method();
             if (isDefaultRequestMethod(requestMethods)) {
-                putHandlers(method, annotation, RequestMethod.values());
+                putHandlers(handler, method, annotation, RequestMethod.values());
                 return;
             }
-            putHandlers(method, annotation, requestMethods);
+            putHandlers(handler, method, annotation, requestMethods);
         }
     }
 
@@ -53,11 +63,11 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         return requestMethods.length == DEFAULT_REQUEST_METHODS_LENGTH;
     }
 
-    private void putHandlers(Method method, RequestMapping annotation, RequestMethod[] values) {
+    private void putHandlers(Object handler, Method method, RequestMapping annotation, RequestMethod[] values) {
         for (RequestMethod value : values) {
             HandlerKey handlerKey = new HandlerKey(annotation.value(), value);
 
-            handlerExecutions.put(handlerKey, new HandlerExecution(method));
+            handlerExecutions.put(handlerKey, new HandlerExecution(handler, method));
         }
     }
 
