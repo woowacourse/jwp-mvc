@@ -5,13 +5,14 @@ import nextstep.mvc.tobe.view.JspView;
 import nextstep.mvc.tobe.view.RedirectView;
 import nextstep.mvc.tobe.view.View;
 
+import static nextstep.mvc.tobe.view.JspView.JSP;
 import static nextstep.mvc.tobe.view.RedirectView.DEFAULT_REDIRECT_PREFIX;
 
 public class UrlBasedViewResolver implements ViewResolver {
     @Override
     public View resolveViewName(Object view) {
         if (view instanceof String) {
-            if (((String) view).endsWith(".jsp")) {
+            if (((String) view).endsWith(JSP)) {
                 return new JspView((String) view);
             }
             if (((String) view).startsWith(DEFAULT_REDIRECT_PREFIX)) {

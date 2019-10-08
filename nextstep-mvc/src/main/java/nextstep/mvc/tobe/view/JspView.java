@@ -6,6 +6,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 
 public class JspView implements View {
+    public static final String JSP = ".jsp";
+
     private String viewName;
 
     public JspView(String viewName) {
@@ -14,8 +16,6 @@ public class JspView implements View {
 
     @Override
     public void render(Map<String, ?> model, HttpServletRequest request, HttpServletResponse response) throws Exception {
-//        model.keySet().forEach(key -> request.setAttribute(key, model.get(key)));
-
         RequestDispatcher rd = request.getRequestDispatcher(viewName);
         rd.forward(request, response);
     }
