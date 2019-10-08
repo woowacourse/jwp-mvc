@@ -1,6 +1,6 @@
-package nextstep.mvc;
+package nextstep.mvc.adapter;
 
-import nextstep.mvc.exception.ExecutionHandleException;
+import nextstep.mvc.exception.ViewNameResolveException;
 import nextstep.mvc.tobe.view.JspView;
 import nextstep.mvc.tobe.view.RedirectView;
 import nextstep.mvc.tobe.view.View;
@@ -16,6 +16,6 @@ public class ViewNameResolver {
         if (viewName.endsWith(JSP_SUFFIX)) {
             return new JspView(viewName);
         }
-        throw new ExecutionHandleException("해당하는 View가 없습니다.");
+        throw new ViewNameResolveException("해당하는 View가 없습니다.");
     }
 }
