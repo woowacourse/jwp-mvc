@@ -14,8 +14,8 @@ import javax.servlet.http.HttpServletResponse;
 public class IndexController {
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
-    public ModelAndView index(HttpServletRequest req, HttpServletResponse res) {
+    public String index(HttpServletRequest req, HttpServletResponse res) {
         req.setAttribute("users", DataBase.findAll());
-        return new ModelAndView(new JSPView("home.jsp"));
+        return "home.jsp";
     }
 }
