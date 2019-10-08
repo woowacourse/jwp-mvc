@@ -1,6 +1,7 @@
-package nextstep.mvc.tobe;
+package nextstep.mvc.tobe.adapter;
 
 import nextstep.mvc.asis.Controller;
+import nextstep.mvc.tobe.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
