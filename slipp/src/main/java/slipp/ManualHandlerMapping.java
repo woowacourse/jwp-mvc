@@ -23,7 +23,6 @@ public class ManualHandlerMapping implements HandlerMapping {
         mappings.put("/", new HomeController());
         mappings.put("/users", new ListUserController());
         mappings.put("/users/profile", new ProfileController());
-        mappings.put("/users/create", new CreateUserController());
         mappings.put("/users/updateForm", new UpdateFormUserController());
         mappings.put("/users/update", new UpdateUserController());
 
