@@ -7,6 +7,7 @@ import java.lang.annotation.Target;
 
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
+@Controller
 public @interface RestController {
-    String path() default "";
+    String value() default "";
 }
