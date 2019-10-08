@@ -4,7 +4,6 @@ import nextstep.mvc.exception.NotFoundHandlerAdapterException;
 import nextstep.mvc.exception.NotFoundHandlerException;
 import nextstep.mvc.handleradapter.AnnotationHandlerAdapter;
 import nextstep.mvc.handleradapter.HandlerAdapter;
-import nextstep.mvc.handleradapter.LegacyHandlerAdapter;
 import nextstep.mvc.handlermapping.HandlerMapping;
 import nextstep.mvc.tobe.view.ModelAndView;
 import nextstep.mvc.tobe.view.View;
@@ -39,7 +38,7 @@ public class DispatcherServlet extends HttpServlet {
         for (HandlerMapping handlerMapping : handlerMappings) {
             handlerMapping.initialize();
         }
-        handlerAdapters = Arrays.asList(new LegacyHandlerAdapter(), new AnnotationHandlerAdapter());
+        handlerAdapters = Arrays.asList(new AnnotationHandlerAdapter());
     }
 
     @Override
@@ -54,8 +53,10 @@ public class DispatcherServlet extends HttpServlet {
             render(req, resp, modelAndView);
 
         } catch (Exception e) {
+
             logger.error(e.getMessage());
             resp.sendError(404);
+
         }
     }
 
