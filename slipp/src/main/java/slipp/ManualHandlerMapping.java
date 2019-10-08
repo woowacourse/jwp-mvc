@@ -1,7 +1,5 @@
 package slipp;
 
-import nextstep.ControllerHandlerAdapter;
-import nextstep.HandlerAdapter;
 import nextstep.mvc.DispatcherServlet;
 import nextstep.mvc.HandlerMapping;
 import nextstep.mvc.asis.Controller;
@@ -37,11 +35,6 @@ public class ManualHandlerMapping implements HandlerMapping {
     @Override
     public Controller getHandler(HttpServletRequest request) {
         return mappings.get(request.getRequestURI());
-    }
-
-    @Override
-    public HandlerAdapter getHandlerAdapter() {
-        return new ControllerHandlerAdapter();
     }
 
     void put(String url, Controller controller) {

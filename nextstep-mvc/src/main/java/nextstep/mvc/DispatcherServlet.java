@@ -1,6 +1,5 @@
 package nextstep.mvc;
 
-import com.google.common.collect.Lists;
 import nextstep.HandlerAdapter;
 import nextstep.exception.PageNotFoundException;
 import nextstep.mvc.tobe.view.ErrorView;
@@ -23,19 +22,17 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger logger = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private List<HandlerMapping> hms = Lists.newArrayList();
-    private List<HandlerAdapter> adapters = Lists.newArrayList();
+    private List<HandlerMapping> hms;
+    private List<HandlerAdapter> adapters;
 
-    public DispatcherServlet(HandlerMapping... hm) {
-        this.hms.addAll(Arrays.asList(hm));
+    public DispatcherServlet(List<HandlerAdapter> adapters, HandlerMapping... hm) {
+        this.hms = Arrays.asList(hm);
+        this.adapters = adapters;
     }
 
     @Override
     public void init() {
-        hms.forEach(handlerMapping -> {
-            handlerMapping.initialize();
-            adapters.add(handlerMapping.getHandlerAdapter());
-        });
+        hms.forEach(HandlerMapping::initialize);
     }
 
     @Override
