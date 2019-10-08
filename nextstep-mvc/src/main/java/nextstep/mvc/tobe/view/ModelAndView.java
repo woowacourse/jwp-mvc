@@ -17,10 +17,6 @@ public class ModelAndView {
         this.view = view;
     }
 
-    public ModelAndView(String viewName) {
-        this.view = new ViewResolver().resolve(viewName);
-    }
-
     public ModelAndView addObject(String attributeName, Object attributeValue) {
         model.put(attributeName, attributeValue);
         return this;
