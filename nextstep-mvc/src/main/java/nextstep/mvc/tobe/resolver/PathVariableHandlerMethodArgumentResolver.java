@@ -18,7 +18,7 @@ public class PathVariableHandlerMethodArgumentResolver implements HandlerMethodA
     @Override
     public Object resolveArgument(final WebRequest webRequest, final MethodParameter methodParameter) {
         final String uri = webRequest.getRequestURI();
-        final String path = methodParameter.getMethod().getAnnotation(RequestMapping.class).value();
+        final String path = methodParameter.getAnnotation(RequestMapping.class).value();
         final PathPattern pathPattern = PathPatternUtils.parse(path);
 
         final String value = Objects.requireNonNull(pathPattern
