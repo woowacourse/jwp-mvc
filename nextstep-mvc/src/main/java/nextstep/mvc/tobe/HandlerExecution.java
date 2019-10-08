@@ -1,10 +1,13 @@
 package nextstep.mvc.tobe;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import nextstep.utils.JsonUtils;
 import nextstep.web.annotation.RequestBody;
 import nextstep.web.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.lang.reflect.*;
 import java.util.Arrays;
 import java.util.List;
@@ -35,7 +38,11 @@ public class HandlerExecution {
                         return getRequestParam(request, parameter);
                     }
                     if (parameter.isAnnotationPresent(RequestBody.class)) {
-                        return getRequestBody(request, parameter);
+                        try {
+                            return getRequestBody(request, parameter);
+                        } catch (IllegalArgumentException e) {
+                            return getBody(request, parameter.getType());
+                        }
                     }
                     return null;
                 })
@@ -64,9 +71,18 @@ public class HandlerExecution {
                 .findAny()
                 .orElseThrow(IllegalArgumentException::new);
 
+
         try {
             return constructor.newInstance(params.toArray());
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private static <T> T getBody(HttpServletRequest request, Class<T> returnType) {
+        try {
+            return JsonUtils.toObject(request.getReader().readLine(), returnType);
+        } catch (IOException e) {
             throw new IllegalArgumentException();
         }
     }

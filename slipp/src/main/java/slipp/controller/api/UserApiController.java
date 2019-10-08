@@ -1,20 +1,16 @@
 package slipp.controller.api;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import nextstep.utils.JsonUtils;
-import nextstep.web.annotation.PathVariable;
-import nextstep.web.annotation.RequestMapping;
-import nextstep.web.annotation.RequestMethod;
-import nextstep.web.annotation.RestController;
+import nextstep.mvc.tobe.ModelAndView;
+import nextstep.web.annotation.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import slipp.domain.User;
 import slipp.dto.UserCreatedDto;
+import slipp.dto.UserUpdatedDto;
 import slipp.support.db.DataBase;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.util.Optional;
 
 import static slipp.controller.api.UserApiController.DEFAULT_MAPPING_VALUE;
@@ -26,34 +22,40 @@ public class UserApiController {
     private static final String LOCATION = "Location";
     static final String DEFAULT_MAPPING_VALUE = "/api/users";
 
-    @RequestMapping(value = "/{userId}", method = RequestMethod.GET)
-    public Object findUser(@PathVariable(value = "userId") String userId,
+    @RequestMapping(method = RequestMethod.GET)
+    public Object findUser(@RequestParam(value = "userId") String userId,
                            HttpServletRequest request, HttpServletResponse response) {
-        Optional<User> maybeUser = Optional.ofNullable(DataBase.findUserById(userId));
+        User user = getUser(userId);
         log.debug("find User");
 
-        return maybeUser.orElseThrow(() -> new IllegalArgumentException("유저가 존재하지 않습니다."));
+        return new ModelAndView().addObject("user", user);
     }
 
+
     @RequestMapping(method = RequestMethod.POST)
-    public Object create(HttpServletRequest request, HttpServletResponse response) {
-        UserCreatedDto userCreatedDto = getBody(request, UserCreatedDto.class);
+    public Object create(@RequestBody UserCreatedDto userCreatedDto, HttpServletResponse response) {
 
         User user = new User(userCreatedDto.getUserId(), userCreatedDto.getPassword(), userCreatedDto.getName(), userCreatedDto.getEmail());
         DataBase.addUser(user);
         log.debug("user created {}", user);
 
         response.setStatus(HttpServletResponse.SC_CREATED);
-        response.setHeader(LOCATION, DEFAULT_MAPPING_VALUE + "/" + user.getUserId());
+        response.setHeader(LOCATION, DEFAULT_MAPPING_VALUE + "?userId=" + user.getUserId());
         return user;
     }
 
-    private static <T> T getBody(HttpServletRequest request, Class<T> returnType) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        try {
-            return JsonUtils.toObject(request.getReader().readLine(), returnType);
-        } catch (IOException e) {
-            throw new IllegalArgumentException();
-        }
+    @RequestMapping(method = RequestMethod.PUT)
+    public Object create(@RequestParam(value = "userId") String userId, @RequestBody UserUpdatedDto userUpdatedDto, HttpServletResponse response) {
+        User user = getUser(userId);
+        User updateUser = new User(userId, userUpdatedDto.getPassword(), userUpdatedDto.getName(), userUpdatedDto.getEmail());
+        user.update(updateUser);
+        DataBase.addUser(user);
+        log.debug("user created {}", user);
+
+        return user;
+    }
+
+    private User getUser(@RequestParam("userId") String userId) {
+        return Optional.ofNullable(DataBase.findUserById(userId)).orElseThrow(() -> new IllegalArgumentException("유저가 존재하지 않습니다."));
     }
 }
