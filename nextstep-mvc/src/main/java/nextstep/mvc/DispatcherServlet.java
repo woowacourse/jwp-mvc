@@ -10,10 +10,12 @@ import nextstep.mvc.tobe.adapter.SimpleControllerAdapter;
 import nextstep.mvc.tobe.exception.HandlerAdapterNotSupportedException;
 import nextstep.mvc.tobe.exception.HandlerNotFoundException;
 import nextstep.mvc.tobe.mapping.HandlerMapping;
+import nextstep.mvc.tobe.view.View;
+import nextstep.mvc.tobe.viewresolver.ViewResolver;
+import nextstep.mvc.tobe.viewresolver.ViewResolverManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -35,14 +37,19 @@ public class DispatcherServlet extends HttpServlet {
 
     private List<HandlerMapping> handlerMappings;
     private List<HandlerAdapter> handlerAdapters;
+    private ViewResolverManager viewResolverManager;
 
     public DispatcherServlet(HandlerMapping... handlerMappings) {
         this.handlerMappings = Arrays.asList(handlerMappings);
         this.handlerAdapters = Arrays.asList(new SimpleControllerAdapter(), new ResponseBodyAdapter(), new HandlerExecutionAdapter());
+        this.viewResolverManager = new ViewResolverManager();
     }
 
     @Override
     public void init() throws ServletException {
+        if (handlerMappings.isEmpty()) {
+            throw new IllegalArgumentException("HandlerMapping 은 최소한 하나는 있어야 합니다.");
+        }
         handlerMappings.forEach(HandlerMapping::initialize);
     }
 
@@ -59,8 +66,9 @@ public class DispatcherServlet extends HttpServlet {
             final ModelAndView mav = handlerAdapter.handle(webRequest, handler);
 
             // TODO ViewResolver (2단계)
+            final View view = viewResolverManager.resolveView(mav.getView());
 
-            move(mav, req, resp);
+            view.render(mav.getModel(), req, resp);
 
         } catch (HandlerNotFoundException e) {
             logger.error("not support uri: {} ", req.getRequestURI());
@@ -86,25 +94,15 @@ public class DispatcherServlet extends HttpServlet {
                 .orElseThrow(HandlerAdapterNotSupportedException::new);
     }
 
-    private void move(ModelAndView mav, HttpServletRequest req, HttpServletResponse resp) throws Exception {
-        final String viewName = mav.getViewName();
-        if (viewName == null) {
-            mav.getView().render(mav.getModel(), req, resp);
-            return;
-        }
-        if (viewName.startsWith(DEFAULT_REDIRECT_PREFIX)) {
-            resp.sendRedirect(viewName.substring(DEFAULT_REDIRECT_PREFIX.length()));
-            return;
-        }
-        RequestDispatcher rd = req.getRequestDispatcher(viewName);
-        rd.forward(req, resp);
-    }
-
     public void addHandlerMapping(final HandlerMapping handlerMapping) {
         handlerMappings.add(handlerMapping);
     }
 
     public void addHandlerAdapter(final HandlerAdapter handlerAdapter) {
         handlerAdapters.add(handlerAdapter);
+    }
+
+    public void addViewResolver(final ViewResolver viewResolver) {
+        viewResolverManager.addViewResolver(viewResolver);
     }
 }
