@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Arrays;
+import java.util.Objects;
 
 @WebServlet(name = "dispatcher", urlPatterns = "/", loadOnStartup = 1)
 public class DispatcherServlet extends HttpServlet {
@@ -36,7 +37,7 @@ public class DispatcherServlet extends HttpServlet {
         logger.debug("Method : {}, Request URI : {}", req.getMethod(), requestUri);
 
         HandlerExecution handler = Arrays.stream(handlerMappings)
-                .filter(handlerMapping -> handlerMapping.getHandler(req) != null)
+                .filter(handlerMapping -> Objects.nonNull(handlerMapping.getHandler(req)))
                 .findFirst()
                 .orElseThrow(ServletException::new)
                 .getHandler(req);
