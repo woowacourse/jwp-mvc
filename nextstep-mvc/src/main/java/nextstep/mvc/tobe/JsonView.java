@@ -15,17 +15,20 @@ public class JsonView implements View {
     public void render(Map<String, ?> model, HttpServletRequest request, HttpServletResponse response) throws Exception {
         Writer writer = response.getWriter();
 
-        response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
         if (model.size() > 0) {
+            response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
             writer.write(OBJECT_MAPPER.writeValueAsString(getValue(model)));
         }
-        writer.flush();
+
+        writer.close();
         response.flushBuffer();
     }
 
     private Object getValue(Map<String, ?> model) {
         if (model.size() == 1) {
-            return model.values().iterator().next();
+            return model.values()
+                    .iterator()
+                    .next();
         }
         return model;
     }
