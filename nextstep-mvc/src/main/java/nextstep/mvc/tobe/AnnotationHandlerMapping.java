@@ -34,15 +34,17 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
             for (Method method : methods) {
                 String url = method.getAnnotation(RequestMapping.class).value();
-                List<RequestMethod> requestMethod =
+                List<RequestMethod> requestMethods =
                         Arrays.asList(method.getAnnotation(RequestMapping.class).method());
 
-                if (requestMethod.isEmpty()) {
+                if (requestMethods.isEmpty()) {
                     putAllRequestMethod(newInstance, method, url);
                     return;
                 }
 
-                putHandler(newInstance, method, new HandlerKey(url, requestMethod.get(0)));
+                for (RequestMethod requestMethod : requestMethods) {
+                    putHandler(newInstance, method, new HandlerKey(url, requestMethod));
+                }
             }
         }
     }
