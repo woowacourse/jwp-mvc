@@ -29,7 +29,8 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     @Override
     public void initialize() {
-        List<Object> handlers = Arrays.asList(getHandlersByAnnotation(Controller.class), getHandlersByAnnotation(RestController.class));
+        List<Object> handlers = getHandlersByAnnotation(Controller.class);
+        handlers.addAll(getHandlersByAnnotation(RestController.class));
 
         handlers.forEach(this::registerHandlerExecutions);
     }
