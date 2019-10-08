@@ -14,7 +14,6 @@ public class HandlerMappingManager {
         this.handlerMappings = handlerMappings;
     }
 
-
     public void initialize() {
         handlerMappings.forEach(HandlerMapping::initialize);
     }

@@ -1,6 +1,7 @@
 package nextstep.mvc;
 
 import nextstep.mvc.asis.Controller;
+import nextstep.mvc.tobe.HandlerAdapterManager;
 import nextstep.mvc.tobe.HandlerMappingManager;
 import nextstep.mvc.tobe.view.ModelAndView;
 import nextstep.mvc.tobe.View;
@@ -17,18 +18,20 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 @WebServlet(name = "dispatcher", urlPatterns = "/", loadOnStartup = 1)
 public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger logger = LoggerFactory.getLogger(DispatcherServlet.class);
-    private static final String DEFAULT_REDIRECT_PREFIX = "redirect:";
 
     private final HandlerMappingManager handlerMappingManager;
+    private final HandlerAdapterManager handlerAdapterManager;
 
-    public DispatcherServlet(HandlerMapping... rm) {
-        handlerMappingManager = new HandlerMappingManager(Arrays.asList(rm));
+    public DispatcherServlet(List<HandlerMapping> handlerMappings, List<HandlerAdapter> handlerAdapters) {
+        handlerMappingManager = new HandlerMappingManager(handlerMappings);
+        handlerAdapterManager = new HandlerAdapterManager(handlerAdapters);
     }
 
     @Override
@@ -37,37 +40,19 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     @Override
-    protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException {
         String requestUri = req.getRequestURI();
         logger.debug("Method : {}, Request URI : {}", req.getMethod(), requestUri);
 
         Handler handler = handlerMappingManager.getHandler(req);
+
         try {
-            if (handler instanceof Controller) {
-                String viewName = ((Controller) handler).handle(req, resp);
-                move(viewName, req, resp);
-            } else if (handler instanceof HandlerExecution) {
-                ModelAndView mav = ((HandlerExecution) handler).handle(req, resp);
-                render(mav, req, resp);
-            } else {
-                logger.error("적절하지 않은 요청입니다. {}", req);
-                throw new BadRequestException();
-            }
-        } catch (Throwable e) {
+            ModelAndView mav = handlerAdapterManager.handle(handler, req, resp);
+            render(mav, req, resp);
+        } catch (Exception e) {
             logger.error("Exception : {}", e);
             throw new ServletException(e.getMessage());
         }
-    }
-
-    private void move(String viewName, HttpServletRequest req, HttpServletResponse resp)
-            throws ServletException, IOException {
-        if (viewName.startsWith(DEFAULT_REDIRECT_PREFIX)) {
-            resp.sendRedirect(viewName.substring(DEFAULT_REDIRECT_PREFIX.length()));
-            return;
-        }
-
-        RequestDispatcher rd = req.getRequestDispatcher(viewName);
-        rd.forward(req, resp);
     }
 
     private void render(ModelAndView mav, HttpServletRequest req, HttpServletResponse resp) throws Exception {
