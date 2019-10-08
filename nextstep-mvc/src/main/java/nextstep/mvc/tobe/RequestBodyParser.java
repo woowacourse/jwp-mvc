@@ -15,17 +15,13 @@ public class RequestBodyParser {
     private static final Logger logger = LoggerFactory.getLogger(RequestBodyParser.class);
     private static final String DELIMITER_OF_REQUEST_BODY = "&";
     private static final String DELIMITER_OF_REQUEST_KEY_AND_VALUE = "=";
-    private static final String START_BRACKET = "{";
-    private static final String END_BRACKET = "}";
-    private static final String DOUBLE_QUOTATION = "\"";
-    private static final String EMPTY = "";
 
     public static Map<String, String> parse(HttpServletRequest request) {
         Map<String, String> body = Maps.newHashMap();
 
         try (BufferedReader reader = request.getReader()) {
             String requestBody = CharStreams.toString(reader);
-            String[] tokens = extractBody(requestBody).split(DELIMITER_OF_REQUEST_BODY);
+            String[] tokens = requestBody.split(DELIMITER_OF_REQUEST_BODY);
 
             for (String token : tokens) {
                 String[] split = token.split(DELIMITER_OF_REQUEST_KEY_AND_VALUE);
@@ -37,9 +33,5 @@ public class RequestBodyParser {
             logger.debug(e.getMessage());
         }
         return Collections.unmodifiableMap(body);
-    }
-
-    private static String extractBody(String body) {
-        return body.replaceAll(DOUBLE_QUOTATION, EMPTY);
     }
 }
