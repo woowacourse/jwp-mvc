@@ -25,7 +25,6 @@ public class JsonView implements View {
         this.object = object;
     }
 
-    // todo 리팩토링
     @Override
     public void render(final Map<String, ?> model, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
@@ -54,8 +53,7 @@ public class JsonView implements View {
         final PrintWriter writer = response.getWriter();
 
         if (Objects.isNotNull(body)) {
-            final String json = OBJECT_MAPPER.writeValueAsString(body);
-            writer.println(json);
+            writer.println(OBJECT_MAPPER.writeValueAsString(body));
         }
         writer.println(convert(model));
         writer.flush();
