@@ -1,4 +1,4 @@
-package nextstep.mvc.tobe.view;
+package nextstep.mvc.view;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import nextstep.web.support.MediaType;

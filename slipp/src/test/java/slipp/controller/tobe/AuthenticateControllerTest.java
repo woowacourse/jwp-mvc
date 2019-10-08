@@ -7,7 +7,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import support.test.NsWebTestClient;
 
-class LoginControllerTest {
+class AuthenticateControllerTest {
     private NsWebTestClient client;
 
     @BeforeEach

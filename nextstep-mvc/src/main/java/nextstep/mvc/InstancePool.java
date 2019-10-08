@@ -1,4 +1,4 @@
-package nextstep.mvc.tobe;
+package nextstep.mvc;
 
 import java.lang.annotation.Annotation;
 import java.util.HashMap;

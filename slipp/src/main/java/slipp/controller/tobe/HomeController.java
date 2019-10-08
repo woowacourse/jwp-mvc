@@ -1,7 +1,7 @@
 package slipp.controller.tobe;
 
-import nextstep.mvc.tobe.view.JspView;
-import nextstep.mvc.tobe.view.ModelAndView;
+import nextstep.mvc.view.JspView;
+import nextstep.mvc.view.ModelAndView;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import slipp.support.db.DataBase;

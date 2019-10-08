@@ -1,7 +1,7 @@
 package slipp.controller.tobe;
 
-import nextstep.mvc.tobe.view.JsonView;
-import nextstep.mvc.tobe.view.ModelAndView;
+import nextstep.mvc.view.JsonView;
+import nextstep.mvc.view.ModelAndView;
 import nextstep.utils.JsonUtils;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;

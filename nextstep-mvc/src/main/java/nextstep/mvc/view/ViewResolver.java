@@ -1,9 +1,4 @@
-package nextstep.mvc.tobe;
-
-import nextstep.mvc.tobe.view.JspView;
-import nextstep.mvc.tobe.view.ModelAndView;
-import nextstep.mvc.tobe.view.RedirectView;
-import nextstep.mvc.tobe.view.View;
+package nextstep.mvc.view;
 
 public class ViewResolver {
 
