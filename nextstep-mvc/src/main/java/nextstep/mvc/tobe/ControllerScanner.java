@@ -31,7 +31,7 @@ public class ControllerScanner {
             try {
                 fe.apply((T) arg);
             } catch (Exception e) {
-                throw new RuntimeException();
+                throw new ScannerException(this.getClass().toString());
             }
         };
     }
