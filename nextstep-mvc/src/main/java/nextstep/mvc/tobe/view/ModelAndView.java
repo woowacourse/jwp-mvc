@@ -1,4 +1,4 @@
-package nextstep.mvc.tobe;
+package nextstep.mvc.tobe.view;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -15,6 +15,10 @@ public class ModelAndView {
 
     public ModelAndView(View view) {
         this.view = view;
+    }
+
+    public ModelAndView(String viewName) {
+        this.view = new ViewResolver().resolve(viewName);
     }
 
     public ModelAndView addObject(String attributeName, Object attributeValue) {

@@ -3,8 +3,8 @@ package nextstep.mvc;
 import com.google.common.collect.Lists;
 import nextstep.HandlerAdapter;
 import nextstep.exception.PageNotFoundException;
-import nextstep.mvc.tobe.ErrorView;
-import nextstep.mvc.tobe.ModelAndView;
+import nextstep.mvc.tobe.view.ErrorView;
+import nextstep.mvc.tobe.view.ModelAndView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
