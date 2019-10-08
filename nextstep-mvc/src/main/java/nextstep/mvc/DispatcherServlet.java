@@ -1,18 +1,14 @@
 package nextstep.mvc;
 
-import java.io.IOException;
 import java.util.List;
-import java.util.Objects;
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import nextstep.mvc.asis.Controller;
-import nextstep.mvc.tobe.HandlerExecution;
 import nextstep.mvc.tobe.ModelAndView;
+import nextstep.mvc.tobe.adapter.HandlerAdapter;
 import nextstep.mvc.tobe.exception.RequestUrlNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,9 +19,11 @@ public class DispatcherServlet extends HttpServlet {
     private static final String DEFAULT_REDIRECT_PREFIX = "redirect:";
     private static final long serialVersionUID = 1L;
     private List<HandlerMapping> handlerMappings;
+    private List<HandlerAdapter> handlerAdapters;
 
-    public DispatcherServlet(List<HandlerMapping> handlerMappings) {
+    public DispatcherServlet(List<HandlerMapping> handlerMappings, List<HandlerAdapter> handlerAdapters) {
         this.handlerMappings = handlerMappings;
+        this.handlerAdapters = handlerAdapters;
     }
 
     @Override
@@ -38,35 +36,29 @@ public class DispatcherServlet extends HttpServlet {
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException {
         try {
-            Controller controller = (Controller) handlerMappings.get(0).getHandler(req);
-            if (Objects.nonNull(controller)) {
-                String viewName = controller.execute(req, resp);
-                move(viewName, req, resp);
-                return;
-            }
+            HandlerMapping handlerMapping = findHandlerMapping(req);
 
-            HandlerExecution execution = (HandlerExecution) handlerMappings.get(1).getHandler(req);
-            if (Objects.nonNull(execution)) {
-                ModelAndView modelAndView = execution.handle(req, resp);
-                modelAndView.render(req, resp);
-                return;
-            }
+            HandlerAdapter handlerAdapter = findHandlerAdapter(handlerMapping);
+
+            ModelAndView modelAndView = handlerAdapter.handle(handlerMapping, req, resp);
+            modelAndView.render(req, resp);
         } catch (Exception e) {
             logger.error("Exception : {}", e);
             throw new ServletException(e.getMessage());
         }
-
-        throw new RequestUrlNotFoundException();
     }
 
-    private void move(String viewName, HttpServletRequest req, HttpServletResponse resp)
-            throws ServletException, IOException {
-        if (viewName.startsWith(DEFAULT_REDIRECT_PREFIX)) {
-            resp.sendRedirect(viewName.substring(DEFAULT_REDIRECT_PREFIX.length()));
-            return;
-        }
+    private HandlerAdapter findHandlerAdapter(HandlerMapping handlerMapping) {
+        return handlerAdapters.stream()
+                .filter(handlerAdapter -> handlerAdapter.isSupports(handlerMapping))
+                .findFirst()
+                .orElseThrow(RequestUrlNotFoundException::new);
+    }
 
-        RequestDispatcher rd = req.getRequestDispatcher(viewName);
-        rd.forward(req, resp);
+    public HandlerMapping findHandlerMapping(HttpServletRequest req) {
+        return handlerMappings.stream()
+                .filter(handlerMapping -> handlerMapping.isSupports(req))
+                .findFirst()
+                .orElseThrow(RequestUrlNotFoundException::new);
     }
 }
