@@ -1,4 +1,4 @@
-package slipp.annotationcontroller;
+package slipp.controller;
 
 import nextstep.mvc.tobe.ModelAndView;
 import nextstep.mvc.tobe.view.JsonView;
@@ -15,11 +15,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Scanner;
-import java.util.stream.Collectors;
 
 @Controller
-public class AnnotationApiController {
-    private static final Logger log = LoggerFactory.getLogger(AnnotationApiController.class);
+public class ApiController {
+    private static final Logger log = LoggerFactory.getLogger(ApiController.class);
 
     @RequestMapping(value = "/api/users", method = RequestMethod.POST)
     public ModelAndView create(HttpServletRequest request, HttpServletResponse response) throws IOException {

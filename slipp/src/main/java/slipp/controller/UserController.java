@@ -1,11 +1,8 @@
-package slipp.annotationcontroller;
+package slipp.controller;
 
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import slipp.controller.UserSessionUtils;
 import slipp.domain.User;
 import slipp.support.db.DataBase;
 
@@ -13,8 +10,25 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @Controller
-public class AnnotationUpdateUserController {
-    private static final Logger log = LoggerFactory.getLogger(AnnotationUpdateUserController.class);
+public class UserController {
+    @RequestMapping(value = "/users/create", method = RequestMethod.POST)
+    public String create(HttpServletRequest req, HttpServletResponse resp) throws Exception {
+        User user = new User(req.getParameter("userId"), req.getParameter("password"), req.getParameter("name"),
+                req.getParameter("email"));
+
+        DataBase.addUser(user);
+        return "redirect:/";
+    }
+
+    @RequestMapping(value = "/users", method = RequestMethod.GET)
+    public String list(HttpServletRequest req, HttpServletResponse resp) throws Exception {
+        if (!UserSessionUtils.isLogined(req.getSession())) {
+            return "redirect:/users/loginForm";
+        }
+
+        req.setAttribute("users", DataBase.findAll());
+        return "/user/list.jsp";
+    }
 
     @RequestMapping(value = "/users/update", method = RequestMethod.POST)
     public String update(HttpServletRequest req, HttpServletResponse resp) throws Exception {
@@ -25,8 +39,8 @@ public class AnnotationUpdateUserController {
 
         User updateUser = new User(req.getParameter("userId"), req.getParameter("password"), req.getParameter("name"),
                 req.getParameter("email"));
-        log.debug("Update User : {}", updateUser);
         user.update(updateUser);
         return "redirect:/";
     }
+
 }
