@@ -8,22 +8,13 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 public class HandlerExecution {
-    private Object instance;
     private Method method;
-
-    public HandlerExecution(Method method) {
-        this.instance = getInstance(method.getDeclaringClass());
+    private Object instance;
+    public HandlerExecution(Method method, Object instance) {
         this.method = method;
+        this.instance = instance;
     }
 
-    private Object getInstance(Class clazz) {
-        try {
-            return clazz.getConstructor().newInstance();
-        } catch (InstantiationException | IllegalAccessException
-                | InvocationTargetException | NoSuchMethodException e) {
-            throw new InstanceCreationFailedException(e);
-        }
-    }
 
     public Method getMethod() {
         return method;

@@ -13,38 +13,39 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.List;
 
 @WebServlet(name = "dispatcher", urlPatterns = "/", loadOnStartup = 1)
 public class DispatcherServlet extends HttpServlet {
     public static final String DEFAULT_REDIRECT_PREFIX = "redirect:";
     private static final long serialVersionUID = 1L;
     private static final Logger logger = LoggerFactory.getLogger(DispatcherServlet.class);
-    private HandlerMapping rm;
-    private AnnotationHandlerMapping am;
+    private List<HandlerMapping> handlerMappings = new ArrayList<>();
+    public DispatcherServlet() {
 
-    public DispatcherServlet(HandlerMapping rm, AnnotationHandlerMapping am) {
-        this.rm = rm;
-        this.am = am;
+    }
+
+    public void addHandlerMapping(HandlerMapping handlerMapping){
+        handlerMappings.add(handlerMapping);
     }
 
     @Override
-    public void init()  {
-        rm.initialize();
-        am.initialize();
+    public void init() {
+
     }
 
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String requestUri = req.getRequestURI();
         logger.debug("Method : {}, Request URI : {}", req.getMethod(), requestUri);
-        // TODO: 2019-10-04 handlerExecution과
         try {
             HandlerExecution execution = am.getHandler(req);
             ModelAndView mv = execution.handle(req, resp);
             move2(mv, req, resp);
 
         } catch (NotFoundHandlerException | IllegalAccessException | InvocationTargetException e) {
-            Controller controller = (Controller)rm.getHandler(requestUri);
+            Controller controller = (Controller) rm.getHandler();
             try {
                 String viewName = controller.execute(req, resp);
                 move(viewName, req, resp);

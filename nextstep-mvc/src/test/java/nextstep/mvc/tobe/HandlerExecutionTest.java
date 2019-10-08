@@ -19,7 +19,7 @@ class HandlerExecutionTest {
         MockHttpServletResponse response = new MockHttpServletResponse();
 
         Method method = MyController.class.getDeclaredMethod("findUserId", HttpServletRequest.class, HttpServletResponse.class);
-        HandlerExecution execution = new HandlerExecution(method);
+        HandlerExecution execution = new HandlerExecution(method, method.getDeclaringClass().getConstructor().newInstance());
         assertThat(execution.handle(request, response).getView()).isInstanceOf(EmptyView.class);
     }
 
@@ -30,7 +30,7 @@ class HandlerExecutionTest {
         MockHttpServletResponse response = new MockHttpServletResponse();
 
         Method method = MyController.class.getDeclaredMethod("notNullTest", HttpServletRequest.class, HttpServletResponse.class);
-        HandlerExecution execution = new HandlerExecution(method);
+        HandlerExecution execution = new HandlerExecution(method,method.getDeclaringClass().getConstructor().newInstance());
 
         assertThat(execution.handle(request, response)).isInstanceOf(ModelAndView.class);
     }
