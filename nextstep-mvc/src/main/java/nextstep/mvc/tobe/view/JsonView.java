@@ -17,13 +17,13 @@ public class JsonView implements View {
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
 
         if (model.size() != EMPTY_DATA) {
-            response.getWriter().write(ObjectToJson(model));
+            response.getWriter().write(convertObjectToJson(model));
             response.getWriter().flush();
             response.getWriter().close();
         }
     }
 
-    private String ObjectToJson(Map<String, ?> model) throws JsonProcessingException {
+    private String convertObjectToJson(Map<String, ?> model) throws JsonProcessingException {
         Object data = model;
         if (model.size() == SINGLE_DATA) {
             data = getSingleData(model);
