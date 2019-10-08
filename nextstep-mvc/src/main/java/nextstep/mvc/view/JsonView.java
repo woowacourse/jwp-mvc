@@ -9,34 +9,29 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 
 public class JsonView implements View {
-    private static final int ONE_DATA_TO_MODEL_SIZE = 1;
+    private static final int EMPTY_MODEL_SIZE = 0;
+    private static final int SINGLE_DATA_MODEL_SIZE = 1;
 
     @Override
     public void render(Map<String, ?> model, HttpServletRequest request, HttpServletResponse response) throws Exception {
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
         ObjectMapper objectMapper = new ObjectMapper();
-        if (model.size() != 0) {
-            String content = getContent(model, objectMapper);
+        if (model.size() != EMPTY_MODEL_SIZE) {
+            String content = objectToJson(model, objectMapper);
             response.getWriter().write(content);
             response.getWriter().flush();
             response.getWriter().close();
         }
     }
 
-    private String getContent(Map<String, ?> model, ObjectMapper objectMapper) throws JsonProcessingException {
-        return model.size() == ONE_DATA_TO_MODEL_SIZE ?
-                objectToString(model, objectMapper) : objectToJson(model, objectMapper);
+    private String objectToJson(Map<String, ?> model, ObjectMapper objectMapper) throws JsonProcessingException {
+        return model.size() == SINGLE_DATA_MODEL_SIZE ?
+                objectMapper.writeValueAsString(getSingleData(model)) : objectMapper.writeValueAsString(model);
     }
 
-    private String objectToString(Map<String, ?> model, ObjectMapper objectMapper) throws JsonProcessingException {
-        Object value = model.values().stream()
+    private Object getSingleData(Map<String, ?> model) {
+        return model.values().stream()
                 .findFirst()
                 .orElseThrow(ObjectToStringException::new);
-        return objectMapper.writeValueAsString(value);
-    }
-
-    private String objectToJson(Map<String, ?> model, ObjectMapper objectMapper) throws JsonProcessingException {
-        return objectMapper.writerWithDefaultPrettyPrinter()
-                .writeValueAsString(model);
     }
 }
