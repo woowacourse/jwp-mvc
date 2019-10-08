@@ -1,12 +1,8 @@
-package slipp;
+package nextstep.mvc.tobe;
 
 import nextstep.mvc.DispatcherServlet;
 import nextstep.mvc.HandlerMapping;
-import nextstep.mvc.tobe.AnnotationHandlerMapping;
-import nextstep.mvc.tobe.ControllerHandlerAdaptor;
-import nextstep.mvc.tobe.HandlerAdaptor;
 import nextstep.mvc.exception.HandlerAdapterNotFoundException;
-import nextstep.mvc.tobe.HandlerExecutionAdaptor;
 import nextstep.mvc.exception.HandlerNotExistException;
 import nextstep.web.annotation.RequestMethod;
 import org.junit.jupiter.api.BeforeEach;
@@ -38,7 +34,7 @@ public class DispatcherServletTests {
     @Test
     void service() throws ServletException, IOException {
         dispatcherServlet = new DispatcherServlet(Arrays.asList(new ControllerHandlerAdaptor(), new HandlerExecutionAdaptor()),
-            Arrays.asList(new ManualHandlerMapping(), new AnnotationHandlerMapping("slipp")));
+            Arrays.asList(new AnnotationHandlerMapping("nextstep")));
         dispatcherServlet.init();
 
         makeRequest();
@@ -50,7 +46,7 @@ public class DispatcherServletTests {
     void HandlerAdapterNotFound() {
         List<HandlerAdaptor> list = new ArrayList<>();
         dispatcherServlet = new DispatcherServlet(list,
-            Arrays.asList(new ManualHandlerMapping(), new AnnotationHandlerMapping("slipp")));
+            Arrays.asList(new AnnotationHandlerMapping("nextstep")));
         dispatcherServlet.init();
         makeRequest();
 
@@ -73,10 +69,7 @@ public class DispatcherServletTests {
 
     private void makeRequest() {
         mockHttpServletRequest.setMethod(RequestMethod.GET.toString());
-        mockHttpServletRequest.setRequestURI("/");
-        mockHttpServletRequest.setProtocol("HTTP/1.1");
-        mockHttpServletRequest.addHeader("Host", "localhost:8080");
-        mockHttpServletRequest.addHeader("Connection", "keep-alive");
-        mockHttpServletRequest.addHeader("Accept", "*/*");
+        mockHttpServletRequest.setRequestURI("/users");
+        mockHttpServletRequest.setParameter("userId", "admin");
     }
 }

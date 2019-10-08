@@ -20,7 +20,7 @@ public class MyController {
         logger.debug("Find UserId : {}", userId);
         User user = DataBase.findUserById(userId);
         request.setAttribute("user", user);
-        return null;
+        return new ModelAndView(new JSPView("/user/profile.jsp"));
     }
 
     @RequestMapping(value = "/users", method = RequestMethod.POST)
