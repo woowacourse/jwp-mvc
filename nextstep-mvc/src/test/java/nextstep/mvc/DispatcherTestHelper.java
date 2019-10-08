@@ -1,5 +1,8 @@
 package nextstep.mvc;
 
+import nextstep.ControllerHandlerAdapter;
+import nextstep.HandlerAdapter;
+import nextstep.HandlerExecutionAdapter;
 import nextstep.mvc.tobe.AnnotationHandlerMapping;
 import nextstep.web.annotation.RequestMethod;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -8,6 +11,8 @@ import slipp.ManualHandlerMapping;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpSession;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 public class DispatcherTestHelper {
@@ -21,7 +26,8 @@ public class DispatcherTestHelper {
     private MockHttpServletResponse response;
 
     public DispatcherTestHelper() {
-        dispatcher = new DispatcherServlet(new ManualHandlerMapping(), new AnnotationHandlerMapping("slipp"));
+        List<HandlerAdapter> adapters = Arrays.asList(new ControllerHandlerAdapter(), new HandlerExecutionAdapter());
+        dispatcher = new DispatcherServlet(adapters, new ManualHandlerMapping(), new AnnotationHandlerMapping("slipp"));
         dispatcher.init();
 
         request = new MockHttpServletRequest();

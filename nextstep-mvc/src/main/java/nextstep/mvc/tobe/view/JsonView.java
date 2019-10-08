@@ -9,11 +9,14 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 
 public class JsonView implements View {
+    private static final int EMPTY_DATA = 0;
+    private static final int SINGLE_DATA = 1;
+
     @Override
     public void render(Map<String, ?> model, HttpServletRequest request, HttpServletResponse response) throws Exception {
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
 
-        if (model.size() != 0) {
+        if (model.size() != EMPTY_DATA) {
             response.getWriter().write(ObjectToJson(model));
             response.getWriter().flush();
             response.getWriter().close();
@@ -21,20 +24,18 @@ public class JsonView implements View {
     }
 
     private String ObjectToJson(Map<String, ?> model) throws JsonProcessingException {
-        ObjectMapper objectMapper = new ObjectMapper();
-
-        if (model.size() == 1) {
-            return convertOneData(model, objectMapper);
+        Object data = model;
+        if (model.size() == SINGLE_DATA) {
+            data = getSingleData(model);
         }
 
-        return objectMapper.writerWithDefaultPrettyPrinter()
-                .writeValueAsString(model);
+        ObjectMapper objectMapper = new ObjectMapper();
+        return objectMapper.writeValueAsString(data);
     }
 
-    private String convertOneData(Map<String, ?> model, ObjectMapper objectMapper) throws JsonProcessingException {
-        Object object = model.values().stream()
+    private Object getSingleData(Map<String, ?> model) {
+        return model.values().stream()
                 .findFirst()
                 .orElseThrow(IllegalArgumentException::new);
-        return objectMapper.writeValueAsString(object);
     }
 }
