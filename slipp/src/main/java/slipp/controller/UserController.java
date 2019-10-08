@@ -1,16 +1,14 @@
 package slipp.controller;
 
-import nextstep.mvc.tobe.resolver.ArgumentResolver;
-import nextstep.mvc.tobe.view.JsonView;
+import nextstep.mvc.tobe.view.JspView;
 import nextstep.mvc.tobe.view.ModelAndView;
+import nextstep.mvc.tobe.view.RedirectView;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
-import nextstep.web.support.ResponseLocationBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import slipp.domain.User;
-import slipp.dto.UserUpdatedDto;
 import slipp.support.db.DataBase;
 
 import javax.servlet.http.HttpServletRequest;
@@ -21,45 +19,70 @@ public class UserController {
 
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
 
-    @RequestMapping(value = "/api/users", method = RequestMethod.POST)
-    public ModelAndView save(HttpServletRequest req, HttpServletResponse resp) {
-        User user = ArgumentResolver.resolve(req, User.class);
-        DataBase.addUser(user);
-        log.debug("create user >>> {}", user);
-
-        String location = ResponseLocationBuilder.of("/api/users")
-                .appendParam("userId", user.getUserId())
-                .build();
-        resp.setHeader("Location", location);
-        resp.setStatus(HttpServletResponse.SC_CREATED);
-
-        return new ModelAndView(new JsonView());
+    @RequestMapping(value = "/users/form", method = RequestMethod.GET)
+    public ModelAndView showSignUpForm(HttpServletRequest req, HttpServletResponse resp) {
+        return new ModelAndView(new JspView("/user/form.jsp"));
     }
 
-    @RequestMapping(value = "/api/users", method = RequestMethod.GET)
-    public ModelAndView fetch(HttpServletRequest req, HttpServletResponse resp) {
+    @RequestMapping(value = "/users/profile", method = RequestMethod.GET)
+    public ModelAndView showProfile(HttpServletRequest req, HttpServletResponse resp) {
         String userId = req.getParameter("userId");
         User user = DataBase.findUserById(userId);
-        log.debug("fetch user >>> {}", user);
+        if (user == null) {
+            throw new IllegalArgumentException("사용자를 찾을 수 없습니다.");
+        }
 
-        resp.setStatus(HttpServletResponse.SC_OK);
-
-        ModelAndView modelAndView = new ModelAndView(new JsonView());
+        ModelAndView modelAndView = new ModelAndView(new JspView("/user/profile.jsp"));
         modelAndView.addObject("user", user);
         return modelAndView;
     }
 
-    @RequestMapping(value = "/api/users", method = RequestMethod.PUT)
-    public ModelAndView update(HttpServletRequest req, HttpServletResponse resp) {
+    @RequestMapping(value = "/users/updateForm", method = RequestMethod.GET)
+    public ModelAndView showUpdateForm(HttpServletRequest req, HttpServletResponse resp) {
         String userId = req.getParameter("userId");
-        UserUpdatedDto userUpdatedDto = ArgumentResolver.resolve(req, UserUpdatedDto.class);
-
         User user = DataBase.findUserById(userId);
-        user.update(userUpdatedDto);
-        log.debug("update user >>> {}", userUpdatedDto);
+        if (!UserSessionUtils.isSameUser(req.getSession(), user)) {
+            throw new IllegalStateException("다른 사용자의 정보를 수정할 수 없습니다.");
+        }
 
-        resp.setStatus(HttpServletResponse.SC_OK);
+        ModelAndView modelAndView = new ModelAndView(new JspView("/user/updateForm.jsp"));
+        modelAndView.addObject("user", user);
+        return modelAndView;
+    }
 
-        return new ModelAndView(new JsonView());
+    @RequestMapping(value = "/users/create", method = RequestMethod.POST)
+    public ModelAndView create(HttpServletRequest req, HttpServletResponse resp) {
+        User user = new User(req.getParameter("userId"), req.getParameter("password"), req.getParameter("name"),
+                req.getParameter("email"));
+        log.debug("User : {}", user);
+
+        DataBase.addUser(user);
+        return new ModelAndView(new RedirectView("/"));
+    }
+
+    @RequestMapping(value = "/users", method = RequestMethod.GET)
+    public ModelAndView fetchUsers(HttpServletRequest req, HttpServletResponse resp) {
+        if (!UserSessionUtils.isLogined(req.getSession())) {
+            return new ModelAndView(new RedirectView("/users/loginForm"));
+        }
+
+        ModelAndView modelAndView = new ModelAndView(new JspView("/user/list.jsp"));
+        modelAndView.addObject("users", DataBase.findAll());
+        return modelAndView;
+    }
+
+    @RequestMapping(value = "/users/update", method = RequestMethod.POST)
+    public ModelAndView updateUser(HttpServletRequest req, HttpServletResponse resp) {
+        User user = DataBase.findUserById(req.getParameter("userId"));
+        if (!UserSessionUtils.isSameUser(req.getSession(), user)) {
+            throw new IllegalStateException("다른 사용자의 정보를 수정할 수 없습니다.");
+        }
+
+        User updateUser = new User(req.getParameter("userId"), req.getParameter("password"), req.getParameter("name"),
+                req.getParameter("email"));
+        log.debug("Update User : {}", updateUser);
+        user.update(updateUser);
+
+        return new ModelAndView(new RedirectView("/"));
     }
 }

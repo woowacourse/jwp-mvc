@@ -15,8 +15,14 @@ import javax.servlet.http.HttpSession;
 
 @Controller
 public class LoginController {
+
+    @RequestMapping(value = "/users/loginForm", method = RequestMethod.GET)
+    public ModelAndView showLoginForm(HttpServletRequest req, HttpServletResponse resp) {
+        return new ModelAndView(new JspView("/user/login.jsp"));
+    }
+
     @RequestMapping(value = "/users/login", method = RequestMethod.POST)
-    public ModelAndView execute(HttpServletRequest req, HttpServletResponse resp) {
+    public ModelAndView login(HttpServletRequest req, HttpServletResponse resp) {
         ModelAndView modelAndView;
         String userId = req.getParameter("userId");
         String password = req.getParameter("password");
@@ -31,5 +37,13 @@ public class LoginController {
         modelAndView = new ModelAndView(new JspView("/user/login.jsp"));
         modelAndView.addObject("loginFailed", true);
         return modelAndView;
+    }
+
+    @RequestMapping(value = "/users/logout", method = RequestMethod.GET)
+    public ModelAndView logout(HttpServletRequest req, HttpServletResponse resp) {
+        HttpSession session = req.getSession();
+        session.removeAttribute(UserSessionUtils.USER_SESSION_KEY);
+
+        return new ModelAndView(new RedirectView("/"));
     }
 }
