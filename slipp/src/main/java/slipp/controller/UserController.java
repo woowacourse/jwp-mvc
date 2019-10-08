@@ -23,7 +23,7 @@ public class UserController {
     public ModelAndView create(HttpServletRequest req, HttpServletResponse resp) throws Exception {
         User user = new User(req.getParameter("userId"), req.getParameter("password"), req.getParameter("name"),
                 req.getParameter("email"));
-        log.debug("User : {}", user);
+        log.debug("UserDto : {}", user);
 
         DataBase.addUser(user);
         return new ModelAndView(new RedirectView("redirect:/"));

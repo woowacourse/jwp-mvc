@@ -32,6 +32,6 @@ public class JsonView implements View {
     private Object getSingleData(Map<String, ?> model) {
         return model.values().stream()
                 .findFirst()
-                .orElseThrow(ObjectToStringException::new);
+                .orElseThrow(NotSingleDataException::new);
     }
 }
