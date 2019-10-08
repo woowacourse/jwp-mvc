@@ -13,11 +13,17 @@ public class JsonView implements View {
     public void render(Map<String, ?> model, HttpServletRequest request, HttpServletResponse response) throws Exception {
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
         PrintWriter writer = response.getWriter();
+        String result = "";
         if (model.isEmpty()) {
-            return;
+            result = "";
         }
         ObjectMapper mapper = new ObjectMapper();
-        String result = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(model);
+        if (model.size() == 1) {
+            result = mapper.writeValueAsString(model.values().toArray()[0]);
+        }
+        if (model.size() > 1) {
+            result = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(model);
+        }
         writer.write(result);
         writer.flush();
         writer.close();
