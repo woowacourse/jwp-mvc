@@ -12,6 +12,13 @@ import javax.servlet.http.HttpSession;
 
 @Controller
 public class LoginController {
+    private static final String LOGIN_FORM = "/user/login.jsp";
+
+    @RequestMapping(value = "/users/loginForm", method = RequestMethod.GET)
+    public String loginForm() {
+        return LOGIN_FORM;
+    }
+
     @RequestMapping(value = "/users/login", method = RequestMethod.POST)
     public String execute(HttpServletRequest req, HttpServletResponse resp) throws Exception {
         String userId = req.getParameter("userId");
