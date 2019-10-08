@@ -7,10 +7,11 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public class JsonUtils {
+    public static ObjectMapper objectMapper = new ObjectMapper();
+
     public static <T> T toObject(String json, Class<T> clazz) throws ObjectMapperException {
         try {
-            ObjectMapper objectMapper = getObjectMapper();
-            return objectMapper.readValue(json, clazz);
+            return getObjectMapper().readValue(json, clazz);
         } catch (IOException e) {
             throw new ObjectMapperException(e);
         }
@@ -18,15 +19,13 @@ public class JsonUtils {
 
     public static <T> T toObject(InputStream inputStream, Class<T> clazz) throws ObjectMapperException {
         try {
-            ObjectMapper objectMapper = getObjectMapper();
-            return objectMapper.readValue(inputStream, clazz);
+            return getObjectMapper().readValue(inputStream, clazz);
         } catch (IOException e) {
             throw new ObjectMapperException(e);
         }
     }
 
     private static ObjectMapper getObjectMapper() {
-        ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.setVisibility(
                 objectMapper.getSerializationConfig()
                         .getDefaultVisibilityChecker()
