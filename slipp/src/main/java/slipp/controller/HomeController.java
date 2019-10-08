@@ -14,7 +14,7 @@ import static nextstep.web.annotation.RequestMethod.GET;
 @Controller
 public class HomeController {
 
-    @RequestMapping(value = "/", method = GET)
+    @RequestMapping(value = "/api/", method = GET)
     public ModelAndView indexPage(HttpServletRequest req, HttpServletResponse resp) {
         ModelAndView modelAndView = new ModelAndView(new JspView("home.jsp"));
         modelAndView.addObject("users", DataBase.findAll());
