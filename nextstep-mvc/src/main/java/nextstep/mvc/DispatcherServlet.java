@@ -6,6 +6,8 @@ import nextstep.mvc.handleradapter.AnnotationHandlerAdapter;
 import nextstep.mvc.handleradapter.HandlerAdapter;
 import nextstep.mvc.handleradapter.LegacyHandlerAdapter;
 import nextstep.mvc.tobe.ModelAndView;
+import nextstep.mvc.tobe.view.View;
+import nextstep.mvc.tobe.view.ViewResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,6 +25,7 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger logger = LoggerFactory.getLogger(DispatcherServlet.class);
 
+    private ViewResolver viewResolver = new ViewResolver();
     private List<HandlerMapping> handlerMappings;
     private List<HandlerAdapter> handlerAdapters;
 
@@ -48,12 +51,23 @@ public class DispatcherServlet extends HttpServlet {
 
             HandlerAdapter handlerAdapter = getHandlerAdapter(handler);
             ModelAndView modelAndView = handlerAdapter.handle(req, resp, handler);
-            modelAndView.getView().render(modelAndView.getModel(), req, resp);
+            render(req, resp, modelAndView);
 
         } catch (Exception e) {
             logger.error(e.getMessage());
             resp.sendError(404);
         }
+    }
+
+    private void render(HttpServletRequest req, HttpServletResponse resp, ModelAndView modelAndView) throws Exception {
+        String viewName = modelAndView.getViewName();
+        if (viewName != null) {
+            View view = viewResolver.resolveViewName(viewName);
+            view.render(modelAndView.getModel(), req, resp);
+            return;
+        }
+        View view = modelAndView.getView();
+        view.render(modelAndView.getModel(), req, resp);
     }
 
     private Object getHandler(HttpServletRequest req) {

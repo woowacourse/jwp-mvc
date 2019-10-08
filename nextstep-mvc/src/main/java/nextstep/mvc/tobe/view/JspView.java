@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 
 public class JspView implements View {
+
     private String viewName;
 
     public JspView(String viewName) {
