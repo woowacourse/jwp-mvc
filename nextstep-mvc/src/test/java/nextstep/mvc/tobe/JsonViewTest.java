@@ -61,4 +61,15 @@ public class JsonViewTest {
         assertThat(response.getContentType()).isEqualTo(MediaType.APPLICATION_JSON_UTF8_VALUE);
         logger.debug("response body : {}", response.getContentAsString());
     }
+
+    @Test
+    public void jsonUtilsTest() {
+        StringBuffer stringBuffer = new StringBuffer();
+        stringBuffer.append("{\n");
+        stringBuffer.append("\"color\": \"testcolor\",\n");
+        stringBuffer.append("\"type\": \"testtype\"\n");
+        stringBuffer.append("}");
+        Car actual = JsonUtils.toObject(stringBuffer.toString(), Car.class);
+        assertThat(new Car("testcolor", "testtype")).isEqualTo(actual);
+    }
 }
