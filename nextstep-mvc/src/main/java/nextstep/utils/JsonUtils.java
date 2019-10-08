@@ -3,7 +3,7 @@ package nextstep.utils;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import nextstep.mvc.tobe.ObjectMapperException;
+import nextstep.mvc.exception.ObjectMapperException;
 
 import java.io.IOException;
 

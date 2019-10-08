@@ -1,7 +1,7 @@
 package nextstep.mvc.handleradapter;
 
 import nextstep.mvc.asis.Controller;
-import nextstep.mvc.tobe.ModelAndView;
+import nextstep.mvc.tobe.view.ModelAndView;
 import nextstep.mvc.tobe.view.JspView;
 import nextstep.mvc.tobe.view.RedirectView;
 
