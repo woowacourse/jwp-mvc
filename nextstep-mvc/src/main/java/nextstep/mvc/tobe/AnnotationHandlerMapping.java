@@ -7,7 +7,6 @@ import nextstep.web.annotation.RequestMethod;
 import org.reflections.Reflections;
 
 import javax.servlet.http.HttpServletRequest;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
@@ -24,7 +23,7 @@ public class AnnotationHandlerMapping {
         this.basePackage = basePackage;
     }
 
-    public void initialize() throws NoSuchMethodException, IllegalAccessException, InstantiationException, InvocationTargetException {
+    public void initialize() {
         Reflections reflections = new Reflections(basePackage);
         Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
         for (Class controller : controllers) {
@@ -37,12 +36,15 @@ public class AnnotationHandlerMapping {
     private void mappingHandlers(Method method) {
         RequestMapping rm = method.getAnnotation(RequestMapping.class);
         HandlerExecution handlerExecution = new HandlerExecution(method);
-        if (rm.method().length > 0) {
-            HandlerKey handlerKey = new HandlerKey(rm.value(), rm.method()[0]);
-            handlerExecutions.put(handlerKey, handlerExecution);
+        if (rm.method().length == 0) {
+            mappingEmptyMethodHandler(rm, handlerExecution);
             return;
         }
-        mappingEmptyMethodHandler(rm, handlerExecution);
+
+        for (int i = 0; i < rm.method().length; i++) {
+            HandlerKey handlerKey = new HandlerKey(rm.value(), rm.method()[i]);
+            handlerExecutions.put(handlerKey, handlerExecution);
+        }
     }
 
     private void mappingEmptyMethodHandler(RequestMapping rm, HandlerExecution handlerExecution) {

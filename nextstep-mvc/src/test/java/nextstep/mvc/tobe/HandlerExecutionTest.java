@@ -25,7 +25,7 @@ class HandlerExecutionTest {
 
     @Test
     @DisplayName("handle 메서드를 실행하면 ModelAndView를 결과로 되돌려준다.")
-    void execution_() throws Exception {
+    void execution_notNullTest_ModelAndView() throws Exception {
         MockHttpServletRequest request = new MockHttpServletRequest("GET", "/notnull");
         MockHttpServletResponse response = new MockHttpServletResponse();
 

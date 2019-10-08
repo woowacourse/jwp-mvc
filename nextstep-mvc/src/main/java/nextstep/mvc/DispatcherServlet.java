@@ -30,11 +30,7 @@ public class DispatcherServlet extends HttpServlet {
     @Override
     public void init()  {
         rm.initialize();
-        try {
-            am.initialize();
-        } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
-            e.printStackTrace();
-        }
+        am.initialize();
     }
 
     @Override
@@ -48,7 +44,7 @@ public class DispatcherServlet extends HttpServlet {
             move2(mv, req, resp);
 
         } catch (NotFoundHandlerException | IllegalAccessException | InvocationTargetException e) {
-            Controller controller = rm.getHandler(requestUri);
+            Controller controller = (Controller)rm.getHandler(requestUri);
             try {
                 String viewName = controller.execute(req, resp);
                 move(viewName, req, resp);
