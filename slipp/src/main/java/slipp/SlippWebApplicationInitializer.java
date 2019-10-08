@@ -5,6 +5,9 @@ import nextstep.mvc.HandlerMapping;
 import nextstep.mvc.adapter.AnnotationHandlerAdapter;
 import nextstep.mvc.adapter.HandlerAdapter;
 import nextstep.mvc.handler.AnnotationHandlerMapping;
+import nextstep.mvc.resolver.JsonViewResolver;
+import nextstep.mvc.resolver.JspViewResolver;
+import nextstep.mvc.resolver.ViewResolver;
 import nextstep.web.WebApplicationInitializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,7 +29,11 @@ public class SlippWebApplicationInitializer  implements WebApplicationInitialize
         List<HandlerAdapter> adapters = Arrays.asList(
                 new AnnotationHandlerAdapter()
         );
-        DispatcherServlet dispatcherServlet = new DispatcherServlet(mappings, adapters);
+        List<ViewResolver> resolvers = Arrays.asList(
+                new JspViewResolver(),
+                new JsonViewResolver()
+        );
+        DispatcherServlet dispatcherServlet = new DispatcherServlet(mappings, adapters, resolvers);
 
         ServletRegistration.Dynamic dispatcher = servletContext.addServlet("dispatcher", dispatcherServlet);
         dispatcher.setLoadOnStartup(1);

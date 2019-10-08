@@ -2,8 +2,11 @@ package nextstep.mvc;
 
 import nextstep.exception.NoSuchAdapterException;
 import nextstep.exception.NoSuchHandlerException;
+import nextstep.exception.NoSuchResolverException;
 import nextstep.mvc.adapter.HandlerAdapter;
+import nextstep.mvc.resolver.ViewResolver;
 import nextstep.mvc.view.ModelAndView;
+import nextstep.mvc.view.View;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,10 +25,12 @@ public class DispatcherServlet extends HttpServlet {
 
     private List<HandlerMapping> mappings;
     private List<HandlerAdapter> adapters;
+    private List<ViewResolver> resolvers;
 
-    public DispatcherServlet(List<HandlerMapping> mappings, List<HandlerAdapter> adapters) {
+    public DispatcherServlet(List<HandlerMapping> mappings, List<HandlerAdapter> adapters, List<ViewResolver> resolvers) {
         this.mappings = mappings;
         this.adapters = adapters;
+        this.resolvers = resolvers;
     }
 
     @Override
@@ -40,7 +45,8 @@ public class DispatcherServlet extends HttpServlet {
         HandlerAdapter handlerAdapter = getHandlerAdapter(handler);
         try {
             ModelAndView mav = handlerAdapter.handle(req, resp, handler);
-            mav.render(req, resp);
+            View view = getViewResolver(mav).resolveViewName(mav.getViewName());
+            view.render(mav.getModel(), req, resp);
         } catch (Throwable e) {
             logger.error("Exception : {}", e.getMessage());
             throw new ServletException(e.getMessage());
@@ -60,5 +66,12 @@ public class DispatcherServlet extends HttpServlet {
                 .filter(a -> a.supports(handler))
                 .findFirst()
                 .orElseThrow(NoSuchAdapterException::new);
+    }
+
+    private ViewResolver getViewResolver(ModelAndView modelAndView) {
+        return resolvers.stream()
+                .filter(r -> r.supports(modelAndView.getViewName()))
+                .findFirst()
+                .orElseThrow(NoSuchResolverException::new);
     }
 }
