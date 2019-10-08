@@ -40,13 +40,16 @@ public class DispatcherServlet extends HttpServlet {
 
         Object handler = getHandler(req);
         HandlerAdapter handlerAdapter = getHandlerAdapter(handler);
-        ModelAndView modelAndView = null;
-        try {
-            modelAndView = handlerAdapter.execute(handler, req, resp);
-        } catch (Exception e) {
-
-        }
+        ModelAndView modelAndView = getModelAndView(req, resp, handler, handlerAdapter);
         modelAndView.render(req, resp);
+    }
+
+    private ModelAndView getModelAndView(HttpServletRequest req, HttpServletResponse resp, Object handler, HandlerAdapter handlerAdapter) {
+        try {
+            return handlerAdapter.execute(handler, req, resp);
+        } catch (Exception e) {
+            throw new IllegalArgumentException();
+        }
     }
 
     private HandlerAdapter getHandlerAdapter(Object handlerMapping) {
