@@ -49,15 +49,33 @@ public class JsonViewTest {
     }
 
     @Test
-    void render_over_two_element() throws Exception {
+    void render_one_primitive() throws Exception {
         Map<String, Object> model = new HashMap<>();
-        Car expected = new Car("Black", "Sonata");
-        model.put("car", expected);
-        model.put("name", "포비");
+        int expected = 1;
+        model.put("number", expected);
 
         view.render(model, request, response);
 
+        int actual = JsonUtils.toObject(response.getContentAsString(), int.class);
         assertThat(response.getContentType()).isEqualTo(MediaType.APPLICATION_JSON_UTF8_VALUE);
+        assertThat(actual).isEqualTo(expected);
+    }
+
+    @Test
+    void render_over_two_element() throws Exception {
+        final Map<String, Object> model = new HashMap<>();
+        final Car car = new Car("Black", "Sonata");
+        final String name = "포비";
+        model.put("car", car);
+        model.put("name", name);
+
+        view.render(model, request, response);
+
+        Map actual = JsonUtils.toObject(response.getContentAsString(), Map.class);
+
         logger.debug("response body : {}", response.getContentAsString());
+        assertThat(response.getContentType()).isEqualTo(MediaType.APPLICATION_JSON_UTF8_VALUE);
+        assertThat(actual.get("name")).isEqualTo(name);
+        assertThat(actual.get("car").toString()).contains(car.getColor(), car.getType());
     }
 }
