@@ -54,5 +54,5 @@ https://gist.github.com/joshbuchea/6f47e86d2510bce28f8e7f42ae84c716
 
 ---
 ### 2단계 요구사항
-- [ ] JsonView.render 구현 (JsonViewTest 성공하게 바꾸기)
+- [x] JsonView.render 구현 (JsonViewTest 성공하게 바꾸기)
 - [ ] post의 body값 읽어오는 controller 생성 (UserAcceptanceTest 성공하게 변경)
