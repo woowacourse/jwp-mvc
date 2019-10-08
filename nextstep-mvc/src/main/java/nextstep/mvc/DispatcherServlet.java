@@ -34,8 +34,7 @@ public class DispatcherServlet extends HttpServlet {
         logger.debug("Method : {}, Request URI : {}", req.getMethod(), req.getRequestURI());
         try {
             ModelAndView modelAndView = handle(req, resp);
-            View view = modelAndView.getView();
-            view.render(modelAndView.getModel(), req, resp);
+            modelAndView.render(req, resp);
         } catch (Exception e) {
             logger.error("Exception : {}", e.getMessage());
             resp.setStatus(STATUS_CODE_FORBIDDEN);
