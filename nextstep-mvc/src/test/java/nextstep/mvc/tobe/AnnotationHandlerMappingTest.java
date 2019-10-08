@@ -5,6 +5,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import samples.User;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -13,7 +14,7 @@ public class AnnotationHandlerMappingTest {
 
     @BeforeEach
     public void setup() {
-        handlerMapping = new AnnotationHandlerMapping("nextstep.mvc.tobe");
+        handlerMapping = new AnnotationHandlerMapping("samples");
         handlerMapping.initialize();
     }
 
