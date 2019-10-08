@@ -2,7 +2,6 @@ package nextstep.mvc.tobe;
 
 import nextstep.db.DataBase;
 import nextstep.mvc.HandlerAdapter;
-import nextstep.mvc.asis.Controller;
 import nextstep.mvc.exception.MappingException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
