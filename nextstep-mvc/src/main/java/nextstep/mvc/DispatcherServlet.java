@@ -2,6 +2,7 @@ package nextstep.mvc;
 
 import nextstep.mvc.asis.Controller;
 import nextstep.mvc.tobe.*;
+import nextstep.mvc.tobe.handlerAdapter.HandlerAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,7 +14,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import java.util.List;
 
 @WebServlet(name = "dispatcher", urlPatterns = "/", loadOnStartup = 1)
@@ -21,18 +21,15 @@ public class DispatcherServlet extends HttpServlet {
     public static final String DEFAULT_REDIRECT_PREFIX = "redirect:";
     private static final long serialVersionUID = 1L;
     private static final Logger logger = LoggerFactory.getLogger(DispatcherServlet.class);
-    private List<HandlerMapping> handlerMappings = new ArrayList<>();
-    public DispatcherServlet() {
+    private List<HandlerMapping> handlerMappings;
+    private List<HandlerAdapter> handlerAdapters;
 
-    }
-
-    public void addHandlerMapping(HandlerMapping handlerMapping){
-        handlerMappings.add(handlerMapping);
+    public DispatcherServlet(List<HandlerMapping> handlerMappings) {
+        this.handlerMappings = handlerMappings;
     }
 
     @Override
     public void init() {
-
     }
 
     @Override

@@ -1,6 +1,6 @@
 package nextstep.mvc.tobe;
 
-import nextstep.mvc.tobe.exception.InstanceCreationFailedException;
+import nextstep.mvc.tobe.view.EmptyView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
