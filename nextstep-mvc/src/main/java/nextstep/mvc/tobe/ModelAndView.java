@@ -1,5 +1,6 @@
 package nextstep.mvc.tobe;
 
+import nextstep.mvc.tobe.view.JsonView;
 import nextstep.mvc.tobe.view.View;
 
 import java.util.Collections;
@@ -14,6 +15,11 @@ public class ModelAndView {
     }
 
     public ModelAndView(View view) {
+        this.view = view;
+    }
+
+    public ModelAndView(Map<String, Object> model, View view) {
+        this.model = model;
         this.view = view;
     }
 
