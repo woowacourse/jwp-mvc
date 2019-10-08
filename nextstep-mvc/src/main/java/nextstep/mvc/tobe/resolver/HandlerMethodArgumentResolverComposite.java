@@ -11,7 +11,7 @@ public class HandlerMethodArgumentResolverComposite implements HandlerMethodArgu
 
     private HandlerMethodArgumentResolverComposite() {
         resolvers.add(new PathVariableHandlerMethodArgumentResolver());
-        resolvers.add(new HttpServletHandlerMethodArgumentResolver());
+        resolvers.add(new HttpServletMethodArgumentResolver());
         resolvers.add(new RequestBodyMethodArgumentResolver());
     }
 

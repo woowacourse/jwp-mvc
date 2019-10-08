@@ -5,7 +5,7 @@ import nextstep.mvc.tobe.WebRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public class HttpServletHandlerMethodArgumentResolver implements HandlerMethodArgumentResolver {
+public class HttpServletMethodArgumentResolver implements HandlerMethodArgumentResolver {
     @Override
     public boolean supports(final MethodParameter methodParameter) {
         return methodParameter.isSameType(HttpServletRequest.class)
