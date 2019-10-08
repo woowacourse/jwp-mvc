@@ -7,28 +7,29 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 import java.util.Objects;
 
-public class RedirectView implements View {
-    private final String redirectUrl;
+public class TemplateView implements View {
 
-    public RedirectView(String redirectUrl) {
-        this.redirectUrl = redirectUrl;
+    private final String url;
+
+    public TemplateView(String url) {
+        this.url = url;
     }
 
     @Override
     public void render(Map<String, ?> model, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        response.sendRedirect(redirectUrl);
+
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        RedirectView that = (RedirectView) o;
-        return Objects.equals(redirectUrl, that.redirectUrl);
+        TemplateView that = (TemplateView) o;
+        return Objects.equals(url, that.url);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(redirectUrl);
+        return Objects.hash(url);
     }
 }

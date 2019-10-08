@@ -5,8 +5,11 @@ import nextstep.mvc.tobe.View;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class ModelAndView {
+    private static final String REDIRECT_PREFIX = "redirect:";
+
     private View view;
     private Map<String, Object> model = new HashMap<String, Object>();
 
@@ -19,6 +22,18 @@ public class ModelAndView {
 
     public static ModelAndView of(View view) {
         return new ModelAndView(view);
+    }
+
+    public static ModelAndView of(String url) {
+        if (url.startsWith(REDIRECT_PREFIX)) {
+            return redirect(url.substring(REDIRECT_PREFIX.length()));
+        }
+
+        return forward(url);
+    }
+
+    public static ModelAndView forward(String url) {
+        return new ModelAndView(new TemplateView(url));
     }
 
     public static ModelAndView redirect(String redirectUrl) {
@@ -40,5 +55,19 @@ public class ModelAndView {
 
     public View getView() {
         return view;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ModelAndView that = (ModelAndView) o;
+        return Objects.equals(view, that.view) &&
+                Objects.equals(model, that.model);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(view, model);
     }
 }
