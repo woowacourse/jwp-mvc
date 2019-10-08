@@ -1,5 +1,7 @@
 package slipp.domain;
 
+import slipp.dto.UserUpdatedDto;
+
 public class User {
     private String userId;
     private String password;
@@ -36,6 +38,12 @@ public class User {
         this.password = updateUser.password;
         this.name = updateUser.name;
         this.email = updateUser.email;
+    }
+
+    public void update(UserUpdatedDto userUpdatedDto) {
+        this.password = userUpdatedDto.getPassword();
+        this.name = userUpdatedDto.getName();
+        this.email = userUpdatedDto.getEmail();
     }
 
     public boolean matchPassword(String password) {
