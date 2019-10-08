@@ -45,7 +45,7 @@ public class UserApiController {
     }
 
     @RequestMapping(method = RequestMethod.PUT)
-    public Object create(@RequestParam(value = "userId") String userId, @RequestBody UserUpdatedDto userUpdatedDto, HttpServletResponse response) {
+    public Object updateUser(@RequestParam(value = "userId") String userId, @RequestBody UserUpdatedDto userUpdatedDto, HttpServletResponse response) {
         User user = getUser(userId);
         User updateUser = new User(userId, userUpdatedDto.getPassword(), userUpdatedDto.getName(), userUpdatedDto.getEmail());
         user.update(updateUser);
