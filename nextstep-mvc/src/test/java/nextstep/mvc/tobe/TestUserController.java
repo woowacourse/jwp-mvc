@@ -34,8 +34,7 @@ public class TestUserController {
         mav.addObject("testUser", testUser);
         return mav;
     }
-
-
+    
     @RequestMapping(value = "/users/{id}", method = RequestMethod.GET)
     public ModelAndView show_pathvariable(@PathVariable long id) {
         logger.debug("userId: {}", id);
