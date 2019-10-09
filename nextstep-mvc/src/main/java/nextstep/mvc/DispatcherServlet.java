@@ -6,11 +6,11 @@ import nextstep.mvc.exception.NotFoundViewResolverExcepetion;
 import nextstep.mvc.handleradapter.AnnotationHandlerAdapter;
 import nextstep.mvc.handleradapter.HandlerAdapter;
 import nextstep.mvc.handlermapping.HandlerMapping;
-import nextstep.mvc.tobe.view.ModelAndView;
-import nextstep.mvc.tobe.view.View;
-import nextstep.mvc.tobe.view.viewresolver.DefaultViewResolver;
-import nextstep.mvc.tobe.view.viewresolver.StringViewResolver;
-import nextstep.mvc.tobe.view.viewresolver.ViewResolver;
+import nextstep.mvc.view.ModelAndView;
+import nextstep.mvc.view.View;
+import nextstep.mvc.viewresolver.DefaultViewResolver;
+import nextstep.mvc.viewresolver.StringViewResolver;
+import nextstep.mvc.viewresolver.ViewResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

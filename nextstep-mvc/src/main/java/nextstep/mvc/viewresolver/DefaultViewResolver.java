@@ -1,7 +1,7 @@
-package nextstep.mvc.tobe.view.viewresolver;
+package nextstep.mvc.viewresolver;
 
-import nextstep.mvc.tobe.view.ModelAndView;
-import nextstep.mvc.tobe.view.View;
+import nextstep.mvc.view.ModelAndView;
+import nextstep.mvc.view.View;
 
 public class DefaultViewResolver implements ViewResolver {
 
