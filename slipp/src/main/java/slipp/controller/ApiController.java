@@ -28,6 +28,9 @@ public class ApiController {
         User user = extractPostRequestBody(request);
         log.debug("User : {}", user);
 
+//        Map<String, Object> model = new HashMap<>();
+//        model.put("user", user);
+
         DataBase.addUser(user);
         response.setStatus(201);
         response.addHeader("Location", "/api/users?userId=" + user.getUserId());
