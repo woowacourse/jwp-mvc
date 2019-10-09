@@ -46,10 +46,7 @@ public class HandlerScanner {
 
     private void createHandlerExecution(Method method, Map<HandlerKey, HandlerExecution> handlerExecutions) {
         RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-        RequestMethod[] methods = requestMapping.method();
-        if (methods.length == EMPTY) {
-            methods = RequestMethod.values();
-        }
+        RequestMethod[] methods = getRequestMethods(requestMapping);
         String value = requestMapping.value();
 
         for (RequestMethod requestMethod : methods) {
@@ -57,5 +54,13 @@ public class HandlerScanner {
             handlerExecutions.put(handlerKey,
                     new HandlerExecution(method, instances.get(method.getDeclaringClass())));
         }
+    }
+
+    private RequestMethod[] getRequestMethods(RequestMapping requestMapping) {
+        RequestMethod[] methods = requestMapping.method();
+        if (methods.length == EMPTY) {
+            return RequestMethod.values();
+        }
+        return methods;
     }
 }

@@ -1,4 +1,4 @@
-package slipp.controller;
+package slipp.controller.api;
 
 import nextstep.mvc.view.ModelAndView;
 import nextstep.utils.JsonUtils;

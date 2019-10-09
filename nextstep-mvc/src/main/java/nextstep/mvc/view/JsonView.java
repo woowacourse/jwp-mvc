@@ -11,20 +11,19 @@ public class JsonView implements View {
     @Override
     public void render(Map<String, ?> model, HttpServletRequest request, HttpServletResponse response) throws Exception {
         ObjectMapper objectMapper = new ObjectMapper();
-        String modelAsString = "";
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
+        String modelAsString = getModelAsString(model, objectMapper);
+        response.getWriter().write(modelAsString);
+    }
 
-        if (model.size() < 1) {
-            return;
-        }
+    private String getModelAsString(Map<String, ?> model, ObjectMapper objectMapper) throws Exception {
         if (model.size() == 1) {
             Object value = model.values().toArray()[0];
-            modelAsString = objectMapper.writeValueAsString(value);
+            return objectMapper.writeValueAsString(value);
         }
         if (model.size() >= 2) {
-            modelAsString = objectMapper.writeValueAsString(model);
+            return objectMapper.writeValueAsString(model);
         }
-
-        response.getWriter().write(modelAsString);
+        return "";
     }
 }
