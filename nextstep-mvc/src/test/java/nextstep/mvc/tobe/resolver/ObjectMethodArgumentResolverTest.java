@@ -1,6 +1,5 @@
 package nextstep.mvc.tobe.resolver;
 
-import nextstep.mvc.tobe.TestUser;
 import nextstep.mvc.tobe.WebRequest;
 import nextstep.mvc.tobe.WebRequestContext;
 import org.junit.jupiter.api.BeforeEach;
@@ -33,7 +32,7 @@ class ObjectMethodArgumentResolverTest {
 
     @BeforeEach
     void setUp() throws NoSuchMethodException {
-        method = clazz.getDeclaredMethod("sampleJavaBean", OnlyDefaultConstructorJavaBean.class);
+        method = clazz.getDeclaredMethod("sampleJavaBean", OnlyDefaultConstructorJavaBean.class, PrivateConstructorJavaBean.class);
 
         params = Stream.of(clazz.getDeclaredMethods())
                 .filter(method -> method.getName().startsWith("sample"))
@@ -65,7 +64,21 @@ class ObjectMethodArgumentResolverTest {
         assertThat(actual.getAge()).isEqualTo(Long.parseLong(age));
     }
 
-    void sampleJavaBean(final OnlyDefaultConstructorJavaBean javaBean) {
+    @Test
+    void 기본생성자_접근자_private_javaBean_매핑() {
+        // given
+        final MethodParameter methodParameter = new MethodParameter(params.get(PrivateConstructorJavaBean.class), "javaBean", 1, method);
+
+        // when
+        final PrivateConstructorJavaBean actual = (PrivateConstructorJavaBean) resolver.resolveArgument(webRequest, methodParameter);
+
+        // then
+        assertThat(actual.getUserId()).isEqualTo(userId);
+        assertThat(actual.getPassword()).isEqualTo(password);
+        assertThat(actual.getAge()).isEqualTo(Long.parseLong(age));
+    }
+
+    void sampleJavaBean(final OnlyDefaultConstructorJavaBean javaBean, final PrivateConstructorJavaBean bean) {
     }
 
 }
@@ -76,6 +89,27 @@ class OnlyDefaultConstructorJavaBean {
     private int age;
 
     public OnlyDefaultConstructorJavaBean() {
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public int getAge() {
+        return age;
+    }
+}
+
+class PrivateConstructorJavaBean {
+    private String userId;
+    private String password;
+    private int age;
+
+    private PrivateConstructorJavaBean() {
     }
 
     public String getUserId() {

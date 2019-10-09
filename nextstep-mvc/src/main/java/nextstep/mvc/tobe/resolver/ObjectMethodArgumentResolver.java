@@ -6,7 +6,9 @@ import nextstep.mvc.tobe.exception.HandlerMethodArgumentResolverException;
 import nextstep.utils.TypeConverter;
 
 import javax.servlet.http.HttpServletRequest;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 
 public class ObjectMethodArgumentResolver implements HandlerMethodArgumentResolver {
 
@@ -21,7 +23,10 @@ public class ObjectMethodArgumentResolver implements HandlerMethodArgumentResolv
             final HttpServletRequest request = webRequest.getRequest();
             final Class<?> parameterType = methodParameter.getType();
             final Field[] fields = parameterType.getDeclaredFields();
-            final Object instance = parameterType.newInstance();
+
+            final Constructor<?> constructor = parameterType.getDeclaredConstructor();
+            constructor.setAccessible(true);
+            final Object instance = constructor.newInstance();
 
             for (final Field field : fields) {
                 final Object value = parseValue(field, request);
@@ -30,7 +35,7 @@ public class ObjectMethodArgumentResolver implements HandlerMethodArgumentResolv
             }
 
             return instance;
-        } catch (InstantiationException | IllegalAccessException e) {
+        } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
             throw new HandlerMethodArgumentResolverException(e.getMessage());
         }
     }
