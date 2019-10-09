@@ -7,6 +7,8 @@ import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import slipp.controller.exception.NotFoundUserException;
+import slipp.controller.exception.UnAuthorizedException;
 import slipp.domain.User;
 import slipp.support.db.DataBase;
 
@@ -68,7 +70,7 @@ public class UserController {
         String userId = req.getParameter("userId");
         User user = DataBase.findUserById(userId);
         if (user == null) {
-            throw new NullPointerException("사용자를 찾을 수 없습니다.");
+            throw new NotFoundUserException(userId);
         }
         req.setAttribute("user", user);
         return new ModelAndView(new JspView("/user/profile.jsp"));
@@ -79,7 +81,7 @@ public class UserController {
         String userId = req.getParameter("userId");
         User user = DataBase.findUserById(userId);
         if (!UserSessionUtils.isSameUser(req.getSession(), user)) {
-            throw new IllegalStateException("다른 사용자의 정보를 수정할 수 없습니다.");
+            throw new UnAuthorizedException(userId);
         }
         req.setAttribute("user", user);
         return new ModelAndView(new JspView("/user/updateForm.jsp"));
@@ -87,9 +89,10 @@ public class UserController {
 
     @RequestMapping(value = "/users/update", method = RequestMethod.POST)
     public ModelAndView updateUser(HttpServletRequest req, HttpServletResponse resp) {
-        User user = DataBase.findUserById(req.getParameter("userId"));
+        String userId = req.getParameter("userId");
+        User user = DataBase.findUserById(userId);
         if (!UserSessionUtils.isSameUser(req.getSession(), user)) {
-            throw new IllegalStateException("다른 사용자의 정보를 수정할 수 없습니다.");
+            throw new UnAuthorizedException(userId);
         }
 
         User updateUser = new User(req.getParameter("userId"), req.getParameter("password"), req.getParameter("name"),
