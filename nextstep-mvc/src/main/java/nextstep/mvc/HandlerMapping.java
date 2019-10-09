@@ -1,9 +1,11 @@
 package nextstep.mvc;
 
-import nextstep.mvc.asis.Controller;
+import nextstep.mvc.tobe.Handler;
+
+import javax.servlet.http.HttpServletRequest;
 
 public interface HandlerMapping {
     void initialize();
 
-    Controller getHandler(String requestUri);
+    Handler getHandler(HttpServletRequest request);
 }

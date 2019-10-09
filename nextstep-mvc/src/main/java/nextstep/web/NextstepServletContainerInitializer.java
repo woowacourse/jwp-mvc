@@ -18,7 +18,7 @@ public class NextstepServletContainerInitializer implements ServletContainerInit
         if (webAppInitializerClasses != null) {
             for (Class<?> waiClass : webAppInitializerClasses) {
                 try {
-                    initializers.add((WebApplicationInitializer) waiClass.newInstance());
+                    initializers.add((WebApplicationInitializer) waiClass.getDeclaredConstructor().newInstance());
                 } catch (Throwable ex) {
                     throw new ServletException("Failed to instantiate WebApplicationInitializer class", ex);
                 }
