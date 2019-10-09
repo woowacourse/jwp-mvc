@@ -1,10 +1,10 @@
 package nextstep.mvc.tobe.handleradapter;
 
 import nextstep.mvc.asis.Controller;
-import nextstep.mvc.tobe.JspView;
-import nextstep.mvc.tobe.ModelAndView;
-import nextstep.mvc.tobe.RedirectView;
-import nextstep.mvc.tobe.View;
+import nextstep.mvc.tobe.view.JspView;
+import nextstep.mvc.tobe.view.ModelAndView;
+import nextstep.mvc.tobe.view.RedirectView;
+import nextstep.mvc.tobe.view.View;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
