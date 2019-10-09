@@ -1,7 +1,6 @@
 package nextstep.mvc;
 
-import nextstep.mvc.tobe.ModelAndView;
-import nextstep.mvc.tobe.NoHandlerMatchException;
+import nextstep.mvc.exception.NoHandlerMatchException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

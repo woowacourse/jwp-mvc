@@ -1,13 +1,10 @@
-package slipp.domain;
+package nextstep.mvc;
 
 public class User {
     private String userId;
     private String password;
     private String name;
     private String email;
-
-    public User() {
-    }
 
     public User(String userId, String password, String name, String email) {
         this.userId = userId;
@@ -80,8 +77,11 @@ public class User {
         } else if (!name.equals(other.name))
             return false;
         if (userId == null) {
-            return other.userId == null;
-        } else return userId.equals(other.userId);
+            if (other.userId != null)
+                return false;
+        } else if (!userId.equals(other.userId))
+            return false;
+        return true;
     }
 
     @Override
