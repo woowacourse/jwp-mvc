@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 
 @Controller
 public class UserController {
-    private static final Logger log = LoggerFactory.getLogger(CreateUserController.class);
+    private static final Logger log = LoggerFactory.getLogger(UserController.class);
 
     @RequestMapping(value = "/users/create", method = RequestMethod.POST)
     public ModelAndView create(HttpServletRequest req, HttpServletResponse resp) throws Exception {
