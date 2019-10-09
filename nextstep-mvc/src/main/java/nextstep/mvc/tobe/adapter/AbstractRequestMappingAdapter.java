@@ -6,7 +6,7 @@ import nextstep.mvc.tobe.handler.HandlerExecution;
 import nextstep.mvc.tobe.resolver.HandlerMethodArgumentResolverComposite;
 import nextstep.mvc.tobe.resolver.MethodParameters;
 
-public abstract class AbstractRequestMappingAdapter implements HandlerAdapter {
+public abstract class AbstractRequestMappingAdapter implements RequestMappingAdapter {
     private HandlerMethodArgumentResolverComposite argumentResolvers;
 
     public AbstractRequestMappingAdapter() {
