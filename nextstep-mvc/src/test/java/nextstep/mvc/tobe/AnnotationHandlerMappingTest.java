@@ -32,6 +32,13 @@ public class AnnotationHandlerMappingTest {
         assertThat(request.getAttribute("user")).isEqualTo(user);
     }
 
+    @Test
+    public void multiple_request_method_mapping() {
+        MockHttpServletRequest request = new MockHttpServletRequest("DELETE", "/users");
+        HandlerExecution execution = handlerMapping.getHandler(request);
+        assertThat(execution).isNotNull();
+    }
+
     private void createUser(User user) throws Exception {
         MockHttpServletRequest request = new MockHttpServletRequest("POST", "/users");
         request.setParameter("userId", user.getUserId());

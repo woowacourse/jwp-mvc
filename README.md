@@ -7,3 +7,23 @@
 
 ## 우아한테크코스 코드리뷰
 * [온라인 코드 리뷰 과정](https://github.com/woowacourse/woowacourse-docs/blob/master/maincourse/README.md)
+
+
+## To do
+- [x] Annotation Scan 하는 부분을 AnnotationHandlerMapping 클래스에서 분리, 별도의
+객체로 책임을 위임한다.
+
+- [x] Dispatcher Servlet 의 입장에서, ManualHandlerMapping 의 리턴 타입(Controller)과
+AnnotationHandlerMapping 의 리턴 타입(HandlerExecution)이 맞지 않아 분기문이 발생한다.
+이를 방지하기 위해 ControllerAdaptor 를 만들고, HandlerExecution 을 구현하도록 만든다.
+ManualHandlerMapping 은 Controller 가 아니라 ControllerAdaptor 를 리턴한다.
+
+- [x] RequestMethod 를 하나만 받는게 아니라 여러 개 받을 수 있도록 리팩토링
+    - method 가 설정되어있지 않으면 모든 메서드 지원 (GET/POST/PUT/DELETE)
+    - HandlerKey 는 건드리지 않고 RequestMapping 만 건드린다. 
+    - ControllerScanner 에서 RequestMethod[] 를 처리하는 로직을 추가한다.
+
+- [x] 컨트롤러의 메서드가 반드시 ModelAndView 를 리턴하진 않아도 된다. String 을 리턴할수도 있고 Object 를 리턴할 수도 있는데 어떻게 대응할 것인지?
+    - AnnotationHandlerMapping 이 value 로 HandlerExecution 을 받는데, 이것의 리턴 타입이 ModelAndView 라서 확장이 불가능. Object 로 바꿔야할듯.
+
+- [ ] DispatcherServlet 테스트 코드 작성 (MockHttpServletRequest, MockHttpServletResponse)

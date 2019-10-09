@@ -1,5 +1,7 @@
 package nextstep.mvc.tobe;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -26,6 +28,10 @@ public class ModelAndView {
 
     public Map<String, Object> getModel() {
         return Collections.unmodifiableMap(model);
+    }
+
+    public void render(HttpServletRequest req, HttpServletResponse res) throws Exception {
+        view.render(model, req, res);
     }
 
     public View getView() {
