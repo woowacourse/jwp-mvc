@@ -10,7 +10,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
 @WebServlet(name = "dispatcher", urlPatterns = "/", loadOnStartup = 1)
 public class DispatcherServlet extends HttpServlet {
@@ -29,32 +28,24 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     @Override
-    protected void service(final HttpServletRequest req, final HttpServletResponse resp) {
-        final String requestUri = req.getRequestURI();
-        logger.debug("Method : {}, Request URI : {}", req.getMethod(), requestUri);
+    protected void service(final HttpServletRequest request, final HttpServletResponse response) {
+        final String requestUri = request.getRequestURI();
+        logger.debug("Method : {}, Request URI : {}", request.getMethod(), requestUri);
 
-        final ModelAndView handler = getModelAndView(req, resp);
+        final HandlerMapping handler = getModelAndView(request, response);
 
         try {
-            handler.render(req, resp);
+            ModelAndView mav = handler.execute(request, response);
+            mav.render(request, response);
         } catch (Exception e) {
             logger.info("!! ERROR : {}", e.getMessage());
         }
     }
 
-    private ModelAndView getModelAndView(HttpServletRequest req, HttpServletResponse resp) {
+    private HandlerMapping getModelAndView(final HttpServletRequest request, final HttpServletResponse response) {
         return handlerMappings.stream()
-                .map(handlerMapping -> processException(handlerMapping, req, resp))
-                .filter(Objects::nonNull)
+                .filter(handlerMapping -> handlerMapping.isSupport(request))
                 .findAny()
                 .orElseThrow(() -> new IllegalArgumentException("요청한 uri 을 찾을 수 없습니다."));
-    }
-
-    private ModelAndView processException(final HandlerMapping handlerMapping, final HttpServletRequest req, final HttpServletResponse resp) {
-        try {
-            return handlerMapping.execute(req, resp);
-        } catch (Exception e) {
-            return null;
-        }
     }
 }
