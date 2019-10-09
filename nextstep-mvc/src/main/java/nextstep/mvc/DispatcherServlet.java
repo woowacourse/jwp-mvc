@@ -9,6 +9,8 @@ import nextstep.mvc.tobe.adapter.ResponseBodyAdapter;
 import nextstep.mvc.tobe.adapter.SimpleControllerAdapter;
 import nextstep.mvc.tobe.exception.HandlerAdapterNotSupportedException;
 import nextstep.mvc.tobe.exception.HandlerNotFoundException;
+import nextstep.mvc.tobe.interceptor.HandlerInterceptor;
+import nextstep.mvc.tobe.interceptor.InterceptorRegistry;
 import nextstep.mvc.tobe.mapping.HandlerMapping;
 import nextstep.mvc.tobe.view.View;
 import nextstep.mvc.tobe.viewresolver.ViewResolver;
@@ -37,8 +39,10 @@ public class DispatcherServlet extends HttpServlet {
     private List<HandlerMapping> handlerMappings;
     private List<HandlerAdapter> handlerAdapters;
     private ViewResolverManager viewResolverManager;
+    private InterceptorRegistry interceptorRegistry;
 
-    public DispatcherServlet(HandlerMapping... handlerMappings) {
+    public DispatcherServlet(InterceptorRegistry interceptorRegistry, HandlerMapping... handlerMappings) {
+        this.interceptorRegistry = interceptorRegistry;
         this.handlerMappings = Arrays.asList(handlerMappings);
         this.handlerAdapters = Arrays.asList(new SimpleControllerAdapter(), new ResponseBodyAdapter(), new HandlerExecutionAdapter());
         this.viewResolverManager = new ViewResolverManager();
@@ -60,9 +64,17 @@ public class DispatcherServlet extends HttpServlet {
 
             final Object handler = getHandler(req);
 
+            final List<HandlerInterceptor> interceptors = interceptorRegistry.getHandlerInterceptors(req.getRequestURI());
+
+            if (!preHandle(req, resp, handler, interceptors)) {
+                return;
+            }
+
             final HandlerAdapter handlerAdapter = getHandlerAdapter(handler);
 
             final ModelAndView mav = handlerAdapter.handle(webRequest, handler);
+
+            postHandle(req, resp, handler, interceptors, mav);
 
             final View view = viewResolverManager.resolveView(mav.getView());
 
@@ -74,6 +86,21 @@ public class DispatcherServlet extends HttpServlet {
         } catch (Exception e) {
             logger.error("Exception: {}", e.getMessage());
             resp.sendError(SC_INTERNAL_SERVER_ERROR, e.getMessage());
+        }
+    }
+
+    private boolean preHandle(final HttpServletRequest req, final HttpServletResponse resp, final Object handler, final List<HandlerInterceptor> interceptors) throws Exception {
+        for (final HandlerInterceptor interceptor : interceptors) {
+            if (!interceptor.preHandle(req, resp, handler)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private void postHandle(final HttpServletRequest req, final HttpServletResponse resp, final Object handler, final List<HandlerInterceptor> interceptors, final ModelAndView mav) throws Exception {
+        for (final HandlerInterceptor interceptor : interceptors) {
+            interceptor.postHandle(req, resp, handler, mav);
         }
     }
 
