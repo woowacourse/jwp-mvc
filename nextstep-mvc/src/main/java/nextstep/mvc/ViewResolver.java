@@ -1,4 +1,6 @@
-package nextstep.mvc.tobe.view;
+package nextstep.mvc;
+
+import nextstep.mvc.tobe.view.ModelAndView;
 
 public interface ViewResolver {
     boolean supports(ModelAndView mv);

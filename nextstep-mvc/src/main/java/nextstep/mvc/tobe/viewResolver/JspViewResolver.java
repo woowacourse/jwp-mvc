@@ -1,4 +1,9 @@
-package nextstep.mvc.tobe.view;
+package nextstep.mvc.tobe.viewResolver;
+
+import nextstep.mvc.View;
+import nextstep.mvc.ViewResolver;
+import nextstep.mvc.tobe.view.JspView;
+import nextstep.mvc.tobe.view.ModelAndView;
 
 public class JspViewResolver implements ViewResolver {
     private static final String REDIRECT_PREFIX = "redirect:";

@@ -1,13 +1,13 @@
 package slipp;
 
 import nextstep.mvc.DispatcherServlet;
+import nextstep.mvc.HandlerAdapter;
 import nextstep.mvc.HandlerMapping;
+import nextstep.mvc.ViewResolver;
 import nextstep.mvc.asis.ControllerHandlerAdapter;
-import nextstep.mvc.tobe.AnnotationHandlerMapping;
-import nextstep.mvc.tobe.HandlerAdapter;
-import nextstep.mvc.tobe.HandlerExecutionHandlerAdapter;
-import nextstep.mvc.tobe.view.JspViewResolver;
-import nextstep.mvc.tobe.view.ViewResolver;
+import nextstep.mvc.tobe.adapter.AnnotationHandlerMapping;
+import nextstep.mvc.tobe.adapter.HandlerExecutionHandlerAdapter;
+import nextstep.mvc.tobe.viewResolver.JspViewResolver;
 import nextstep.web.WebApplicationInitializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

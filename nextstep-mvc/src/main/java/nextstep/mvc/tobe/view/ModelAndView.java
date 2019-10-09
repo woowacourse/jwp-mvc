@@ -1,5 +1,7 @@
 package nextstep.mvc.tobe.view;
 
+import nextstep.mvc.View;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;

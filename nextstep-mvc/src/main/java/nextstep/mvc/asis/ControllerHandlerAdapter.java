@@ -1,6 +1,6 @@
 package nextstep.mvc.asis;
 
-import nextstep.mvc.tobe.HandlerAdapter;
+import nextstep.mvc.HandlerAdapter;
 import nextstep.mvc.tobe.view.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;

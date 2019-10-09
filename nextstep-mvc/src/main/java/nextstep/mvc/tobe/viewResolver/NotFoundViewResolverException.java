@@ -1,4 +1,4 @@
-package nextstep.mvc.tobe.view;
+package nextstep.mvc.tobe.viewResolver;
 
 import javassist.NotFoundException;
 

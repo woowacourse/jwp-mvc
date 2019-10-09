@@ -1,13 +1,10 @@
 package nextstep.mvc;
 
 import javassist.NotFoundException;
-import nextstep.mvc.tobe.HandlerAdapter;
-import nextstep.mvc.tobe.NotFoundAdapterException;
-import nextstep.mvc.tobe.NotFoundControllerException;
+import nextstep.mvc.tobe.adapter.NotFoundAdapterException;
+import nextstep.mvc.tobe.handler.NotFoundHandlerException;
 import nextstep.mvc.tobe.view.ModelAndView;
-import nextstep.mvc.tobe.view.NotFoundViewResolverException;
-import nextstep.mvc.tobe.view.View;
-import nextstep.mvc.tobe.view.ViewResolver;
+import nextstep.mvc.tobe.viewResolver.NotFoundViewResolverException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,7 +57,7 @@ public class DispatcherServlet extends HttpServlet {
                 .map(handlerMapping -> handlerMapping.getHandler(req))
                 .filter(Objects::nonNull)
                 .findFirst()
-                .orElseThrow(() -> new NotFoundControllerException("해당하는 Handler를 찾을 수 없습니다."));
+                .orElseThrow(() -> new NotFoundHandlerException("해당하는 Handler를 찾을 수 없습니다."));
     }
 
     private HandlerAdapter findHandlerAdapter(Object handler) throws NotFoundAdapterException {
