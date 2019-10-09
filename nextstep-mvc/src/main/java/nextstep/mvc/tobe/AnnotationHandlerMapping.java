@@ -59,9 +59,4 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         String method = request.getMethod();
         return new HandlerKey(url, RequestMethod.valueOf(method));
     }
-
-    @Override
-    public boolean supports(HttpServletRequest req) {
-        return getHandler(req) != null;
-    }
 }

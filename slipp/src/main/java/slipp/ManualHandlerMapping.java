@@ -39,11 +39,6 @@ public class ManualHandlerMapping implements HandlerMapping {
         return mappings.get(req.getRequestURI());
     }
 
-    @Override
-    public boolean supports(HttpServletRequest req) {
-        return getHandler(req) != null;
-    }
-
     void put(String url, Controller controller) {
         mappings.put(url, controller);
     }
