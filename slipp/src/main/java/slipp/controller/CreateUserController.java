@@ -17,6 +17,11 @@ import javax.servlet.http.HttpServletResponse;
 public class CreateUserController {
     private static final Logger log = LoggerFactory.getLogger(CreateUserController.class);
 
+    @RequestMapping(value = "/users/form", method = RequestMethod.GET)
+    public String signupForm(HttpServletRequest req, HttpServletResponse resp) throws Exception {
+        return "/user/form.jsp";
+    }
+
     @RequestMapping(value = "/users", method = RequestMethod.POST)
     public ModelAndView create(HttpServletRequest req, HttpServletResponse resp) throws Exception {
         User user = new User(req.getParameter("userId"), req.getParameter("password"), req.getParameter("name"),
