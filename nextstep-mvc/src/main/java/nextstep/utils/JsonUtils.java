@@ -19,4 +19,17 @@ public class JsonUtils {
             throw new ObjectMapperException(e);
         }
     }
+
+    public static String toJson(Object object) throws ObjectMapperException {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.setVisibility(objectMapper.getSerializationConfig().getDefaultVisibilityChecker()
+                    .withFieldVisibility(JsonAutoDetect.Visibility.ANY)
+                    .withGetterVisibility(JsonAutoDetect.Visibility.ANY)
+                    .withSetterVisibility(JsonAutoDetect.Visibility.NONE));
+            return objectMapper.writeValueAsString(object);
+        } catch (IOException e) {
+            throw new ObjectMapperException(e);
+        }
+    }
 }
