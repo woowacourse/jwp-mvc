@@ -1,19 +1,14 @@
-package nextstep.mvc.tobe;
+package nextstep.mvc.tobe.view;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 public class ModelAndView {
-    private View view;
-    private Map<String, Object> model = new HashMap<String, Object>();
+    private String viewName;
+    private Map<String, Object> model = new HashMap<>();
 
-    public ModelAndView() {
-    }
-
-    public ModelAndView(View view) {
-        this.view = view;
-    }
+    public ModelAndView() {}
 
     public ModelAndView addObject(String attributeName, Object attributeValue) {
         model.put(attributeName, attributeValue);
@@ -28,7 +23,15 @@ public class ModelAndView {
         return Collections.unmodifiableMap(model);
     }
 
-    public View getView() {
-        return view;
+    public boolean isViewNameExist() {
+        return viewName != null;
+    }
+
+    public void setViewName(String viewName) {
+        this.viewName = viewName;
+    }
+
+    public String getViewName() {
+        return viewName;
     }
 }

@@ -1,14 +1,14 @@
-package nextstep.mvc.tobe;
+package nextstep.mvc.tobe.util;
 
 import nextstep.web.annotation.Controller;
 import org.reflections.Reflections;
 
 import java.util.Set;
 
-public class ControllerScanner {
+public class ComponentScanner {
     private Reflections reflections;
 
-    public ControllerScanner(Object[] basePackage) {
+    public ComponentScanner(Object[] basePackage) {
         reflections = new Reflections(basePackage);
     }
 
