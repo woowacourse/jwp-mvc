@@ -1,6 +1,5 @@
 package slipp.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import nextstep.mvc.tobe.JsonView;
 import nextstep.mvc.tobe.ModelAndView;
 import nextstep.web.annotation.Controller;
@@ -14,6 +13,8 @@ import slipp.support.db.DataBase;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+
+import static nextstep.utils.JsonUtils.OBJECT_MAPPER;
 
 @Controller
 public class UserController {
@@ -31,8 +32,7 @@ public class UserController {
     @RequestMapping(value = "/api/users", method = RequestMethod.POST)
     public ModelAndView create(HttpServletRequest request, HttpServletResponse response) throws IOException {
 //        String collect = request.getReader().lines().collect(Collectors.joining(System.lineSeparator()));
-        ObjectMapper objectMapper = new ObjectMapper();
-        UserCreatedDto userCreatedDto = objectMapper.readValue(request.getReader(), UserCreatedDto.class);
+        UserCreatedDto userCreatedDto = OBJECT_MAPPER.readValue(request.getReader(), UserCreatedDto.class);
         User user = new User(userCreatedDto.getUserId(), userCreatedDto.getPassword(), userCreatedDto.getName(), userCreatedDto.getEmail());
         DataBase.addUser(user);
         response.setStatus(201);
@@ -50,8 +50,7 @@ public class UserController {
         String userId = request.getParameter("userId");
         User user = DataBase.findUserById(userId);
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        UserUpdatedDto userUpdatedDto = objectMapper.readValue(request.getReader(), UserUpdatedDto.class);
+        UserUpdatedDto userUpdatedDto = OBJECT_MAPPER.readValue(request.getReader(), UserUpdatedDto.class);
         user.update(new User(user.getUserId(), userUpdatedDto.getPassword(), userUpdatedDto.getName(), userUpdatedDto.getEmail()));
 
         modelAndView.addObject("user", user);
