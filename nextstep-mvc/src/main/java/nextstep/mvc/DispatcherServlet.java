@@ -1,6 +1,9 @@
 package nextstep.mvc;
 
-import nextstep.mvc.tobe.ModelAndView;
+import nextstep.mvc.tobe.view.ModelAndView;
+import nextstep.mvc.tobe.exception.NotFoundHandlerException;
+import nextstep.mvc.tobe.exception.NotSupportHandlerAdapterException;
+import nextstep.mvc.tobe.handleradapter.HandlerAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -8,8 +11,9 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @WebServlet(name = "dispatcher", urlPatterns = "/", loadOnStartup = 1)
 public class DispatcherServlet extends HttpServlet {
@@ -17,9 +21,11 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger logger = LoggerFactory.getLogger(DispatcherServlet.class);
 
     private final List<HandlerMapping> handlerMappings;
+    private final List<HandlerAdapter> handlerAdapters;
 
-    public DispatcherServlet(final HandlerMapping... handlerMapping) {
-        handlerMappings = Arrays.asList(handlerMapping);
+    public DispatcherServlet(final List<HandlerMapping> handlerMappings, final List<HandlerAdapter> handlerAdapters) {
+        this.handlerMappings = new ArrayList<>(handlerMappings);
+        this.handlerAdapters = new ArrayList<>(handlerAdapters);
     }
 
     @Override
@@ -32,20 +38,29 @@ public class DispatcherServlet extends HttpServlet {
         final String requestUri = request.getRequestURI();
         logger.debug("Method : {}, Request URI : {}", request.getMethod(), requestUri);
 
-        final HandlerMapping handler = getModelAndView(request, response);
+        final Object handler = getHandler(request);
+        final HandlerAdapter handlerAdapter = getHandlerAdapter(handler);
 
         try {
-            ModelAndView mav = handler.execute(request, response);
+            final ModelAndView mav = handlerAdapter.handle(request, response, handler);
             mav.render(request, response);
         } catch (Exception e) {
             logger.info("!! ERROR : {}", e.getMessage());
         }
     }
 
-    private HandlerMapping getModelAndView(final HttpServletRequest request, final HttpServletResponse response) {
+    private Object getHandler(final HttpServletRequest request) {
         return handlerMappings.stream()
-                .filter(handlerMapping -> handlerMapping.isSupport(request))
+                .map(handlerMapping -> handlerMapping.getHandler(request))
+                .filter(Objects::nonNull)
                 .findAny()
-                .orElseThrow(() -> new IllegalArgumentException("요청한 uri 을 찾을 수 없습니다."));
+                .orElseThrow(() -> new NotFoundHandlerException("지원하지 않는 URI"));
+    }
+
+    private HandlerAdapter getHandlerAdapter(final Object handler) {
+        return handlerAdapters.stream()
+                .filter(ha -> ha.supports(handler))
+                .findAny()
+                .orElseThrow(() -> new NotSupportHandlerAdapterException("지원하지 않는 handler adapter"));
     }
 }
