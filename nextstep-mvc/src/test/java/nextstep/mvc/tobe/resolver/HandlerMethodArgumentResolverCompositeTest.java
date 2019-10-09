@@ -75,7 +75,7 @@ class HandlerMethodArgumentResolverCompositeTest {
     }
 
     @Test
-    void show_pathvariable() throws Exception {
+    void show_pathVariable() throws Exception {
         // given
         final Method method = getMethod("show_pathvariable", clazz.getMethods());
         request.setRequestURI("/users/10");

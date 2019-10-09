@@ -33,7 +33,7 @@ class ObjectMethodArgumentResolverTest {
 
     @BeforeEach
     void setUp() throws NoSuchMethodException {
-        method = clazz.getDeclaredMethod("sampleJavaBean", TestUser.class, OnlyDefaultConstructorJavaBean.class);
+        method = clazz.getDeclaredMethod("sampleJavaBean", OnlyDefaultConstructorJavaBean.class);
 
         params = Stream.of(clazz.getDeclaredMethods())
                 .filter(method -> method.getName().startsWith("sample"))
@@ -52,20 +52,6 @@ class ObjectMethodArgumentResolverTest {
     }
 
     @Test
-    void 모든_필드_생성자_javaBean_매핑() {
-        // given
-        final MethodParameter methodParameter = new MethodParameter(params.get(TestUser.class), "testUser", 1, method);
-
-        // when
-        final TestUser actual = (TestUser) resolver.resolveArgument(webRequest, methodParameter);
-
-        // then
-        assertThat(actual.getUserId()).isEqualTo(userId);
-        assertThat(actual.getPassword()).isEqualTo(password);
-        assertThat(actual.getAge()).isEqualTo(Long.parseLong(age));
-    }
-
-    @Test
     void 기본생성자만_있는_javaBean_매핑() {
         // given
         final MethodParameter methodParameter = new MethodParameter(params.get(OnlyDefaultConstructorJavaBean.class), "javaBean", 1, method);
@@ -79,7 +65,7 @@ class ObjectMethodArgumentResolverTest {
         assertThat(actual.getAge()).isEqualTo(Long.parseLong(age));
     }
 
-    void sampleJavaBean(final TestUser testUser, final OnlyDefaultConstructorJavaBean javaBean) {
+    void sampleJavaBean(final OnlyDefaultConstructorJavaBean javaBean) {
     }
 
 }
