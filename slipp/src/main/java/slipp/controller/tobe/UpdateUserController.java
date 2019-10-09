@@ -15,7 +15,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 
 @Controller
@@ -40,6 +39,7 @@ public class UpdateUserController {
             logger.debug(e.getMessage());
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
+
         return new ModelAndView();
     }
 
@@ -59,46 +59,23 @@ public class UpdateUserController {
         User user = DataBase.findUserById(userId);
         try {
             User updateUser = JsonUtils.toObject(getBody(request), User.class);
-
             user.update(updateUser);
+            logger.debug("Update user : {}", user);
         } catch (IOException e) {
             logger.debug(e.getMessage());
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
-        logger.debug("Update user : {}", user);
+
         return new ModelAndView();
     }
 
     private static String getBody(HttpServletRequest request) throws IOException {
-        String body = null;
-        StringBuilder stringBuilder = new StringBuilder();
-        BufferedReader bufferedReader = null;
+        int contentLength = request.getContentLength();
+        BufferedReader br = new BufferedReader(new InputStreamReader(request.getInputStream()));
+        char[] body = new char[contentLength];
 
-        try {
-            InputStream inputStream = request.getInputStream();
-            if (inputStream != null) {
-                bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-                char[] charBuffer = new char[128];
-                int bytesRead = -1;
-                while ((bytesRead = bufferedReader.read(charBuffer)) > 0) {
-                    stringBuilder.append(charBuffer, 0, bytesRead);
-                }
-            } else {
-                stringBuilder.append("");
-            }
-        } catch (IOException ex) {
-            throw ex;
-        } finally {
-            if (bufferedReader != null) {
-                try {
-                    bufferedReader.close();
-                } catch (IOException ex) {
-                    throw ex;
-                }
-            }
-        }
+        br.read(body, 0, contentLength);
 
-        body = stringBuilder.toString();
-        return body;
+        return String.copyValueOf(body);
     }
 }
