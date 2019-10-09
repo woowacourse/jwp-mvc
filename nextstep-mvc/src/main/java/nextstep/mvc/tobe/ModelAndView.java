@@ -35,6 +35,8 @@ public class ModelAndView {
     }
 
     public void render(HttpServletRequest req, HttpServletResponse resp) throws Exception {
-        view.render(model, req, resp);
+        if (this.view != null) {
+            view.render(model, req, resp);
+        }
     }
 }
