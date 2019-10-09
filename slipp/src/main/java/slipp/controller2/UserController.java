@@ -46,10 +46,6 @@ public class UserController {
 
     @RequestMapping(value = "/users", method = RequestMethod.GET)
     public ModelAndView list(HttpServletRequest req) throws Exception {
-        if (!UserSessionUtils.isLogined(req.getSession())) {
-            return new ModelAndView("redirect:/users/loginForm");
-        }
-
         final Collection<User> users = DataBase.findAll();
         return new ModelAndView("/user/list").addObject("users", users);
     }
