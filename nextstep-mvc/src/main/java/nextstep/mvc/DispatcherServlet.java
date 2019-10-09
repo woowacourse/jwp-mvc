@@ -7,6 +7,9 @@ import nextstep.mvc.handleradapter.AnnotationHandlerAdapter;
 import nextstep.mvc.handleradapter.HandlerAdapter;
 import nextstep.mvc.handlermapping.HandlerMapping;
 import nextstep.mvc.tobe.view.*;
+import nextstep.mvc.tobe.view.viewresolver.DefaultViewResolver;
+import nextstep.mvc.tobe.view.viewresolver.StringViewResolver;
+import nextstep.mvc.tobe.view.viewresolver.ViewResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
