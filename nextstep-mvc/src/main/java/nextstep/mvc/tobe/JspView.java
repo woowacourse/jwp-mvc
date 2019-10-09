@@ -12,11 +12,14 @@ public class JspView implements View {
     private final String view;
 
     public JspView(String view) {
+        this.view = processViewName(view);
+    }
+
+    private String processViewName(String view) {
         if (view.endsWith(SUFFIX)) {
-            this.view = view;
-            return;
+            return view;
         }
-        this.view = view + SUFFIX;
+        return view + SUFFIX;
     }
 
     public String getView() {
