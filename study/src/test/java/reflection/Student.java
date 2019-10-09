@@ -5,6 +5,11 @@ public class Student {
 
     private int age;
 
+    public void setMyInfo(String name, int age) {
+        this.name = name;
+        this.age = age;
+    }
+
     public String getName() {
         return name;
     }

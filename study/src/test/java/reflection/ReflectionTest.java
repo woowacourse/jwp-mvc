@@ -60,8 +60,6 @@ public class ReflectionTest {
         Class<Student> clazz = Student.class;
         logger.debug(clazz.getName());
 
-        clazz.getDeclaredMethods();
-
         Constructor<Student> constructor = clazz.getConstructor();
         Student student = constructor.newInstance();
 
@@ -73,6 +71,24 @@ public class ReflectionTest {
         ageField.set(student, 27);
 
         assertThat(student.getName()).isEqualTo("뚱이");
+        assertThat(student.getAge()).isEqualTo(27);
+    }
+
+    @Test
+    void 메서드_매개변수에_값_할당() throws Exception {
+        Class<Student> clazz = Student.class;
+
+        Constructor<Student> constructor = clazz.getDeclaredConstructor();
+        Student student = constructor.newInstance();
+
+        Method[] methods = clazz.getDeclaredMethods();
+        for (Method method : methods) {
+            logger.debug(method.getName());
+            System.out.println(method.getParameterCount());
+//            method.invoke(student, "코맥", 27);
+        }
+
+        assertThat(student.getName()).isEqualTo("코맥");
         assertThat(student.getAge()).isEqualTo(27);
     }
 }
