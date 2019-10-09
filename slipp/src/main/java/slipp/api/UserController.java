@@ -1,4 +1,4 @@
-package slipp.controller;
+package slipp.api;
 
 import nextstep.mvc.tobe.JsonView;
 import nextstep.mvc.tobe.ModelAndView;
@@ -19,23 +19,32 @@ import static nextstep.utils.JsonUtils.OBJECT_MAPPER;
 @Controller
 public class UserController {
 
+    private static final int OK = 200;
+    private static final int CREATED = 201;
+
     @RequestMapping(value = "/api/users", method = RequestMethod.GET)
     public ModelAndView select(HttpServletRequest request, HttpServletResponse response) {
-        ModelAndView modelAndView = new ModelAndView(new JsonView());
         String userId = request.getParameter("userId");
         User user = DataBase.findUserById(userId);
+
+        ModelAndView modelAndView = new ModelAndView(new JsonView());
         modelAndView.addObject("user", user);
-        response.setStatus(200);
+        response.setStatus(OK);
         return modelAndView;
     }
 
     @RequestMapping(value = "/api/users", method = RequestMethod.POST)
     public ModelAndView create(HttpServletRequest request, HttpServletResponse response) throws IOException {
 //        String collect = request.getReader().lines().collect(Collectors.joining(System.lineSeparator()));
+        System.out.println("닿아라");
         UserCreatedDto userCreatedDto = OBJECT_MAPPER.readValue(request.getReader(), UserCreatedDto.class);
         User user = new User(userCreatedDto.getUserId(), userCreatedDto.getPassword(), userCreatedDto.getName(), userCreatedDto.getEmail());
+
+//        User user = userCreatedDto.toEntity();
+
         DataBase.addUser(user);
-        response.setStatus(201);
+
+        response.setStatus(CREATED);
         ModelAndView modelAndView = new ModelAndView(new JsonView());
         modelAndView.addObject("user", user);
         response.setHeader("Location", "/api/users?userId=" + user.getUserId());
@@ -45,16 +54,15 @@ public class UserController {
 
     @RequestMapping(value = "/api/users", method = RequestMethod.PUT)
     public ModelAndView update(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        ModelAndView modelAndView = new ModelAndView(new JsonView());
-        response.setStatus(200);
         String userId = request.getParameter("userId");
         User user = DataBase.findUserById(userId);
 
         UserUpdatedDto userUpdatedDto = OBJECT_MAPPER.readValue(request.getReader(), UserUpdatedDto.class);
-        user.update(new User(user.getUserId(), userUpdatedDto.getPassword(), userUpdatedDto.getName(), userUpdatedDto.getEmail()));
+        user.update(userUpdatedDto.toEntity());
 
+        response.setStatus(OK);
+        ModelAndView modelAndView = new ModelAndView(new JsonView());
         modelAndView.addObject("user", user);
-        response.setHeader("Location", "/api/users?userId=" + user.getUserId());
         return modelAndView;
     }
 }
