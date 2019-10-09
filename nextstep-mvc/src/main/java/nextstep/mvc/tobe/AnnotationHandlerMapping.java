@@ -33,7 +33,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
                 .forEach(key -> logger.info("Path : {}, Controller : {}", key, handlerExecutions.get(key).getClass()));
     }
 
-    private void registerHandler(Method method) {
+    private void registerHandler(final Method method) {
         final RequestMapping mapping = method.getAnnotation(RequestMapping.class);
         final RequestMethod[] requestMethods = getSupportMethod(mapping);
 
@@ -42,23 +42,16 @@ public class AnnotationHandlerMapping implements HandlerMapping {
                 .forEach(handlerKey -> handlerExecutions.put(handlerKey, new HandlerExecution(method)));
     }
 
-    private RequestMethod[] getSupportMethod(RequestMapping mapping) {
+    private RequestMethod[] getSupportMethod(final RequestMapping mapping) {
         return mapping.method().length == EMPTY ? RequestMethod.values() : mapping.method();
     }
 
-    @Override
-    public boolean isSupport(HttpServletRequest request) {
-        return handlerExecutions.containsKey(makeHandlerKey(request));
-    }
-
-    private HandlerKey makeHandlerKey(HttpServletRequest request) {
+    private HandlerKey makeHandlerKey(final HttpServletRequest request) {
         return new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod()));
     }
 
     @Override
-    public ModelAndView execute(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        return handlerExecutions
-                .get(makeHandlerKey(request))
-                .handle(request, response);
+    public HandlerExecution getHandler(final HttpServletRequest request) {
+        return handlerExecutions.get(makeHandlerKey(request));
     }
 }
