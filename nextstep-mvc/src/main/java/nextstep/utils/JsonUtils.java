@@ -8,6 +8,8 @@ import nextstep.mvc.exception.ObjectMapperException;
 import java.io.IOException;
 
 public class JsonUtils {
+    private static final ObjectMapper objectMapper = new ObjectMapper();
+
     public static <T> T toObject(String json, Class<T> clazz) throws ObjectMapperException {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
@@ -22,10 +24,8 @@ public class JsonUtils {
     }
 
     public static String toJson(Object object) {
-        ObjectMapper objectMappper = new ObjectMapper();
-
         try {
-            return objectMappper.writeValueAsString(object);
+            return objectMapper.writeValueAsString(object);
         } catch (JsonProcessingException e) {
             throw new ObjectMapperException();
         }
