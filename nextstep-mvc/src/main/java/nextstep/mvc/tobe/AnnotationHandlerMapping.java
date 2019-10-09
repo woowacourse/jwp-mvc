@@ -6,6 +6,8 @@ import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
 import org.reflections.Reflections;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.InvocationTargetException;
@@ -14,6 +16,9 @@ import java.util.Map;
 import java.util.Set;
 
 public class AnnotationHandlerMapping implements HandlerMapping {
+    private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
+    private static final String TAG = "AnnotationHandlerMapping";
+
     private static final int DEFAULT_REQUEST_METHODS_LENGTH = 0;
 
     private Object[] basePackage;
@@ -66,7 +71,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     private void putHandlers(Object handler, Method method, RequestMapping annotation, RequestMethod[] values) {
         for (RequestMethod value : values) {
             HandlerKey handlerKey = new HandlerKey(annotation.value(), value);
-
+            log.info("{} Path : {}, ", TAG, annotation.value());
             handlerExecutions.put(handlerKey, new HandlerExecution(handler, method));
         }
     }
