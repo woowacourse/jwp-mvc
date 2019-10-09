@@ -6,7 +6,6 @@ import nextstep.mvc.asis.Controller;
 import nextstep.mvc.tobe.HandlerExecution;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import slipp.controller.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -20,12 +19,6 @@ public class ManualHandlerMapping implements HandlerMapping {
 
     @Override
     public void initialize() {
-        mappings.put("/", new HomeController());
-        mappings.put("/users", new ListUserController());
-        mappings.put("/users/profile", new ProfileController());
-        mappings.put("/users/updateForm", new UpdateFormUserController());
-        mappings.put("/users/update", new UpdateUserController());
-
         logger.info("Initialized Request Mapping!");
         mappings.keySet().forEach(path -> {
             logger.info("Path : {}, Controller : {}", path, mappings.get(path).getClass());
