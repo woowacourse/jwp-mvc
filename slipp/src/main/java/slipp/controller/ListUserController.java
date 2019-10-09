@@ -1,6 +1,5 @@
 package slipp.controller;
 
-import nextstep.mvc.tobe.view.JspView;
 import nextstep.mvc.tobe.view.ModelAndView;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
@@ -16,12 +15,15 @@ public class ListUserController {
 
     @RequestMapping(value = "/users", method = GET)
     public ModelAndView findUsers(HttpServletRequest req, HttpServletResponse resp) throws Exception {
+        ModelAndView mav = new ModelAndView();
+
         if (!UserSessionUtils.isLogined(req.getSession())) {
-            return new ModelAndView(new JspView("redirect:/users/loginForm"));
+            mav.setViewName("redirect:/users/loginForm");
+            return mav;
         }
 
-        ModelAndView modelAndView = new ModelAndView(new JspView("/user/list.jsp"));
-        modelAndView.addObject("users", DataBase.findAll());
-        return modelAndView;
+        mav.setViewName("/user/list.jsp");
+        mav.addObject("users", DataBase.findAll());
+        return mav;
     }
 }

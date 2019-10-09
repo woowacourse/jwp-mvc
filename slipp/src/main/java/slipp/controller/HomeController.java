@@ -1,6 +1,5 @@
 package slipp.controller;
 
-import nextstep.mvc.tobe.view.JspView;
 import nextstep.mvc.tobe.view.ModelAndView;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
@@ -16,8 +15,9 @@ public class HomeController {
 
     @RequestMapping(value = "/", method = GET)
     public ModelAndView indexPage(HttpServletRequest req, HttpServletResponse resp) {
-        ModelAndView modelAndView = new ModelAndView(new JspView("home.jsp"));
-        modelAndView.addObject("users", DataBase.findAll());
-        return modelAndView;
+        ModelAndView mav = new ModelAndView();
+        mav.setViewName("home.jsp");
+        mav.addObject("users", DataBase.findAll());
+        return mav;
     }
 }
