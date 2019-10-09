@@ -14,8 +14,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.List;
-import java.util.Objects;
 
 @WebServlet(name = "dispatcher", urlPatterns = "/", loadOnStartup = 1)
 public class DispatcherServlet extends HttpServlet {
@@ -23,15 +21,15 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger logger = LoggerFactory.getLogger(DispatcherServlet.class);
     private static final String DEFAULT_REDIRECT_PREFIX = "redirect:";
 
-    private List<HandlerMapping> requestMappings;
+    private HandlerMappingRepository handlerMappingRepository;
 
-    public DispatcherServlet(List<HandlerMapping> requestMappings) {
-        this.requestMappings = requestMappings;
+    public DispatcherServlet(HandlerMappingRepository handlerMappingRepository) {
+        this.handlerMappingRepository = handlerMappingRepository;
     }
 
     @Override
     public void init() throws ServletException {
-        requestMappings.forEach(HandlerMapping::initialize);
+        handlerMappingRepository.init();
     }
 
     @Override
@@ -63,11 +61,7 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private Object findHandler(HttpServletRequest req) {
-        return requestMappings.stream()
-                .map(requestMapping -> requestMapping.getHandler(req))
-                .filter(Objects::nonNull)
-                .findAny()
-                .orElseThrow(HandlerNotFoundException::new);
+        return handlerMappingRepository.findHandler(req);
     }
 
     private void move(String viewName, HttpServletRequest req, HttpServletResponse resp)
