@@ -76,15 +76,16 @@ public class ControllerAcceptanceTest {
     @DisplayName("로그인 성공후 유저리스트 가져오기 테스트")
     void getUserList() {
         signUp();
-        String cookie = logIn("kjm", "password");
-        assertThat(getPageResource("/users", cookie)).contains(user.getEmail());
-        assertThat(getPageResource("/users", cookie)).contains(user.getUserId());
+        String sessionId = logIn("kjm", "password");
+        assertThat(getPageResource("/users", sessionId)).contains(user.getEmail());
+        assertThat(getPageResource("/users", sessionId)).contains(user.getUserId());
     }
 
     @Test
     @DisplayName("로그인 실패 후 유저리스트 가져오기 테스트 실패")
     void getUserListFail() {
         signUp();
+        logInFail("notAUser", "NotAPassWord");
         getFailedPageResource("/users", "not a cookie");
     }
 
