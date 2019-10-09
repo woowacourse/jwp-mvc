@@ -1,13 +1,9 @@
 package nextstep.mvc.tobe.exception;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 public class InstanceCreationFailedException extends RuntimeException {
-    private final Logger logger = LoggerFactory.getLogger(InstanceCreationFailedException.class);
+    private static final String MESSAGE = "인스턴스 생성에 실패하였습니다.";
 
-    public InstanceCreationFailedException(ReflectiveOperationException e) {
-        super(e);
-        logger.debug(e.getMessage());
+    public InstanceCreationFailedException() {
+        super(MESSAGE);
     }
 }

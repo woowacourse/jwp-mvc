@@ -18,9 +18,10 @@ class HandlerExecutionTest {
     void execution_() throws Exception {
         MockHttpServletRequest request = new MockHttpServletRequest("GET", "/notnull");
         MockHttpServletResponse response = new MockHttpServletResponse();
-
+        Object controller = new MyController();
         Method method = MyController.class.getDeclaredMethod("returnNotNull", HttpServletRequest.class, HttpServletResponse.class);
-        HandlerExecution execution = new HandlerExecution(MyController.class, method);
+
+        HandlerExecution execution = new HandlerExecution(controller, method);
 
         assertThat(execution.execute(request, response)).isInstanceOf(ModelAndView.class);
     }
@@ -30,9 +31,11 @@ class HandlerExecutionTest {
     void execution_findUserId_isNull() throws Exception {
         MockHttpServletRequest request = new MockHttpServletRequest("POST", "/users");
         MockHttpServletResponse response = new MockHttpServletResponse();
-
+        Object controller = new MyController();
         Method method = MyController.class.getDeclaredMethod("findUserId", HttpServletRequest.class, HttpServletResponse.class);
-        HandlerExecution execution = new HandlerExecution(MyController.class, method);
+
+        HandlerExecution execution = new HandlerExecution(controller, method);
+
         assertThat(execution.execute(request, response).getView()).isInstanceOf(EmptyView.class);
     }
 }

@@ -12,20 +12,11 @@ public class HandlerExecution implements ServletRequestHandler {
     private Object instance;
     private Method method;
 
-    public HandlerExecution(Class clazz, Method method) {
-        this.instance = getInstance(clazz);
+    HandlerExecution(Object controller, Method method) {
+        this.instance = controller;
         this.method = method;
     }
-
-    private Object getInstance(Class clazz) {
-        try {
-            return clazz.getConstructor().newInstance();
-        } catch (InstantiationException | IllegalAccessException
-                | InvocationTargetException | NoSuchMethodException e) {
-            throw new InstanceCreationFailedException(e);
-        }
-    }
-
+    
     public Method getMethod() {
         return method;
     }

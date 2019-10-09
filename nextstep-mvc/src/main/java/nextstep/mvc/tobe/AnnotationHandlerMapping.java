@@ -1,21 +1,26 @@
 package nextstep.mvc.tobe;
 
 import com.google.common.collect.Maps;
+import nextstep.mvc.tobe.exception.InstanceCreationFailedException;
 import nextstep.mvc.tobe.exception.NotFoundHandlerException;
+import nextstep.utils.LoggingUtils;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
 import org.reflections.Reflections;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class AnnotationHandlerMapping {
+    private static final Logger logger = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
+
     private Object[] basePackage;
 
     private Map<HandlerKey, HandlerExecution> handlerExecutions = Maps.newHashMap();
@@ -25,19 +30,40 @@ public class AnnotationHandlerMapping {
     }
 
     public void initialize() {
-        Reflections reflections = new Reflections(basePackage);
-        Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
+        List<Object> controllers = getControllers();
 
-        for (Class controller : controllers) {
-            Arrays.stream(controller.getDeclaredMethods())
+        for (Object controller : controllers) {
+            Arrays.stream(controller.getClass().getDeclaredMethods())
                     .filter(method -> method.isAnnotationPresent(RequestMapping.class))
-                    .forEach(this::createHandlerMapping);
+                    .forEach(method -> createHandlerMapping(controller, method));
         }
     }
 
-    private void createHandlerMapping(Method controllerMethod) {
-        RequestMapping annotation = controllerMethod.getAnnotation(RequestMapping.class);
-        HandlerExecution execution = createHandlerExecutionOf(controllerMethod);
+    private List<Object> getControllers() {
+        Reflections reflections = new Reflections(basePackage);
+        Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
+        List<Object> controllers = new ArrayList<>();
+
+        for (Class controllerClass : controllerClasses) {
+            controllers.add(instanceOf(controllerClass));
+        }
+        return controllers;
+    }
+
+    private Object instanceOf(Class controllerClass) {
+        try {
+            Constructor constructor = controllerClass.getConstructor();
+            return constructor.newInstance();
+        } catch (NoSuchMethodException | IllegalAccessException
+                | InstantiationException | InvocationTargetException e) {
+            LoggingUtils.logStackTrace(logger, e);
+            throw new InstanceCreationFailedException();
+        }
+    }
+
+    private void createHandlerMapping(Object controller, Method method) {
+        RequestMapping annotation = method.getAnnotation(RequestMapping.class);
+        HandlerExecution execution = new HandlerExecution(controller, method);
         RequestMethod[] requestMethods = annotation.method();
 
         if (requestMethods.length == 0) {
@@ -46,11 +72,6 @@ public class AnnotationHandlerMapping {
         }
 
         connectHandler(annotation, execution);
-    }
-
-    private HandlerExecution createHandlerExecutionOf(Method method) {
-        Class controller = method.getDeclaringClass();
-        return new HandlerExecution(controller, method);
     }
 
     private void connectHandlerToAllConnectableRequestMethods(RequestMapping annotation,
