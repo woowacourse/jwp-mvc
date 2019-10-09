@@ -1,4 +1,4 @@
-package nextstep.mvc.tobe;
+package nextstep.mvc.tobe.handler;
 
 import nextstep.mvc.exception.AdapterNotFoundException;
 import nextstep.mvc.tobe.view.ModelAndView;

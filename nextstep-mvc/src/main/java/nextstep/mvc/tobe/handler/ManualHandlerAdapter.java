@@ -1,4 +1,4 @@
-package nextstep.mvc.tobe;
+package nextstep.mvc.tobe.handler;
 
 import nextstep.mvc.asis.Controller;
 import nextstep.mvc.tobe.view.JspView;

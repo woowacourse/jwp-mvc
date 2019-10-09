@@ -1,7 +1,8 @@
-package nextstep.mvc.tobe;
+package nextstep.mvc.tobe.handler;
 
 import com.google.common.collect.Maps;
 import nextstep.mvc.HandlerMapping;
+import nextstep.mvc.tobe.ControllerScanner;
 import nextstep.mvc.tobe.view.ModelAndView;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
@@ -68,7 +69,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     @Override
-    public Handler getHandler(HttpServletRequest request) {
+    public RequestHandler getHandler(HttpServletRequest request) {
         String requestURI = request.getRequestURI();
         RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
         HandlerKey handlerKey = new HandlerKey(requestURI, requestMethod);
