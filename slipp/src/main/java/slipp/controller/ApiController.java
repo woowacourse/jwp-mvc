@@ -2,10 +2,10 @@ package slipp.controller;
 
 import nextstep.mvc.tobe.view.JsonView;
 import nextstep.mvc.tobe.view.ModelAndView;
+import nextstep.utils.JsonUtils;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
-import nextstep.utils.JsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import slipp.domain.User;
@@ -14,9 +14,9 @@ import slipp.support.db.DataBase;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
-import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 
 @Controller

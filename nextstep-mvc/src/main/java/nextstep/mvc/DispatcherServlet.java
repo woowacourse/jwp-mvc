@@ -2,11 +2,12 @@ package nextstep.mvc;
 
 import nextstep.mvc.exception.NotFoundHandlerAdapterException;
 import nextstep.mvc.exception.NotFoundHandlerException;
-import nextstep.mvc.exception.NotFoundViewResolverExcpetion;
+import nextstep.mvc.exception.NotFoundViewResolverExcepetion;
 import nextstep.mvc.handleradapter.AnnotationHandlerAdapter;
 import nextstep.mvc.handleradapter.HandlerAdapter;
 import nextstep.mvc.handlermapping.HandlerMapping;
-import nextstep.mvc.tobe.view.*;
+import nextstep.mvc.tobe.view.ModelAndView;
+import nextstep.mvc.tobe.view.View;
 import nextstep.mvc.tobe.view.viewresolver.DefaultViewResolver;
 import nextstep.mvc.tobe.view.viewresolver.StringViewResolver;
 import nextstep.mvc.tobe.view.viewresolver.ViewResolver;
@@ -84,6 +85,6 @@ public class DispatcherServlet extends HttpServlet {
         return viewResolvers.stream()
                 .filter(viewResolver -> viewResolver.canHandle(modelAndView))
                 .findAny()
-                .orElseThrow(NotFoundViewResolverExcpetion::new);
+                .orElseThrow(NotFoundViewResolverExcepetion::new);
     }
 }

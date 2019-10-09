@@ -4,7 +4,6 @@ import nextstep.mvc.tobe.view.JspView;
 import nextstep.mvc.tobe.view.ModelAndView;
 import nextstep.mvc.tobe.view.RedirectView;
 import nextstep.mvc.tobe.view.View;
-import nextstep.mvc.tobe.view.viewresolver.ViewResolver;
 
 public class StringViewResolver implements ViewResolver {
     private static final String DEFAULT_REDIRECT_PREFIX = "redirect:";
