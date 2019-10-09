@@ -2,7 +2,6 @@ package slipp.controller;
 
 import nextstep.mvc.tobe.JspView;
 import nextstep.mvc.tobe.ModelAndView;
-import nextstep.mvc.tobe.RequestBodyParser;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
@@ -13,7 +12,6 @@ import slipp.support.db.DataBase;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Map;
 import java.util.Objects;
 
 @Controller
@@ -22,12 +20,11 @@ public class UserController {
 
     @RequestMapping(value = "/users/create", method = RequestMethod.POST)
     public ModelAndView save(HttpServletRequest request, HttpServletResponse response) {
-        Map<String, String> body = RequestBodyParser.parse(request);
         User user = new User(
-                body.get("userId"),
-                body.get("password"),
-                body.get("name"),
-                body.get("email"));
+                request.getParameter("userId"),
+                request.getParameter("password"),
+                request.getParameter("name"),
+                request.getParameter("email"));
 
         DataBase.addUser(user);
         return new ModelAndView(new JspView("redirect:/"));
@@ -68,21 +65,22 @@ public class UserController {
 
     @RequestMapping(value = "/users/update", method = RequestMethod.POST)
     public ModelAndView update(HttpServletRequest request, HttpServletResponse response) {
-        Map<String, String> body = RequestBodyParser.parse(request);
-        User user = DataBase.findUserById(body.get("userId"));
+        String userId = request.getParameter("userId");
+        User user = DataBase.findUserById(userId);
 
         if (!UserSessionUtils.isSameUser(request.getSession(), user)) {
             throw new IllegalStateException("다른 사용자의 정보를 수정할 수 없습니다.");
         }
 
-        User updatedUser = new User(
-                body.get("userId"),
-                Objects.isNull(body.get("password")) ? user.getPassword() : body.get("password"),
-                Objects.isNull(body.get("name")) ? user.getName() : body.get("name"),
-                Objects.isNull(body.get("email")) ? user.getEmail() : body.get("email"));
+        User updateUser = new User(
+                userId,
+                Objects.isNull(request.getParameter("password")) ? user.getPassword() : request.getParameter("password"),
+                Objects.isNull(request.getParameter("name")) ? user.getName() : request.getParameter("name"),
+                Objects.isNull(request.getParameter("email")) ? user.getEmail() : request.getParameter("email")
+        );
 
-        log.debug("Update User : {}", updatedUser);
-        user.update(updatedUser);
+        log.debug("Update User : {}", updateUser);
+        user.update(updateUser);
 
         return new ModelAndView(new JspView("redirect:/"));
     }
