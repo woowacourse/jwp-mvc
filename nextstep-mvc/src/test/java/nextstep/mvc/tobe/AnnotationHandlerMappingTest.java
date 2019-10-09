@@ -1,8 +1,9 @@
 package nextstep.mvc.tobe;
 
 import nextstep.db.DataBase;
+import nextstep.mvc.tobe.handleradapter.HandlerAdapter;
+import nextstep.mvc.tobe.handleradapter.HandlerExecutionHandlerAdapter;
 import nextstep.mvc.tobe.view.JspView;
-import nextstep.mvc.tobe.view.ModelAndView;
 import nextstep.mvc.tobe.view.RedirectView;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,18 +22,6 @@ class AnnotationHandlerMappingTest {
     }
 
     @Test
-    void isSupport_true() {
-        MockHttpServletRequest request = new MockHttpServletRequest("GET", "/users");
-        assertThat(handlerMapping.isSupport(request)).isTrue();
-    }
-
-    @Test
-    void isSupport_false() {
-        MockHttpServletRequest request = new MockHttpServletRequest("GET", "/nope");
-        assertThat(handlerMapping.isSupport(request)).isFalse();
-    }
-
-    @Test
     void create_find() throws Exception {
         User user = new User("pobi", "password", "포비", "pobi@nextstep.camp");
         createUser(user);
@@ -41,10 +30,12 @@ class AnnotationHandlerMappingTest {
         MockHttpServletRequest request = new MockHttpServletRequest("GET", "/users");
         request.setParameter("userId", user.getUserId());
         MockHttpServletResponse response = new MockHttpServletResponse();
-        ModelAndView mav = handlerMapping.execute(request, response);
 
-        assertThat(handlerMapping.isSupport(request));
-        assertThat(mav.getView()).isEqualTo(new JspView("/user/form"));
+        HandlerExecution handler = handlerMapping.getHandler(request);
+        HandlerAdapter handlerAdapter = new HandlerExecutionHandlerAdapter();
+
+        assertThat(handlerAdapter.supports(handler)).isTrue();
+        assertThat(handlerAdapter.handle(request, response, handler).getView()).isEqualTo(new JspView("/user/form"));
         assertThat(request.getAttribute("user")).isEqualTo(user);
     }
 
@@ -55,9 +46,11 @@ class AnnotationHandlerMappingTest {
         request.setParameter("name", user.getName());
         request.setParameter("email", user.getEmail());
         MockHttpServletResponse response = new MockHttpServletResponse();
-        ModelAndView mav = handlerMapping.execute(request, response);
 
-        assertThat(handlerMapping.isSupport(request));
-        assertThat(mav.getView()).isEqualTo(new RedirectView("/"));
+        HandlerExecution handler = handlerMapping.getHandler(request);
+        HandlerAdapter handlerAdapter = new HandlerExecutionHandlerAdapter();
+
+        assertThat(handlerAdapter.supports(handler)).isTrue();
+        assertThat(handlerAdapter.handle(request, response, handler).getView()).isEqualTo(new RedirectView("/"));
     }
 }
