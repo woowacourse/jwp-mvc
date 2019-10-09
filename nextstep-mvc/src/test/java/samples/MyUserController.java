@@ -21,7 +21,7 @@ public class MyUserController {
         logger.debug("Find UserId : {}", userId);
         User user = DataBase.findUserById(userId);
         request.setAttribute("user", user);
-        return null;
+        return new ModelAndView(new JspView("/user/profile.jsp"));
     }
 
     @RequestMapping(value = "/users", method = RequestMethod.POST)
@@ -33,6 +33,6 @@ public class MyUserController {
                 request.getParameter("email"));
         logger.debug("User : {}", user);
         DataBase.addUser(user);
-        return null;
+        return new ModelAndView(new RedirectView("redirect:/"));
     }
 }
