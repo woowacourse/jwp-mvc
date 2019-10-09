@@ -6,7 +6,7 @@ import nextstep.mvc.view.View;
 public class JsonViewResolver implements ViewResolver {
     @Override
     public boolean supports(String viewName) {
-        return viewName.contains("api");
+        return viewName.isEmpty();
     }
 
     @Override
