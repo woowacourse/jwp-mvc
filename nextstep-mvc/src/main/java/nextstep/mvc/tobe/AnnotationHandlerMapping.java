@@ -55,13 +55,17 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     private void filterRequestMapping(Object handler, Method method) {
         if (method.isAnnotationPresent(RequestMapping.class)) {
             RequestMapping annotation = method.getAnnotation(RequestMapping.class);
-            RequestMethod[] requestMethods = annotation.method();
-            if (isDefaultRequestMethod(requestMethods)) {
-                putHandlers(handler, method, annotation, RequestMethod.values());
-                return;
-            }
+            RequestMethod[] requestMethods = getRequest(annotation);
             putHandlers(handler, method, annotation, requestMethods);
         }
+    }
+
+    private RequestMethod[] getRequest(RequestMapping annotation) {
+        RequestMethod[] requestMethods = annotation.method();
+        if (isDefaultRequestMethod(requestMethods)) {
+            return RequestMethod.values();
+        }
+        return requestMethods;
     }
 
     private boolean isDefaultRequestMethod(RequestMethod[] requestMethods) {
