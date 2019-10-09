@@ -1,5 +1,6 @@
 package nextstep.mvc.tobe;
 
+import nextstep.mvc.mock.Car;
 import nextstep.mvc.tobe.view.JsonView;
 import nextstep.utils.JsonUtils;
 import org.junit.jupiter.api.BeforeEach;

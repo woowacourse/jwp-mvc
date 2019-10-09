@@ -1,5 +1,6 @@
 package nextstep.mvc.tobe;
 
+import nextstep.mvc.mock.MyController;
 import nextstep.mvc.tobe.view.EmptyView;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

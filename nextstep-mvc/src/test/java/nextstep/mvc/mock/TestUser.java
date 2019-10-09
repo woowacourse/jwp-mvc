@@ -1,4 +1,4 @@
-package nextstep.mvc.tobe;
+package nextstep.mvc.mock;
 
 public class TestUser {
     private String userId;
