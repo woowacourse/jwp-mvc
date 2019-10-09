@@ -1,7 +1,6 @@
 package slipp.controller;
 
 import nextstep.mvc.tobe.view.ModelAndView;
-import nextstep.utils.JsonUtils;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import org.slf4j.Logger;
@@ -11,7 +10,6 @@ import slipp.support.db.DataBase;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import java.io.IOException;
 
 import static nextstep.web.annotation.RequestMethod.GET;
@@ -41,9 +39,9 @@ public class UserController {
         response.setStatus(201);
         response.addHeader("Location", "/api/users?userId=" + user.getUserId());
 
-        log.debug("UserId : {}",user.getUserId());
+        log.debug("UserId : {}", user.getUserId());
         ModelAndView modelAndView = new ModelAndView();
-        modelAndView.addObject("user",user);
+        modelAndView.addObject("user", user);
         return modelAndView;
     }
 
