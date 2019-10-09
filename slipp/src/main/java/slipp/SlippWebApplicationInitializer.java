@@ -12,10 +12,11 @@ import javax.servlet.ServletRegistration;
 
 public class SlippWebApplicationInitializer implements WebApplicationInitializer {
     private static final Logger log = LoggerFactory.getLogger(SlippWebApplicationInitializer.class);
+    private static final String CONTROLLER_BASE_PACKAGE = "slipp";
 
     @Override
     public void onStartup(ServletContext servletContext) throws ServletException {
-        HandlerMapping[] handlerMappings = {new AnnotationHandlerMapping("slipp.controller"), new ManualHandlerMapping()};
+        HandlerMapping[] handlerMappings = {new AnnotationHandlerMapping(CONTROLLER_BASE_PACKAGE), new ManualHandlerMapping()};
         HandlerAdapter[] handlerAdapters = {new AnnotationHandlerAdapter(), new ManualHandlerAdapter()};
 
         DispatcherServlet dispatcherServlet = new DispatcherServlet(handlerMappings, handlerAdapters);
