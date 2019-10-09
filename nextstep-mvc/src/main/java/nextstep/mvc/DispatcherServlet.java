@@ -5,6 +5,9 @@ import nextstep.mvc.tobe.HandlerAdapter;
 import nextstep.mvc.tobe.NotFoundAdapterException;
 import nextstep.mvc.tobe.NotFoundControllerException;
 import nextstep.mvc.tobe.view.ModelAndView;
+import nextstep.mvc.tobe.view.NotFoundViewResolverException;
+import nextstep.mvc.tobe.view.View;
+import nextstep.mvc.tobe.view.ViewResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,10 +26,12 @@ public class DispatcherServlet extends HttpServlet {
 
     private final List<HandlerMapping> handlerMappings;
     private final List<HandlerAdapter> handlerAdapters;
+    private final List<ViewResolver> viewResolvers;
 
-    public DispatcherServlet(List<HandlerMapping> handlerMappings, List<HandlerAdapter> handlerAdapters) {
+    public DispatcherServlet(List<HandlerMapping> handlerMappings, List<HandlerAdapter> handlerAdapters, List<ViewResolver> viewResolvers) {
         this.handlerMappings = handlerMappings;
         this.handlerAdapters = handlerAdapters;
+        this.viewResolvers = viewResolvers;
     }
 
     @Override
@@ -37,28 +42,38 @@ public class DispatcherServlet extends HttpServlet {
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException {
         try {
-            Object handler = getHandler(req);
-            HandlerAdapter handlerAdapter = getHandlerAdapter(handler);
+            Object handler = findHandler(req);
+            HandlerAdapter handlerAdapter = findHandlerAdapter(handler);
             ModelAndView mv = handlerAdapter.handle(req, resp, handler);
-            mv.render(req, resp);
+
+            ViewResolver viewResolver = findViewResolver(mv);
+            View view = viewResolver.resolve(mv);
+            view.render(mv.getModel(), req, resp);
         } catch (Throwable e) {
             logger.error("Exception : {}", e);
             throw new ServletException(e.getMessage());
         }
     }
 
-    private Object getHandler(HttpServletRequest req) throws NotFoundException {
+    private Object findHandler(HttpServletRequest req) throws NotFoundException {
         return handlerMappings.stream()
                 .map(handlerMapping -> handlerMapping.getHandler(req))
                 .filter(Objects::nonNull)
                 .findFirst()
-                .orElseThrow(() -> new NotFoundControllerException("해당하는 컨트롤러를 찾을 수 없습니다."));
+                .orElseThrow(() -> new NotFoundControllerException("해당하는 Handler를 찾을 수 없습니다."));
     }
 
-    private HandlerAdapter getHandlerAdapter(Object handler) throws NotFoundAdapterException {
+    private HandlerAdapter findHandlerAdapter(Object handler) throws NotFoundAdapterException {
         return handlerAdapters.stream()
                 .filter(handlerAdapter -> handlerAdapter.supports(handler))
                 .findFirst()
-                .orElseThrow(() -> new NotFoundAdapterException("해당하는 핸들러를 찾을 수 없습니다."));
+                .orElseThrow(() -> new NotFoundAdapterException("해당하는 HandlerAdapter를 찾을 수 없습니다."));
+    }
+
+    private ViewResolver findViewResolver(ModelAndView mv) throws NotFoundViewResolverException {
+        return viewResolvers.stream()
+                .filter(viewResolver -> viewResolver.supports(mv))
+                .findFirst()
+                .orElseThrow(() -> new NotFoundViewResolverException("해당하는 ViewResolver가 없습니다."));
     }
 }
