@@ -7,7 +7,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.ResponseCookie;
 import org.springframework.test.web.reactive.server.WebTestClient;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.BodyInserters;
 import slipp.domain.User;
 import support.test.NsWebTestClient;
@@ -15,6 +17,7 @@ import support.test.NsWebTestClient;
 import java.io.File;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.registerFormatterForType;
 
 public class ControllerAcceptanceTest {
     private static final Logger logger = LoggerFactory.getLogger(UserAcceptanceTest.class);
@@ -77,6 +80,7 @@ public class ControllerAcceptanceTest {
     void getUserList() {
         signUp();
         String sessionId = logIn("kjm", "password");
+        System.err.println("this is the said cookie **=>" + sessionId);
         assertThat(getPageResource("/users", sessionId)).contains(user.getEmail());
         assertThat(getPageResource("/users", sessionId)).contains(user.getUserId());
     }
@@ -115,7 +119,8 @@ public class ControllerAcceptanceTest {
 
 
     String logIn(String id, String password) {
-        return testClientBuilder.build()
+
+        MultiValueMap<String, ResponseCookie> cookies = testClientBuilder.build()
                 .post()
                 .uri("/users/login")
                 .body(BodyInserters.fromFormData("userId", id)
@@ -123,8 +128,11 @@ public class ControllerAcceptanceTest {
                 .exchange()
                 .expectStatus().is3xxRedirection()
                 .returnResult(String.class)
-                .getResponseHeaders()
-                .getFirst("Set-Cookie");
+                .getResponseCookies();
+
+        cookies.keySet().stream().forEach(key -> logger.debug( "this is the key ==>" + key + " // this is the cookie ==> " + cookies.get(key)));
+        String sessionId = cookies.get("JSESSIONID").toString();
+        return sessionId.substring(1, sessionId.length() - 1);
     }
 
     byte[] logInFail(String id, String password) {
