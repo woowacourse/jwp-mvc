@@ -1,13 +1,11 @@
 package nextstep.mvc;
 
-import nextstep.mvc.asis.Controller;
 import nextstep.mvc.exception.HandlerNotFoundException;
-import nextstep.mvc.tobe.HandlerExecution;
+import nextstep.mvc.tobe.HandlerAdapterRepository;
 import nextstep.mvc.tobe.view.ModelAndView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -19,16 +17,17 @@ import java.io.IOException;
 public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger logger = LoggerFactory.getLogger(DispatcherServlet.class);
-    private static final String DEFAULT_REDIRECT_PREFIX = "redirect:";
 
     private HandlerMappingRepository handlerMappingRepository;
+    private HandlerAdapterRepository handlerAdapterRepository;
 
-    public DispatcherServlet(HandlerMappingRepository handlerMappingRepository) {
+    public DispatcherServlet(HandlerMappingRepository handlerMappingRepository, HandlerAdapterRepository handlerAdapterRepository) {
         this.handlerMappingRepository = handlerMappingRepository;
+        this.handlerAdapterRepository = handlerAdapterRepository;
     }
 
     @Override
-    public void init() throws ServletException {
+    public void init() {
         handlerMappingRepository.init();
     }
 
@@ -39,7 +38,9 @@ public class DispatcherServlet extends HttpServlet {
 
         try {
             Object handler = findHandler(req);
-            render(req, resp, handler);
+            ModelAndView modelAndView = handlerAdapterRepository.adapt(handler, req, resp);
+            modelAndView.render(req, resp);
+
         } catch (HandlerNotFoundException e) {
             logger.error("Exception : {}", e);
             resp.sendError(404);
@@ -49,29 +50,7 @@ public class DispatcherServlet extends HttpServlet {
         }
     }
 
-    private void render(HttpServletRequest req, HttpServletResponse resp, Object handler) throws Exception {
-        if (handler instanceof Controller) {
-            String viewName = ((Controller) handler).execute(req, resp);
-            move(viewName, req, resp);
-        }
-        if (handler instanceof HandlerExecution) {
-            ModelAndView modelAndView = ((HandlerExecution) handler).execute(req, resp);
-            modelAndView.render(req, resp);
-        }
-    }
-
     private Object findHandler(HttpServletRequest req) {
         return handlerMappingRepository.findHandler(req);
-    }
-
-    private void move(String viewName, HttpServletRequest req, HttpServletResponse resp)
-            throws ServletException, IOException {
-        if (viewName.startsWith(DEFAULT_REDIRECT_PREFIX)) {
-            resp.sendRedirect(viewName.substring(DEFAULT_REDIRECT_PREFIX.length()));
-            return;
-        }
-
-        RequestDispatcher rd = req.getRequestDispatcher(viewName);
-        rd.forward(req, resp);
     }
 }
