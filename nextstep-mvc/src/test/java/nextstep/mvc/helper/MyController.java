@@ -1,4 +1,4 @@
-package nextstep.mvc.tobe;
+package nextstep.mvc.helper;
 
 import nextstep.db.DataBase;
 import nextstep.mvc.view.ModelAndView;

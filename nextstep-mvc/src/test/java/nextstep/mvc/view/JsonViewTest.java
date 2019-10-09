@@ -1,6 +1,6 @@
 package nextstep.mvc.view;
 
-import nextstep.mvc.tobe.Car;
+import nextstep.mvc.helper.Car;
 import nextstep.utils.JsonUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,21 +22,21 @@ public class JsonViewTest {
     private View view;
 
     @BeforeEach
-    void setUp() {
+    public void setUp() {
         request = new MockHttpServletRequest();
         response = new MockHttpServletResponse();
         view = new JsonView();
     }
 
     @Test
-    void render_no_element() throws Exception {
+    public void render_no_element() throws Exception {
         view.render(new HashMap<>(), request, response);
         assertThat(response.getContentType()).isEqualTo(MediaType.APPLICATION_JSON_UTF8_VALUE);
         assertThat(response.getContentAsString()).isBlank();
     }
 
     @Test
-    void render_one_element() throws Exception {
+    public void render_one_element() throws Exception {
         Map<String, Object> model = new HashMap<>();
         Car expected = new Car("Black", "Sonata");
         model.put("car", expected);
@@ -49,7 +49,7 @@ public class JsonViewTest {
     }
 
     @Test
-    void render_over_two_element() throws Exception {
+    public void render_over_two_element() throws Exception {
         Map<String, Object> model = new HashMap<>();
         Car expected = new Car("Black", "Sonata");
         model.put("car", expected);

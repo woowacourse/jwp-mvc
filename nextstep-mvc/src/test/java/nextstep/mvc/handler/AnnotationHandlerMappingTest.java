@@ -1,7 +1,7 @@
 package nextstep.mvc.handler;
 
 import nextstep.db.DataBase;
-import nextstep.mvc.tobe.User;
+import nextstep.mvc.helper.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -14,7 +14,7 @@ public class AnnotationHandlerMappingTest {
 
     @BeforeEach
     public void setup() {
-        handlerMapping = new AnnotationHandlerMapping("nextstep.mvc.tobe");
+        handlerMapping = new AnnotationHandlerMapping("nextstep.mvc.helper");
         handlerMapping.initialize();
     }
 

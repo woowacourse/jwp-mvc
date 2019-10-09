@@ -1,4 +1,4 @@
-package nextstep.mvc.tobe;
+package nextstep.mvc.helper;
 
 import java.util.Objects;
 

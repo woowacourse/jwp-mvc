@@ -5,9 +5,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import slipp.domain.User;
 import slipp.dto.UserCreatedDto;
 import slipp.dto.UserUpdatedDto;
-import slipp.domain.User;
 import support.test.NsWebTestClient;
 
 import java.net.URI;
@@ -20,13 +20,13 @@ public class UserAcceptanceTest {
     private NsWebTestClient client;
 
     @BeforeEach
-    void setUp() {
+    public void setUp() {
         client = NsWebTestClient.of(8080);
     }
 
     @Test
     @DisplayName("사용자 회원가입/조회/수정/삭제")
-    void crud() {
+    public void crud() {
         // 회원가입
         UserCreatedDto expected =
                 new UserCreatedDto("pobi", "password", "포비", "pobi@nextstep.camp");

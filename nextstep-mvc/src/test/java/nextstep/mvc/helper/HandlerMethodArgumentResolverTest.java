@@ -1,4 +1,4 @@
-package nextstep.mvc.tobe;
+package nextstep.mvc.helper;
 
 import nextstep.mvc.view.ModelAndView;
 import org.junit.jupiter.api.Test;
@@ -19,7 +19,7 @@ public class HandlerMethodArgumentResolverTest {
     private ParameterNameDiscoverer nameDiscoverer = new LocalVariableTableParameterNameDiscoverer();
 
     @Test
-    void string() throws Exception {
+    public void string() throws Exception {
         MockHttpServletRequest request = new MockHttpServletRequest();
         String userId = "javajigi";
         String password = "password";
