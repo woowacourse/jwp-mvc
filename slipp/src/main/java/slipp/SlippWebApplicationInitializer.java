@@ -15,7 +15,7 @@ public class SlippWebApplicationInitializer implements WebApplicationInitializer
 
     @Override
     public void onStartup(ServletContext servletContext) throws ServletException {
-        HandlerMapping[] handlerMappings = {new AnnotationHandlerMapping(), new ManualHandlerMapping()};
+        HandlerMapping[] handlerMappings = {new AnnotationHandlerMapping("slipp.controller"), new ManualHandlerMapping()};
         HandlerAdapter[] handlerAdapters = {new AnnotationHandlerAdapter(), new ManualHandlerAdapter()};
 
         DispatcherServlet dispatcherServlet = new DispatcherServlet(handlerMappings, handlerAdapters);
