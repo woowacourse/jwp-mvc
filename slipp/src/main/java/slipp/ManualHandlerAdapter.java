@@ -1,5 +1,6 @@
-package nextstep.mvc;
+package slipp;
 
+import nextstep.mvc.HandlerAdapter;
 import nextstep.mvc.asis.Controller;
 import nextstep.mvc.tobe.JspView;
 import nextstep.mvc.tobe.ModelAndView;

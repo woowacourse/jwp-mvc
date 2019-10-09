@@ -1,7 +1,8 @@
 package slipp;
 
-import nextstep.mvc.*;
-import nextstep.mvc.tobe.AnnotationHandlerMapping;
+import nextstep.mvc.DispatcherServlet;
+import nextstep.mvc.HandlerAdapter;
+import nextstep.mvc.HandlerMapping;
 import nextstep.web.WebApplicationInitializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,14 +30,12 @@ public class SlippWebApplicationInitializer implements WebApplicationInitializer
     private List<HandlerMapping> initHandlerMapping() {
         List<HandlerMapping> handlerMappings = new ArrayList<>();
         handlerMappings.add(new ManualHandlerMapping());
-        handlerMappings.add(new AnnotationHandlerMapping("slipp.controller"));
         return handlerMappings;
     }
 
     private List<HandlerAdapter> initHandlerAdapter() {
         List<HandlerAdapter> handlerAdapters = new ArrayList<>();
         handlerAdapters.add(new ManualHandlerAdapter());
-        handlerAdapters.add(new AnnotationHandlerAdapter());
         return handlerAdapters;
     }
 }
