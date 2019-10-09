@@ -2,6 +2,8 @@ package nextstep.mvc;
 
 import com.google.common.collect.Lists;
 import nextstep.mvc.asis.Controller;
+import nextstep.mvc.tobe.HandlerExecution;
+import nextstep.mvc.tobe.ModelAndView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,7 +24,6 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger logger = LoggerFactory.getLogger(DispatcherServlet.class);
     private static final String DEFAULT_REDIRECT_PREFIX = "redirect:";
 
-
     private List<HandlerMapping> handlerMappings;
 
     public DispatcherServlet(HandlerMapping... rm) {
@@ -39,35 +40,42 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException {
-        Controller controller = findHandler(req);
+        Object handler = findHandler(req);
         try {
-            String viewName = (String) controller.execute(req, resp);
-            move(viewName, req, resp);
+            if (handler instanceof Controller) {
+                ModelAndView mav = (ModelAndView) ((Controller) handler).execute(req, resp);
+                move(mav, req, resp);
+            }
+
+            if (handler instanceof HandlerExecution) {
+                ModelAndView mav = ((HandlerExecution) handler).handle(req, resp);
+                move(mav, req, resp);
+            }
         } catch (Throwable e) {
             logger.error("Exception : {}", e);
             throw new ServletException(e.getMessage());
         }
     }
 
-    private Controller findHandler(HttpServletRequest request) {
+    private Object findHandler(HttpServletRequest request) {
         for (HandlerMapping handlerMapping : handlerMappings) {
-            Controller controller = handlerMapping.getHandler(request);
-            if (Objects.nonNull(controller)) {
-                return controller;
+            Object execution = handlerMapping.getHandler(request);
+            if (Objects.nonNull(execution)) {
+                return execution;
             }
         }
 
         throw new IllegalArgumentException();
     }
 
-    private void move(String viewName, HttpServletRequest req, HttpServletResponse resp)
+    private void move(ModelAndView mv, HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
-        if (viewName.startsWith(DEFAULT_REDIRECT_PREFIX)) {
-            resp.sendRedirect(viewName.substring(DEFAULT_REDIRECT_PREFIX.length()));
+        if (mv.getViewName().startsWith(DEFAULT_REDIRECT_PREFIX)) {
+            resp.sendRedirect(mv.getViewName().substring(DEFAULT_REDIRECT_PREFIX.length()));
             return;
         }
 
-        RequestDispatcher rd = req.getRequestDispatcher(viewName);
+        RequestDispatcher rd = req.getRequestDispatcher(mv.getViewName());
         rd.forward(req, resp);
     }
 }
