@@ -18,6 +18,18 @@ class AnnotationHandlerMappingTest {
     }
 
     @Test
+    void isSupport_true() {
+        MockHttpServletRequest request = new MockHttpServletRequest("GET", "/users");
+        assertThat(handlerMapping.isSupport(request)).isTrue();
+    }
+
+    @Test
+    void isSupport_false() {
+        MockHttpServletRequest request = new MockHttpServletRequest("GET", "/nope");
+        assertThat(handlerMapping.isSupport(request)).isFalse();
+    }
+
+    @Test
     void create_find() throws Exception {
         User user = new User("pobi", "password", "포비", "pobi@nextstep.camp");
         createUser(user);
@@ -28,6 +40,7 @@ class AnnotationHandlerMappingTest {
         MockHttpServletResponse response = new MockHttpServletResponse();
         ModelAndView mav = handlerMapping.execute(request, response);
 
+        assertThat(handlerMapping.isSupport(request));
         assertThat(mav.getView()).isEqualTo(new JspView("/user/form"));
         assertThat(request.getAttribute("user")).isEqualTo(user);
     }
@@ -41,6 +54,7 @@ class AnnotationHandlerMappingTest {
         MockHttpServletResponse response = new MockHttpServletResponse();
         ModelAndView mav = handlerMapping.execute(request, response);
 
+        assertThat(handlerMapping.isSupport(request));
         assertThat(mav.getView()).isEqualTo(new RedirectView("/"));
     }
 }

@@ -41,4 +41,8 @@ public class ManualHandlerMapping {
     void put(final String url, final Controller controller) {
         mappings.put(url, controller);
     }
+
+    public boolean containsKey(final HttpServletRequest request) {
+        return mappings.containsKey(request.getRequestURI());
+    }
 }

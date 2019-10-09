@@ -24,6 +24,11 @@ public class ManualHandlerMappingAdapter implements HandlerMapping {
     }
 
     @Override
+    public boolean isSupport(HttpServletRequest request) {
+        return manualHandlerMapping.containsKey(request);
+    }
+
+    @Override
     public ModelAndView execute(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         final String execution = manualHandlerMapping.getHandler(request)
                 .execute(request, response);

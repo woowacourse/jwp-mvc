@@ -47,9 +47,18 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     @Override
+    public boolean isSupport(HttpServletRequest request) {
+        return handlerExecutions.containsKey(makeHandlerKey(request));
+    }
+
+    private HandlerKey makeHandlerKey(HttpServletRequest request) {
+        return new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod()));
+    }
+
+    @Override
     public ModelAndView execute(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         return handlerExecutions
-                .get(new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod())))
+                .get(makeHandlerKey(request))
                 .handle(request, response);
     }
 }
