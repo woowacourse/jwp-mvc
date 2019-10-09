@@ -1,7 +1,6 @@
 package nextstep.mvc.tobe;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import nextstep.utils.JsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,22 +19,8 @@ public class JsonView implements View {
     @Override
     public void render(Map<String, ?> model, HttpServletRequest request, HttpServletResponse response) throws Exception {
         response.setContentType(APPLICATION_JSON_UTF8_VALUE);
-        String content = getContent(model);
+        String content = JsonUtils.toJsonString(model);
         createResponse(response, content);
-    }
-
-    private String getContent(Map<String, ?> model) throws JsonProcessingException {
-        ObjectMapper objectMapper = new ObjectMapper();
-        int modelSize = model.size();
-
-        if(modelSize == 0){
-            return BLANK;
-        }
-        else if(modelSize == 1) {
-            return objectMapper.writeValueAsString(
-                    model.values().stream().findFirst().get());
-        }
-            return objectMapper.writeValueAsString(model);
     }
 
     private void createResponse(HttpServletResponse response, String content) throws IOException {
