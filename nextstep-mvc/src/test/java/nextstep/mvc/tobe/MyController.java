@@ -20,18 +20,36 @@ public class MyController {
         logger.debug("Find UserId : {}", userId);
         User user = DataBase.findUserById(userId);
         request.setAttribute("user", user);
-        return null;
+        return new ModelAndView("/users/view.jsp");
     }
 
     @RequestMapping(value = "/users", method = RequestMethod.POST)
     public ModelAndView save(HttpServletRequest request, HttpServletResponse response) {
         User user = new User(
-                request.getParameter("userId"),
-                request.getParameter("password"),
-                request.getParameter("name"),
-                request.getParameter("email"));
+            request.getParameter("userId"),
+            request.getParameter("password"),
+            request.getParameter("name"),
+            request.getParameter("email"));
         logger.debug("User : {}", user);
         DataBase.addUser(user);
-        return null;
+        return new ModelAndView("/home.jsp");
+    }
+
+    @RequestMapping(value = "/test")
+    public ModelAndView test(HttpServletRequest request, HttpServletResponse response) {
+        request.setAttribute("test", true);
+        return new ModelAndView("/test.jsp");
+    }
+
+    @RequestMapping("/no_name")
+    public ModelAndView test_no_attribute_name(HttpServletRequest request, HttpServletResponse response) {
+        request.setAttribute("test_no_value_name", true);
+        return new ModelAndView("/home.jsp");
+    }
+
+    @RequestMapping(method = RequestMethod.POST)
+    public ModelAndView test_empty_url(HttpServletRequest request, HttpServletResponse response) {
+        request.setAttribute("test_empty_url", true);
+        return new ModelAndView("/home.jsp");
     }
 }
