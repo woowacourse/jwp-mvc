@@ -1,8 +1,9 @@
 package slipp.controller;
 
+import com.google.common.io.CharStreams;
 import nextstep.mvc.tobe.JsonView;
 import nextstep.mvc.tobe.ModelAndView;
-import nextstep.mvc.tobe.RequestBodyParser;
+import nextstep.utils.JsonUtils;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
@@ -11,7 +12,7 @@ import slipp.support.db.DataBase;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Map;
+import java.io.IOException;
 
 import static javax.servlet.http.HttpServletResponse.SC_CREATED;
 
@@ -19,13 +20,9 @@ import static javax.servlet.http.HttpServletResponse.SC_CREATED;
 public class UserApiController {
 
     @RequestMapping(value = "/api/users", method = RequestMethod.POST)
-    public ModelAndView create(HttpServletRequest request, HttpServletResponse response) {
-        Map<String, String> body = RequestBodyParser.parse(request);
-        User user = new User(
-                body.get("userId"),
-                body.get("password"),
-                body.get("name"),
-                body.get("email"));
+    public ModelAndView create(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        User user = JsonUtils.toObject(
+                CharStreams.toString(request.getReader()), User.class);
 
         DataBase.addUser(user);
 
@@ -44,17 +41,14 @@ public class UserApiController {
     }
 
     @RequestMapping(value = "/api/users", method = RequestMethod.PUT)
-    public ModelAndView update(HttpServletRequest request, HttpServletResponse response) {
-        Map<String, String> body = RequestBodyParser.parse(request);
-        User updatedUser = new User(
-                request.getParameter("userId"),
-                body.get("password"),
-                body.get("name"),
-                body.get("email"));
+    public ModelAndView update(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        User user = DataBase.findUserById(request.getParameter("userId"));
+        User updateUser = JsonUtils.toObject(
+                CharStreams.toString(request.getReader()), User.class);
 
-        DataBase.addUser(updatedUser);
+        user.update(updateUser);
 
         return new ModelAndView(new JsonView())
-                .addObject("user", updatedUser);
+                .addObject("user", user);
     }
 }
