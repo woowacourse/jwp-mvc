@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 
 @WebServlet(name = "dispatcher", urlPatterns = "/", loadOnStartup = 1)
 public class DispatcherServlet extends HttpServlet {
@@ -40,24 +41,30 @@ public class DispatcherServlet extends HttpServlet {
         logger.debug("Method : {}, Request URI : {}", req.getMethod(), requestUri);
 
         try {
-            Object handler = handlerMappings.stream()
-                    .map(handlerMapping -> handlerMapping.getHandler(req))
-                    .findAny()
-                    .orElseThrow(NotFoundHandlerException::new);
+            Object handler = getHandler(req);
 
-            HandlerAdapter handlerAdapter = handlerAdapters.stream()
-                    .filter(adapter -> adapter.canAdapt(handler))
-                    .findFirst()
-                    .orElseThrow(NotFoundAdapterException::new);
-
-            ModelAndView mv = handlerAdapter.adapt(handler,req,resp);
+            HandlerAdapter handlerAdapter = getHandlerAdapter(handler);
+            ModelAndView mv = handlerAdapter.adapt(handler, req, resp);
             move(mv, req, resp);
         } catch (Throwable e) {
             logger.error("Exception : {}", e);
             throw new ServletException(e.getMessage());
         }
+    }
 
+    private HandlerAdapter getHandlerAdapter(Object handler) {
+        return handlerAdapters.stream()
+                .filter(adapter -> adapter.canAdapt(handler))
+                .findFirst()
+                .orElseThrow(NotFoundAdapterException::new);
+    }
 
+    private Object getHandler(HttpServletRequest req) {
+        return handlerMappings.stream()
+                .map(handlerMapping -> handlerMapping.getHandler(req))
+                .filter(Objects::nonNull)
+                .findFirst()
+                .orElseThrow(NotFoundHandlerException::new);
     }
 
     private void move(ModelAndView mv, HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

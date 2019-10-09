@@ -12,5 +12,5 @@ import static nextstep.web.annotation.RequestMethod.*;
 public @interface RequestMapping {
     String value() default "";
 
-    RequestMethod[] method() default {GET,POST,PUT,DELETE};
+    RequestMethod[] method() default {};
 }

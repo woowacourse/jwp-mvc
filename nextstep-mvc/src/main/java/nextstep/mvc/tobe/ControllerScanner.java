@@ -3,13 +3,16 @@ package nextstep.mvc.tobe;
 import nextstep.mvc.tobe.exception.InstanceCreationFailedException;
 import nextstep.web.annotation.Controller;
 import org.reflections.Reflections;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 public class ControllerScanner {
-    Reflections reflections;
+    private static final Logger logger = LoggerFactory.getLogger(ControllerScanner.class);
+    private final Reflections reflections;
     private Map<Class<?>, Object> controllers;
 
     public ControllerScanner(Object... baseUrl) {
@@ -30,7 +33,7 @@ public class ControllerScanner {
         try {
             return clazz.getConstructor().newInstance();
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            e.printStackTrace();
+            logger.debug("Error: {}", e);
         }
         throw new InstanceCreationFailedException("Error: 인스턴스 생성 실패");
     }

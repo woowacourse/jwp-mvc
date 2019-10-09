@@ -15,7 +15,6 @@ public class HandlerExecution {
         this.instance = instance;
     }
 
-
     public Method getMethod() {
         return method;
     }

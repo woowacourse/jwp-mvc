@@ -34,7 +34,7 @@ public class LoginController implements Controller {
         }
     }
 
-    @RequestMapping(value = "/users/login", method = RequestMethod.GET)
+    @RequestMapping(value = "/users/loginForm")
     public ModelAndView loginForm(HttpServletRequest req, HttpServletResponse resp) {
         return new ModelAndView(new JspView("/user/login.jsp"));
     }

@@ -7,7 +7,9 @@ import nextstep.web.annotation.RequestMethod;
 
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 public class AnnotationHandlerMapping implements HandlerMapping {
@@ -32,11 +34,27 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     private void mappingHandlers(Method method, Object instance) {
         RequestMapping annotation = method.getAnnotation(RequestMapping.class);
         HandlerExecution handlerExecution = new HandlerExecution(method, instance);
-        Arrays.stream(annotation.method())
+        List<RequestMethod> annotationRequestMethod = new ArrayList<>(Arrays.asList(annotation.method()));
+
+        if (isRequestMethodEmpty(annotationRequestMethod)) {
+            Arrays.stream(RequestMethod.values())
+                    .filter(requestMethod -> isNotRegistered(annotation, requestMethod))
+                    .forEach(requestMethod -> annotationRequestMethod.add(requestMethod));
+        }
+
+        annotationRequestMethod.stream()
                 .forEach(x -> {
                     HandlerKey handlerKey = new HandlerKey(annotation.value(), x);
                     handlerExecutions.put(handlerKey, handlerExecution);
                 });
+    }
+
+    private boolean isRequestMethodEmpty(List<RequestMethod> annotationRequestMethod) {
+        return annotationRequestMethod.size() == 0;
+    }
+
+    private boolean isNotRegistered(RequestMapping annotation, RequestMethod requestMethod) {
+        return !handlerExecutions.containsKey(new HandlerKey(annotation.value(), requestMethod));
     }
 
     @Override
@@ -44,14 +62,6 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         String uri = request.getRequestURI();
         RequestMethod method = RequestMethod.valueOf(request.getMethod());
         HandlerExecution handlerExecution = handlerExecutions.get(new HandlerKey(uri, method));
-
-        isEmpty(handlerExecution);
         return handlerExecution;
-    }
-
-    private void isEmpty(HandlerExecution handlerExecution) {
-        if (handlerExecution == null) {
-            throw new NotFoundHandlerException();
-        }
     }
 }

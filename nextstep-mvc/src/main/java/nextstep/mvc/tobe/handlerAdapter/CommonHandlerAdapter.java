@@ -14,7 +14,8 @@ public class CommonHandlerAdapter implements HandlerAdapter {
 
     @Override
     public ModelAndView adapt(Object handler, HttpServletRequest req, HttpServletResponse resp) throws Exception {
-        return (ModelAndView) handler;
+        HandlerExecution handlerExecution = (HandlerExecution)handler;
+        return handlerExecution.handle(req,resp);
     }
 }
 

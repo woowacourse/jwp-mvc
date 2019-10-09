@@ -45,6 +45,21 @@ public class MyController {
         return new ModelAndView();
     }
 
+    @RequestMapping(value = "/method", method = RequestMethod.GET)
+    public ModelAndView getMethod(HttpServletRequest request, HttpServletResponse response) {
+        return new ModelAndView();
+    }
+
+    @RequestMapping(value = "/method", method = RequestMethod.PUT)
+    public ModelAndView putMethod(HttpServletRequest request, HttpServletResponse response) {
+        return new ModelAndView();
+    }
+
+    @RequestMapping(value = "/method", method = RequestMethod.DELETE)
+    public ModelAndView deleteMethod(HttpServletRequest request, HttpServletResponse response) {
+        return new ModelAndView();
+    }
+
     @RequestMapping(value = "/method")
     public ModelAndView emptyMethod(HttpServletRequest request, HttpServletResponse response) {
         return new ModelAndView();
