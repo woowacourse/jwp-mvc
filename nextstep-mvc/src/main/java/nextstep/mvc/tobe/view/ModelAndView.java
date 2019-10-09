@@ -46,7 +46,7 @@ public class ModelAndView {
         return view instanceof String ? (String) view : null;
     }
 
-    public View getView() {
-        return (View) view;
+    public Object getView() {
+        return view;
     }
 }

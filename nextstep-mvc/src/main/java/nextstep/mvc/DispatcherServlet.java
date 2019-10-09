@@ -2,12 +2,11 @@ package nextstep.mvc;
 
 import nextstep.mvc.exception.NotFoundHandlerAdapterException;
 import nextstep.mvc.exception.NotFoundHandlerException;
+import nextstep.mvc.exception.NotFoundViewResolverExcpetion;
 import nextstep.mvc.handleradapter.AnnotationHandlerAdapter;
 import nextstep.mvc.handleradapter.HandlerAdapter;
 import nextstep.mvc.handlermapping.HandlerMapping;
-import nextstep.mvc.tobe.view.ModelAndView;
-import nextstep.mvc.tobe.view.View;
-import nextstep.mvc.tobe.view.ViewResolver;
+import nextstep.mvc.tobe.view.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,9 +24,9 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger logger = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private ViewResolver viewResolver = new ViewResolver();
     private List<HandlerMapping> handlerMappings;
     private List<HandlerAdapter> handlerAdapters;
+    private List<ViewResolver> viewResolvers;
 
     public DispatcherServlet(List<HandlerMapping> handlerMappings) {
         this.handlerMappings = handlerMappings;
@@ -39,6 +38,7 @@ public class DispatcherServlet extends HttpServlet {
             handlerMapping.initialize();
         }
         handlerAdapters = Arrays.asList(new AnnotationHandlerAdapter());
+        viewResolvers = Arrays.asList(new StringViewResolver(), new DefaultViewResolver());
     }
 
     @Override
@@ -50,7 +50,9 @@ public class DispatcherServlet extends HttpServlet {
             Object handler = getHandler(req);
             HandlerAdapter handlerAdapter = getHandlerAdapter(handler);
             ModelAndView modelAndView = handlerAdapter.handle(req, resp, handler);
-            render(req, resp, modelAndView);
+            ViewResolver viewResolver = getViewResolver(modelAndView);
+            View view = viewResolver.resolveView(modelAndView);
+            view.render(modelAndView.getModel(), req, resp);
 
         } catch (Exception e) {
 
@@ -58,17 +60,6 @@ public class DispatcherServlet extends HttpServlet {
             resp.sendError(404);
 
         }
-    }
-
-    private void render(HttpServletRequest req, HttpServletResponse resp, ModelAndView modelAndView) throws Exception {
-        String viewName = modelAndView.getViewName();
-        if (viewName != null) {
-            View view = viewResolver.resolveViewName(viewName);
-            view.render(modelAndView.getModel(), req, resp);
-            return;
-        }
-        View view = modelAndView.getView();
-        view.render(modelAndView.getModel(), req, resp);
     }
 
     private Object getHandler(HttpServletRequest req) {
@@ -84,5 +75,12 @@ public class DispatcherServlet extends HttpServlet {
                 .filter(adapter -> adapter.canHandle(handler))
                 .findAny()
                 .orElseThrow(NotFoundHandlerAdapterException::new);
+    }
+
+    private ViewResolver getViewResolver(ModelAndView modelAndView) {
+        return viewResolvers.stream()
+                .filter(viewResolver -> viewResolver.canHandle(modelAndView))
+                .findAny()
+                .orElseThrow(NotFoundViewResolverExcpetion::new);
     }
 }
