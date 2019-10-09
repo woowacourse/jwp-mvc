@@ -1,5 +1,6 @@
 package nextstep.mvc;
 
+import nextstep.mvc.exception.AdapterNotFoundException;
 import nextstep.mvc.exception.HandlerNotFoundException;
 import nextstep.mvc.tobe.HandlerAdapterRepository;
 import nextstep.mvc.tobe.view.ModelAndView;
@@ -41,7 +42,7 @@ public class DispatcherServlet extends HttpServlet {
             ModelAndView modelAndView = handlerAdapterRepository.adapt(handler, req, resp);
             modelAndView.render(req, resp);
 
-        } catch (HandlerNotFoundException e) {
+        } catch (HandlerNotFoundException | AdapterNotFoundException e) {
             logger.error("Exception : {}", e);
             resp.sendError(404);
         } catch (Throwable e) {

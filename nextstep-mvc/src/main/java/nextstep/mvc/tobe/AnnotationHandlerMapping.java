@@ -19,7 +19,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
     private Object[] basePackage;
 
-    private Map<HandlerKey, HandlerExecution> handlerExecutions = Maps.newHashMap();
+    private Map<HandlerKey, RequestHandler> handlerExecutions = Maps.newHashMap();
 
     public AnnotationHandlerMapping(Object... basePackage) {
         this.basePackage = basePackage;
@@ -56,7 +56,8 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         for (RequestMethod requestMethod : requestMethods) {
             HandlerKey handlerKey = new HandlerKey(requestMapping.value(), requestMethod);
             HandlerExecution handlerExecution = (req, res) -> (ModelAndView) method.invoke(controller, req, res);
-            handlerExecutions.put(handlerKey, handlerExecution);
+
+            handlerExecutions.put(handlerKey, new RequestHandler(handlerExecution));
             log.info("path : {}, controller: {}", requestMapping.value(), controller.getClass());
         }
     }
@@ -67,7 +68,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     @Override
-    public HandlerExecution getHandler(HttpServletRequest request) {
+    public Handler getHandler(HttpServletRequest request) {
         String requestURI = request.getRequestURI();
         RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
         HandlerKey handlerKey = new HandlerKey(requestURI, requestMethod);
