@@ -56,3 +56,4 @@ https://gist.github.com/joshbuchea/6f47e86d2510bce28f8e7f42ae84c716
 ### 2단계 요구사항
 - [x] JsonView.render 구현 (JsonViewTest 성공하게 바꾸기)
 - [x] post의 body값 읽어오는 controller 생성 (UserAcceptanceTest 성공하게 변경)
+- [ ] 모든 Controller를 애노테이션 기반 MVC(@MVC)로 변경한 후 asis MVC 프레임워크 관련 코드를 모두 삭제
