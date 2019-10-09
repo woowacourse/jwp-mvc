@@ -2,11 +2,13 @@ package nextstep.mvc.tobe;
 
 import nextstep.db.DataBase;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class AnnotationHandlerMappingTest {
     private AnnotationHandlerMapping handlerMapping;
@@ -27,7 +29,7 @@ public class AnnotationHandlerMappingTest {
         request.setParameter("userId", user.getUserId());
         MockHttpServletResponse response = new MockHttpServletResponse();
         HandlerExecution execution = handlerMapping.getHandler(request);
-        execution.handle(request, response);
+        execution.execute(request, response);
 
         assertThat(request.getAttribute("user")).isEqualTo(user);
     }
@@ -40,6 +42,15 @@ public class AnnotationHandlerMappingTest {
         request.setParameter("email", user.getEmail());
         MockHttpServletResponse response = new MockHttpServletResponse();
         HandlerExecution execution = handlerMapping.getHandler(request);
-        execution.handle(request, response);
+        execution.execute(request, response);
+    }
+
+    @Test
+    @DisplayName("HandlerKey가 중복된 경우")
+    void duplicate() {
+        AnnotationHandlerMapping duplicateAnnotaionMapping =
+                new AnnotationHandlerMapping("nextstep.mvc.duplicate");
+        assertThatThrownBy(duplicateAnnotaionMapping::initialize)
+                .isInstanceOf(DuplicateHandlerKeyException.class);
     }
 }
