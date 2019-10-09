@@ -35,11 +35,8 @@ public class UserController {
 
     @RequestMapping(value = "/api/users", method = RequestMethod.POST)
     public ModelAndView create(HttpServletRequest request, HttpServletResponse response) throws IOException {
-//        String collect = request.getReader().lines().collect(Collectors.joining(System.lineSeparator()));
         UserCreatedDto userCreatedDto = OBJECT_MAPPER.readValue(request.getReader(), UserCreatedDto.class);
-        User user = new User(userCreatedDto.getUserId(), userCreatedDto.getPassword(), userCreatedDto.getName(), userCreatedDto.getEmail());
-
-//        User user = userCreatedDto.toEntity();
+        User user = userCreatedDto.toEntity();
 
         DataBase.addUser(user);
 
