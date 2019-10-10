@@ -34,7 +34,8 @@ public class NsWebTestClient {
                 .uri(url)
                 .body(Mono.just(body), clazz)
                 .exchange()
-                .expectStatus().isCreated()
+//                .expectStatus().isCreated()
+                .expectStatus().isFound()
                 .expectBody()
                 .returnResult();
         return response.getResponseHeaders().getLocation();
