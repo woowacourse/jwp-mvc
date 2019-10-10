@@ -6,7 +6,7 @@ import nextstep.mvc.tobe.view.ModelAndView;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
-import nextstep.web.support.ResponseLocationBuilder;
+import nextstep.web.support.UriBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import slipp.domain.User;
@@ -27,7 +27,7 @@ public class UserApiController {
         DataBase.addUser(user);
         log.debug("create user >>> {}", user);
 
-        String location = ResponseLocationBuilder.of("/api/users")
+        String location = UriBuilder.of("/api/users")
                 .appendParam("userId", user.getUserId())
                 .build();
         resp.setHeader("Location", location);

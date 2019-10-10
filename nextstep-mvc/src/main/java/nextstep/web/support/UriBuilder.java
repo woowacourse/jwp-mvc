@@ -1,11 +1,12 @@
 package nextstep.web.support;
 
 import com.google.common.collect.Maps;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class ResponseLocationBuilder {
+public class UriBuilder {
 
     private static final String QUERY_STRING_MARK = "?";
     private static final String KEY_VALUE_SEPARATOR = "=";
@@ -13,15 +14,15 @@ public class ResponseLocationBuilder {
     private final String url;
     private final Map<String, String> params = Maps.newHashMap();
 
-    private ResponseLocationBuilder(final String url) {
+    private UriBuilder(final String url) {
         this.url = url;
     }
 
-    public static ResponseLocationBuilder of(final String url) {
-        return new ResponseLocationBuilder(url);
+    public static UriBuilder of(final String url) {
+        return new UriBuilder(url);
     }
 
-    public ResponseLocationBuilder appendParam(String name, String value) {
+    public UriBuilder appendParam(String name, String value) {
         params.put(name, value);
         return this;
     }
@@ -31,6 +32,6 @@ public class ResponseLocationBuilder {
                 .map(entry -> entry.getKey() + KEY_VALUE_SEPARATOR + entry.getValue())
                 .collect(Collectors.joining(PARAMETER_SEPARATOR));
 
-        return url + QUERY_STRING_MARK + queryString;
+        return StringUtils.isEmpty(queryString) ? url : url + QUERY_STRING_MARK + queryString;
     }
 }
