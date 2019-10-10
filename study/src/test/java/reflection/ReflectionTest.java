@@ -41,6 +41,7 @@ public class ReflectionTest {
         Class<Question> clazz = Question.class;
         Constructor[] constructors = clazz.getDeclaredConstructors();
         List<Class[]> parameterTypeList = new ArrayList<>();
+
         for (Constructor constructor : constructors) {
             Class[] parameterTypes = constructor.getParameterTypes();
             logger.debug("paramer length : {}", parameterTypes.length);

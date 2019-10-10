@@ -1,6 +1,5 @@
 package nextstep.mvc.tobe;
 
-import nextstep.mvc.tobe.exception.InstanceCreationFailedException;
 import nextstep.mvc.tobe.view.EmptyView;
 
 import javax.servlet.http.HttpServletRequest;
@@ -16,7 +15,7 @@ public class HandlerExecution implements ServletRequestHandler {
         this.instance = controller;
         this.method = method;
     }
-    
+
     public Method getMethod() {
         return method;
     }
