@@ -42,8 +42,6 @@ public class UserApiController {
         User user = DataBase.findUserById(userId);
         log.debug("fetch user >>> {}", user);
 
-        resp.setStatus(HttpServletResponse.SC_OK);
-
         ModelAndView modelAndView = new ModelAndView(new JsonView());
         modelAndView.addObject("user", user);
         return modelAndView;
@@ -57,8 +55,6 @@ public class UserApiController {
         User user = DataBase.findUserById(userId);
         user.update(userUpdatedDto);
         log.debug("update user >>> {}", userUpdatedDto);
-
-        resp.setStatus(HttpServletResponse.SC_OK);
 
         return new ModelAndView(new JsonView());
     }
