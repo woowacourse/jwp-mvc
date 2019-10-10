@@ -25,10 +25,10 @@ public class JspViewResolver implements ViewResolver {
     }
 
     private boolean isRedirectPrefix() {
-        return REDIRECT_PREFIX.startsWith(viewName);
+        return viewName.startsWith(REDIRECT_PREFIX);
     }
 
     private boolean isJspSuffix() {
-        return JSP_SUFFIX.endsWith(viewName);
+        return viewName.endsWith(JSP_SUFFIX);
     }
 }
