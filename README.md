@@ -17,5 +17,5 @@
 ## View 구현
 
 - [x] 요구사항 1 - nextstep-mvc 모듈에 nextstep.mvc.tobe.JsonViewTest의 모든 테스트를 pass하도록 JsonView를 구현한다.
-- [ ] 요구사항 2 - slipp 모듈에 slipp.controller.UserAcceptanceTest 테스트를 pass하도록 Controller를 추가한다. Controller는 애노테이션 기반 MVC를 사용한다. slipp 모듈에 slipp.controller.UserAcceptanceTest 테스트를 pass하도록 Controller를 추가한다. Controller는 애노테이션 기반 MVC를 사용한다.
+- [x] 요구사항 2 - slipp 모듈에 slipp.controller.UserAcceptanceTest 테스트를 pass하도록 Controller를 추가한다. Controller는 애노테이션 기반 MVC를 사용한다. slipp 모듈에 slipp.controller.UserAcceptanceTest 테스트를 pass하도록 Controller를 추가한다. Controller는 애노테이션 기반 MVC를 사용한다.
 - [ ] 요구사항 3 - 모든 Controller를 애노테이션 기반 MVC(@MVC)로 변경한 후 asis MVC 프레임워크 관련 코드를 모두 삭제해도 slipp 서비스가 가능하도록 구현한다.
