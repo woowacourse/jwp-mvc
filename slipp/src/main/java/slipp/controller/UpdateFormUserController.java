@@ -10,13 +10,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import static nextstep.web.annotation.RequestMethod.GET;
-import static nextstep.web.annotation.RequestMethod.POST;
 
 @Controller
 public class UpdateFormUserController {
 
     @RequestMapping(value = "/users/updateForm", method = GET)
-    public ModelAndView execute(HttpServletRequest req, HttpServletResponse resp) throws Exception {
+    public ModelAndView updateForm(HttpServletRequest req, HttpServletResponse resp) throws Exception {
         ModelAndView mav = new ModelAndView();
         String userId = req.getParameter("userId");
         User user = DataBase.findUserById(userId);

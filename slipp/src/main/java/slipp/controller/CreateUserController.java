@@ -1,7 +1,6 @@
 package slipp.controller;
 
 import nextstep.mvc.tobe.view.ModelAndView;
-import nextstep.utils.JsonUtils;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import org.slf4j.Logger;
@@ -28,7 +27,7 @@ public class CreateUserController {
         log.debug("User : {}", user);
 
         DataBase.addUser(user);
-        mav.addObject("user",user);
+        mav.addObject("user", user);
         mav.setViewName("redirect:/");
         return mav;
     }
