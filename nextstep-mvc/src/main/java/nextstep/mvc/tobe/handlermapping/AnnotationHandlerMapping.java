@@ -3,6 +3,7 @@ package nextstep.mvc.tobe.handlermapping;
 import com.google.common.collect.Maps;
 import nextstep.mvc.Handler;
 import nextstep.mvc.HandlerMapping;
+import nextstep.mvc.tobe.exception.DuplicateHandlerKeyException;
 import nextstep.mvc.tobe.view.ModelAndView;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
@@ -54,15 +55,34 @@ public class AnnotationHandlerMapping implements HandlerMapping {
                                                 RequestMapping requestMapping) {
         Arrays.stream(requestMethods)
                 .forEach(requestMethod -> handlerExecutions.put(createHandlerKey(requestMapping.value(), requestMethod),
-                        (request, response) -> (ModelAndView) method.invoke(controller, request, response)));
+                            (request, response) -> (ModelAndView) method.invoke(controller, request, response)));
     }
 
     private HandlerKey createHandlerKey(String url, RequestMethod requestMethod) {
-        return new HandlerKey(url, requestMethod);
+        HandlerKey handlerKey = new HandlerKey(url, requestMethod);
+        validDuplicateHandlerKey(handlerKey);
+
+        return handlerKey;
+    }
+
+    @Override
+    public boolean support(HttpServletRequest request) {
+        String requestUrl = request.getRequestURI();
+        RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
+
+        return handlerExecutions.containsKey(createHandlerKey(requestUrl, requestMethod));
     }
 
     @Override
     public Handler getHandler(HttpServletRequest request) {
-        return handlerExecutions.get(new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod())));
+        String requestUrl = request.getRequestURI();
+        RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
+        return handlerExecutions.get(createHandlerKey(requestUrl, requestMethod));
+    }
+
+    private void validDuplicateHandlerKey(HandlerKey handlerKey) {
+        if (handlerExecutions.containsKey(handlerKey)) {
+            throw new DuplicateHandlerKeyException();
+        }
     }
 }
