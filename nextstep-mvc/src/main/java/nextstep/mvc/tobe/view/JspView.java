@@ -1,4 +1,4 @@
-package nextstep.mvc.tobe;
+package nextstep.mvc.tobe.view;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -9,6 +9,7 @@ import java.util.Map;
 
 public class JspView implements View {
     private static final String DEFAULT_REDIRECT_PREFIX = "redirect:";
+    private static final String SUF_FIX = ".jsp";
 
     private String name;
 
@@ -19,11 +20,6 @@ public class JspView implements View {
     @Override
     public void render(Map<String, ?> model, HttpServletRequest request, HttpServletResponse response) throws Exception {
         move(name, request, response);
-    }
-
-    @Override
-    public String getName() {
-        return name;
     }
 
     private void move(String viewName, HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
