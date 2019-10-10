@@ -1,6 +1,5 @@
 package nextstep.mvc;
 
-import nextstep.mvc.tobe.AnnotationHandlerMapping;
 import nextstep.mvc.tobe.HandlerExecution;
 import nextstep.mvc.tobe.HandlerMapping;
 import nextstep.mvc.tobe.ModelAndView;
@@ -26,8 +25,8 @@ public class DispatcherServlet extends HttpServlet {
 
     private List<HandlerMapping> handlerMappings;
 
-    public DispatcherServlet(HandlerMapping manualHandlerMapping, AnnotationHandlerMapping annotationHandlerMapping) {
-        handlerMappings = Arrays.asList(manualHandlerMapping, annotationHandlerMapping);
+    public DispatcherServlet(HandlerMapping... handlerMappings) {
+        this.handlerMappings = Arrays.asList(handlerMappings);
     }
 
     @Override
@@ -42,10 +41,7 @@ public class DispatcherServlet extends HttpServlet {
         String requestUri = req.getRequestURI();
         logger.debug("Method : {}, Request URI : {}", req.getMethod(), requestUri);
 
-        HandlerMapping handler = handlerMappings.stream()
-                .filter(handlerMapping -> Objects.nonNull(handlerMapping.getHandler(req)))
-                .findFirst().orElseThrow(NotSupportedHandlerMethod::new);
-
+        HandlerMapping handler = findHandler(req);
         HandlerExecution handlerExecution = handler.getHandler(req);
 
         try {
@@ -54,6 +50,12 @@ public class DispatcherServlet extends HttpServlet {
         } catch (Exception e) {
             logger.debug("렌더링 실패");
         }
+    }
+
+    private HandlerMapping findHandler(HttpServletRequest req) {
+        return handlerMappings.stream()
+                    .filter(handlerMapping -> Objects.nonNull(handlerMapping.getHandler(req)))
+                    .findFirst().orElseThrow(NotSupportedHandlerMethod::new);
     }
 
     private void move(String viewName, HttpServletRequest req, HttpServletResponse resp)

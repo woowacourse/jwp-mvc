@@ -1,7 +1,6 @@
-package slipp;
+package nextstep.mvc.tobe;
 
 import nextstep.mvc.asis.Controller;
-import nextstep.mvc.tobe.*;
 
 import javax.servlet.http.HttpServletRequest;
 

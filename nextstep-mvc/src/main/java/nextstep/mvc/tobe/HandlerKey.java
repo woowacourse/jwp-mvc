@@ -15,23 +15,19 @@ public class HandlerKey {
         this.requestMethods = Arrays.asList(requestMethods);
     }
 
-    public boolean isUrl(String url) {
+    boolean isSupported(String url, RequestMethod requestMethod) {
+        return isUrl(url) && containsMethodType(requestMethod);
+    }
+
+    private boolean isUrl(String url) {
         return this.url.equals(url);
     }
 
-    public boolean containsMethodType(RequestMethod requestMethod) {
+    private boolean containsMethodType(RequestMethod requestMethod) {
         if (requestMethods.contains(RequestMethod.ALL)) {
             return true;
         }
         return requestMethods.contains(requestMethod);
-    }
-
-    @Override
-    public String toString() {
-        return "HandlerKey{" +
-                "url='" + url + '\'' +
-                ", requestMethods=" + requestMethods +
-                '}';
     }
 
     @Override
@@ -46,5 +42,13 @@ public class HandlerKey {
     @Override
     public int hashCode() {
         return Objects.hash(url, requestMethods);
+    }
+
+    @Override
+    public String toString() {
+        return "HandlerKey{" +
+                "url='" + url + '\'' +
+                ", requestMethods=" + requestMethods +
+                '}';
     }
 }

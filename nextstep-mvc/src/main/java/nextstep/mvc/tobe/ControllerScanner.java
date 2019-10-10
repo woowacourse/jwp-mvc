@@ -7,10 +7,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-class ControllerScan {
+class ControllerScanner {
     private Map<Class<?>, Object> controllers = new HashMap<>();
 
-    ControllerScan() {
+    ControllerScanner() {
     }
 
     void initialize(Object... basePackage) throws IllegalAccessException, InstantiationException {
