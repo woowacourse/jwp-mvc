@@ -1,7 +1,7 @@
-package nextstep.mvc.tobe.core;
+package nextstep.mvc.core;
 
 import com.google.common.collect.Maps;
-import nextstep.mvc.tobe.scanner.ControllerScanner;
+import nextstep.mvc.scanner.ControllerScanner;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -1,8 +1,8 @@
-package nextstep.mvc.tobe.view;
+package nextstep.mvc.view;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import nextstep.mvc.tobe.ObjectMapperException;
+import nextstep.mvc.ObjectMapperException;
 
 import java.io.PrintWriter;
 import java.util.Arrays;

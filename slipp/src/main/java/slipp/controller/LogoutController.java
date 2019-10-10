@@ -1,7 +1,7 @@
 package slipp.controller;
 
-import nextstep.mvc.tobe.view.ModelAndView;
-import nextstep.mvc.tobe.view.RedirectView;
+import nextstep.mvc.view.ModelAndView;
+import nextstep.mvc.view.RedirectView;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;

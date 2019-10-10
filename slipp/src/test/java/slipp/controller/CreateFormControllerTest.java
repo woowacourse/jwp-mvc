@@ -1,14 +1,13 @@
 package slipp.controller;
 
-import nextstep.mvc.tobe.core.RequestHandlers;
-import nextstep.mvc.tobe.view.ModelAndView;
-import nextstep.mvc.tobe.view.RedirectView;
+import nextstep.mvc.core.RequestHandlers;
+import nextstep.mvc.view.ModelAndView;
+import nextstep.mvc.view.RedirectView;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-import slipp.ManualLegacyHandlerMapping;
 import slipp.domain.User;
 import slipp.support.db.DataBase;
 
@@ -19,7 +18,7 @@ class CreateFormControllerTest {
 
     @BeforeEach
     void setUp() {
-        mappings = new RequestHandlers(new ManualLegacyHandlerMapping(), "slipp.controller");
+        mappings = new RequestHandlers("slipp.controller");
         mappings.initialize();
     }
 
