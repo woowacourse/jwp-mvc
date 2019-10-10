@@ -1,5 +1,6 @@
 package slipp.controller;
 
+import nextstep.mvc.tobe.JspView;
 import nextstep.mvc.tobe.ModelAndView;
 import nextstep.mvc.tobe.RedirectView;
 import nextstep.web.annotation.Controller;
@@ -12,6 +13,7 @@ import slipp.support.db.DataBase;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 @Controller
 public class UserController {
@@ -30,4 +32,32 @@ public class UserController {
         return new ModelAndView(new RedirectView("redirect:/"));
     }
 
+    @RequestMapping(value = "/users", method = RequestMethod.GET)
+    public ModelAndView show(HttpServletRequest request, HttpServletResponse response) {
+        if (!UserSessionUtils.isLogined(request.getSession())) {
+            return new ModelAndView(new RedirectView("redirect:/users/loginForm"));
+        }
+
+        request.setAttribute("users", DataBase.findAll());
+        return new ModelAndView(new JspView("/user/list.jsp"));
+    }
+
+    @RequestMapping(value = "/users/login", method = RequestMethod.POST)
+    public ModelAndView login(HttpServletRequest request, HttpServletResponse response) {
+        String userId = request.getParameter("userId");
+        String password = request.getParameter("password");
+        User user = DataBase.findUserById(userId);
+        if (user == null) {
+            request.setAttribute("loginFailed", true);
+            return new ModelAndView(new JspView("/user/login.jsp"));
+        }
+        if (user.matchPassword(password)) {
+            HttpSession session = request.getSession();
+            session.setAttribute(UserSessionUtils.USER_SESSION_KEY, user);
+            return new ModelAndView(new RedirectView("redirect:/"));
+        } else {
+            request.setAttribute("loginFailed", true);
+            return new ModelAndView(new JspView("/user/login.jsp"));
+        }
+    }
 }
