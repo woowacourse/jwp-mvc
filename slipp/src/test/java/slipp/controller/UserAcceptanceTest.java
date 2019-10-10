@@ -5,22 +5,24 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import slipp.domain.User;
 import slipp.dto.UserCreatedDto;
 import slipp.dto.UserUpdatedDto;
-import slipp.domain.User;
 import support.test.NsWebTestClient;
+import support.test.TestServerRunner;
 
 import java.net.URI;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class UserAcceptanceTest {
-    private static final Logger logger = LoggerFactory.getLogger(UserAcceptanceTest.class);
+    private static final Logger log = LoggerFactory.getLogger(UserAcceptanceTest.class);
 
     private NsWebTestClient client;
 
     @BeforeEach
     void setUp() {
+        TestServerRunner.run();
         client = NsWebTestClient.of(8080);
     }
 
@@ -31,7 +33,7 @@ public class UserAcceptanceTest {
         UserCreatedDto expected =
                 new UserCreatedDto("pobi", "password", "포비", "pobi@nextstep.camp");
         URI location = client.createResource("/api/users", expected, UserCreatedDto.class);
-        logger.debug("location : {}", location); // /api/users?userId=pobi 와 같은 형태로 반환
+        log.debug("location : {}", location); // /api/users?userId=pobi 와 같은 형태로 반환
 
         // 조회
         User actual = client.getResource(location, User.class);
