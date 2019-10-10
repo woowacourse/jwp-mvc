@@ -1,6 +1,8 @@
 package nextstep.mvc;
 
 import nextstep.mvc.asis.Controller;
+import nextstep.mvc.handlermapping.HandlerMapping;
+import nextstep.mvc.tobe.HandlerExecution;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,11 +16,12 @@ import java.io.IOException;
 
 @WebServlet(name = "dispatcher", urlPatterns = "/", loadOnStartup = 1)
 public class DispatcherServlet extends HttpServlet {
+    private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
+
     private static final long serialVersionUID = 1L;
-    private static final Logger logger = LoggerFactory.getLogger(DispatcherServlet.class);
     private static final String DEFAULT_REDIRECT_PREFIX = "redirect:";
 
-    private HandlerMapping rm;
+    private final HandlerMapping rm;
 
     public DispatcherServlet(HandlerMapping rm) {
         this.rm = rm;
@@ -32,15 +35,22 @@ public class DispatcherServlet extends HttpServlet {
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String requestUri = req.getRequestURI();
-        logger.debug("Method : {}, Request URI : {}", req.getMethod(), requestUri);
+        log.debug("Method : {}, Request URI : {}", req.getMethod(), requestUri);
 
-        Controller controller = rm.getHandler(requestUri);
-        try {
-            String viewName = controller.execute(req, resp);
-            move(viewName, req, resp);
-        } catch (Throwable e) {
-            logger.error("Exception : {}", e);
-            throw new ServletException(e.getMessage());
+        Object object = rm.getHandler(req);
+        if (object instanceof Controller) {
+            log.info("legacy HandlerMapping");
+            Controller controller = (Controller) object;
+            try {
+                String viewName = controller.execute(req, resp);
+                move(viewName, req, resp);
+            } catch (Throwable e) {
+                log.error("Exception : {}", e);
+                throw new ServletException(e.getMessage());
+            }
+        } else if (object instanceof HandlerExecution) {
+            log.info("new HandlerMapping");
+
         }
     }
 
