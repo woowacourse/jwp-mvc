@@ -1,12 +1,15 @@
 package nextstep.mvc.tobe.handlerresolver;
 
 import nextstep.mvc.tobe.handler.ControllerHandlerExecution;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
 
 public class HandlerMappingAdapter implements HandlerResolver {
+    private static final Logger log = LoggerFactory.getLogger(HandlerMappingAdapter.class);
     private HandlerMapping handlerMapping;
 
     public HandlerMappingAdapter(HandlerMapping handlerMapping) {
@@ -29,8 +32,8 @@ public class HandlerMappingAdapter implements HandlerResolver {
         try {
             target = handlerMapping.getHandler(req.getRequestURI()).getClass().getConstructor().newInstance();
         } catch (Exception e) {
-            // TODO : throw exception
-            e.printStackTrace();
+            log.debug(e.getMessage(), e.getCause());
+            throw new ClassInitializeException();
         }
 
         Method method = target.getClass().getDeclaredMethods()[0];
