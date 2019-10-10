@@ -44,12 +44,12 @@ public class DispatcherServlet extends HttpServlet {
         try {
             if (handler instanceof Controller) {
                 ModelAndView mav = (ModelAndView) ((Controller) handler).execute(req, resp);
-                move(mav, req, resp);
+                mav.getView().render(mav.getModel(), req, resp);
             }
 
             if (handler instanceof HandlerExecution) {
                 ModelAndView mav = ((HandlerExecution) handler).handle(req, resp);
-                move(mav, req, resp);
+                mav.getView().render(mav.getModel(), req, resp);
             }
         } catch (Throwable e) {
             logger.error("Exception : {}", e);
