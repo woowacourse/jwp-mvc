@@ -1,6 +1,8 @@
 package slipp.controller;
 
 import nextstep.mvc.tobe.core.RequestHandlers;
+import nextstep.mvc.tobe.view.ModelAndView;
+import nextstep.mvc.tobe.view.RedirectView;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -34,8 +36,9 @@ class CreateUserControllerTest {
 
         MockHttpServletResponse response = new MockHttpServletResponse();
 
-        mappings.handle(request, response);
+        ModelAndView mv = mappings.handle(request, response);
 
         assertThat(DataBase.findUserById("sloth")).isEqualTo(expected);
+        assertThat(mv.getView() instanceof RedirectView).isTrue();
     }
 }

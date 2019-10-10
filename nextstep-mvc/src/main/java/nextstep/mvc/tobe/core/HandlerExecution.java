@@ -1,6 +1,5 @@
 package nextstep.mvc.tobe.core;
 
-import nextstep.mvc.tobe.view.JspView;
 import nextstep.mvc.tobe.view.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
@@ -18,6 +17,6 @@ public class HandlerExecution {
 
     public ModelAndView handle(HttpServletRequest request, HttpServletResponse response) throws Exception {
         Object result = method.invoke(target, request, response);
-        return new ModelAndView(new JspView(String.valueOf(result)));
+        return (ModelAndView) result;
     }
 }
