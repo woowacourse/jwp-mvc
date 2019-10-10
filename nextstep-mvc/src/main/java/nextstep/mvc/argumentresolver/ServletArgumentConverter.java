@@ -1,0 +1,36 @@
+package nextstep.mvc.argumentresolver;
+
+import nextstep.mvc.exception.NotSupportedServletArgumentTypeException;
+import nextstep.mvc.tobe.ModelAndView;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.util.Arrays;
+import java.util.function.BiFunction;
+
+public enum ServletArgumentConverter {
+    HTTP_REQUEST(HttpServletRequest.class, (req, res) -> req),
+    HTTP_RESPONSE(HttpServletResponse.class, (req, res) -> res),
+    HTTP_SESSION(HttpSession.class, (req, res) -> req.getSession()),
+    MODEL_AND_VIEW(ModelAndView.class, (req, res) -> new ModelAndView());
+
+    private final Class<?> valueType;
+    private final BiFunction<HttpServletRequest, HttpServletResponse, Object> convertFunction;
+
+    ServletArgumentConverter(Class<?> valueType, BiFunction<HttpServletRequest, HttpServletResponse, Object> convertFunction) {
+        this.valueType = valueType;
+        this.convertFunction = convertFunction;
+    }
+
+    public static ServletArgumentConverter supports(Class<?> valueType) {
+        return Arrays.stream(values())
+                .filter(argument -> argument.valueType.equals(valueType))
+                .findAny()
+                .orElseThrow(NotSupportedServletArgumentTypeException::new);
+    }
+
+    public Object convert(HttpServletRequest request, HttpServletResponse response) {
+        return convertFunction.apply(request, response);
+    }
+}
