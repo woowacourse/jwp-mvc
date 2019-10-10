@@ -12,8 +12,11 @@ public class JspViewResolver implements ViewResolver {
 
     @Override
     public boolean isSupport(final ModelAndView mav) {
+        if (mav.hasNotViewName()) {
+            return false;
+        }
         this.viewName = mav.getViewName();
-        return isJspSuffix() | isRedirectPrefix();
+        return isJspSuffix() || isRedirectPrefix();
     }
 
     @Override
