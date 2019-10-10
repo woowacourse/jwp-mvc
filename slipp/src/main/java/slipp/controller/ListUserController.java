@@ -13,7 +13,7 @@ import static nextstep.web.annotation.RequestMethod.GET;
 @Controller
 public class ListUserController {
 
-    @RequestMapping(value = "/users", method = GET)
+    @RequestMapping(value = "/users/list", method = GET)
     public ModelAndView findUsers(HttpServletRequest req, HttpServletResponse resp) throws Exception {
         ModelAndView mav = new ModelAndView();
 
