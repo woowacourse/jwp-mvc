@@ -10,6 +10,7 @@ import nextstep.mvc.tobe.viewresolver.ViewResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -38,7 +39,7 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     @Override
-    protected void service(final HttpServletRequest req, final HttpServletResponse resp) {
+    protected void service(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException {
         String requestUri = req.getRequestURI();
         log.debug("Method : {}, Request URI : {}", req.getMethod(), requestUri);
 
@@ -50,6 +51,7 @@ public class DispatcherServlet extends HttpServlet {
             view.render(mav.getModel(), req, resp);
         } catch (Exception e) {
             log.error(e.getMessage());
+            throw new ServletException(e.getMessage());
         }
     }
 
