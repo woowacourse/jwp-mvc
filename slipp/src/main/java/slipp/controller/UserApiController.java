@@ -16,6 +16,8 @@ import slipp.support.db.DataBase;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import static slipp.support.constant.HttpHeaders.LOCATION;
+
 @Controller
 public class UserApiController {
 
@@ -30,7 +32,7 @@ public class UserApiController {
         String location = UriBuilder.of("/api/users")
                 .appendParam("userId", user.getUserId())
                 .build();
-        resp.setHeader("Location", location);
+        resp.setHeader(LOCATION, location);
         resp.setStatus(HttpServletResponse.SC_CREATED);
 
         return new ModelAndView(new JsonView());
