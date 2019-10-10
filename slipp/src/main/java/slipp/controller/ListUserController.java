@@ -1,19 +1,26 @@
 package slipp.controller;
 
+import nextstep.mvc.tobe.view.JspView;
+import nextstep.mvc.tobe.view.ModelAndView;
+import nextstep.web.annotation.Controller;
+import nextstep.web.annotation.RequestMapping;
+import nextstep.web.annotation.RequestMethod;
 import slipp.support.db.DataBase;
-import nextstep.mvc.asis.Controller;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public class ListUserController implements Controller {
-    @Override
-    public String execute(HttpServletRequest req, HttpServletResponse resp) throws Exception {
+@Controller
+public class ListUserController {
+
+    // TODO 메서드가 디폴트면 실행 안 됨!
+    @RequestMapping(value = "/users", method = RequestMethod.GET)
+    public ModelAndView showUsers(HttpServletRequest req, HttpServletResponse resp) {
         if (!UserSessionUtils.isLogined(req.getSession())) {
-            return "redirect:/users/loginForm";
+            return new ModelAndView(new JspView("redirect:/users/loginForm"));
         }
 
         req.setAttribute("users", DataBase.findAll());
-        return "/user/list.jsp";
+        return new ModelAndView(new JspView("/user/list.jsp"));
     }
 }

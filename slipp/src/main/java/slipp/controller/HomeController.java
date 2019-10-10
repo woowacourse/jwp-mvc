@@ -1,7 +1,7 @@
 package slipp.controller;
 
-import nextstep.mvc.tobe.JspView;
-import nextstep.mvc.tobe.ModelAndView;
+import nextstep.mvc.tobe.view.JspView;
+import nextstep.mvc.tobe.view.ModelAndView;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
@@ -14,10 +14,10 @@ import javax.servlet.http.HttpServletResponse;
 
 @Controller
 public class HomeController {
-private static final Logger log = LoggerFactory.getLogger(HomeController.class);
+    private static final Logger log = LoggerFactory.getLogger(HomeController.class);
 
     @RequestMapping(value = "/", method = {RequestMethod.GET})
-    public ModelAndView handle(HttpServletRequest req, HttpServletResponse resp) throws Exception {
+    public ModelAndView showIndex(HttpServletRequest req, HttpServletResponse resp) throws Exception {
         req.setAttribute("users", DataBase.findAll());
         log.debug("Home Controller : {}", DataBase.findAll());
         return new ModelAndView(new JspView("home.jsp"));
