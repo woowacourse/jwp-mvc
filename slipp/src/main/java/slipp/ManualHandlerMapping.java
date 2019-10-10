@@ -6,7 +6,6 @@ import nextstep.mvc.asis.Controller;
 import nextstep.mvc.asis.ForwardController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import slipp.controller.LogoutController;
 import slipp.controller.ProfileController;
 import slipp.controller.UpdateFormUserController;
 import slipp.controller.UpdateUserController;
@@ -23,7 +22,6 @@ public class ManualHandlerMapping implements HandlerMapping {
     public void initialize() {
         mappings.put("/users/form", new ForwardController("/user/form.jsp"));
         mappings.put("/users/profile", new ProfileController());
-        mappings.put("/users/logout", new LogoutController());
         mappings.put("/users/updateForm", new UpdateFormUserController());
         mappings.put("/users/update", new UpdateUserController());
 
