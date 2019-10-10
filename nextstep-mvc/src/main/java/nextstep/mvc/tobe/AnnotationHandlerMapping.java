@@ -57,6 +57,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         if (handlerExecutions.containsKey(handlerKey)) {
             return handlerExecutions.get(handlerKey);
         }
-        throw new IllegalArgumentException();
+        // 404 에러
+        throw new IllegalArgumentException("404");
     }
 }
