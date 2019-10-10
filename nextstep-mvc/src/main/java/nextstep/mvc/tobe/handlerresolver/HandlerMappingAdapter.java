@@ -28,15 +28,30 @@ public class HandlerMappingAdapter implements HandlerResolver {
 
     @Override
     public ControllerHandlerExecution getHandler(HttpServletRequest req) {
+        Object target = mappingTarget(req);
+        Method method = mappingMethod(target);
+        return new ControllerHandlerExecution(method, target);
+    }
+
+    private Method mappingMethod(Object target) {
+        Method method = null;
+        try {
+            method = target.getClass().getDeclaredMethod("execute", HttpServletRequest.class, HttpServletResponse.class);
+        } catch (NoSuchMethodException e) {
+            log.debug(e.getMessage(), e.getCause());
+            throw new RuntimeException(e);
+        }
+        return method;
+    }
+
+    private Object mappingTarget(HttpServletRequest req) {
         Object target = null;
         try {
             target = handlerMapping.getHandler(req.getRequestURI()).getClass().getConstructor().newInstance();
         } catch (Exception e) {
             log.debug(e.getMessage(), e.getCause());
-            throw new ClassInitializeException();
+            throw new CreateClassInstanceException();
         }
-
-        Method method = target.getClass().getDeclaredMethods()[0];
-        return new ControllerHandlerExecution(method, target);
+        return target;
     }
 }

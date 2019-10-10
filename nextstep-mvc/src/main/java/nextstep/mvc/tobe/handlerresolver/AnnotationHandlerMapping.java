@@ -27,7 +27,6 @@ public class AnnotationHandlerMapping implements HandlerResolver {
     @Override
     public void initialize() {
         logger.info("annotation mapping initialized!");
-
         Set<Class<?>> controllerAnnotatedClazz = ControllerScanner.scan(basePackage);
         handlerExecutions = RequestMappingScanner.scan(controllerAnnotatedClazz);
 

@@ -14,6 +14,6 @@ public class RedirectViewResolver implements ViewResolver {
 
     @Override
     public View resolve(ModelAndView mav) {
-        return new RedirectView(mav.getViewName());
+        return new RedirectView(mav.getViewName().substring(DEFAULT_REDIRECT_PREFIX.length()));
     }
 }

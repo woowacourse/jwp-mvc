@@ -16,20 +16,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BaseControllerTest {
-    public List<HandlerResolver> handlerAdapters = new ArrayList<>();
+    public List<HandlerResolver> handlerResolvers = new ArrayList<>();
     public List<ViewResolver> viewResolvers = new ArrayList<>();
 
     public void init() {
-        handlerAdapters.add(new AnnotationHandlerMapping("slipp.controller"));
-        handlerAdapters.add(new HandlerMappingAdapter(new ManualHandlerMapping()));
-        handlerAdapters.forEach(HandlerResolver::initialize);
+        handlerResolvers.add(new AnnotationHandlerMapping("slipp.controller"));
+        handlerResolvers.add(new HandlerMappingAdapter(new ManualHandlerMapping()));
+        handlerResolvers.forEach(HandlerResolver::initialize);
         viewResolvers.add(new JspViewResolver());
         viewResolvers.add(new JsonViewResolver());
         viewResolvers.add(new RedirectViewResolver());
     }
 
     public HandlerExecution mappingHandler(HttpServletRequest req, HttpServletResponse resp) {
-        return handlerAdapters.stream().filter(adapter -> adapter.support(req, resp))
+        return handlerResolvers.stream().filter(resolver -> resolver.support(req, resp))
                 .findFirst()
                 .orElseThrow(IllegalAccessError::new)
                 .getHandler(req)

@@ -49,7 +49,7 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private HandlerExecution mappingHandler(HttpServletRequest req, HttpServletResponse resp) {
-        return handlerResolvers.stream().filter(adapter -> adapter.support(req, resp))
+        return handlerResolvers.stream().filter(resolver -> resolver.support(req, resp))
                 .findAny()
                 .orElseThrow(IllegalAccessError::new)
                 .getHandler(req)
@@ -62,6 +62,7 @@ public class DispatcherServlet extends HttpServlet {
             mav = handlerExecution.handle(req, resp);
         } catch (Exception e) {
             logger.debug("message : {}, cause : {}", e.getMessage(), e.getCause());
+            throw new RuntimeException(e);
         }
         return mav;
     }
