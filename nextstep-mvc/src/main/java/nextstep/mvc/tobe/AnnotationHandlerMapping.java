@@ -10,7 +10,10 @@ import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class AnnotationHandlerMapping implements HandlerMapping {
@@ -42,10 +45,8 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     private Map<Class<?>, Set<Method>> getRequestMappingMethods(Set<Class<?>> clazzes) {
-        Map<Class<?>, Set<Method>> list = new HashMap<>();
-        clazzes.forEach(clazz ->
-                list.put(clazz, ReflectionUtils.getAllMethods(clazz, ReflectionUtils.withAnnotation(RequestMapping.class))));
-        return list;
+        return clazzes.stream()
+                .collect(Collectors.toMap(clazz -> clazz, clazz -> ReflectionUtils.getAllMethods(clazz, ReflectionUtils.withAnnotation(RequestMapping.class))));
     }
 
     private List<HandlerKey> createHandlerKeys(RequestMapping requestMapping) {
