@@ -8,11 +8,7 @@ public class JsonViewResolver implements ViewResolver {
 
     @Override
     public boolean isSupport(final ModelAndView mav) {
-        return hasNotViewName(mav);
-    }
-
-    private boolean hasNotViewName(final ModelAndView mav) {
-        return !mav.hasViewName();
+        return mav.hasNotViewName();
     }
 
     @Override
