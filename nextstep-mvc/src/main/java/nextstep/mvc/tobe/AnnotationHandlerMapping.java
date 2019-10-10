@@ -1,73 +1,79 @@
 package nextstep.mvc.tobe;
 
 import com.google.common.collect.Maps;
+import nextstep.utils.ComponentScanner;
+import nextstep.utils.ValueExtractor;
+import nextstep.utils.ValueTargets;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.lang.annotation.Annotation;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 public class AnnotationHandlerMapping {
-
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
-    private Object[] basePackage;
+
+    private static final ValueTargets requestMappingTargets = ValueTargets.from(new HashMap<>() {{
+        put("value", String.class);
+        put("method", RequestMethod[].class);
+    }});
+
+    private Object[] basePackages;
     private Map<HandlerKey, HandlerExecution> handlerExecutions = Maps.newHashMap();
 
-    public AnnotationHandlerMapping(Object... basePackage) {
-        this.basePackage = basePackage;
+    public AnnotationHandlerMapping(Object... basePackages) {
+        this.basePackages = basePackages;
     }
 
-    public void initialize() throws InvocationTargetException, IllegalAccessException {
-//        Reflections reflections = new Reflections("tobe");
-        Reflections reflections = new Reflections("nextstep.mvc.tobe");
-
-        Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
-
-        log.debug("controller classes: {}", controllerClasses.toString());
-
-        for (Class<?> controllerClass : controllerClasses) {
-            for (Method method : controllerClass.getDeclaredMethods()) {
-                if (method.isAnnotationPresent(RequestMapping.class)) {
-                    log.debug("method: {}", method);
-
-                    HandlerKey handlerKey = makeHandlerKey(method);
-
-                    handlerExecutions.put(handlerKey, new HandlerExecution() {
-                        public ModelAndView handle(HttpServletRequest request, HttpServletResponse response) throws Exception {
-                            return (ModelAndView) method.invoke(controllerClass.getDeclaredConstructor().newInstance(), request, response);
-                        }
-                    });
-                }
+    public void initialize() {
+        for (Object basePackage : basePackages) {
+            if (!(basePackage instanceof String)) {
+                log.error("not supported basePackage: {}", basePackage.getClass());
+                return;
             }
+            registerHandler((String) basePackage);
         }
     }
 
-    private HandlerKey makeHandlerKey(Method method) throws InvocationTargetException, IllegalAccessException {
+    private void registerHandler(String basePackagePrefix) {
+        ComponentScanner componentScanner = ComponentScanner.fromBasePackagePrefix(basePackagePrefix);
+
+        for (final Class<?> controllerClass : componentScanner.scanAnnotatedClasses(Controller.class)) {
+            Arrays.asList(controllerClass.getDeclaredMethods()).stream()
+                    .filter(method -> method.isAnnotationPresent(RequestMapping.class))
+                    .forEach(method -> {
+                        HandlerKey handlerKey = makeHandlerKey(method);
+                        HandlerExecution handlerExecution = makeHandlerExecution(method, controllerClass);
+
+                        handlerExecutions.put(handlerKey, handlerExecution);
+                    });
+        }
+    }
+
+    private HandlerKey makeHandlerKey(Method method) {
         Annotation annotation = method.getAnnotation(RequestMapping.class);
 
-        Class<? extends Annotation> type = annotation.annotationType();
+        Map<String, Object> extracted = ValueExtractor.extractFromAnnotation(annotation, requestMappingTargets);
+        String value = (String) extracted.get("value");
+        RequestMethod[] methods = (RequestMethod[]) extracted.get("method");
 
-        // value, method
-        String value = null;
-        RequestMethod[] methods = null;
-        for (Method annotationMethod : type.getDeclaredMethods()) {
-            if ("value".equals(annotationMethod.getName())) {
-                value = (String) annotationMethod.invoke(annotation);
-            } else if ("method".equals(annotationMethod.getName())) {
-                methods = (RequestMethod[]) annotationMethod.invoke(annotation);
+        return new HandlerKey(value, (methods == null) ? null : methods[0]);
+    }
+
+    private HandlerExecution makeHandlerExecution(Method method, Class<?> controllerClass) {
+        return new HandlerExecution() {
+            public ModelAndView handle(HttpServletRequest request, HttpServletResponse response) throws Exception {
+                return (ModelAndView) method.invoke(controllerClass.getDeclaredConstructor().newInstance(), request, response);
             }
-        }
-        RequestMethod requestMethod = (methods == null) ? null : methods[0];
-        return new HandlerKey(value, requestMethod);
+        };
     }
 
     public HandlerExecution getHandler(HttpServletRequest request) {

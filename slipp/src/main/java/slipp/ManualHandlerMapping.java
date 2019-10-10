@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ManualHandlerMapping implements HandlerMapping {
-    private static final Logger logger = LoggerFactory.getLogger(DispatcherServlet.class);
+    private static final Logger logger = LoggerFactory.getLogger(ManualHandlerMapping.class);
     private Map<String, Controller> mappings = new HashMap<>();
 
     @Override
