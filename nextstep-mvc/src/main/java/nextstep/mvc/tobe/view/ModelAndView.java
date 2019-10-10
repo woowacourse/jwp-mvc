@@ -1,5 +1,7 @@
 package nextstep.mvc.tobe.view;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -33,7 +35,7 @@ public class ModelAndView {
         return Collections.unmodifiableMap(model);
     }
 
-    public boolean hasViewName() {
-        return viewName == null;
+    public boolean hasNotViewName() {
+        return StringUtils.isBlank(viewName);
     }
 }
