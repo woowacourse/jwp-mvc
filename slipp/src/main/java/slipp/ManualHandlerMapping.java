@@ -5,7 +5,6 @@ import nextstep.mvc.HandlerMapping;
 import nextstep.mvc.asis.Controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import slipp.controller.ProfileController;
 import slipp.controller.UpdateFormUserController;
 import slipp.controller.UpdateUserController;
 
@@ -19,7 +18,6 @@ public class ManualHandlerMapping implements HandlerMapping {
 
     @Override
     public void initialize() {
-        mappings.put("/users/profile", new ProfileController());
         mappings.put("/users/updateForm", new UpdateFormUserController());
         mappings.put("/users/update", new UpdateUserController());
 
