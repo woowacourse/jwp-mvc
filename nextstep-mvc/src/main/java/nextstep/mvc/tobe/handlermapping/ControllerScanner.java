@@ -1,5 +1,6 @@
 package nextstep.mvc.tobe.handlermapping;
 
+import nextstep.mvc.tobe.exception.ControllerCreateException;
 import nextstep.web.annotation.Controller;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
@@ -23,10 +24,9 @@ public class ControllerScanner {
         for (Class<?> controller : controllers) {
             try {
                 this.controllers.put(controller, controller.newInstance());
-            } catch (InstantiationException e) {
-                logger.error("해당 컨트롤러를 생성할 수 없습니다. {}", e.getMessage());
-            } catch (IllegalAccessException e) {
-                logger.error("생성자에 접근할 수 없습니다. {}", e.getMessage());
+            } catch (InstantiationException | IllegalAccessException e) {
+                logger.error("{} 컨트롤러를 생성할 수 없습니다. {}", controller.getName(), e.getMessage());
+                throw new ControllerCreateException();
             }
         }
     }
