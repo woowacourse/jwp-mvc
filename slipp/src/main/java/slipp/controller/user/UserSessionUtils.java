@@ -1,4 +1,4 @@
-package slipp.controller;
+package slipp.controller.user;
 
 import slipp.domain.User;
 

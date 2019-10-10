@@ -1,4 +1,4 @@
-package slipp.controller;
+package slipp.controller.home;
 
 import nextstep.mvc.tobe.ModelAndView;
 import nextstep.web.annotation.Controller;

@@ -1,4 +1,4 @@
-package slipp.controller;
+package slipp.controller.user;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import nextstep.mvc.tobe.ModelAndView;
