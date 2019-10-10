@@ -14,12 +14,12 @@ public class JspView implements View {
 
     @Override
     public void render(Map<String, ?> model, HttpServletRequest req, HttpServletResponse resp) throws Exception {
-        setModel(model, req);
         RequestDispatcher rd = req.getRequestDispatcher(path);
+        setAttribute(model, req);
         rd.forward(req, resp);
     }
 
-    private void setModel(Map<String,?> model, HttpServletRequest request) {
-        model.keySet().forEach(key -> request.setAttribute(key, model.get(key)));
+    private void setAttribute(Map<String,?> model, HttpServletRequest req) {
+        model.keySet().stream().forEach(key -> req.setAttribute(key, model.get(key)));
     }
 }

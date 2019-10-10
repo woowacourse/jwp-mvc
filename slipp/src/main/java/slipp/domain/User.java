@@ -6,6 +6,9 @@ public class User {
     private String name;
     private String email;
 
+    public User() {
+    }
+
     public User(String userId, String password, String name, String email) {
         this.userId = userId;
         this.password = password;
@@ -27,12 +30,6 @@ public class User {
 
     public String getEmail() {
         return email;
-    }
-
-    public void update(User updateUser) {
-        this.password = updateUser.password;
-        this.name = updateUser.name;
-        this.email = updateUser.email;
     }
 
     public boolean matchPassword(String password) {

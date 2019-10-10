@@ -1,5 +1,7 @@
 package slipp.dto;
 
+import slipp.domain.User;
+
 public class UserCreatedDto {
     private String userId;
     private String password;
@@ -7,6 +9,10 @@ public class UserCreatedDto {
     private String email;
 
     private UserCreatedDto() {
+    }
+
+    public User toUser() {
+        return new User(this.getUserId(), this.getPassword(), this.getName(), this.getEmail());
     }
 
     public UserCreatedDto(String userId, String password, String name, String email) {
