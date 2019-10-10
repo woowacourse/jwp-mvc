@@ -9,10 +9,18 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class ArgumentResolver {
-    public List<Argument> arguments;
+    private static ArgumentResolver argumentResolver;
+    private List<Argument> arguments;
 
-    public ArgumentResolver() {
+    private ArgumentResolver() {
         arguments = init();
+    }
+
+    public static ArgumentResolver getInstance() {
+        if (argumentResolver == null) {
+            return new ArgumentResolver();
+        }
+        return argumentResolver;
     }
 
     private List<Argument> init() {
