@@ -13,10 +13,17 @@ public class ModelAndView {
     private Map<String, Object> model = new HashMap<String, Object>();
 
     public ModelAndView() {
+        this.view = (model, request, response) -> {
+
+        };
     }
 
     public ModelAndView(final String viewName) {
         this.view = ViewResolver.resolve(viewName);
+    }
+
+    public ModelAndView(final View view) {
+        this.view = view;
     }
 
     public ModelAndView addObject(String attributeName, Object attributeValue) {

@@ -27,9 +27,8 @@ public class JsonUtils {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             if (model.size() == 1) {
-                String key = model.keySet()
-                        .iterator().next();
-                return objectMapper.writeValueAsString(model.get(key));
+                Object value = model.values().toArray()[0];
+                return objectMapper.writeValueAsString(value);
             } else if (model.size() > 1) {
                 return objectMapper.writeValueAsString(model);
             }

@@ -15,7 +15,7 @@ public class JsonView implements View {
             throws Exception {
         final PrintWriter printWriter = response.getWriter();
         setContentType(response);
-        printWriter.write(JsonUtils.toJsonString(model));
+        printWriter.println(JsonUtils.toJsonString(model));
         printWriter.flush();
     }
 
