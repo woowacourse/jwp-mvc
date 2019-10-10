@@ -42,9 +42,9 @@ public class DispatcherServlet extends HttpServlet {
         String requestUri = req.getRequestURI();
         log.debug("Method : {}, Request URI : {}", req.getMethod(), requestUri);
 
-        HandlerExecution handler = (HandlerExecution) findHandler(req);
-        HandlerAdaptor handlerAdaptor = findHandlerAdaptor(handler);
         try {
+            HandlerExecution handler = (HandlerExecution) findHandler(req);
+            HandlerAdaptor handlerAdaptor = findHandlerAdaptor(handler);
             ModelAndView mav = handlerAdaptor.handle(req, resp, handler);
             View view = findView(mav);
             view.render(mav.getModel(), req, resp);
