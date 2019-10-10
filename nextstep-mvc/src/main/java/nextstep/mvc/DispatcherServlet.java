@@ -1,21 +1,16 @@
 package nextstep.mvc;
 
-import nextstep.mvc.asis.Controller;
-import nextstep.mvc.tobe.HandlerExecution;
 import nextstep.mvc.tobe.ModelAndView;
-import nextstep.mvc.tobe.View;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @WebServlet(name = "dispatcher", urlPatterns = "/", loadOnStartup = 1)
 public class DispatcherServlet extends HttpServlet {
@@ -24,62 +19,11 @@ public class DispatcherServlet extends HttpServlet {
     private static final String DEFAULT_REDIRECT_PREFIX = "redirect:";
 
     private List<HandlerMapping> handlerMappings;
+    private List<HandlerAdapter> handlerAdapters;
 
     public DispatcherServlet() {
         handlerMappings = new ArrayList<>();
-    }
-
-    public void addHandlerMapping(HandlerMapping handlerMapping) {
-        handlerMappings.add(handlerMapping);
-    }
-
-    private boolean processByHandler(HttpServletRequest req, HttpServletResponse resp, Object handler) throws ServletException {
-        if (handler instanceof Controller) {
-            executeAndRenderByManualHandler(req, resp, (Controller) handler);
-            return true;
-        }
-
-        if (handler instanceof HandlerExecution) {
-            executeAndRenderByAnnotationHandler(req, resp, (HandlerExecution) handler);
-            return true;
-        }
-        return false;
-    }
-
-    private void executeAndRenderByManualHandler(HttpServletRequest req, HttpServletResponse resp, Controller handler) throws ServletException {
-        try {
-            String viewName = handler.execute(req, resp);
-            renderByManualHandler(viewName, req, resp);
-        } catch (Throwable e) {
-            logger.error("Exception : {}", e);
-            throw new ServletException(e.getMessage());
-        }
-    }
-
-    private void executeAndRenderByAnnotationHandler(HttpServletRequest req, HttpServletResponse resp, HandlerExecution handler) throws ServletException {
-        try {
-            ModelAndView mav = handler.handle(req, resp);
-            renderByAnnotationHandler(mav, req, resp);
-        } catch (Throwable e) {
-            logger.error("Exception : {}", e);
-            throw new ServletException(e.getMessage());
-        }
-    }
-
-    private void renderByManualHandler(String viewName, HttpServletRequest req, HttpServletResponse resp)
-            throws ServletException, IOException {
-        if (viewName.startsWith(DEFAULT_REDIRECT_PREFIX)) {
-            resp.sendRedirect(viewName.substring(DEFAULT_REDIRECT_PREFIX.length()));
-            return;
-        }
-
-        RequestDispatcher rd = req.getRequestDispatcher(viewName);
-        rd.forward(req, resp);
-    }
-
-    private void renderByAnnotationHandler(ModelAndView mav, HttpServletRequest req, HttpServletResponse resp) throws Exception {
-        View view = mav.getView();
-        view.render(mav.getModel(), req, resp);
+        handlerAdapters = new ArrayList<>();
     }
 
     @Override
@@ -88,13 +32,43 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     @Override
-    protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException {
+    protected void service(HttpServletRequest req, HttpServletResponse resp) {
         logger.debug("Method : {}, Request URI : {}", req.getMethod(), req.getRequestURI());
+
+        ModelAndView mav = processRequest(req, resp);
+        try {
+            mav.getView().render(mav.getModel(), req, resp);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private ModelAndView processRequest(HttpServletRequest request, HttpServletResponse response) {
         for (HandlerMapping handlerMapping : handlerMappings) {
-            Object handler = handlerMapping.getHandler(req);
-            if (processByHandler(req, resp, handler)) {
-                return;
+            Object handler = handlerMapping.getHandler(request);
+            ModelAndView mav = doProcess(request, response, handler);
+
+            if (Objects.nonNull(mav)) {
+                return mav;
             }
         }
+        return null;
+    }
+
+    private ModelAndView doProcess(HttpServletRequest req, HttpServletResponse resp, Object handler) {
+        for (HandlerAdapter handlerAdapter : handlerAdapters) {
+            if (handlerAdapter.supports(handler)) {
+                return handlerAdapter.handle(req, resp, handler);
+            }
+        }
+        return null;
+    }
+
+    public void addHandlerMapping(HandlerMapping handlerMapping) {
+        handlerMappings.add(handlerMapping);
+    }
+
+    public void addHandlerAdapter(HandlerAdapter handlerAdapter) {
+        handlerAdapters.add(handlerAdapter);
     }
 }
