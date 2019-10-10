@@ -18,8 +18,4 @@ public class JspView implements View {
         rd.forward(request, response);
     }
 
-    // TODO :
-    public String getViewName() {
-        return viewName;
-    }
 }
