@@ -1,8 +1,8 @@
 package slipp.controller;
 
 import com.google.common.io.CharStreams;
-import nextstep.mvc.tobe.JsonView;
 import nextstep.mvc.tobe.ModelAndView;
+import nextstep.mvc.tobe.view.JsonView;
 import nextstep.utils.JsonUtils;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;

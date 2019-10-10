@@ -1,8 +1,10 @@
-package nextstep.mvc.tobe;
+package nextstep.mvc.tobe.mapping;
 
 import nextstep.db.DataBase;
-import nextstep.mvc.HandlerAdapter;
-import nextstep.mvc.exception.MappingException;
+import nextstep.mvc.tobe.User;
+import nextstep.mvc.tobe.adapter.HandlerAdapter;
+import nextstep.mvc.tobe.adapter.HandlerExecutionHandlerAdapter;
+import nextstep.mvc.tobe.exception.MappingException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;

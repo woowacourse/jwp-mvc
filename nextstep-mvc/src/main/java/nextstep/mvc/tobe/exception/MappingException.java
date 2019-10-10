@@ -1,4 +1,4 @@
-package nextstep.mvc.exception;
+package nextstep.mvc.tobe.exception;
 
 public class MappingException extends RuntimeException {
     public MappingException() {

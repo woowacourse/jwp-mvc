@@ -1,4 +1,4 @@
-package nextstep.mvc.exception;
+package nextstep.mvc.tobe.exception;
 
 public class NotFoundHttpMethodException extends RuntimeException {
     public NotFoundHttpMethodException() {

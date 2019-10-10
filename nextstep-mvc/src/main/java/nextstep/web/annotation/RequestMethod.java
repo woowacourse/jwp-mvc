@@ -1,6 +1,6 @@
 package nextstep.web.annotation;
 
-import nextstep.mvc.exception.NotFoundHttpMethodException;
+import nextstep.mvc.tobe.exception.NotFoundHttpMethodException;
 
 import java.util.Arrays;
 

@@ -1,8 +1,7 @@
-package nextstep.mvc.tobe;
+package nextstep.mvc.tobe.mapping;
 
 import com.google.common.collect.Maps;
-import nextstep.mvc.HandlerMapping;
-import nextstep.mvc.exception.MappingException;
+import nextstep.mvc.tobe.exception.MappingException;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
 import org.reflections.ReflectionUtils;
@@ -61,6 +60,10 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     private void putHandler(Object instance, Method method, HandlerKey handlerKey) {
         handlerExecutions.put(handlerKey,
+//                (request, response) -> {
+//                    Object[] paramValues = ArgumentResolver.resolve(method, request, response);
+//                    return method.invoke(instance, paramValues);
+//                });
                 (request, response) -> method.invoke(instance, request, response));
     }
 

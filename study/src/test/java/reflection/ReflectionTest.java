@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.*;
+import java.util.Date;
 
 public class ReflectionTest {
     private static final Logger logger = LoggerFactory.getLogger(ReflectionTest.class);
@@ -74,8 +75,13 @@ public class ReflectionTest {
         }
 
         Constructor constructor = clazz.getConstructor(String.class, String.class, String.class);
+        Constructor constructor2 = clazz.getConstructor(
+                long.class, String.class, String.class, String.class, Date.class, int.class);
         Question question = (Question) constructor.newInstance("iva", "wooteco", "hello");
+        Question question2 = (Question) constructor2.newInstance(
+                Long.parseLong("1"), "iva", "wooteco", "hello", new Date(), Integer.parseInt("1"));
         logger.debug("question : {}", question.toString());
+        logger.debug("question2 : {}", question2.toString());
     }
 
     @Test

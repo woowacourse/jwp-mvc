@@ -1,4 +1,4 @@
-package nextstep.mvc;
+package nextstep.mvc.tobe.mapping;
 
 import javax.servlet.http.HttpServletRequest;
 
