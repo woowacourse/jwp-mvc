@@ -1,4 +1,4 @@
-package slipp.annotationcontroller;
+package slipp.controller;
 
 import nextstep.mvc.tobe.view.JsonView;
 import nextstep.mvc.tobe.view.ModelAndView;
