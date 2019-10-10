@@ -19,16 +19,16 @@ public class TestUserController {
         return mav;
     }
 
-    @RequestMapping(value = "/users", method = RequestMethod.POST)
-    public ModelAndView create_int_long(long id, int age) {
-        logger.debug("id: {}, age: {}", id, age);
-        ModelAndView mav = new ModelAndView();
-        mav.addObject("id", id);
-        mav.addObject("age", age);
-        return mav;
-    }
-
-    @RequestMapping(value = "/users", method = RequestMethod.POST)
+    //    @RequestMapping(value = "/users", method = RequestMethod.POST)
+//    public ModelAndView create_int_long(long id, int age) {
+//        logger.debug("id: {}, age: {}", id, age);
+//        ModelAndView mav = new ModelAndView();
+//        mav.addObject("id", id);
+//        mav.addObject("age", age);
+//        return mav;
+//    }
+//
+    @RequestMapping(value = "/users/object", method = RequestMethod.POST)
     public ModelAndView create_javabean(TestUser testUser) {
         logger.debug("testUser: {}", testUser);
         ModelAndView mav = new ModelAndView();
