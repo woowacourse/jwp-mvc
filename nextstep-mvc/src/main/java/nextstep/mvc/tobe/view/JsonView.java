@@ -24,7 +24,7 @@ public class JsonView implements View {
         }
 
         if (singleSize(model)) {
-            String json = objectMapper.writeValueAsString(model.values().stream().findFirst().get());
+            String json = objectMapper.writeValueAsString(model.values().toArray()[0]);
             write(response, json);
             return;
         }
@@ -34,11 +34,12 @@ public class JsonView implements View {
     }
 
     private void write(HttpServletResponse response, String json) throws IOException {
+        log.debug("written json value: {}", json);
         response.getWriter().write(json);
         response.getWriter().flush();
     }
 
     private boolean singleSize(Map<String, ?> model) {
-        return model.keySet().size() == SINGLE;
+        return model.values().size() == SINGLE;
     }
 }
