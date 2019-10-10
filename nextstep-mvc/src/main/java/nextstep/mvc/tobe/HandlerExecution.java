@@ -7,7 +7,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-public class HandlerExecution implements ServletRequestHandler {
+public class HandlerExecution implements HandlerAdapter {
     private Object instance;
     private Method method;
 

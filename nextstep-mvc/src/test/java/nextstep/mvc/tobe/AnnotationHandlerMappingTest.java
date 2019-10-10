@@ -31,7 +31,7 @@ public class AnnotationHandlerMappingTest {
         MockHttpServletRequest request = new MockHttpServletRequest("GET", "/users");
         request.setParameter("userId", user.getUserId());
         MockHttpServletResponse response = new MockHttpServletResponse();
-        ServletRequestHandler execution = handlerMapping.getHandler(request);
+        HandlerAdapter execution = handlerMapping.getHandler(request);
         execution.execute(request, response);
 
         assertThat(request.getAttribute("user")).isEqualTo(user);
@@ -42,7 +42,7 @@ public class AnnotationHandlerMappingTest {
     public void post_method_in_requestMapping_annotation() {
         MockHttpServletRequest request = new MockHttpServletRequest("POST", "/one-method");
 
-        ServletRequestHandler matchedExecution = handlerMapping.getHandler(request);
+        HandlerAdapter matchedExecution = handlerMapping.getHandler(request);
 
         assertThat(matchedExecution).isNotNull();
     }
@@ -54,16 +54,16 @@ public class AnnotationHandlerMappingTest {
         String requestUrl = "/all-method";
         List<MockHttpServletRequest> requests = getRequestsOfAllRequestMethod(requestUrl);
 
+        MockHttpServletRequest getRequest = new MockHttpServletRequest("GET", requestUrl);
+        HandlerAdapter getRequestHandler = handlerMapping.getHandler(getRequest);
+
         // When
         for (MockHttpServletRequest request : requests) {
-            assertThat(handlerMapping.getHandler(request)).isNotNull();
-        }
-    }
+            HandlerAdapter handler = handlerMapping.getHandler(request);
 
-    @Test
-    @DisplayName("같은 url에 대해서라면 RequestMethod가 지정된 handler가 우선시되어 매핑된다.")
-    public void name() {
-        //TODO: 2019-10-10 이 부분에 대한 테스트 조금 더 고민
+            assertThat(handler).isNotNull();
+            assertThat(handler == getRequestHandler).isTrue();
+        }
     }
 
     private void createUser(User user) throws Exception {
@@ -73,7 +73,7 @@ public class AnnotationHandlerMappingTest {
         request.setParameter("name", user.getName());
         request.setParameter("email", user.getEmail());
         MockHttpServletResponse response = new MockHttpServletResponse();
-        ServletRequestHandler execution = handlerMapping.getHandler(request);
+        HandlerAdapter execution = handlerMapping.getHandler(request);
         execution.execute(request, response);
     }
 

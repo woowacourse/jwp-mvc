@@ -1,7 +1,7 @@
 package nextstep.mvc;
 
 import nextstep.mvc.tobe.ModelAndView;
-import nextstep.mvc.tobe.ServletRequestHandler;
+import nextstep.mvc.tobe.HandlerAdapter;
 import nextstep.mvc.tobe.exception.NotFoundHandlerException;
 import nextstep.mvc.tobe.view.View;
 import nextstep.utils.LoggingUtils;
@@ -40,7 +40,7 @@ public class DispatcherServlet extends HttpServlet {
         logRequest(request);
 
         try {
-            ServletRequestHandler handler = getHandlerOf(request);
+            HandlerAdapter handler = getHandlerOf(request);
             ModelAndView modelAndView = handler.execute(request, response);
             move(modelAndView, request, response);
         } catch (Exception error) {
@@ -54,7 +54,7 @@ public class DispatcherServlet extends HttpServlet {
         logger.debug("Method : {}, Request URI : {}", request.getMethod(), requestUri);
     }
 
-    private ServletRequestHandler getHandlerOf(HttpServletRequest request) {
+    private HandlerAdapter getHandlerOf(HttpServletRequest request) {
         return handlerMappings.stream()
                 .map(handlerMapping -> handlerMapping.getHandler(request))
                 .filter(Objects::nonNull)

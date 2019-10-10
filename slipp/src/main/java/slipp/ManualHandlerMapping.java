@@ -5,7 +5,7 @@ import nextstep.mvc.HandlerMapping;
 import nextstep.mvc.asis.Controller;
 import nextstep.mvc.asis.ForwardController;
 import nextstep.mvc.tobe.ControllerAdapter;
-import nextstep.mvc.tobe.ServletRequestHandler;
+import nextstep.mvc.tobe.HandlerAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import slipp.controller.*;
@@ -35,7 +35,7 @@ public class ManualHandlerMapping implements HandlerMapping {
     }
 
     @Override
-    public ServletRequestHandler getHandler(HttpServletRequest request) {
+    public HandlerAdapter getHandler(HttpServletRequest request) {
         String requestUri = request.getRequestURI();
         Controller controller = mappings.get(requestUri);
         return ControllerAdapter.of(controller);
