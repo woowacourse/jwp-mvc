@@ -43,7 +43,7 @@ public class DispatcherServlet extends HttpServlet {
                     .filter(adapter -> adapter.supports(handler))
                     .findFirst()
                     .orElseThrow(AdapterNotExistException::new);
-            ModelAndView mav =foundAdapter.handle(req, resp, handler);
+            ModelAndView mav = foundAdapter.handle(req, resp, handler);
             mav.render(req, resp);
         } catch (Exception e) {
             logger.error("Exception : {}", e);

@@ -31,7 +31,7 @@ public class UserController {
     @RequestMapping(value = "/users", method = RequestMethod.POST)
     public ModelAndView post(HttpServletRequest req, HttpServletResponse res) {
         User user = new User(req.getParameter("userId"), req.getParameter("password"), req.getParameter("name"),
-            req.getParameter("email"));
+                req.getParameter("email"));
         logger.debug("User : {}", user);
         DataBase.addUser(user);
         return new ModelAndView(new JSPView("redirect:/"));
