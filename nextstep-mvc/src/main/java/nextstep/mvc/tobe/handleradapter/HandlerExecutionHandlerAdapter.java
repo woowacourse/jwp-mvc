@@ -1,9 +1,12 @@
-package nextstep.mvc.tobe;
+package nextstep.mvc.tobe.handleradapter;
+
+import nextstep.mvc.tobe.HandlerExecution;
+import nextstep.mvc.tobe.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public class ToBeHandlerAdapter implements HandlerAdapter {
+public class HandlerExecutionHandlerAdapter implements HandlerAdapter {
 
     @Override
     public ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {

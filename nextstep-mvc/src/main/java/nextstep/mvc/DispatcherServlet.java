@@ -1,8 +1,8 @@
 package nextstep.mvc;
 
 import nextstep.mvc.tobe.Handler;
-import nextstep.mvc.tobe.HandlerAdapter;
 import nextstep.mvc.tobe.ModelAndView;
+import nextstep.mvc.tobe.handleradapter.HandlerAdapter;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
