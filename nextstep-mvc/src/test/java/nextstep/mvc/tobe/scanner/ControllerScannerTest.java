@@ -11,9 +11,7 @@ class ControllerScannerTest {
     @Test
     @DisplayName("base pakage의 하위 클래스들을 scan하여 controller list를 반환한다.")
     void scanController() {
-        // TODO: 2019-10-10 ControllerScanner의 역할에 대해 조금 더 고민
-        Object[] basePackage = {"nextstep.mvc.tobe"};
-        List<Object> controllers = ControllerScanner.scanControllers(basePackage);
+        List<Object> controllers = ControllerScanner.scanControllers("nextstep.mvc.tobe");
 
         assertThat(controllers.size()).isEqualTo(1);
     }

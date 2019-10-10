@@ -16,7 +16,7 @@ import java.util.Set;
 public class ControllerScanner {
     private static final Logger logger = LoggerFactory.getLogger(ControllerScanner.class);
 
-    public static List<Object> scanControllers(Object[] basePackage) {
+    public static List<Object> scanControllers(Object... basePackage) {
         Reflections reflections = new Reflections(basePackage);
         Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
         List<Object> controllers = new ArrayList<>();
