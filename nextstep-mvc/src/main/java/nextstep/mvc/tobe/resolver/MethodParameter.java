@@ -22,6 +22,11 @@ public class MethodParameter {
         return parameter.isAnnotationPresent(annotation);
     }
 
+
+    public <T extends Annotation> T getAnnotation(final Class<T> annotation) {
+        return method.getAnnotation(annotation);
+    }
+
     public Parameter getParameter() {
         return parameter;
     }

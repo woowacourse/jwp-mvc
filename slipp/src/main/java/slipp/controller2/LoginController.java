@@ -4,7 +4,6 @@ import nextstep.mvc.tobe.ModelAndView;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
-import slipp.controller.UserSessionUtils;
 import slipp.domain.User;
 import slipp.support.db.DataBase;
 
@@ -20,7 +19,7 @@ public class LoginController {
         User user = DataBase.findUserById(userId);
         if (user == null) {
             req.setAttribute("loginFailed", true);
-            return new ModelAndView("/user/login.jsp");
+            return new ModelAndView("/user/login");
         }
         if (user.matchPassword(password)) {
             HttpSession session = req.getSession();
@@ -28,9 +27,10 @@ public class LoginController {
             return new ModelAndView("redirect:/");
         } else {
             req.setAttribute("loginFailed", true);
-            return new ModelAndView("/user/login.jsp");
+            return new ModelAndView("/user/login");
         }
     }
+
     @RequestMapping(value = "/users/logout", method = RequestMethod.GET)
     public ModelAndView logout(HttpServletRequest req, HttpServletResponse resp) throws Exception {
         HttpSession session = req.getSession();
@@ -40,6 +40,6 @@ public class LoginController {
 
     @RequestMapping(value = "/users/loginForm", method = RequestMethod.GET)
     public String form() {
-        return "/user/login.jsp";
+        return "/user/login";
     }
 }

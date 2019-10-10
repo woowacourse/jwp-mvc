@@ -1,8 +1,6 @@
 package nextstep.mvc.tobe.resolver;
 
-import nextstep.mvc.tobe.ModelAndView;
-import nextstep.mvc.tobe.TestUser;
-import nextstep.mvc.tobe.TestUserController;
+import nextstep.mvc.tobe.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -14,8 +12,9 @@ import java.util.Arrays;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class HandlerMethodArgumentResolverCompositeTest {
-    private HandlerMethodArgumentResolver resolver = new HandlerMethodArgumentResolverComposite();
+    private HandlerMethodArgumentResolver resolver = HandlerMethodArgumentResolverComposite.getInstance();
     private MockHttpServletRequest request;
+    private WebRequest webRequest;
     private Class clazz = TestUserController.class;
 
     private String id = "1";
@@ -30,6 +29,8 @@ class HandlerMethodArgumentResolverCompositeTest {
         request.addParameter("password", password);
         request.addParameter("id", id);
         request.addParameter("age", age);
+
+        webRequest = new WebRequestContext(request, null);
     }
 
     @Test
@@ -74,7 +75,7 @@ class HandlerMethodArgumentResolverCompositeTest {
     }
 
     @Test
-    void show_pathvariable() throws Exception {
+    void show_pathVariable() throws Exception {
         // given
         final Method method = getMethod("show_pathvariable", clazz.getMethods());
         request.setRequestURI("/users/10");
@@ -91,7 +92,7 @@ class HandlerMethodArgumentResolverCompositeTest {
 
         final Object[] values = methodParameters.getMethodParams()
                 .stream()
-                .map(methodParameter -> resolver.resolveArgument(request, methodParameter))
+                .map(methodParameter -> resolver.resolveArgument(webRequest, methodParameter))
                 .toArray();
         return (ModelAndView) method.invoke(clazz.newInstance(), values);
     }

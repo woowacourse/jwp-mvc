@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
@@ -49,15 +50,45 @@ public class JsonViewTest {
     }
 
     @Test
-    void render_over_two_element() throws Exception {
+    void render_one_primitive() throws Exception {
         Map<String, Object> model = new HashMap<>();
-        Car expected = new Car("Black", "Sonata");
-        model.put("car", expected);
-        model.put("name", "포비");
+        int expected = 1;
+        model.put("number", expected);
 
         view.render(model, request, response);
 
+        int actual = JsonUtils.toObject(response.getContentAsString(), int.class);
         assertThat(response.getContentType()).isEqualTo(MediaType.APPLICATION_JSON_UTF8_VALUE);
+        assertThat(actual).isEqualTo(expected);
+    }
+
+    @Test
+    void render_over_two_element() throws Exception {
+        final Map<String, Object> model = new HashMap<>();
+        final Car car = new Car("Black", "Sonata");
+        final String name = "포비";
+        model.put("car", car);
+        model.put("name", name);
+
+        view.render(model, request, response);
+
+        Map actual = JsonUtils.toObject(response.getContentAsString(), Map.class);
+
         logger.debug("response body : {}", response.getContentAsString());
+        assertThat(response.getContentType()).isEqualTo(MediaType.APPLICATION_JSON_UTF8_VALUE);
+        assertThat(actual.get("name")).isEqualTo(name);
+        assertThat(actual.get("car").toString()).contains(car.getColor(), car.getType());
+    }
+
+    @Test
+    void render_with_ResponseEntity() throws Exception {
+        final Car expected = new Car("Black", "Sonata");
+        final JsonView jsonView = new JsonView(ResponseEntity.ok(expected));
+
+        jsonView.render(null, request, response);
+
+        Car actual = JsonUtils.toObject(response.getContentAsString(), Car.class);
+
+        assertThat(actual).isEqualTo(expected);
     }
 }

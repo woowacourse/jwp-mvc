@@ -1,12 +1,12 @@
 package nextstep.mvc.tobe.resolver;
 
+import nextstep.mvc.tobe.WebRequest;
 import nextstep.utils.PathPatternUtils;
 import nextstep.utils.TypeConverter;
 import nextstep.web.annotation.PathVariable;
 import nextstep.web.annotation.RequestMapping;
 import org.springframework.web.util.pattern.PathPattern;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.Objects;
 
 public class PathVariableHandlerMethodArgumentResolver implements HandlerMethodArgumentResolver {
@@ -16,9 +16,9 @@ public class PathVariableHandlerMethodArgumentResolver implements HandlerMethodA
     }
 
     @Override
-    public Object resolveArgument(final HttpServletRequest request, final MethodParameter methodParameter) {
-        final String uri = request.getRequestURI();
-        final String path = methodParameter.getMethod().getAnnotation(RequestMapping.class).value();
+    public Object resolveArgument(final WebRequest webRequest, final MethodParameter methodParameter) {
+        final String uri = webRequest.getRequestURI();
+        final String path = methodParameter.getAnnotation(RequestMapping.class).value();
         final PathPattern pathPattern = PathPatternUtils.parse(path);
 
         final String value = Objects.requireNonNull(pathPattern

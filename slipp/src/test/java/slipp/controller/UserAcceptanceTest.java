@@ -39,9 +39,12 @@ public class UserAcceptanceTest {
         assertThat(actual.getName()).isEqualTo(expected.getName());
         assertThat(actual.getEmail()).isEqualTo(expected.getEmail());
 
+        // 로그인 후 세션 얻어오기
+        final String jSessionId = client.getJSessionId("pobi", "password");
+
         // 수정
         UserUpdatedDto updateUser = new UserUpdatedDto("password2", "코난", "conan@nextstep.camp");
-        client.updateResource(location, updateUser, UserUpdatedDto.class);
+        client.updateResource(location, updateUser, UserUpdatedDto.class, jSessionId);
 
         actual = client.getResource(location, User.class);
         assertThat(actual.getPassword()).isEqualTo(updateUser.getPassword());

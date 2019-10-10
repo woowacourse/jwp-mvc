@@ -34,8 +34,8 @@ public class ModelAndView {
         return Collections.unmodifiableMap(model);
     }
 
-    public View getView() {
-        return view instanceof View ? (View) view : null;
+    public Object getView() {
+        return view;
     }
 
     public String getViewName() {

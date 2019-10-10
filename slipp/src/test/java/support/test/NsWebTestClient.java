@@ -2,6 +2,7 @@ package support.test;
 
 import org.springframework.test.web.reactive.server.EntityExchangeResult;
 import org.springframework.test.web.reactive.server.WebTestClient;
+import org.springframework.web.reactive.function.BodyInserters;
 import reactor.core.publisher.Mono;
 
 import java.net.URI;
@@ -10,6 +11,7 @@ import static org.springframework.web.reactive.function.client.ExchangeFilterFun
 
 public class NsWebTestClient {
     private static final String BASE_URL = "http://localhost";
+    public static final String JSESSIONID = "JSESSIONID";
 
     private String baseUrl = BASE_URL;
     private int port;
@@ -40,10 +42,11 @@ public class NsWebTestClient {
         return response.getResponseHeaders().getLocation();
     }
 
-    public <T> void updateResource(URI location, T body, Class<T> clazz) {
+    public <T> void updateResource(URI location, T body, Class<T> clazz, final String jSessionId) {
         testClientBuilder.build()
                 .put()
                 .uri(location.toString())
+                .cookie(JSESSIONID, jSessionId)
                 .body(Mono.just(body), clazz)
                 .exchange()
                 .expectStatus().isOk();
@@ -57,6 +60,37 @@ public class NsWebTestClient {
                 .expectStatus().isOk()
                 .expectBody(clazz)
                 .returnResult().getResponseBody();
+    }
+
+
+    public String getJSessionId(final String userId, final String password) {
+        return testClientBuilder.build()
+                .post()
+                .uri("/users/login")
+                .body(BodyInserters
+                        .fromFormData("userId", userId)
+                        .with("password", password))
+                .exchange()
+                .expectStatus().is3xxRedirection()
+                .expectBody()
+                .returnResult()
+                .getResponseCookies().get(JSESSIONID).get(0).getValue();
+    }
+
+    public WebTestClient.RequestBodyUriSpec post() {
+        return testClientBuilder.build().post();
+    }
+
+    public WebTestClient.RequestHeadersUriSpec<?> get() {
+        return testClientBuilder.build().get();
+    }
+
+    public WebTestClient.RequestBodyUriSpec put() {
+        return testClientBuilder.build().put();
+    }
+
+    public WebTestClient.RequestHeadersUriSpec<?> delete() {
+        return testClientBuilder.build().delete();
     }
 
     public static NsWebTestClient of(int port) {

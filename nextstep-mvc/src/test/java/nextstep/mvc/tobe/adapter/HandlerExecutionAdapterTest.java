@@ -1,14 +1,14 @@
 package nextstep.mvc.tobe.adapter;
 
 
+import nextstep.mvc.tobe.WebRequest;
+import nextstep.mvc.tobe.WebRequestContext;
 import nextstep.mvc.tobe.handler.HandlerExecution;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-
-import java.lang.reflect.InvocationTargetException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -22,12 +22,14 @@ class HandlerExecutionAdapterTest {
     private final HandlerExecution handler = mock(HandlerExecution.class);
     private MockHttpServletResponse response;
     private MockHttpServletRequest request;
+    private WebRequest webRequest;
 
     @BeforeEach
     void setUp() throws NoSuchMethodException {
         when(handler.getMethod()).thenReturn(this.getClass().getDeclaredMethod("StringToModelAndView"));
-        response = new MockHttpServletResponse();
         request = new MockHttpServletRequest();
+        response = new MockHttpServletResponse();
+        webRequest = new WebRequestContext(request, response);
     }
 
     @Test
@@ -44,7 +46,7 @@ class HandlerExecutionAdapterTest {
         when(handler.execute(any())).thenReturn("view");
 
         // when & then
-        assertDoesNotThrow(() -> handlerAdapter.handle(request, response, handler));
+        assertDoesNotThrow(() -> handlerAdapter.handle(webRequest, handler));
     }
 
     @Test
@@ -54,6 +56,6 @@ class HandlerExecutionAdapterTest {
         when(handler.execute(any())).thenReturn(123);
 
         // when & then
-        assertThrows(ClassCastException.class, () -> handlerAdapter.handle(request, response, handler));
+        assertThrows(ClassCastException.class, () -> handlerAdapter.handle(webRequest, handler));
     }
 }

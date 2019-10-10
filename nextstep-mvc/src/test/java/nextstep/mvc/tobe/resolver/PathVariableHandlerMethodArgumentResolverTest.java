@@ -1,11 +1,14 @@
 package nextstep.mvc.tobe.resolver;
 
+import nextstep.mvc.tobe.WebRequest;
+import nextstep.mvc.tobe.WebRequestContext;
 import nextstep.web.annotation.PathVariable;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
@@ -18,6 +21,8 @@ public class PathVariableHandlerMethodArgumentResolverTest {
     private Class clazz = PathVariableHandlerMethodArgumentResolverTest.class;
     private Parameter[] parameters;
     private MockHttpServletRequest request;
+    private MockHttpServletResponse response;
+    private WebRequest webRequest;
     private String id = "1";
     private Method method;
 
@@ -31,6 +36,8 @@ public class PathVariableHandlerMethodArgumentResolverTest {
 
         request = new MockHttpServletRequest();
         request.addParameter("id", id);
+
+        webRequest = new WebRequestContext(request, response);
     }
 
     @Test
@@ -58,7 +65,7 @@ public class PathVariableHandlerMethodArgumentResolverTest {
         request.setRequestURI("/users/10");
 
         // when
-        final Object actual = resolver.resolveArgument(request, methodParameter);
+        final Object actual = resolver.resolveArgument(webRequest, methodParameter);
 
         // then
         assertThat(actual).isEqualTo(10L);
@@ -78,8 +85,8 @@ public class PathVariableHandlerMethodArgumentResolverTest {
         request.setRequestURI("/users/10/12");
 
         // when
-        final Object id = resolver.resolveArgument(request, methodParameter);
-        final Object userId = resolver.resolveArgument(request, methodParameter2);
+        final Object id = resolver.resolveArgument(webRequest, methodParameter);
+        final Object userId = resolver.resolveArgument(webRequest, methodParameter2);
 
         // then
         assertThat(id).isEqualTo(10L);

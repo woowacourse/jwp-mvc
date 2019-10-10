@@ -1,5 +1,6 @@
 package nextstep.mvc.tobe.handler;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
@@ -23,5 +24,9 @@ public class HandlerExecution {
 
     public Method getMethod() {
         return method;
+    }
+
+    public boolean isAnnotationPresent(final Class<? extends Annotation> annotation) {
+        return method.isAnnotationPresent(annotation);
     }
 }

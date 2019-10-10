@@ -1,5 +1,6 @@
 package slipp.controller;
 
+import slipp.controller2.UserSessionUtils;
 import slipp.support.db.DataBase;
 import nextstep.mvc.asis.Controller;
 

@@ -37,10 +37,23 @@
      - [x] DispatcherServlet 에 적용하기
 - [ ] 성능 측정 ServletFilter 구현해보기
 - [x] /users/{id} - url 요청 가능하게 하기   
-
+- [ ] handlerMappings, adapters 등.. 포장하기
+- [x] 모든 클래스 이름 점검 (ex. HandlerMethodArgumentResolver)
+- [ ] ResponseEntity 직접 구현하기
+- [ ] interceptor HttpMethod 비교기능 추가
 ## 추가 미션
 - [ ] 다른 템플릿 엔진 지원하기
 - [ ] 인터셉터 구현하기
+    - HandlerInterceptor 구현
+    - InterceptorRegistry 에 등록
+    - InterceptorRegistration 은 HandlerInterceptor, includePatterns, excludePatterns 를 갖는다.
+    
+    - 흐름
+        - url-> filter includePatterns = true, excludePatterns = false 확인 후 
+        해당하는 모든 HandlerInterceptor 반환
+        - HandlerAdapter 실행 전에 interceptor.preHandle() 
+        - HandlerAdapter 실행 후에 interceptor.postHandle()
+      
 
 새로운 컨트롤러 (RequestMapping 스캔 기반)은 controller2 패키지에 위치
 
