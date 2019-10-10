@@ -1,7 +1,7 @@
 package slipp.controller;
 
-import nextstep.mvc.tobe.ModelAndView;
-import nextstep.mvc.tobe.RequestMappingHandlerMapping;
+import nextstep.mvc.tobe.handler.HandlerExecution;
+import nextstep.mvc.tobe.view.ModelAndView;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -9,21 +9,18 @@ import org.slf4j.LoggerFactory;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockHttpSession;
-import slipp.ManualHandlerMapping;
+import slipp.controller.controller.BaseControllerTest;
 import slipp.domain.User;
 import slipp.support.db.DataBase;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class UpdateUserControllerTest {
+class UpdateUserControllerTest extends BaseControllerTest {
     private static final Logger logger = LoggerFactory.getLogger(UpdateUserControllerTest.class);
-
-    private RequestMappingHandlerMapping mappings;
 
     @BeforeEach
     void setUp() {
-        mappings = new RequestMappingHandlerMapping(new ManualHandlerMapping());
-        mappings.initialize();
+        init();
     }
 
     @Test
@@ -41,8 +38,10 @@ class UpdateUserControllerTest {
 
         MockHttpServletResponse response = new MockHttpServletResponse();
 
-        ModelAndView mav = mappings.handle(request, response);
-        assertThat(mav.getView().getViewName()).isEqualTo("redirect:/");
+        HandlerExecution handler = mappingHandler(request, response);
+        ModelAndView mav = handler.handle(request, response);
+
+        assertThat(mav.getViewName()).isEqualTo("redirect:/");
         assertThat(DataBase.findUserById("sloth").getName()).isEqualTo("나무늘보");
     }
 
