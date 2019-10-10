@@ -1,7 +1,7 @@
 package nextstep.mvc.adapter;
 
+import nextstep.mvc.ModelAndView;
 import nextstep.mvc.exception.ExecutionResultAdapterException;
-import nextstep.mvc.tobe.ModelAndView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

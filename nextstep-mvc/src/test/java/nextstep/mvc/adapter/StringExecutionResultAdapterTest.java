@@ -1,9 +1,9 @@
 package nextstep.mvc.adapter;
 
+import nextstep.mvc.ModelAndView;
 import nextstep.mvc.exception.ViewNameResolveException;
-import nextstep.mvc.tobe.ModelAndView;
-import nextstep.mvc.tobe.view.JspView;
-import nextstep.mvc.tobe.view.RedirectView;
+import nextstep.mvc.view.JspView;
+import nextstep.mvc.view.RedirectView;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;

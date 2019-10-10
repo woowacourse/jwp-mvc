@@ -1,7 +1,6 @@
-package nextstep.mvc.tobe;
+package nextstep.mvc.view;
 
-import nextstep.mvc.tobe.view.JsonView;
-import nextstep.mvc.tobe.view.View;
+import nextstep.mvc.tobe.Car;
 import nextstep.utils.JsonUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,7 +16,7 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class JsonViewTest {
-    private static final Logger logger = LoggerFactory.getLogger( JsonViewTest.class );
+    private static final Logger logger = LoggerFactory.getLogger(JsonViewTest.class);
     private MockHttpServletRequest request;
     private MockHttpServletResponse response;
     private View view;

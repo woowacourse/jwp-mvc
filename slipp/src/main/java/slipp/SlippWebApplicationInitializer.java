@@ -1,8 +1,8 @@
 package slipp;
 
+import nextstep.mvc.AnnotationHandlerMapping;
 import nextstep.mvc.DispatcherServlet;
 import nextstep.mvc.adapter.ExecutionResultAdapters;
-import nextstep.mvc.tobe.AnnotationHandlerMapping;
 import nextstep.web.WebApplicationInitializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,8 +19,7 @@ public class SlippWebApplicationInitializer implements WebApplicationInitializer
     public void onStartup(ServletContext servletContext) throws ServletException {
         DispatcherServlet dispatcherServlet = new DispatcherServlet(
                 Arrays.asList(
-                        new ManualHandlerMapping(),
-                        new AnnotationHandlerMapping("slipp.controller.tobe")),
+                        new AnnotationHandlerMapping("slipp.controller")),
                 new ExecutionResultAdapters()
         );
 

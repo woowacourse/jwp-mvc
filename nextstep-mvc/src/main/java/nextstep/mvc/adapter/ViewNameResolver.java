@@ -1,9 +1,9 @@
 package nextstep.mvc.adapter;
 
 import nextstep.mvc.exception.ViewNameResolveException;
-import nextstep.mvc.tobe.view.JspView;
-import nextstep.mvc.tobe.view.RedirectView;
-import nextstep.mvc.tobe.view.View;
+import nextstep.mvc.view.JspView;
+import nextstep.mvc.view.RedirectView;
+import nextstep.mvc.view.View;
 
 public class ViewNameResolver {
     private static final String REDIRECT_PREFIX = "redirect:";

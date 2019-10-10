@@ -1,4 +1,4 @@
-package slipp.controller.tobe;
+package slipp.controller;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -44,6 +44,24 @@ public class LoginControllerTest {
                 .uri("/users/login")
                 .body(BodyInserters.fromFormData("userId", "admin")
                         .with("password", "invalid"))
+                .exchange()
+                .expectStatus().isOk();
+    }
+
+    @Test
+    @DisplayName("logout시 redirect")
+    void logout() {
+        client.get()
+                .uri("/users/logout")
+                .exchange()
+                .expectStatus().isFound();
+    }
+
+    @Test
+    @DisplayName("loginForm으로 이동")
+    void loginForm() {
+        client.get()
+                .uri("/users/loginForm")
                 .exchange()
                 .expectStatus().isOk();
     }

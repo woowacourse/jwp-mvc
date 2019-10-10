@@ -1,9 +1,8 @@
-package slipp.controller.tobe;
+package slipp.controller;
 
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
-import slipp.controller.UserSessionUtils;
 import slipp.domain.User;
 import slipp.support.db.DataBase;
 
@@ -30,5 +29,17 @@ public class LoginController {
             req.setAttribute("loginFailed", true);
             return "/user/login.jsp";
         }
+    }
+
+    @RequestMapping(value = "/users/logout", method = RequestMethod.GET)
+    public String logout(HttpServletRequest req, HttpServletResponse resp) throws Exception {
+        HttpSession session = req.getSession();
+        session.removeAttribute(UserSessionUtils.USER_SESSION_KEY);
+        return "redirect:/";
+    }
+
+    @RequestMapping(value = "/users/loginForm", method = RequestMethod.GET)
+    public String showLoginForm(HttpServletRequest req, HttpServletResponse resp) {
+        return "/user/login.jsp";
     }
 }

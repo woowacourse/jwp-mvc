@@ -1,4 +1,4 @@
-package slipp.controller.tobe;
+package slipp.controller;
 
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;

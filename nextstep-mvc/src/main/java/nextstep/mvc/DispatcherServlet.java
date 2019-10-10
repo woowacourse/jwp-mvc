@@ -2,10 +2,8 @@ package nextstep.mvc;
 
 import nextstep.mvc.adapter.ExecutionResultAdapter;
 import nextstep.mvc.adapter.ExecutionResultAdapters;
-import nextstep.mvc.tobe.Execution;
-import nextstep.mvc.tobe.ModelAndView;
-import nextstep.mvc.tobe.view.JspView;
-import nextstep.mvc.tobe.view.View;
+import nextstep.mvc.view.JspView;
+import nextstep.mvc.view.View;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

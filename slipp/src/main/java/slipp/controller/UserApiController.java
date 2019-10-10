@@ -1,11 +1,13 @@
-package slipp.controller.tobe;
+package slipp.controller;
 
-import nextstep.mvc.tobe.ModelAndView;
-import nextstep.mvc.tobe.view.JsonView;
+import nextstep.mvc.ModelAndView;
+import nextstep.mvc.view.JsonView;
 import nextstep.utils.JsonUtils;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import slipp.domain.User;
 import slipp.dto.UserCreatedDto;
 import slipp.dto.UserUpdatedDto;
@@ -20,6 +22,8 @@ import static javax.servlet.http.HttpServletResponse.SC_CREATED;
 
 @Controller
 public class UserApiController {
+    private static final Logger log = LoggerFactory.getLogger(UserApiController.class);
+
     private static final String USER_ID = "userId";
     private static final String USER_ATTRIBUTE_NAME = "user";
     private static final String USER_CREATED_LOCATION = "/api/users?userId=%s";
@@ -53,6 +57,7 @@ public class UserApiController {
                 createdUser.getName(),
                 createdUser.getEmail()
         );
+        log.debug("User : {}", user);
         DataBase.addUser(user);
         return user;
     }
@@ -77,6 +82,7 @@ public class UserApiController {
                 updateUserDto.getName(),
                 updateUserDto.getEmail()
         );
+        log.debug("Update User : {}", updateUser);
         user.update(updateUser);
         return user;
     }
