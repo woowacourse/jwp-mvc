@@ -4,6 +4,8 @@ import nextstep.mvc.exception.HandlerAdapterNotFoundException;
 import nextstep.mvc.exception.HandlerNotExistException;
 import nextstep.mvc.tobe.HandlerAdaptor;
 import nextstep.mvc.tobe.ModelAndView;
+import nextstep.mvc.tobe.View;
+import nextstep.mvc.tobe.ViewResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,18 +43,25 @@ public class DispatcherServlet extends HttpServlet {
         Object handler = getHandler(req);
         HandlerAdaptor handlerAdaptor = findHandlerAdapter(handler);
         try {
-            ModelAndView view = handlerAdaptor.handle(req, resp, handler);
-            view.render(req, resp);
+            ModelAndView modelAndView = handlerAdaptor.handle(req, resp, handler);
+            view(req, resp, modelAndView);
         } catch (Exception e) {
-            logger.error("Exception : {}", e);
+            logger.info("URI: {}", req.getRequestURI());
+            logger.error("Exception : ", e);
             throw new ServletException(e.getMessage());
         }
+    }
+
+    private void view(HttpServletRequest req, HttpServletResponse resp, ModelAndView modelAndView) throws Exception {
+        ViewResolver viewResolver = new ViewResolver();
+        View view = viewResolver.resolve(modelAndView.getView());
+        view.render(modelAndView.getModel(), req, resp);
     }
 
     private HandlerAdaptor findHandlerAdapter(Object handler) {
         return handlerAdaptors.stream()
             .filter(handlerAdaptor -> handlerAdaptor.supports(handler))
-            .findFirst()
+            .findAny()
             .orElseThrow(HandlerAdapterNotFoundException::new);
     }
 
@@ -60,7 +69,7 @@ public class DispatcherServlet extends HttpServlet {
         return handlerMappings.stream()
             .map(handlerMapping -> handlerMapping.getHandler(req))
             .filter(Objects::nonNull)
-            .findFirst()
+            .findAny()
             .orElseThrow(HandlerNotExistException::new);
     }
 }
