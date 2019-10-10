@@ -1,9 +1,11 @@
 package nextstep.utils;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import nextstep.mvc.tobe.exception.ObjectMapperException;
+import nextstep.utils.exception.ObjectConvertException;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
@@ -57,7 +59,7 @@ public class JsonUtils {
                     .collect(Collectors.joining(System.lineSeparator()));
             return objectMapper.readValue(body, clazz);
         } catch (IOException e) {
-            throw new IllegalArgumentException();
+            throw new ObjectConvertException(e);
         }
     }
 }
