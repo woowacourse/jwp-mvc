@@ -56,6 +56,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
                         handlerExecutions.put(handlerKey, handlerExecution);
                     });
         }
+        log.info("excutions: {}", handlerExecutions);
     }
 
     private HandlerKey makeHandlerKey(Method method) {
@@ -81,11 +82,11 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod()));
 
         if (handlerExecutions.containsKey(handlerKey)) {
-            return Optional.ofNullable(handlerExecutions.get(handlerKey));
+            return Optional.of(handlerExecutions.get(handlerKey));
         }
 
         HandlerKey emptyMethodHandlerKey = new HandlerKey(request.getRequestURI(), null);
-        return Optional.of(handlerExecutions.get(emptyMethodHandlerKey));
+        return Optional.ofNullable(handlerExecutions.get(emptyMethodHandlerKey));
     }
 }
 

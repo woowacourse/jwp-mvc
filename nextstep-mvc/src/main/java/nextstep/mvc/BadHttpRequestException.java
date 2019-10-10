@@ -8,6 +8,6 @@ public class BadHttpRequestException extends RuntimeException {
     }
 
     public static BadHttpRequestException from(HttpServletRequest request) {
-        return new BadHttpRequestException(String.format("uri: %s, method: %d", request.getRequestURI(), request.getMethod()));
+        return new BadHttpRequestException(String.format("uri: %s, method: %s", request.getRequestURI(), request.getMethod()));
     }
 }

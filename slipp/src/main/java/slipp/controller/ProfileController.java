@@ -1,21 +1,24 @@
 package slipp.controller;
 
-import slipp.domain.User;
+import nextstep.mvc.tobe.HandlerExecution;
+import nextstep.mvc.tobe.JspView;
+import nextstep.mvc.tobe.ModelAndView;
+import nextstep.web.annotation.RequestMapping;
+import nextstep.web.annotation.RequestMethod;
 import slipp.support.db.DataBase;
-import nextstep.mvc.asis.Controller;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Optional;
 
-public class ProfileController implements Controller {
+@nextstep.web.annotation.Controller
+public class ProfileController implements HandlerExecution {
     @Override
-    public String execute(HttpServletRequest req, HttpServletResponse resp) throws Exception {
-        String userId = req.getParameter("userId");
-        User user = DataBase.findUserById(userId);
-        if (user == null) {
-            throw new NullPointerException("사용자를 찾을 수 없습니다.");
-        }
-        req.setAttribute("user", user);
-        return "/user/profile.jsp";
+    @RequestMapping(value = "/users/profile", method = {RequestMethod.GET})
+    public ModelAndView handle(HttpServletRequest request, HttpServletResponse response) {
+        return Optional.ofNullable(request.getParameter("userId"))
+                .map(userId -> DataBase.findUserById(userId))
+                .map(user -> new ModelAndView(JspView.from("/user/profile.jsp")).addObject("user", user))
+                .orElseThrow(() -> new NullPointerException("사용자를 찾을 수 없습니다."));
     }
 }
