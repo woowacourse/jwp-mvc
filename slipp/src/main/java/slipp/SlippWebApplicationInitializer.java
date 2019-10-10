@@ -16,6 +16,7 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRegistration;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class SlippWebApplicationInitializer implements WebApplicationInitializer {
@@ -25,8 +26,7 @@ public class SlippWebApplicationInitializer implements WebApplicationInitializer
     public void onStartup(ServletContext servletContext) throws ServletException {
         ControllerScanner scanner = createControllerScanner();
 
-        final List<HandlerMapping> handlerMappings = Arrays.asList(
-                new ManualHandlerMapping(),
+        final List<HandlerMapping> handlerMappings = Collections.singletonList(
                 new AnnotationHandlerMapping(scanner)
         );
 
