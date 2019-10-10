@@ -1,4 +1,4 @@
-package nextstep.mvc.tobe.view.resolver;
+package nextstep.mvc.tobe.resolver;
 
 import nextstep.mvc.tobe.view.JspView;
 import org.junit.jupiter.api.Test;
