@@ -32,11 +32,6 @@ public class JsonView implements View {
         out.flush();
     }
 
-    @Override
-    public String getViewName() {
-        return null;
-    }
-
     private void doPrint(Object object, PrintWriter out) throws IOException {
         out.print(mapper.writeValueAsString(object));
     }
