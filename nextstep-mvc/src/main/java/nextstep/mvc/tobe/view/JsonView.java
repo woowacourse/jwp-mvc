@@ -1,4 +1,4 @@
-package nextstep.mvc.tobe;
+package nextstep.mvc.tobe.view;
 
 import com.google.gson.Gson;
 import nextstep.web.support.MediaType;

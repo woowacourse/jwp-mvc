@@ -1,19 +1,24 @@
 package nextstep.mvc.tobe;
 
 import nextstep.db.DataBase;
+import nextstep.mvc.tobe.test.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
+import javax.servlet.ServletException;
+
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class AnnotationHandlerMappingTest {
+    private static final String BASE_PACKAGE = "nextstep.mvc.tobe.test";
     private AnnotationHandlerMapping handlerMapping;
 
     @BeforeEach
-    public void setup() {
-        handlerMapping = new AnnotationHandlerMapping("nextstep.mvc.tobe");
+    public void setup() throws ServletException {
+        handlerMapping = new AnnotationHandlerMapping(BASE_PACKAGE);
         handlerMapping.initialize();
     }
 
@@ -26,7 +31,7 @@ public class AnnotationHandlerMappingTest {
         MockHttpServletRequest request = new MockHttpServletRequest("GET", "/users");
         request.setParameter("userId", user.getUserId());
         MockHttpServletResponse response = new MockHttpServletResponse();
-        HandlerExecution execution = handlerMapping.getHandler(request);
+        Handler execution = handlerMapping.getHandler(request);
         execution.handle(request, response);
 
         assertThat(request.getAttribute("user")).isEqualTo(user);
@@ -39,7 +44,46 @@ public class AnnotationHandlerMappingTest {
         request.setParameter("name", user.getName());
         request.setParameter("email", user.getEmail());
         MockHttpServletResponse response = new MockHttpServletResponse();
-        HandlerExecution execution = handlerMapping.getHandler(request);
+        Handler execution = handlerMapping.getHandler(request);
         execution.handle(request, response);
+    }
+
+    @Test
+    void test_no_request_mapping_method_get() throws Exception {
+        MockHttpServletRequest getRequest = new MockHttpServletRequest("GET", "/test");
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        Handler execution = handlerMapping.getHandler(getRequest);
+        execution.handle(getRequest, response);
+
+        assertThat(getRequest.getAttribute("test")).isEqualTo(true);
+    }
+
+    @Test
+    void test_no_request_mapping_method_post() throws Exception {
+        MockHttpServletRequest postRequest = new MockHttpServletRequest("POST", "/test");
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        Handler execution = handlerMapping.getHandler(postRequest);
+        execution.handle(postRequest, response);
+
+        assertThat(postRequest.getAttribute("test")).isEqualTo(true);
+    }
+
+    @Test
+    void test_no_request_mapping_attribute_name() throws Exception {
+        MockHttpServletRequest postRequest = new MockHttpServletRequest("POST", "/no_name");
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        Handler execution = handlerMapping.getHandler(postRequest);
+        execution.handle(postRequest, response);
+
+        assertThat(postRequest.getAttribute("test_no_value_name")).isEqualTo(true);
+    }
+
+    @Test
+    void test_empty_request_mapping_url() {
+        MockHttpServletRequest postRequest = new MockHttpServletRequest("POST", "");
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        Handler execution = handlerMapping.getHandler(postRequest);
+
+        assertThrows(NullPointerException.class, () -> execution.handle(postRequest, response));
     }
 }
