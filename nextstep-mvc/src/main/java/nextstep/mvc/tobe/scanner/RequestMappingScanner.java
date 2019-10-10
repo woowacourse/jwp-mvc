@@ -3,6 +3,7 @@ package nextstep.mvc.tobe.scanner;
 import nextstep.mvc.tobe.handler.HandlerExecution;
 import nextstep.mvc.tobe.handler.HandlerKey;
 import nextstep.mvc.tobe.handler.RequestMappingHandlerExecution;
+import nextstep.mvc.tobe.handlerresolver.ClassInitializeException;
 import nextstep.web.annotation.RequestMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +30,7 @@ public class RequestMappingScanner {
                         execution = new RequestMappingHandlerExecution(method, method.getDeclaringClass().getConstructor().newInstance());
                     } catch (Exception e) {
                         log.debug(e.getMessage(), e.getCause());
-                        // TODO : Runtime Exception을 만들어 던지자
+                        throw new ClassInitializeException();
                     }
                     handlerExecutions.put(key, execution);
                 }
