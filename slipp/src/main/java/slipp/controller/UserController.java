@@ -29,4 +29,5 @@ public class UserController {
         DataBase.addUser(user);
         return new ModelAndView(new RedirectView("redirect:/"));
     }
+
 }
