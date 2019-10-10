@@ -28,18 +28,17 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         Map<Class<?>, Object> controllers = new ControllerScanner(basePackage).getControllers();
         Map<Class<?>, Set<Method>> requestMappingMethods = getRequestMappingMethods(controllers.keySet());
 
-        requestMappingMethods.keySet().forEach(clazz -> turnRequestMappingMethods(controllers, requestMappingMethods, clazz));
+        requestMappingMethods.keySet()
+                .forEach(clazz -> turnRequestMappingMethods(controllers.get(clazz), requestMappingMethods.get(clazz)));
     }
 
-    private void turnRequestMappingMethods(Map<Class<?>, Object> controllers, Map<Class<?>, Set<Method>> requestMappingMethods, Class<?> clazz) {
-        for (Method method : requestMappingMethods.get(clazz)) {
-            putHandlerExecution(controllers, clazz, method);
-        }
+    private void turnRequestMappingMethods(Object object, Set<Method> methods) {
+        methods.forEach(method -> putHandlerExecution(object, method));
     }
 
-    private void putHandlerExecution(Map<Class<?>, Object> controllers, Class<?> clazz, Method method) {
+    private void putHandlerExecution(Object instance, Method method) {
         createHandlerKeys(method.getAnnotation(RequestMapping.class)).forEach(handlerKey ->
-                handlerExecutions.put(handlerKey, new HandlerExecution(method, controllers.get(clazz))));
+                handlerExecutions.put(handlerKey, new HandlerExecution(method, instance)));
     }
 
     private Map<Class<?>, Set<Method>> getRequestMappingMethods(Set<Class<?>> clazzes) {
@@ -50,20 +49,22 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     private List<HandlerKey> createHandlerKeys(RequestMapping requestMapping) {
-        RequestMethod[] requestMethods = requestMapping.method();
-        if (requestMethods.length == EMPTY_METHODS) {
-            requestMethods = RequestMethod.values();
-        }
-
-        return Arrays.stream(requestMethods)
+        return Arrays.stream(getRequestMethods(requestMapping))
                 .map(requestMethod -> new HandlerKey(requestMapping.value(), requestMethod))
                 .collect(Collectors.toList());
     }
 
+    private RequestMethod[] getRequestMethods(RequestMapping requestMapping) {
+        RequestMethod[] requestMethods = requestMapping.method();
+        if (requestMethods.length == EMPTY_METHODS) {
+            requestMethods = RequestMethod.values();
+        }
+        return requestMethods;
+    }
+
     @Override
     public HandlerExecution getHandler(HttpServletRequest request) {
-        log.debug("path: {}", request.getRequestURI());
-        log.debug("path: {}", RequestMethod.valueOf(request.getMethod()));
+        log.debug("uri: {} method: {}", request.getRequestURI(), RequestMethod.valueOf(request.getMethod()));
         return handlerExecutions.get(new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod())));
     }
 }
