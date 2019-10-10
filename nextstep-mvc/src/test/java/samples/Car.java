@@ -1,4 +1,4 @@
-package nextstep.mvc.tobe;
+package samples;
 
 import java.util.Objects;
 
@@ -6,7 +6,8 @@ public class Car {
     private String color;
     private String type;
 
-    private Car() {}
+    private Car() {
+    }
 
     public Car(String color, String type) {
         this.color = color;
