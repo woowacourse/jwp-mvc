@@ -11,13 +11,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import slipp.domain.User;
 import slipp.support.db.DataBase;
+import slipp.support.utils.BodyParser;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 
 @Controller
 public class UserApiController {
@@ -26,7 +24,7 @@ public class UserApiController {
     @RequestMapping(value = "/api/users", method = RequestMethod.POST)
     public ModelAndView signUp(HttpServletRequest request, HttpServletResponse response) {
         try {
-            User user = JsonUtils.toObject(getBody(request), User.class);
+            User user = JsonUtils.toObject(BodyParser.getBody(request), User.class);
             logger.debug("signUp User: {} ", user);
             DataBase.addUser(user);
             response.setStatus(HttpServletResponse.SC_CREATED);
@@ -50,7 +48,7 @@ public class UserApiController {
     public ModelAndView updateUser(HttpServletRequest request, HttpServletResponse response) {
         try {
             String userId = request.getParameter("userId");
-            User user = JsonUtils.toObject(getBody(request), User.class);
+            User user = JsonUtils.toObject(BodyParser.getBody(request), User.class);
             logger.debug("Update User: {} ", user);
             DataBase.findUserById(userId).update(user);
             response.setStatus(HttpServletResponse.SC_OK);
@@ -59,16 +57,5 @@ public class UserApiController {
         }
 
         return new ModelAndView();
-    }
-
-    private String getBody(HttpServletRequest request) throws IOException {
-        InputStream inputStream = request.getInputStream();
-        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-        int contentLength = request.getContentLength();
-        char[] body = new char[contentLength];
-
-        bufferedReader.read(body, 0, contentLength);
-
-        return String.copyValueOf(body);
     }
 }
