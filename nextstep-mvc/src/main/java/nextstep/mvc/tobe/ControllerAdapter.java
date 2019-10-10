@@ -2,7 +2,6 @@ package nextstep.mvc.tobe;
 
 import nextstep.mvc.asis.Controller;
 import nextstep.mvc.tobe.exception.ControllerExecutionFailException;
-import nextstep.mvc.tobe.exception.NotFoundHandlerException;
 import nextstep.mvc.tobe.view.EmptyView;
 import nextstep.mvc.tobe.view.JspView;
 import nextstep.mvc.tobe.view.RedirectView;
@@ -17,14 +16,14 @@ public class ControllerAdapter implements ServletRequestHandler {
     private Controller controller;
 
     public ControllerAdapter(Controller controller) {
-        checkNull(controller);
         this.controller = controller;
     }
 
-    private void checkNull(Controller controller) {
+    public static ControllerAdapter of(Controller controller) {
         if (controller == null) {
-            throw new NotFoundHandlerException();
+            return null;
         }
+        return new ControllerAdapter(controller);
     }
 
     @Override

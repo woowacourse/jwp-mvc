@@ -2,8 +2,7 @@ package nextstep.mvc.tobe;
 
 import com.google.common.collect.Maps;
 import nextstep.mvc.HandlerMapping;
-import nextstep.mvc.tobe.exception.NotFoundHandlerException;
-import nextstep.mvc.tobe.scanner.ComponentScanner;
+import nextstep.mvc.tobe.scanner.ControllerScanner;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
 
@@ -26,7 +25,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     @Override
     public void initialize() {
-        List<Object> controllers = ComponentScanner.scanControllers(basePackage);
+        List<Object> controllers = ControllerScanner.scanControllers(basePackage);
 
         for (Object controller : controllers) {
             Arrays.stream(controller.getClass().getDeclaredMethods())
@@ -69,18 +68,10 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     @Override
-    public Object getHandler(HttpServletRequest request) {
+    public ServletRequestHandler getHandler(HttpServletRequest request) {
         String uri = request.getRequestURI();
         RequestMethod method = RequestMethod.valueOf(request.getMethod());
-        HandlerExecution handlerExecution = handlerExecutions.get(new HandlerKey(uri, method));
 
-        checkNull(handlerExecution);
-        return handlerExecution;
-    }
-
-    private void checkNull(HandlerExecution handlerExecution) {
-        if (handlerExecution == null) {
-            throw new NotFoundHandlerException();
-        }
+        return handlerExecutions.get(new HandlerKey(uri, method));
     }
 }

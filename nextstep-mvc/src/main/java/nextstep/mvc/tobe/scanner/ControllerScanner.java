@@ -13,8 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-public class ComponentScanner {
-    private static final Logger logger = LoggerFactory.getLogger(ComponentScanner.class);
+public class ControllerScanner {
+    private static final Logger logger = LoggerFactory.getLogger(ControllerScanner.class);
 
     public static List<Object> scanControllers(Object[] basePackage) {
         Reflections reflections = new Reflections(basePackage);
