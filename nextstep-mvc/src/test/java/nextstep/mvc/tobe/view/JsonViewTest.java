@@ -1,7 +1,6 @@
-package nextstep.mvc.tobe;
+package nextstep.mvc.tobe.view;
 
-import nextstep.mvc.tobe.view.JsonView;
-import nextstep.mvc.tobe.view.View;
+import nextstep.mvc.tobe.Car;
 import nextstep.utils.JsonUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -47,6 +46,7 @@ public class JsonViewTest {
         Car actual = JsonUtils.toObject(response.getContentAsString(), Car.class);
         assertThat(response.getContentType()).isEqualTo(MediaType.APPLICATION_JSON_UTF8_VALUE);
         assertThat(actual).isEqualTo(expected);
+        logger.debug("response body : {}", response.getContentAsString());
     }
 
     @Test
@@ -60,16 +60,5 @@ public class JsonViewTest {
 
         assertThat(response.getContentType()).isEqualTo(MediaType.APPLICATION_JSON_UTF8_VALUE);
         logger.debug("response body : {}", response.getContentAsString());
-    }
-
-    @Test
-    public void jsonUtilsTest() {
-        StringBuffer stringBuffer = new StringBuffer();
-        stringBuffer.append("{\n");
-        stringBuffer.append("\"color\": \"testcolor\",\n");
-        stringBuffer.append("\"type\": \"testtype\"\n");
-        stringBuffer.append("}");
-        Car actual = JsonUtils.toObject(stringBuffer.toString(), Car.class);
-        assertThat(new Car("testcolor", "testtype")).isEqualTo(actual);
     }
 }
