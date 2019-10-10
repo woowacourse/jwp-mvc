@@ -1,8 +1,8 @@
 package slipp.controller.user;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import nextstep.mvc.tobe.ModelAndView;
 import nextstep.mvc.tobe.view.JsonView;
+import nextstep.utils.JsonUtils;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
@@ -13,8 +13,6 @@ import slipp.support.db.DataBase;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.stream.Collectors;
 
 @Controller
 public class RestUserController {
@@ -23,13 +21,14 @@ public class RestUserController {
     @RequestMapping(value = "/api/users", method = RequestMethod.POST)
     public ModelAndView create(HttpServletRequest request, HttpServletResponse response) {
         logger.debug(System.lineSeparator());
-        User user = parseBody(request);
+        User user = JsonUtils.convertValue(request, User.class);
         DataBase.addUser(user);
 
         response.setStatus(201);
         response.setHeader("Location", "/api/users?userId=" + user.getUserId());
         ModelAndView modelAndView = new ModelAndView(new JsonView());
         modelAndView.addObject("user", user);
+
         return modelAndView;
     }
 
@@ -38,9 +37,11 @@ public class RestUserController {
         final String userId = request.getParameter("userId");
         logger.debug("Request GET /api/users?userId=" + userId);
         User user = DataBase.findUserById(userId);
+
         ModelAndView modelAndView = new ModelAndView(new JsonView());
         modelAndView.addObject("user", user);
         response.setStatus(200);
+
         return modelAndView;
     }
 
@@ -50,24 +51,12 @@ public class RestUserController {
         logger.debug("Request PUT /api/users?userId=" + userId);
 
         User user = DataBase.findUserById(userId);
-        User updatedUser = parseBody(request);
+        User updatedUser = JsonUtils.convertValue(request, User.class);
         user.update(updatedUser);
 
         ModelAndView modelAndView = new ModelAndView(new JsonView());
         modelAndView.addObject("user", user);
         response.setStatus(200);
         return modelAndView;
-    }
-
-    private User parseBody(HttpServletRequest request) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        try {
-            String body = request.getReader()
-                    .lines()
-                    .collect(Collectors.joining(System.lineSeparator()));
-            return objectMapper.readValue(body, User.class);
-        } catch (IOException e) {
-            throw new IllegalArgumentException();
-        }
     }
 }
