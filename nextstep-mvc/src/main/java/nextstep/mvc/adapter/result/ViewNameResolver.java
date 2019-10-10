@@ -1,4 +1,4 @@
-package nextstep.mvc.adapter;
+package nextstep.mvc.adapter.result;
 
 import nextstep.mvc.exception.ViewNameResolveException;
 import nextstep.mvc.view.JspView;

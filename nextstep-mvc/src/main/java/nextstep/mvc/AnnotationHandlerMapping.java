@@ -1,6 +1,7 @@
 package nextstep.mvc;
 
 import com.google.common.collect.Maps;
+import nextstep.mvc.exception.DuplicateHandlerKeyException;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;

@@ -1,7 +1,8 @@
 package nextstep.mvc;
 
-import nextstep.mvc.adapter.ExecutionResultAdapter;
-import nextstep.mvc.adapter.ExecutionResultAdapters;
+import nextstep.mvc.adapter.ControllerAdapter;
+import nextstep.mvc.adapter.ExecutionAdapter;
+import nextstep.mvc.adapter.HandlerExecutionAdapter;
 import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.View;
 import org.slf4j.Logger;
@@ -12,6 +13,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -22,17 +24,18 @@ public class DispatcherServlet extends HttpServlet {
     private static final String NOT_FOUND_PAGE = "/err/404.jsp";
 
     private List<HandlerMapping> handlerMappings;
-    private ExecutionResultAdapters executionResultAdapters;
+    private List<ExecutionAdapter> adapters;
 
-    public DispatcherServlet(List<HandlerMapping> handlerMappings, ExecutionResultAdapters executionResultAdapters) {
+    public DispatcherServlet(List<HandlerMapping> handlerMappings) {
         this.handlerMappings = handlerMappings;
-        this.executionResultAdapters = executionResultAdapters;
+        this.adapters = new ArrayList<>();
     }
 
     @Override
     public void init() {
         handlerMappings.forEach(HandlerMapping::initialize);
-        executionResultAdapters.initialize();
+        adapters.add(new ControllerAdapter());
+        adapters.add(new HandlerExecutionAdapter());
     }
 
     @Override
@@ -55,10 +58,8 @@ public class DispatcherServlet extends HttpServlet {
         if (execution == null) {
             return new ModelAndView(new JspView(NOT_FOUND_PAGE));
         }
-
-        Object result = execution.execute(req, resp);
-        ExecutionResultAdapter adapter = executionResultAdapters.findAdapter(result);
-        return adapter.handle(req, resp, result);
+        ExecutionAdapter adapter = findExecutionAdapter(execution);
+        return adapter.execute(req, resp, execution);
     }
 
     private Execution findExecution(HttpServletRequest request) {
@@ -67,5 +68,12 @@ public class DispatcherServlet extends HttpServlet {
                 .filter(Objects::nonNull)
                 .findFirst()
                 .orElse(null);
+    }
+
+    private ExecutionAdapter<?> findExecutionAdapter(Execution execution) {
+        return adapters.stream()
+                .filter(adapter -> adapter.matchClass(execution))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("처리할 수 없는 형태입니다."));
     }
 }

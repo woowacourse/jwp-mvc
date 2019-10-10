@@ -1,4 +1,4 @@
-package nextstep.mvc.adapter;
+package nextstep.mvc.adapter.result;
 
 import nextstep.mvc.ModelAndView;
 import nextstep.mvc.exception.ViewNameResolveException;
@@ -13,7 +13,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class StringExecutionResultAdapterTest {
-    private StringExecutionResultAdapter adapter;
+    private ExecutionResultAdapter adapter;
     private MockHttpServletRequest request;
     private MockHttpServletResponse response;
 
@@ -25,21 +25,33 @@ class StringExecutionResultAdapterTest {
     }
 
     @Test
-    void redirectView() throws Exception {
+    void match() {
+        Object o = "";
+        assertThat(adapter.matchClass(o)).isTrue();
+    }
+
+    @Test
+    void misMatch() {
+        Object o = 1;
+        assertThat(adapter.matchClass(o)).isFalse();
+    }
+
+    @Test
+    void redirectView() {
         ModelAndView modelAndView = adapter.handle(request, response, "redirect:test");
 
         assertThat(modelAndView.getView()).isInstanceOf(RedirectView.class);
     }
 
     @Test
-    void jspView() throws Exception {
+    void jspView() {
         ModelAndView modelAndView = adapter.handle(request, response, "test.jsp");
 
         assertThat(modelAndView.getView()).isInstanceOf(JspView.class);
     }
 
     @Test
-    void notFoundView() throws Exception {
+    void notFoundView() {
         assertThatThrownBy(() -> adapter.handle(request, response, "invalid"))
                 .isInstanceOf(ViewNameResolveException.class);
     }
