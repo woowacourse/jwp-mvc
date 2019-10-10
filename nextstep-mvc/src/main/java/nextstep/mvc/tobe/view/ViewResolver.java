@@ -1,7 +1,11 @@
 package nextstep.mvc.tobe.view;
 
+import nextstep.mvc.tobe.ModelAndView;
+
 import javax.servlet.http.HttpServletResponse;
 
 public interface ViewResolver {
-    View resolve(HttpServletResponse response);
+    boolean support(String viewName);
+
+    View resolve(String viewName);
 }
