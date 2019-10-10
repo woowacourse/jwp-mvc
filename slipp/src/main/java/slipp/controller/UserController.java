@@ -31,10 +31,9 @@ public class UserController {
             HttpSession session = request.getSession();
             session.setAttribute(UserSessionUtils.USER_SESSION_KEY, user);
             return "redirect:/";
-        } else {
-            request.setAttribute("loginFailed", true);
-            return "/user/login.jsp";
         }
+        request.setAttribute("loginFailed", true);
+        return "/user/login.jsp";
     }
 
     @RequestMapping(value = "/users/create", method = RequestMethod.POST)
@@ -62,7 +61,6 @@ public class UserController {
         if (!UserSessionUtils.isLogined(request.getSession())) {
             return "redirect:/users/loginForm";
         }
-
         request.setAttribute("users", DataBase.findAll());
         return "/user/list.jsp";
     }
@@ -102,7 +100,6 @@ public class UserController {
         if (!UserSessionUtils.isSameUser(request.getSession(), user)) {
             throw new IllegalStateException("다른 사용자의 정보를 수정할 수 없습니다.");
         }
-
         User updateUser = new User(request.getParameter("userId"), request.getParameter("password"), request.getParameter("name"),
             request.getParameter("email"));
         logger.debug("Update User : {}", updateUser);

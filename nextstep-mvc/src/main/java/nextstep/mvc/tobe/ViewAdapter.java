@@ -13,7 +13,8 @@ public class ViewAdapter {
                 return new ModelAndView(new RedirectView(((String) view).substring(DEFAULT_REDIRECT_PREFIX.length())));
             }
             return new ModelAndView(new JspView((String) view));
-        } else if (view instanceof View) {
+        }
+        if (view instanceof View) {
             return new ModelAndView((View) view);
         }
         return (ModelAndView) view;
