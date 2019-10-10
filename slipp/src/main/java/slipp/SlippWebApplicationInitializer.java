@@ -21,15 +21,15 @@ import java.util.List;
 public class SlippWebApplicationInitializer implements WebApplicationInitializer {
     private static final Logger log = LoggerFactory.getLogger(SlippWebApplicationInitializer.class);
 
-    private List<HandlerResolver> handlerAdapters = new ArrayList<>();
+    private List<HandlerResolver> handlerResolvers = new ArrayList<>();
     private List<ViewResolver> viewResolvers = new ArrayList<>();
 
     @Override
     public void onStartup(ServletContext servletContext) throws ServletException {
-        initHandlerAdapterStrategy();
+        initHandlerResolverStrategy();
         initViewResolverStrategy();
 
-        DispatcherServlet dispatcherServlet = new DispatcherServlet(handlerAdapters, viewResolvers);
+        DispatcherServlet dispatcherServlet = new DispatcherServlet(handlerResolvers, viewResolvers);
 
         ServletRegistration.Dynamic dispatcher = servletContext.addServlet("dispatcher", dispatcherServlet);
         dispatcher.setLoadOnStartup(1);
@@ -38,14 +38,14 @@ public class SlippWebApplicationInitializer implements WebApplicationInitializer
         log.info("Start MyWebApplication Initializer");
     }
 
+    private void initHandlerResolverStrategy() {
+        handlerResolvers.add(new AnnotationHandlerMapping("slipp.controller"));
+        handlerResolvers.add(new HandlerMappingAdapter(new ManualHandlerMapping()));
+    }
+
     private void initViewResolverStrategy() {
         viewResolvers.add(new JspViewResolver());
         viewResolvers.add(new JsonViewResolver());
         viewResolvers.add(new RedirectViewResolver());
-    }
-
-    private void initHandlerAdapterStrategy() {
-        handlerAdapters.add(new AnnotationHandlerMapping("slipp.controller"));
-        handlerAdapters.add(new HandlerMappingAdapter(new ManualHandlerMapping()));
     }
 }
