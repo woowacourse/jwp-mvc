@@ -14,7 +14,7 @@ import slipp.support.db.DataBase;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class CreateUserControllerTest {
+class CreateFormControllerTest {
     private RequestHandlers mappings;
 
     @BeforeEach

@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 
 @Controller
 public class HomeController {
+
     @RequestMapping(method = RequestMethod.GET, value = "/")
     public ModelAndView execute(HttpServletRequest req, HttpServletResponse resp) throws Exception {
         req.setAttribute("users", DataBase.findAll());

@@ -9,7 +9,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import slipp.ManualLegacyHandlerMapping;
 
-class ListUserControllerTest {
+class ListFormControllerTest {
     private RequestHandlers mappings;
 
     @BeforeEach

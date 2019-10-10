@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 
 @Controller
 public class ListUserController {
+
     @RequestMapping(method = RequestMethod.GET, value = "/users")
     public ModelAndView execute(HttpServletRequest req, HttpServletResponse resp) throws Exception {
         if (!UserSessionUtils.isLogined(req.getSession())) {
