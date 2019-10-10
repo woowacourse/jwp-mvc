@@ -24,7 +24,8 @@ public class JsonView implements View {
     private String convertJson(Map<String, ?> model) {
         if (model.size() == 0) {
             return "";
-        } else if (model.size() == 1) {
+        }
+        if (model.size() == 1) {
             String key = model.keySet().iterator().next();
             return new Gson().toJson(model.get(key));
         }
