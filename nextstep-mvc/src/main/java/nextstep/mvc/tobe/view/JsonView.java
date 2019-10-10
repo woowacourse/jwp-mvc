@@ -16,7 +16,6 @@ public class JsonView implements View {
 
     @Override
     public void render(Map<String, ?> model, HttpServletRequest request, HttpServletResponse response) {
-        response.setContentType("application/json");
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
 
         try {
