@@ -3,14 +3,18 @@ package support.test;
 import org.springframework.test.web.reactive.server.EntityExchangeResult;
 import org.springframework.test.web.reactive.server.StatusAssertions;
 import org.springframework.test.web.reactive.server.WebTestClient;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.reactive.function.BodyInserters;
 import reactor.core.publisher.Mono;
 
 import java.net.URI;
+import java.util.Objects;
 
 import static org.springframework.web.reactive.function.client.ExchangeFilterFunctions.basicAuthentication;
 
 public class NsWebTestClient {
     private static final String BASE_URL = "http://localhost";
+    private static final String JSESSIONID = "JSESSIONID";
 
     private String baseUrl = BASE_URL;
     private int port;
@@ -68,11 +72,58 @@ public class NsWebTestClient {
         return new NsWebTestClient(baseUrl, port);
     }
 
-    public StatusAssertions get(String uri) {
+    public StatusAssertions getRequest(String uri) {
         return testClientBuilder.build()
             .get()
             .uri(uri)
             .exchange()
             .expectStatus();
     }
+
+    public StatusAssertions postRequest(String uri, MultiValueMap<String, String> formData) {
+        return testClientBuilder.build()
+            .post()
+            .uri(uri)
+            .body(BodyInserters.fromFormData(formData))
+            .exchange()
+            .expectStatus();
+    }
+
+    public StatusAssertions loginRequest(String uri, MultiValueMap<String, String> formData) {
+        return testClientBuilder.build()
+            .post()
+            .uri(uri)
+            .cookie("JSESSIONID", getLoginSessionId(formData))
+            .exchange()
+            .expectStatus();
+    }
+
+    public StatusAssertions getRequestWithLogined(String uri, MultiValueMap<String, String> formData) {
+        return testClientBuilder.build()
+            .get()
+            .uri(uri)
+            .cookie(JSESSIONID, getLoginSessionId(formData))
+            .exchange()
+            .expectStatus();
+    }
+
+    public StatusAssertions postRequestWithLogined(String uri, MultiValueMap<String, String> formData, MultiValueMap<String, String> updateFormData) {
+        return testClientBuilder.build()
+            .post()
+            .uri(uri)
+            .cookie(JSESSIONID, getLoginSessionId(formData))
+            .body(BodyInserters.fromFormData(updateFormData))
+            .exchange()
+            .expectStatus();
+    }
+
+    public String getLoginSessionId(final MultiValueMap<String, String> formData) {
+        return Objects.requireNonNull(postRequest("/users/login", formData)
+            .isFound()
+            .returnResult(String.class)
+            .getResponseCookies()
+            .getFirst("JSESSIONID"))
+            .getValue();
+    }
+
 }
