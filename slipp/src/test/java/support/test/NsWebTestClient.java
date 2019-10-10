@@ -3,11 +3,11 @@ package support.test;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.EntityExchangeResult;
 import org.springframework.test.web.reactive.server.WebTestClient;
-import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.reactive.function.BodyInserters;
 import reactor.core.publisher.Mono;
 
 import java.net.URI;
+import java.time.Duration;
 import java.util.Map;
 
 import static org.springframework.web.reactive.function.client.ExchangeFilterFunctions.basicAuthentication;
@@ -24,7 +24,16 @@ public class NsWebTestClient {
         this.port = port;
         this.testClientBuilder = WebTestClient
                 .bindToServer()
+            .responseTimeout(Duration.ofMinutes(5))
                 .baseUrl(baseUrl + ":" + port);
+    }
+
+    public static NsWebTestClient of(int port) {
+        return of(BASE_URL, port);
+    }
+
+    public static NsWebTestClient of(String baseUrl, int port) {
+        return new NsWebTestClient(baseUrl, port);
     }
 
     public NsWebTestClient basicAuth(String username, String password) {
@@ -97,14 +106,6 @@ public class NsWebTestClient {
             .isOk();
     }
 
-    public static NsWebTestClient of(int port) {
-        return of(BASE_URL, port);
-    }
-
-    public static NsWebTestClient of(String baseUrl, int port) {
-        return new NsWebTestClient(baseUrl, port);
-    }
-
     public URI postForm(String url, Map<String, String> params) {
         BodyInserters.FormInserter<String> body = BodyInserters.fromFormData("", "");
         for (String key : params.keySet()) {
@@ -122,5 +123,51 @@ public class NsWebTestClient {
             .expectBody()
             .returnResult();
         return response.getResponseHeaders().getLocation();
+    }
+
+    public WebTestClient.ResponseSpec updateForm(String url, Map<String, String> params, String cookie) {
+        BodyInserters.FormInserter<String> body = BodyInserters.fromFormData("", "");
+
+        for (String key : params.keySet()) {
+            body.with(key, params.get(key));
+        }
+        return testClientBuilder.build()
+            .post()
+            .uri(url)
+            .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+            .cookie("JSESSIONID",cookie)
+            .body(body)
+            .exchange()
+            .expectStatus()
+            .isOk();
+    }
+
+    public WebTestClient.ResponseSpec getCookieResponse(String url, String cookie) {
+        return testClientBuilder.build()
+            .get()
+            .uri(url)
+            .cookie("JSESSIONID", cookie)
+            .exchange();
+    }
+
+    public String getLoginCookie(String url, Map<String, String> params) {
+        BodyInserters.FormInserter<String> body = BodyInserters.fromFormData("", "");
+        for (String key : params.keySet()) {
+            body.with(key, params.get(key));
+        }
+
+        return testClientBuilder.build()
+            .post()
+            .uri(url)
+            .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+            .body(body)
+            .exchange()
+            .expectStatus()
+            .is3xxRedirection()
+            .expectBody()
+            .returnResult()
+            .getResponseCookies()
+            .getFirst("JSESSIONID")
+            .getValue();
     }
 }
