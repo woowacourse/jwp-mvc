@@ -16,7 +16,7 @@ public class HomeController {
     private static final Logger log = LoggerFactory.getLogger(HomeController.class);
 
     @RequestMapping(value = "/", method = {RequestMethod.GET})
-    public ModelAndView showIndex(HttpServletRequest req, HttpServletResponse resp) throws Exception {
+    public ModelAndView showIndex(HttpServletRequest req, HttpServletResponse resp) {
         req.setAttribute("users", DataBase.findAll());
         log.debug("Home Controller : {}", DataBase.findAll());
         return new ModelAndView("home.jsp");

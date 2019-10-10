@@ -67,7 +67,7 @@ public class DispatcherServlet extends HttpServlet {
                         return aClass.getDeclaredConstructor().newInstance();
                     } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
                         return new JspViewResolver();
-                    } // TODO 흠...
+                    }
                 })
                 .collect(Collectors.toList());
     }
@@ -76,12 +76,15 @@ public class DispatcherServlet extends HttpServlet {
         try {
             ModelAndView mav = handler.handle(req, resp);
 
-            View view = this.viewResolvers.stream()
-                    .filter(viewResolver -> Objects.nonNull(viewResolver.resolveViewName(mav.getViewName())))
-                    .findFirst()
-                    .orElseGet(JspViewResolver::new) // TODO 흠...
-                    .resolveViewName(mav.getViewName());
-            mav.setView(view);
+            if (Objects.isNull(mav.getView())) {
+                View view = this.viewResolvers.stream()
+                        .filter(viewResolver -> Objects.nonNull(viewResolver.resolveViewName(mav.getViewName())))
+                        .findFirst()
+                        .orElseGet(JspViewResolver::new)
+                        .resolveViewName(mav.getViewName());
+                mav.setView(view);
+            }
+
             mav.getView().render(mav.getModel(), req, resp);
         } catch (Exception e) {
             logger.error("Exception : {}", e.getMessage());
