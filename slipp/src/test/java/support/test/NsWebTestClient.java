@@ -91,4 +91,13 @@ public class NsWebTestClient {
                 .body(BodyInserters.fromFormData(body))
                 .exchange();
     }
+
+    public WebTestClient.ResponseSpec putRequest(URI location, MultiValueMap<String, String> body, String cookie) {
+        return testClientBuilder.build()
+                .put()
+                .uri(location.toString())
+                .header("Cookie", cookie)
+                .body(BodyInserters.fromFormData(body))
+                .exchange();
+    }
 }

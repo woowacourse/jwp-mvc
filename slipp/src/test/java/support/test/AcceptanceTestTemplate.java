@@ -28,13 +28,17 @@ public class AcceptanceTestTemplate {
         }
     }
 
-    public static void login() throws URISyntaxException {
+    public static void login() {
         body.clear();
         body.add("userId", "pobi123");
         body.add("password", "passworD1!");
 
-        NsWebTestClient.of(8080).postRequest(new URI("/users/login"), body)
-                .expectStatus().isFound();
+        try {
+            NsWebTestClient.of(8080).postRequest(new URI("/users/login"), body)
+                    .expectStatus().isFound();
+        } catch (URISyntaxException e) {
+            logger.error("login uri error : {}", e);
+        }
     }
 
     public static String getCookie() throws URISyntaxException {

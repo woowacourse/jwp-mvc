@@ -32,4 +32,11 @@ public class LoginController {
             return new ModelAndView("/user/login.jsp");
         }
     }
+
+    @RequestMapping(value = "/users/logout", method = RequestMethod.GET)
+    public ModelAndView logout(HttpServletRequest req, HttpServletResponse resp) throws Exception {
+        HttpSession session = req.getSession();
+        session.removeAttribute(UserSessionUtils.USER_SESSION_KEY);
+        return new ModelAndView("redirect:/");
+    }
 }

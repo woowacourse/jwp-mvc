@@ -32,8 +32,8 @@ public class SlippWebApplicationInitializer implements WebApplicationInitializer
         handlerAdapters.add(new ControllerHandlerAdapter());
 
         List<ViewResolver> viewResolvers = new ArrayList<>();
-        viewResolvers.add(new JspViewResolver());
         viewResolvers.add(new JsonViewResolver());
+        viewResolvers.add(new JspViewResolver());
 
         DispatcherServlet dispatcherServlet = new DispatcherServlet(handlerMappings, handlerAdapters, viewResolvers);
 

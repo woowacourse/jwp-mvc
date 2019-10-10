@@ -14,7 +14,6 @@ import static support.test.AcceptanceTestTemplate.login;
 import static support.test.AcceptanceTestTemplate.signUp;
 
 class LoginControllerTest {
-
     private MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
 
     @BeforeEach
@@ -24,7 +23,7 @@ class LoginControllerTest {
 
     @Test
     @DisplayName("로그인 성공")
-    void login_success() throws URISyntaxException {
+    void login_success() {
         login();
     }
 
@@ -37,5 +36,12 @@ class LoginControllerTest {
 
         NsWebTestClient.of(8080).postRequest(new URI("/users/login"), body)
                 .expectStatus().isOk();
+    }
+
+    @Test
+    @DisplayName("로그아웃 성공")
+    void logout() throws URISyntaxException {
+        NsWebTestClient.of(8080).getRequest(new URI("/users/logout"))
+                .expectStatus().isFound();
     }
 }
