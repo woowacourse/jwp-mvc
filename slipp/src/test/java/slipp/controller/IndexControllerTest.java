@@ -9,6 +9,7 @@ import java.net.URISyntaxException;
 class IndexControllerTest {
     @Test
     void index() throws URISyntaxException {
-        NsWebTestClient.of(8080).getRequest(new URI("/")).isOk();
+        NsWebTestClient.of(8080).getRequest(new URI("/"))
+                .expectStatus().isOk();
     }
 }

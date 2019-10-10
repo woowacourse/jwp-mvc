@@ -28,7 +28,7 @@ public class UserController {
     }
 
     @RequestMapping(value = "/users", method = RequestMethod.GET)
-    public ModelAndView show(HttpServletRequest req, HttpServletResponse resp) throws Exception {
+    public ModelAndView findAll(HttpServletRequest req, HttpServletResponse resp) throws Exception {
         if (!UserSessionUtils.isLogined(req.getSession())) {
             return new ModelAndView("redirect:/users/loginForm");
         }

@@ -1,7 +1,6 @@
 package support.test;
 
 import org.springframework.test.web.reactive.server.EntityExchangeResult;
-import org.springframework.test.web.reactive.server.StatusAssertions;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.BodyInserters;
@@ -70,29 +69,26 @@ public class NsWebTestClient {
                 .returnResult().getResponseBody();
     }
 
-    public StatusAssertions getRequest(URI location) {
+    public WebTestClient.ResponseSpec getRequest(URI location) {
         return testClientBuilder.build()
                 .get()
                 .uri(location.toString())
-                .exchange()
-                .expectStatus();
+                .exchange();
     }
 
-    public StatusAssertions getRequest(URI location, String cookie) {
+    public WebTestClient.ResponseSpec getRequest(URI location, String cookie) {
         return testClientBuilder.build()
                 .get()
                 .uri(location.toString())
                 .header("Cookie", cookie)
-                .exchange()
-                .expectStatus();
+                .exchange();
     }
 
-    public StatusAssertions postRequest(URI location, MultiValueMap<String, String> body) {
+    public WebTestClient.ResponseSpec postRequest(URI location, MultiValueMap<String, String> body) {
         return testClientBuilder.build()
                 .post()
                 .uri(location.toString())
                 .body(BodyInserters.fromFormData(body))
-                .exchange()
-                .expectStatus();
+                .exchange();
     }
 }
