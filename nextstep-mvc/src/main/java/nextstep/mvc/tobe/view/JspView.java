@@ -9,7 +9,6 @@ import java.util.Map;
 
 public class JspView implements View {
     private static final String DEFAULT_REDIRECT_PREFIX = "redirect:";
-    private static final String SUF_FIX = ".jsp";
 
     private String name;
 
