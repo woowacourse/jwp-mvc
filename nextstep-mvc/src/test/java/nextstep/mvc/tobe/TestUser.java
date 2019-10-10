@@ -1,11 +1,16 @@
 package nextstep.mvc.tobe;
 
+import nextstep.web.annotation.RequestParam;
+
 public class TestUser {
     private String userId;
     private String password;
     private int age;
 
-    public TestUser(String userId, String password, int age) {
+    private TestUser() {
+    }
+
+    public TestUser(@RequestParam String userId, String password, int age) {
         this.userId = userId;
         this.password = password;
         this.age = age;
