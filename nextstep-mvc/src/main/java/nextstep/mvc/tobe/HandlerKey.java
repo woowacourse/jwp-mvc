@@ -11,14 +11,6 @@ public class HandlerKey {
         this.requestMethod = requestMethod;
     }
 
-    public boolean checkUrl(String url) {
-        return this.url.equals(url);
-    }
-
-    public boolean checkRequestMethod(String requestMethod) {
-        return this.requestMethod.equals(requestMethod);
-    }
-
     @Override
     public String toString() {
         return "HandlerKey [url=" + url + ", requestMethod=" + requestMethod + "]";
