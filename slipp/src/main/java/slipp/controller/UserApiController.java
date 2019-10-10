@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-import static slipp.support.Utils.BodyParser.parseBody;
+import static slipp.support.utils.BodyParser.parseBody;
 
 @Controller
 public class UserApiController {

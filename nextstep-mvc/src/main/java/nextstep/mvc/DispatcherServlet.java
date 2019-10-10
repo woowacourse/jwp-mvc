@@ -72,6 +72,7 @@ public class DispatcherServlet extends HttpServlet {
                 .collect(Collectors.toList());
     }
 
+    // TODO HandlerAdapter 클래스로 분리하기
     private void adaptHandler(HttpServletRequest req, HttpServletResponse resp, HandlerExecution handler) throws ServletException {
         try {
             ModelAndView mav = handler.handle(req, resp);

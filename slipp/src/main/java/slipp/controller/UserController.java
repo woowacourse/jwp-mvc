@@ -7,8 +7,8 @@ import nextstep.web.annotation.RequestMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import slipp.domain.User;
-import slipp.support.Utils.UserSessionUtils;
 import slipp.support.db.DataBase;
+import slipp.support.utils.UserSessionUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
