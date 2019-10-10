@@ -17,14 +17,11 @@ public class HandlerAdapterManager {
         this.handlerAdapters = handlerAdapters;
     }
 
-
     public ModelAndView handle(Handler handler, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        for (HandlerAdapter handlerAdapter : handlerAdapters) {
-            if (handlerAdapter.support(handler)) {
-                return handlerAdapter.handle(handler, request, response);
-            }
-        }
-
-        throw new InvalidHandlerAdaptException();
+        return handlerAdapters.stream()
+                .filter(handlerAdapter -> handlerAdapter.support(handler))
+                .findFirst()
+                .orElseThrow(InvalidHandlerAdaptException::new)
+                .handle(handler, request, response);
     }
 }
