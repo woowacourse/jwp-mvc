@@ -42,4 +42,10 @@ public class UserController {
 
         return new ModelAndView(new RedirectView("/"));
     }
+
+    @RequestMapping(value = "/users/form")
+    public ModelAndView createForm(HttpServletRequest request, HttpServletResponse response) {
+        return new ModelAndView(new JspView("/user/form.jsp"));
+
+    }
 }
