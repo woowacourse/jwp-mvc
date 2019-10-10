@@ -1,6 +1,5 @@
 package slipp.controller;
 
-import nextstep.mvc.tobe.view.JspView;
 import nextstep.mvc.tobe.view.ModelAndView;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
@@ -22,6 +21,6 @@ public class UpdateFormUserController {
             throw new IllegalStateException("다른 사용자의 정보를 수정할 수 없습니다.");
         }
         req.setAttribute("user", user);
-        return new ModelAndView(new JspView("/user/updateForm.jsp"));
+        return new ModelAndView("/user/updateForm.jsp");
     }
 }
