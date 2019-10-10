@@ -1,4 +1,4 @@
-package nextstep.mvc.tobe;
+package nextstep.mvc.mock;
 
 import java.util.Objects;
 

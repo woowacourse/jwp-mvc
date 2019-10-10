@@ -1,6 +1,7 @@
-package nextstep.mvc.tobe;
+package nextstep.mvc.mock;
 
 import nextstep.db.DataBase;
+import nextstep.mvc.tobe.ModelAndView;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
@@ -33,5 +34,35 @@ public class MyController {
         logger.debug("User : {}", user);
         DataBase.addUser(user);
         return null;
+    }
+
+    @RequestMapping(value = "/notnull", method = RequestMethod.POST)
+    public ModelAndView notNullTest(HttpServletRequest request, HttpServletResponse response) {
+        return new ModelAndView();
+    }
+
+    @RequestMapping(value = "/method", method = RequestMethod.POST)
+    public ModelAndView postMethod(HttpServletRequest request, HttpServletResponse response) {
+        return new ModelAndView();
+    }
+
+    @RequestMapping(value = "/method", method = RequestMethod.GET)
+    public ModelAndView getMethod(HttpServletRequest request, HttpServletResponse response) {
+        return new ModelAndView();
+    }
+
+    @RequestMapping(value = "/method", method = RequestMethod.PUT)
+    public ModelAndView putMethod(HttpServletRequest request, HttpServletResponse response) {
+        return new ModelAndView();
+    }
+
+    @RequestMapping(value = "/method", method = RequestMethod.DELETE)
+    public ModelAndView deleteMethod(HttpServletRequest request, HttpServletResponse response) {
+        return new ModelAndView();
+    }
+
+    @RequestMapping(value = "/method")
+    public ModelAndView emptyMethod(HttpServletRequest request, HttpServletResponse response) {
+        return new ModelAndView();
     }
 }
