@@ -10,6 +10,7 @@ import slipp.controller.*;
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 public class ManualHandlerMapping implements HandlerMapping {
     private static final Logger logger = LoggerFactory.getLogger(ManualHandlerMapping.class);
@@ -17,7 +18,6 @@ public class ManualHandlerMapping implements HandlerMapping {
 
     @Override
     public void initialize() {
-        mappings.put("/", new HomeController());
         mappings.put("/users/form", new ForwardController("/user/form.jsp"));
         mappings.put("/users/loginForm", new ForwardController("/user/login.jsp"));
         mappings.put("/users", new ListUserController());
@@ -35,8 +35,8 @@ public class ManualHandlerMapping implements HandlerMapping {
     }
 
     @Override
-    public Object getHandler(HttpServletRequest request) {
-        return mappings.get(request.getRequestURI());
+    public Optional<Object> getHandler(HttpServletRequest request) {
+        return Optional.ofNullable(mappings.get(request.getRequestURI()));
     }
 
     void put(String url, Controller controller) {

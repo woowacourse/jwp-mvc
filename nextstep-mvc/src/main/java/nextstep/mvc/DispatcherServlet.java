@@ -3,6 +3,7 @@ package nextstep.mvc;
 import nextstep.mvc.asis.Controller;
 import nextstep.mvc.handlermapping.HandlerMapping;
 import nextstep.mvc.tobe.HandlerExecution;
+import nextstep.mvc.tobe.ModelAndView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,20 +38,29 @@ public class DispatcherServlet extends HttpServlet {
         String requestUri = req.getRequestURI();
         log.debug("Method : {}, Request URI : {}", req.getMethod(), requestUri);
 
-        Object object = rm.getHandler(req);
+        Object object = rm.getHandler(req)
+                .orElseThrow(() -> BadHttpRequestException.from(req));
+        log.debug("object: {}", object);
         if (object instanceof Controller) {
             log.info("legacy HandlerMapping");
             Controller controller = (Controller) object;
             try {
                 String viewName = controller.execute(req, resp);
                 move(viewName, req, resp);
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 log.error("Exception : {}", e);
                 throw new ServletException(e.getMessage());
             }
         } else if (object instanceof HandlerExecution) {
             log.info("new HandlerMapping");
-
+            HandlerExecution execution = (HandlerExecution) object;
+            try {
+                ModelAndView modelAndView = execution.handle(req, resp);
+                modelAndView.getView().render(modelAndView.getModel(), req, resp);
+            } catch (Exception e) {
+                log.error("Exception : {}", e);
+                throw new ServletException(e.getMessage());
+            }
         }
     }
 
