@@ -2,6 +2,7 @@ package nextstep.mvc.tobe;
 
 import com.google.common.collect.Maps;
 import nextstep.mvc.HandlerMapping;
+import nextstep.mvc.exception.KeyNotFoundException;
 import nextstep.mvc.exception.MappingException;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
@@ -14,7 +15,6 @@ import java.util.Map;
 public class AnnotationHandlerMapping implements HandlerMapping {
     private Object[] basePackage;
 
-    //private Map<HandlerKey, nextstep.mvc.asis.Controller> handlerExecutions = Maps.newHashMap();
     private Map<HandlerKey, HandlerExecution> handlerExecutions = Maps.newHashMap();
 
     public AnnotationHandlerMapping(Object... basePackage) {
@@ -34,24 +34,10 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     @Override
     public HandlerExecution getHandler(HttpServletRequest request) {
         HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), RequestMethod.of(request.getMethod()));
-        return handlerExecutions.get(handlerKey);
-    }
-
-    private void putHandlerExecution(Class<?> controller, Method method) {
-        if (method.isAnnotationPresent(RequestMapping.class)) {
-            String url = method.getAnnotation(RequestMapping.class).value();
-            RequestMethod[] requestMethod = method.getAnnotation(RequestMapping.class).method();
-            requestMethod = isRequestMethodEmpty(requestMethod);
-
-            HandlerKey handlerKey = new HandlerKey(url, requestMethod[0]);
-
-            if (handlerExecutions.containsKey(handlerKey)) {
-                throw new MappingException();
-            }
-
-           /* handlerExecutions.put(handlerKey,
-                    (request, response) -> method.invoke(controller.newInstance(), request, response));*/
+        if (!handlerExecutions.containsKey(handlerKey)) {
+            throw new KeyNotFoundException();
         }
+        return handlerExecutions.get(handlerKey);
     }
 
     private RequestMethod[] isRequestMethodEmpty(RequestMethod[] requestMethod) {
