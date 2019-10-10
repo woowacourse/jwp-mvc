@@ -22,6 +22,6 @@ public class HandlerExecution {
 
     public ModelAndView handle(HttpServletRequest request, HttpServletResponse response) throws InvocationTargetException, IllegalAccessException {
         log.debug("Method : {}", method);
-        return (ModelAndView) method.invoke(declaredObject, new Object[]{request, response});
+        return (ModelAndView) method.invoke(declaredObject, request, response);
     }
 }
