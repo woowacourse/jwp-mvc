@@ -45,28 +45,4 @@ public class ModelAndView {
             throw new RenderFailedException(e);
         }
     }
-
-    public static final class ModelAndViewBuilder {
-        private View view;
-        private Map<String, Object> model = new HashMap<>();
-
-        private ModelAndViewBuilder(View view) {
-            this.view = view;
-        }
-
-        public static ModelAndViewBuilder of(View view) {
-            return new ModelAndViewBuilder(view);
-        }
-
-        public ModelAndViewBuilder append(String key, Object value) {
-            model.put(key, value);
-            return this;
-        }
-
-        public ModelAndView build() {
-            ModelAndView modelAndView = new ModelAndView(view);
-            modelAndView.model = this.model;
-            return modelAndView;
-        }
-    }
 }

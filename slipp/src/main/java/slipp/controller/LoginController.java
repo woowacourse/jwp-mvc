@@ -34,9 +34,8 @@ public class LoginController {
             return new ModelAndView(new RedirectView("/"));
         }
 
-        return ModelAndView.ModelAndViewBuilder.of(new JspView("/user/login.jsp"))
-                .append("loginFailed", true)
-                .build();
+        return new ModelAndView(new JspView("/user/login.jsp"))
+                .addObject("loginFailed", true);
     }
 
     private boolean isLoginSuccessful(final User user, final String password) {

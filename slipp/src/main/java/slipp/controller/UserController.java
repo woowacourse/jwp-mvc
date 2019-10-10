@@ -31,9 +31,8 @@ public class UserController {
         User user = DataBase.findUserById(userId);
         checkUserExists(user);
 
-        return ModelAndView.ModelAndViewBuilder.of(new JspView("/user/profile.jsp"))
-                .append("user", user)
-                .build();
+        return new ModelAndView(new JspView("/user/profile.jsp"))
+                .addObject("user", user);
     }
 
     private void checkUserExists(final User user) {
@@ -46,9 +45,8 @@ public class UserController {
     public ModelAndView showUpdateForm(HttpServletRequest req, HttpServletResponse resp) {
         User user = findAuthorizedUser(req);
 
-        return ModelAndView.ModelAndViewBuilder.of(new JspView("/user/updateForm.jsp"))
-                .append("user", user)
-                .build();
+        return new ModelAndView(new JspView("/user/updateForm.jsp"))
+                .addObject("user", user);
     }
 
     @RequestMapping(value = "/users/create", method = RequestMethod.POST)
@@ -67,9 +65,8 @@ public class UserController {
             return new ModelAndView(new RedirectView("/users/loginForm"));
         }
 
-        return ModelAndView.ModelAndViewBuilder.of(new JspView("/user/list.jsp"))
-                .append("users", DataBase.findAll())
-                .build();
+        return new ModelAndView(new JspView("/user/list.jsp"))
+                .addObject("users", DataBase.findAll());
     }
 
     @RequestMapping(value = "/users/update", method = RequestMethod.POST)
