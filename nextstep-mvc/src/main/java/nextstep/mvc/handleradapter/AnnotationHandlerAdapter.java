@@ -7,8 +7,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 public class AnnotationHandlerAdapter implements HandlerAdapter {
-    private static final String DEFAULT_REDIRECT_PREFIX = "redirect:";
-
     @Override
     public boolean canHandle(Object handler) {
         return handler instanceof HandlerExecution;

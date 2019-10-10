@@ -13,8 +13,7 @@ public class LegacyHandlerAdapter implements HandlerAdapter {
 
     @Override
     public boolean canHandle(Object handler) {
-        boolean truth = handler instanceof Controller;
-        return truth;
+        return handler instanceof Controller;
     }
 
     @Override

@@ -44,15 +44,11 @@ public class DispatcherServlet extends HttpServlet {
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         logger.debug("Method : {}, Request URI : {}", req.getMethod(), req.getRequestURI());
-
         Object handler = getHandler(req);
-
         try {
-
             HandlerAdapter handlerAdapter = getHandlerAdapter(handler);
             ModelAndView modelAndView = handlerAdapter.handle(req, resp, handler);
             render(req, resp, modelAndView);
-
         } catch (Exception e) {
             logger.error(e.getMessage());
             resp.sendError(404);
