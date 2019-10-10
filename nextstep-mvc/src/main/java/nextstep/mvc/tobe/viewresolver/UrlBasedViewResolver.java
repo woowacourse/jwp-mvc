@@ -1,27 +1,32 @@
 package nextstep.mvc.tobe.viewresolver;
 
 import nextstep.mvc.tobe.view.JsonView;
-import nextstep.mvc.tobe.view.JspView;
-import nextstep.mvc.tobe.view.RedirectView;
 import nextstep.mvc.tobe.view.View;
+import nextstep.utils.ClassUtils;
+import org.reflections.Reflections;
 
-import static nextstep.mvc.tobe.view.JspView.JSP;
-import static nextstep.mvc.tobe.view.RedirectView.DEFAULT_REDIRECT_PREFIX;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class UrlBasedViewResolver implements ViewResolver {
+    private List<View> views;
+
+    public UrlBasedViewResolver() {
+        views = new Reflections("view")
+                .getSubTypesOf(View.class)
+                .stream()
+                .map(view -> (View) ClassUtils.createInstance(view))
+                .collect(Collectors.toList());
+    }
+
     @Override
-    public View resolveViewName(Object view) {
-        if (view instanceof String) {
-            if (((String) view).endsWith(JSP)) {
-                return new JspView((String) view);
-            }
-            if (((String) view).startsWith(DEFAULT_REDIRECT_PREFIX)) {
-                return new RedirectView((String) view);
-            }
+    public View resolveViewName(Object viesName) {
+        if (viesName instanceof View) {
+            return (View) viesName;
         }
-        if (view instanceof View) {
-            return (View) view;
-        }
-        return new JsonView();
+        return views.stream()
+                .filter(view -> view.isMapping(viesName))
+                .findAny()
+                .orElse(new JsonView());
     }
 }

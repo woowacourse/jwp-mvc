@@ -15,7 +15,7 @@ class ArgumentResolverTest {
 
     @Test
     void initTest() {
-        ArgumentResolver resolver = new ArgumentResolver();
+        ArgumentResolver resolver = ArgumentResolver.getInstance();
         assertThat(resolver.getArguments()).isNotEmpty();
     }
 
@@ -27,7 +27,7 @@ class ArgumentResolverTest {
         Method method = this.getClass().getDeclaredMethod("httpServletRequestMethod", HttpServletRequest.class);
         Parameter parameter = method.getParameters()[0];
 
-        ArgumentResolver resolver = new ArgumentResolver();
+        ArgumentResolver resolver = ArgumentResolver.getInstance();
         Argument argument = resolver.resolveParam(parameter);
         assertThat(argument).isInstanceOf(ServletParamResolver.class);
     }

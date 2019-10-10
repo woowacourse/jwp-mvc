@@ -18,6 +18,14 @@ public class RedirectView implements View {
     }
 
     @Override
+    public boolean isMapping(Object view) {
+        if (view instanceof String) {
+            return ((String) view).startsWith(DEFAULT_REDIRECT_PREFIX);
+        }
+        return false;
+    }
+
+    @Override
     public void render(Map<String, ?> model, HttpServletRequest request, HttpServletResponse response) throws Exception {
         response.sendRedirect(viewName);
     }
