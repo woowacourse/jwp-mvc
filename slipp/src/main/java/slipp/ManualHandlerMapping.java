@@ -16,14 +16,6 @@ public class ManualHandlerMapping implements HandlerMapping {
 
     @Override
     public void initialize() {
-        //mappings.put("/", new HomeController());
-        // mappings.put("/users/form", new ForwardController("/user/form.jsp"));
-        //mappings.put("/users/loginForm", new ForwardController("/user/login.jsp"));
-        //mappings.put("/users", new ListUserController());
-        //mappings.put("/users/profile", new ProfileController());
-        //mappings.put("/users/updateForm", new UpdateFormUserController());
-        // mappings.put("/users/update", new UpdateUserController());
-
         logger.info("Initialized Request Mapping!");
         mappings.keySet().forEach(path -> {
             logger.info("Path : {}, Controller : {}", path, mappings.get(path).getClass());
