@@ -1,8 +1,5 @@
 package nextstep.mvc.asis;
 
-import nextstep.mvc.tobe.JspView;
-import nextstep.mvc.tobe.ModelAndView;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -17,7 +14,7 @@ public class ForwardController implements Controller {
     }
 
     @Override
-    public ModelAndView execute(HttpServletRequest req, HttpServletResponse resp) {
-        return new ModelAndView(new JspView(forwardUrl));
+    public String execute(HttpServletRequest req, HttpServletResponse resp) {
+        return forwardUrl;
     }
 }

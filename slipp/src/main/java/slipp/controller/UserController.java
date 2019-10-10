@@ -52,4 +52,14 @@ public class UserController {
         session.removeAttribute(UserSessionUtils.USER_SESSION_KEY);
         return new ModelAndView(new JspView("redirect:/"));
     }
+
+    @RequestMapping(value = "/users/form", method = RequestMethod.GET)
+    public ModelAndView userForm(HttpServletRequest request, HttpServletResponse response) {
+        return new ModelAndView(new JspView("/user/form.jsp"));
+    }
+
+    @RequestMapping(value = "/users/loginForm", method = RequestMethod.GET)
+    public ModelAndView loginForm(HttpServletRequest request, HttpServletResponse response) {
+        return new ModelAndView(new JspView("/user/login.jsp"));
+    }
 }

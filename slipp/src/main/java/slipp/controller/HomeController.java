@@ -1,16 +1,19 @@
 package slipp.controller;
 
-import nextstep.mvc.asis.Controller;
 import nextstep.mvc.tobe.JspView;
 import nextstep.mvc.tobe.ModelAndView;
+import nextstep.web.annotation.Controller;
+import nextstep.web.annotation.RequestMapping;
+import nextstep.web.annotation.RequestMethod;
 import slipp.support.db.DataBase;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public class HomeController implements Controller {
-    @Override
-    public ModelAndView execute(HttpServletRequest req, HttpServletResponse resp) throws Exception {
+@Controller
+public class HomeController {
+    @RequestMapping(value = "/", method = RequestMethod.GET)
+    public ModelAndView home(HttpServletRequest req, HttpServletResponse resp) {
         req.setAttribute("users", DataBase.findAll());
         return new ModelAndView(new JspView("home.jsp"));
     }
