@@ -1,6 +1,5 @@
 package slipp.controller;
 
-import nextstep.mvc.tobe.HandlerExecution;
 import nextstep.mvc.tobe.JspView;
 import nextstep.mvc.tobe.ModelAndView;
 import nextstep.web.annotation.RequestMapping;
@@ -12,8 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @nextstep.web.annotation.Controller
-public class UpdateFormUserController implements HandlerExecution {
-    @Override
+public class UpdateFormUserController {
     @RequestMapping(value = "/users/updateForm", method = {RequestMethod.GET})
     public ModelAndView handle(HttpServletRequest request, HttpServletResponse response) {
         String userId = request.getParameter("userId");

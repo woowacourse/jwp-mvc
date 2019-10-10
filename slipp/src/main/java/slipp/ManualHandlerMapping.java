@@ -1,7 +1,6 @@
 package slipp;
 
 import nextstep.mvc.asis.Controller;
-import nextstep.mvc.asis.ForwardController;
 import nextstep.mvc.handlermapping.HandlerMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,8 +17,6 @@ public class ManualHandlerMapping implements HandlerMapping {
 
     @Override
     public void initialize() {
-        mappings.put("/users/form", new ForwardController("/user/form.jsp"));
-        mappings.put("/users/loginForm", new ForwardController("/user/login.jsp"));
         mappings.put("/users", new ListUserController());
         mappings.put("/users/login", new LoginController());
         mappings.put("/users/logout", new LogoutController());

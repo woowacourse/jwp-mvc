@@ -1,6 +1,5 @@
 package slipp.controller;
 
-import nextstep.mvc.tobe.HandlerExecution;
 import nextstep.mvc.tobe.JspView;
 import nextstep.mvc.tobe.ModelAndView;
 import nextstep.web.annotation.RequestMapping;
@@ -12,8 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Optional;
 
 @nextstep.web.annotation.Controller
-public class ProfileController implements HandlerExecution {
-    @Override
+public class ProfileController {
     @RequestMapping(value = "/users/profile", method = {RequestMethod.GET})
     public ModelAndView handle(HttpServletRequest request, HttpServletResponse response) {
         return Optional.ofNullable(request.getParameter("userId"))
