@@ -14,18 +14,26 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @WebServlet(name = "dispatcher", urlPatterns = "/", loadOnStartup = 1)
 public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger logger = LoggerFactory.getLogger(DispatcherServlet.class);
 
+    private static final String VIEW_RESOLVER_BASE_PACKAGE = "nextstep.mvc.tobe.resolver";
+
     private HandlerMapping[] handlerMappings;
+    private List<ViewResolver> viewResolvers;
 
     public DispatcherServlet(HandlerMapping... handlerMappings) {
         this.handlerMappings = handlerMappings;
+        this.viewResolvers = getViewResolvers();
     }
 
     @Override
@@ -49,9 +57,31 @@ public class DispatcherServlet extends HttpServlet {
         adaptHandler(req, resp, handler);
     }
 
+    private List<ViewResolver> getViewResolvers() {
+        Reflections reflections = new Reflections(VIEW_RESOLVER_BASE_PACKAGE);
+        Set<Class<? extends ViewResolver>> classes = reflections.getSubTypesOf(ViewResolver.class);
+
+        return classes.stream()
+                .map(aClass -> {
+                    try {
+                        return aClass.getDeclaredConstructor().newInstance();
+                    } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+                        return new JspViewResolver();
+                    } // TODO 흠...
+                })
+                .collect(Collectors.toList());
+    }
+
     private void adaptHandler(HttpServletRequest req, HttpServletResponse resp, HandlerExecution handler) throws ServletException {
         try {
             ModelAndView mav = handler.handle(req, resp);
+
+            View view = this.viewResolvers.stream()
+                    .filter(viewResolver -> Objects.nonNull(viewResolver.resolveViewName(mav.getViewName())))
+                    .findFirst()
+                    .orElseGet(JspViewResolver::new) // TODO 흠...
+                    .resolveViewName(mav.getViewName());
+            mav.setView(view);
             mav.getView().render(mav.getModel(), req, resp);
         } catch (Exception e) {
             logger.error("Exception : {}", e.getMessage());
