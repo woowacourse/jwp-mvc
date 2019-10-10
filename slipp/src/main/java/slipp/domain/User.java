@@ -8,6 +8,9 @@ public class User {
     private String name;
     private String email;
 
+    public User() {
+    }
+
     public User(UserCreatedDto userCreatedDto) {
         this.userId = userCreatedDto.getUserId();
         this.password = userCreatedDto.getPassword();

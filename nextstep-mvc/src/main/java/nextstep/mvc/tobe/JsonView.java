@@ -28,6 +28,13 @@ public class JsonView implements View {
         if (model.isEmpty()) {
             out.print("");
         }
+
+        out.flush();
+    }
+
+    @Override
+    public String getViewName() {
+        return null;
     }
 
     private void doPrint(Object object, PrintWriter out) throws IOException {
