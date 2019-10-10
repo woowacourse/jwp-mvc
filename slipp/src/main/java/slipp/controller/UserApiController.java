@@ -1,6 +1,6 @@
 package slipp.controller;
 
-import nextstep.mvc.tobe.resolver.ArgumentResolver;
+import nextstep.mvc.tobe.resolver.HttpRequestBodyResolver;
 import nextstep.mvc.tobe.view.JsonView;
 import nextstep.mvc.tobe.view.ModelAndView;
 import nextstep.web.annotation.Controller;
@@ -23,7 +23,7 @@ public class UserApiController {
 
     @RequestMapping(value = "/api/users", method = RequestMethod.POST)
     public ModelAndView save(HttpServletRequest req, HttpServletResponse resp) {
-        User user = ArgumentResolver.resolve(req, User.class);
+        User user = HttpRequestBodyResolver.resolve(req, User.class);
         DataBase.addUser(user);
         log.debug("create user >>> {}", user);
 
@@ -50,7 +50,7 @@ public class UserApiController {
     @RequestMapping(value = "/api/users", method = RequestMethod.PUT)
     public ModelAndView update(HttpServletRequest req, HttpServletResponse resp) {
         String userId = req.getParameter("userId");
-        UserUpdatedDto userUpdatedDto = ArgumentResolver.resolve(req, UserUpdatedDto.class);
+        UserUpdatedDto userUpdatedDto = HttpRequestBodyResolver.resolve(req, UserUpdatedDto.class);
 
         User user = DataBase.findUserById(userId);
         user.update(userUpdatedDto);
