@@ -24,18 +24,18 @@ public class DispatcherServlet extends HttpServlet {
     private static final String NOT_FOUND_PAGE = "/err/404.jsp";
 
     private List<HandlerMapping> handlerMappings;
-    private List<ExecutionAdapter> adapters;
+    private List<ExecutionAdapter> executionAdapters;
 
     public DispatcherServlet(List<HandlerMapping> handlerMappings) {
         this.handlerMappings = handlerMappings;
-        this.adapters = new ArrayList<>();
+        this.executionAdapters = new ArrayList<>();
     }
 
     @Override
     public void init() {
         handlerMappings.forEach(HandlerMapping::initialize);
-        adapters.add(new ControllerAdapter());
-        adapters.add(new HandlerExecutionAdapter());
+        executionAdapters.add(new ControllerAdapter());
+        executionAdapters.add(new HandlerExecutionAdapter());
     }
 
     @Override
@@ -70,8 +70,8 @@ public class DispatcherServlet extends HttpServlet {
                 .orElse(null);
     }
 
-    private ExecutionAdapter<?> findExecutionAdapter(Execution execution) {
-        return adapters.stream()
+    private ExecutionAdapter findExecutionAdapter(Execution execution) {
+        return executionAdapters.stream()
                 .filter(adapter -> adapter.matchClass(execution))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("처리할 수 없는 형태입니다."));
