@@ -7,6 +7,8 @@ import nextstep.mvc.tobe.Car;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.util.List;
@@ -16,6 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class JacksonTest {
 
+    private static final Logger log = LoggerFactory.getLogger(JacksonTest.class);
     private static final String TARGET_PATH = "src/test/java/nextstep/learningtest/target";
     private ObjectMapper objectMapper;
 
@@ -41,7 +44,9 @@ public class JacksonTest {
     void readValue() throws IOException {
         Car car = objectMapper.readValue(new File(TARGET_PATH + "/blue_car.json"), Car.class);
 
-        System.out.println(car);
+        assertThat(car.getColor()).isEqualTo("blue");
+        assertThat(car.getType()).isEqualTo("BMW");
+        log.info("JSON to Java Object >>> car={}", car);
     }
 
     @Test
@@ -62,7 +67,7 @@ public class JacksonTest {
                 });
 
         assertThat(cars.size()).isEqualTo(2);
-        System.out.println(cars);
+        log.info("JSON to list >>> cars={}", cars);
     }
 
     @Test
@@ -75,7 +80,7 @@ public class JacksonTest {
 
         assertThat(cars.get("color")).isEqualTo("black");
         assertThat(cars.get("type")).isEqualTo("FIAT");
-        System.out.println(cars);
+        log.info("JSON to map >>> cars={}", cars);
     }
 
     private void printFile(String path) throws IOException {
