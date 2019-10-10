@@ -11,6 +11,7 @@ public class DataBase {
 
     static {
         users.put("admin", new User("admin", "password", "자바지기", "admin@slipp.net"));
+        users.put("conas", new User("conas", "12345", "conatuseus","conatuseus@gmail.com"));
     }
 
     public static void addUser(User user) {
