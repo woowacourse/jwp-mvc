@@ -5,6 +5,14 @@ public class Student {
 
     private int age;
 
+    public Student() {
+    }
+
+    public Student(String name, int age) {
+        this.name = name;
+        this.age = age;
+    }
+
     public void setMyInfo(String name, int age) {
         this.name = name;
         this.age = age;
