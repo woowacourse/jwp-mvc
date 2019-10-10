@@ -1,6 +1,7 @@
 package nextstep.mvc;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import javax.servlet.ServletException;
@@ -18,7 +19,8 @@ class DispatcherServletTest {
     }
 
     @Test
-    void 유저생성() throws ServletException {
+    @DisplayName(value = "유저생성")
+    void create_userController() throws ServletException {
         Map<String, String> body = new HashMap<>();
         body.put("userId", "admin");
         body.put("password", "password");
@@ -28,13 +30,15 @@ class DispatcherServletTest {
     }
 
     @Test
-    void 유저프로필_조회() throws ServletException {
+    @DisplayName(value = "유저프로필 조회")
+    void showProfile_userController() throws ServletException {
         dispatcherTestHelper.get("/users/profile?userId=admin").service();
         assertThat(dispatcherTestHelper.getResponse().getForwardedUrl()).isEqualTo("/user/profile.jsp");
     }
 
     @Test
-    void 유저리스트_조회() throws ServletException {
+    @DisplayName(value = "유저리스트 조회")
+    void showUsers_userController() throws ServletException {
         Map<String, String> body = new HashMap<>();
         body.put("userId", "admin");
         body.put("password", "password");
