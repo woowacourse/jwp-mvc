@@ -9,6 +9,7 @@ import java.util.Map;
 
 public class RequestContext {
     private Map<String, Object> attributes = Maps.newHashMap();
+    private boolean isHandled = false;
 
     public RequestContext(HttpServletRequest request, HttpServletResponse response) {
         attributes.put(RequestContextKey.REQUEST.getKey(), request);
@@ -31,5 +32,13 @@ public class RequestContext {
 
     public Object getAttribute(String name) {
         return attributes.get(name);
+    }
+
+    public boolean isHandled() {
+        return isHandled;
+    }
+
+    public void completeResponse() {
+        isHandled = true;
     }
 }
