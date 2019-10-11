@@ -34,6 +34,10 @@ public class ModelAndView {
         return forward(url);
     }
 
+    public static ModelAndView json() {
+        return new ModelAndView(new JsonView());
+    }
+
     public static ModelAndView forward(String url) {
         return new ModelAndView(new TemplateView(url));
     }
