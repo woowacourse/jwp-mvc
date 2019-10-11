@@ -11,7 +11,7 @@ import org.springframework.util.MultiValueMap;
 import static org.springframework.web.reactive.function.BodyInserters.fromFormData;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class ControllerTest {
+public class StatusCodeTest {
     private WebTestClient webTestClient = WebTestClient.bindToServer().baseUrl("http://localhost:8080").build();
     private final String id = "id";
     private String cookie;
