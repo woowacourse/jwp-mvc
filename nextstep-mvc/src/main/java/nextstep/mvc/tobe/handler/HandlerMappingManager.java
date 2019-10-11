@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Objects;
 
 public class HandlerMappingManager {
-    private static List<HandlerMapping> handlerMappings = new ArrayList<>();
+    private static final List<HandlerMapping> handlerMappings = new ArrayList<>();
 
     static {
         handlerMappings.add(new AnnotationHandlerMapping("slipp.controller"));
