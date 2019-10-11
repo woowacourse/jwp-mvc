@@ -32,7 +32,7 @@ public class UserApiController {
             response.addHeader("Location", "/api/users?userId=" + user.getUserId());
         } catch (IOException e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            logger.debug("Sign Up Fail: {}", ExceptionUtils.getStackTrace(e));
+            logger.error("Sign Up Fail: {}", ExceptionUtils.getStackTrace(e));
             throw new BodyParseException();
         }
 
@@ -57,7 +57,7 @@ public class UserApiController {
             response.setStatus(HttpServletResponse.SC_OK);
         } catch (IOException e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            logger.debug("Update Fail: {}", ExceptionUtils.getStackTrace(e));
+            logger.error("Update Fail: {}", ExceptionUtils.getStackTrace(e));
             throw new BodyParseException();
         }
 
