@@ -24,7 +24,7 @@ class UserControllerTest {
     @BeforeAll
     void setUp_회원가입_및_로그인() {
         MultiValueMap<String, String> queryString = new LinkedMultiValueMap<>();
-        queryString.add("userId", id);
+        queryString.add(USER_ID, id);
         queryString.add("password", "password");
         queryString.add("name", "name");
         queryString.add("email", "email");
@@ -38,7 +38,7 @@ class UserControllerTest {
 
         cookie = webTestClient.post().uri("/users/login")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .body(fromFormData("userId", "id")
+                .body(fromFormData(USER_ID, "id")
                         .with("password", "password"))
                 .exchange()
                 .returnResult(String.class).getResponseHeaders().getFirst("Set-Cookie");
@@ -62,7 +62,7 @@ class UserControllerTest {
     @Test
     void 유저_정보_수정() {
         MultiValueMap<String, String> updatedQueryString = new LinkedMultiValueMap<>();
-        updatedQueryString.add("userId", "id");
+        updatedQueryString.add(USER_ID, "id");
         updatedQueryString.add("password", UPDATED_PASSWORD);
         updatedQueryString.add("name", "name");
         updatedQueryString.add("email", "email");

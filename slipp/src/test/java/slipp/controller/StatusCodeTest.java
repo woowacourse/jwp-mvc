@@ -12,6 +12,7 @@ import static org.springframework.web.reactive.function.BodyInserters.fromFormDa
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class StatusCodeTest {
+    public static final String USER_ID = "userId";
     private WebTestClient webTestClient = WebTestClient.bindToServer().baseUrl("http://localhost:8080").build();
     private final String id = "id";
     private String cookie;
@@ -19,7 +20,7 @@ public class StatusCodeTest {
     @BeforeAll
     void setUp_회원가입() {
         MultiValueMap<String, String> queryString = new LinkedMultiValueMap<>();
-        queryString.add("userId", id);
+        queryString.add(USER_ID, id);
         queryString.add("password", "password");
         queryString.add("name", "name");
         queryString.add("email", "email");
@@ -33,7 +34,7 @@ public class StatusCodeTest {
 
         cookie = webTestClient.post().uri("/users/login")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .body(fromFormData("userId", "id")
+                .body(fromFormData(USER_ID, "id")
                         .with("password", "password"))
                 .exchange()
                 .returnResult(String.class).getResponseHeaders().getFirst("Set-Cookie");
@@ -61,13 +62,13 @@ public class StatusCodeTest {
 
     @Test
     void 프로필사진_페이지() {
-        webTestClient.get().uri("/users/profile?userId=" + id).exchange().expectStatus().isOk();
+        webTestClient.get().uri("/users/profile?" + USER_ID + "=" + id).exchange().expectStatus().isOk();
 
     }
 
     @Test
     void 업데이트_페이지() {
-        webTestClient.get().uri("/users/updateForm?userId=" + id)
+        webTestClient.get().uri("/users/updateForm?" + USER_ID + "=" + id)
                 .header("cookie", cookie)
                 .exchange().expectStatus().isOk();
     }
