@@ -17,7 +17,6 @@ public class ManualHandlerMapping implements HandlerMapping {
 
     @Override
     public void initialize() {
-        mappings.put("/users", new ListUserController());
         mappings.put("/users/login", new LoginController());
         mappings.put("/users/logout", new LogoutController());
         mappings.put("/users/update", new UpdateUserController());
