@@ -5,7 +5,6 @@ import nextstep.mvc.HandlerMapping;
 import nextstep.mvc.tobe.AnnotationHandlerAdapter;
 import nextstep.mvc.tobe.AnnotationHandlerMapping;
 import nextstep.mvc.tobe.HandlerAdapter;
-import nextstep.mvc.tobe.ManualHandlerAdapter;
 import nextstep.web.WebApplicationInitializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,8 +20,8 @@ public class SlippWebApplicationInitializer implements WebApplicationInitializer
 
     @Override
     public void onStartup(ServletContext servletContext) throws ServletException {
-        List<HandlerMapping> handlerMappings = Arrays.asList(new ManualHandlerMapping(), new AnnotationHandlerMapping("slipp.controller"));
-        List<HandlerAdapter> handlerAdapters = Arrays.asList(new ManualHandlerAdapter(), new AnnotationHandlerAdapter());
+        List<HandlerMapping> handlerMappings = Arrays.asList(new AnnotationHandlerMapping("slipp.controller"));
+        List<HandlerAdapter> handlerAdapters = Arrays.asList(new AnnotationHandlerAdapter());
         DispatcherServlet dispatcherServlet = new DispatcherServlet(handlerMappings, handlerAdapters);
 
         ServletRegistration.Dynamic dispatcher = servletContext.addServlet("dispatcher", dispatcherServlet);
