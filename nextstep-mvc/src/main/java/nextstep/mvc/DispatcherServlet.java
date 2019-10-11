@@ -2,6 +2,8 @@ package nextstep.mvc;
 
 import nextstep.mvc.tobe.HandlerAdapter;
 import nextstep.mvc.tobe.ModelAndView;
+import nextstep.mvc.tobe.View;
+import nextstep.mvc.tobe.ViewResolver;
 import nextstep.mvc.tobe.exception.AdapterNotExistException;
 import nextstep.mvc.tobe.exception.HandlerNotExistException;
 import org.slf4j.Logger;
@@ -44,7 +46,9 @@ public class DispatcherServlet extends HttpServlet {
                     .findFirst()
                     .orElseThrow(AdapterNotExistException::new);
             ModelAndView mav = foundAdapter.handle(req, resp, handler);
-            mav.render(req, resp);
+            ViewResolver vr = new ViewResolver();
+            View view = vr.resolve(mav);
+            view.render(mav.getModel(), req, resp);
         } catch (Exception e) {
             logger.error("Exception : {}", e);
             throw new ServletException(e.getMessage());
