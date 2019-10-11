@@ -1,8 +1,7 @@
 package nextstep.mvc;
 
-import javassist.NotFoundException;
 import nextstep.mvc.tobe.adapter.HandlerAdapterManager;
-import nextstep.mvc.tobe.handler.NotFoundHandlerException;
+import nextstep.mvc.tobe.handler.HandlerMappingManager;
 import nextstep.mvc.tobe.view.ModelAndView;
 import nextstep.mvc.tobe.viewResolver.ViewResolverManager;
 import org.slf4j.Logger;
@@ -13,33 +12,31 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.List;
-import java.util.Objects;
 
 @WebServlet(name = "dispatcher", urlPatterns = "/", loadOnStartup = 1)
 public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger logger = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private final List<HandlerMapping> handlerMappings;
+    private final HandlerMappingManager handlerMappingManager;
     private final HandlerAdapterManager handlerAdapterManager;
     private final ViewResolverManager viewResolverManager;
 
-    public DispatcherServlet(List<HandlerMapping> handlerMappings, HandlerAdapterManager handlerAdapterManager, ViewResolverManager viewResolverManager) {
-        this.handlerMappings = handlerMappings;
+    public DispatcherServlet(HandlerMappingManager handlerMappingManager, HandlerAdapterManager handlerAdapterManager, ViewResolverManager viewResolverManager) {
+        this.handlerMappingManager = handlerMappingManager;
         this.handlerAdapterManager = handlerAdapterManager;
         this.viewResolverManager = viewResolverManager;
     }
 
     @Override
     public void init() {
-        handlerMappings.forEach(HandlerMapping::initialize);
+        handlerMappingManager.initialize();
     }
 
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException {
         try {
-            Object handler = findHandler(req);
+            Object handler = handlerMappingManager.findHandler(req);
             HandlerAdapter handlerAdapter = handlerAdapterManager.findHandlerAdapter(handler);
             ModelAndView mv = handlerAdapter.handle(req, resp, handler);
 
@@ -50,13 +47,5 @@ public class DispatcherServlet extends HttpServlet {
             logger.error("Exception : {}", e);
             throw new ServletException(e.getMessage());
         }
-    }
-
-    private Object findHandler(HttpServletRequest req) throws NotFoundException {
-        return handlerMappings.stream()
-                .map(handlerMapping -> handlerMapping.getHandler(req))
-                .filter(Objects::nonNull)
-                .findFirst()
-                .orElseThrow(() -> new NotFoundHandlerException("해당하는 Handler를 찾을 수 없습니다."));
     }
 }
