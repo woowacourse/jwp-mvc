@@ -7,15 +7,13 @@ import slipp.dto.UserCreatedDto;
 import slipp.dto.UserUpdatedDto;
 import slipp.support.db.DataBase;
 
-import javax.servlet.http.HttpServletResponse;
-
 import static nextstep.web.annotation.RequestMethod.*;
 
 @Controller
 public class UserApiController {
     @RequestMapping(value = "/api/users", method = POST)
     @ResponseBody
-    public ResponseEntity create(@RequestBody UserCreatedDto userCreatedDto, HttpServletResponse response) {
+    public ResponseEntity create(@RequestBody UserCreatedDto userCreatedDto) {
         User user = new User(userCreatedDto.getUserId(),
                 userCreatedDto.getPassword(),
                 userCreatedDto.getName(),
