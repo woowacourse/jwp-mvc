@@ -12,7 +12,7 @@ public class ModelAttributeArgumentResolver implements ArgumentResolver {
         Class<?> type = methodParameter.getType();
         return methodParameter.hasNoDeclaredAnnotation() &&
                 !PrimitiveValueParser.canParse(type) &&
-                !ServletArgumentConverter.supports2(type);
+                !ServletArgumentConverter.supports(type);
     }
 
     @Override
