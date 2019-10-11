@@ -59,6 +59,22 @@ public class UserControllerTest {
         ;
     }
 
+    @Test
+    void 유저_프로파일_조회() {
+        signUp(USER_ID1, PASSWORD, NAME, EMAIL);
+
+        String cookie = getCookie(USER_ID1, PASSWORD);
+
+        client.build()
+                .get()
+                .uri("/users/profile?userId=" + USER_ID1)
+                .header("Cookie", cookie)
+                .exchange()
+                .expectStatus()
+                .isOk()
+        ;
+    }
+
     private String getCookie(String userId, String password) {
         return login(userId, password)
                 .returnResult(String.class)

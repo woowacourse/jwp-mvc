@@ -33,13 +33,25 @@ public class UserController {
     }
 
     @RequestMapping(value = "/users", method = RequestMethod.GET)
-    public ModelAndView show(HttpServletRequest request, HttpServletResponse response) {
+    public ModelAndView showAll(HttpServletRequest request, HttpServletResponse response) {
         if (!UserSessionUtils.isLogined(request.getSession())) {
             return new ModelAndView(new RedirectView("redirect:/users/loginForm"));
         }
 
         request.setAttribute("users", DataBase.findAll());
         return new ModelAndView(new JspView("/user/list.jsp"));
+    }
+
+    @RequestMapping(value = "/users/profile", method = RequestMethod.GET)
+    public ModelAndView show(HttpServletRequest request, HttpServletResponse response) {
+        String userId = request.getParameter("userId");
+        User user = DataBase.findUserById(userId);
+        if (user == null) {
+            throw new NullPointerException("사용자를 찾을 수 없습니다.");
+        }
+
+        request.setAttribute("user", user);
+        return new ModelAndView(new JspView("/user/profile.jsp"));
     }
 
     @RequestMapping(value = "/users/login", method = RequestMethod.POST)
