@@ -1,7 +1,7 @@
 package nextstep.mvc;
 
 import javassist.NotFoundException;
-import nextstep.mvc.tobe.adapter.NotFoundAdapterException;
+import nextstep.mvc.tobe.adapter.HandlerAdapterManager;
 import nextstep.mvc.tobe.handler.NotFoundHandlerException;
 import nextstep.mvc.tobe.view.ModelAndView;
 import nextstep.mvc.tobe.viewResolver.ViewResolverManager;
@@ -22,12 +22,12 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger logger = LoggerFactory.getLogger(DispatcherServlet.class);
 
     private final List<HandlerMapping> handlerMappings;
-    private final List<HandlerAdapter> handlerAdapters;
+    private final HandlerAdapterManager handlerAdapterManager;
     private final ViewResolverManager viewResolverManager;
 
-    public DispatcherServlet(List<HandlerMapping> handlerMappings, List<HandlerAdapter> handlerAdapters, ViewResolverManager viewResolverManager) {
+    public DispatcherServlet(List<HandlerMapping> handlerMappings, HandlerAdapterManager handlerAdapterManager, ViewResolverManager viewResolverManager) {
         this.handlerMappings = handlerMappings;
-        this.handlerAdapters = handlerAdapters;
+        this.handlerAdapterManager = handlerAdapterManager;
         this.viewResolverManager = viewResolverManager;
     }
 
@@ -40,7 +40,7 @@ public class DispatcherServlet extends HttpServlet {
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException {
         try {
             Object handler = findHandler(req);
-            HandlerAdapter handlerAdapter = findHandlerAdapter(handler);
+            HandlerAdapter handlerAdapter = handlerAdapterManager.findHandlerAdapter(handler);
             ModelAndView mv = handlerAdapter.handle(req, resp, handler);
 
             ViewResolver viewResolver = viewResolverManager.findViewResolver(mv);
@@ -58,12 +58,5 @@ public class DispatcherServlet extends HttpServlet {
                 .filter(Objects::nonNull)
                 .findFirst()
                 .orElseThrow(() -> new NotFoundHandlerException("해당하는 Handler를 찾을 수 없습니다."));
-    }
-
-    private HandlerAdapter findHandlerAdapter(Object handler) throws NotFoundAdapterException {
-        return handlerAdapters.stream()
-                .filter(handlerAdapter -> handlerAdapter.supports(handler))
-                .findFirst()
-                .orElseThrow(() -> new NotFoundAdapterException("해당하는 HandlerAdapter를 찾을 수 없습니다."));
     }
 }
