@@ -75,6 +75,22 @@ public class UserControllerTest {
         ;
     }
 
+    @Test
+    void 유저_수정_페이지() {
+        signUp(USER_ID1, PASSWORD, NAME, EMAIL);
+
+        String cookie = getCookie(USER_ID1, PASSWORD);
+
+        client.build()
+                .get()
+                .uri("/users/updateForm?userId=" + USER_ID1)
+                .header("Cookie", cookie)
+                .exchange()
+                .expectStatus()
+                .isOk()
+        ;
+    }
+
     private String getCookie(String userId, String password) {
         return login(userId, password)
                 .returnResult(String.class)

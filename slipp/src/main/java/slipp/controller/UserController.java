@@ -72,4 +72,15 @@ public class UserController {
             return new ModelAndView(new JspView("/user/login.jsp"));
         }
     }
+
+    @RequestMapping(value = "/users/updateForm", method = RequestMethod.GET)
+    public ModelAndView updateForm(HttpServletRequest request, HttpServletResponse response) {
+        String userId = request.getParameter("userId");
+        User user = DataBase.findUserById(userId);
+        if (!UserSessionUtils.isSameUser(request.getSession(), user)) {
+            throw new IllegalStateException("다른 사용자의 정보를 수정할 수 없습니다.");
+        }
+        request.setAttribute("user", user);
+        return new ModelAndView(new JspView("/user/updateForm.jsp"));
+    }
 }
