@@ -58,5 +58,11 @@ https://gist.github.com/joshbuchea/6f47e86d2510bce28f8e7f42ae84c716
 - [x] post의 body값 읽어오는 controller 생성 (UserAcceptanceTest 성공하게 변경)
 - [ ] 모든 Controller를 애노테이션 기반 MVC(@MVC)로 변경한 후 asis MVC 프레임워크 관련 코드를 모두 삭제
 
+### 피드백
+- [x] JsonView 에서 상수 사용 (매직넘버 제거!)
+- [ ] JsonView 에서 response에 json 만들 때 ObjectMapper의 writeValue를 이용해서 구현하는것도 해보기 (JsonUtils 사용해보기)
+- [ ] RestUserController 에서 service 분리해보기 (그냥 분리해도 괜찮은가..? ```@Service``` 필요 없나..?)
+- [ ] HttpUtils에서 getBody하는 부분에서 body 읽어올 때 apache.commons.io의 IOUtils.toString() 사용해보기
+
 ### Advanced
 - [x] Controller 메소드 인자 매핑

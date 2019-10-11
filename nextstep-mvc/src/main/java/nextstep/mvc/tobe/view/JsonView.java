@@ -12,6 +12,8 @@ import java.util.Map;
 
 public class JsonView implements View {
     private final Logger logger = LoggerFactory.getLogger(JsonView.class);
+    private static final int MODEL_NO_BODY_SIZE = 0;
+    private static final int MODEL_ONE_SIZE = 1;
 
     @Override
     public void render(Map<String, ?> model, HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -22,10 +24,10 @@ public class JsonView implements View {
     }
 
     private String convertJson(Map<String, ?> model) {
-        if (model.size() == 0) {
+        if (model.size() == MODEL_NO_BODY_SIZE) {
             return "";
         }
-        if (model.size() == 1) {
+        if (model.size() == MODEL_ONE_SIZE) {
             String key = model.keySet().iterator().next();
             return new Gson().toJson(model.get(key));
         }
