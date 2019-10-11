@@ -1,6 +1,5 @@
 package slipp.controller;
 
-import com.google.gson.Gson;
 import nextstep.mvc.tobe.ModelAndView;
 import nextstep.mvc.tobe.view.CreatedView;
 import nextstep.mvc.tobe.view.JsonView;
@@ -17,9 +16,9 @@ import slipp.support.db.DataBase;
 
 @Controller
 public class RestUserController {
+    private final Logger logger = LoggerFactory.getLogger(RestUserController.class);
     private static final String REST_USER_API_PATH = "/api/users";
     private static final String QUERY_PARAM_USER_ID = "userId";
-    private final Logger logger = LoggerFactory.getLogger(RestUserController.class);
 
 
     @RequestMapping(value = REST_USER_API_PATH, method = RequestMethod.POST)
@@ -42,10 +41,6 @@ public class RestUserController {
         ModelAndView modelAndView = new ModelAndView(new JsonView());
         modelAndView.addObject("user", user);
         return modelAndView;
-    }
-
-    private Object convertObject(String body, Class<?> clazz) {
-        return new Gson().fromJson(body, clazz);
     }
 
     private String saveUser(String userId, String password, String name, String email) {

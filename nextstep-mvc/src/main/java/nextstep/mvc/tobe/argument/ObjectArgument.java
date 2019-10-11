@@ -1,6 +1,7 @@
 package nextstep.mvc.tobe.argument;
 
-import nextstep.mvc.tobe.HttpUtils;
+import nextstep.utils.HttpUtils;
+import nextstep.utils.JsonUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -15,6 +16,6 @@ public class ObjectArgument implements Argument {
     @Override
     public Object getArgument(HttpServletRequest request, HttpServletResponse response) {
         String body = HttpUtils.generateRequestBody(request);
-        return HttpUtils.convertJsonToObject(body, type);
+        return JsonUtils.toObject(body, type);
     }
 }

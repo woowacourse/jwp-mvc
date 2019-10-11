@@ -5,5 +5,5 @@ dependencies {
     api("com.fasterxml.jackson.core:jackson-databind:2.9.9.1")
     implementation("com.github.jknack:handlebars:4.1.2")
     implementation("org.apache.ant:ant:1.10.6")
-    implementation ("com.google.code.gson:gson:2.8.6")
+    implementation ("commons-io:commons-io:2.6")
 }
