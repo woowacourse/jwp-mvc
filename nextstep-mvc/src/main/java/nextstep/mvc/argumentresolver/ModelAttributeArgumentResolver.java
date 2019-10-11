@@ -11,7 +11,7 @@ public class ModelAttributeArgumentResolver implements ArgumentResolver {
     public boolean canResolve(MethodParameter methodParameter) {
         Class<?> type = methodParameter.getType();
         return methodParameter.hasNoDeclaredAnnotation() &&
-                !PrimitiveParser.canParse(type) &&
+                !PrimitiveValueParser.canParse(type) &&
                 !ServletArgumentConverter.supports2(type);
     }
 
@@ -24,7 +24,7 @@ public class ModelAttributeArgumentResolver implements ArgumentResolver {
             for (Field field : fields) {
                 field.setAccessible(true);
                 Class<?> fieldType = field.getType();
-                field.set(instance, PrimitiveParser.parse(request.getParameter(field.getName()), fieldType));
+                field.set(instance, PrimitiveValueParser.parse(request.getParameter(field.getName()), fieldType));
             }
             return instance;
         } catch (Exception e) {
