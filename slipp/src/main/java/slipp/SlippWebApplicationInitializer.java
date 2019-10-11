@@ -1,10 +1,10 @@
 package slipp;
 
 import nextstep.mvc.DispatcherServlet;
-import nextstep.mvc.HandlerMapping;
-import nextstep.mvc.tobe.AnnotationHandlerAdapter;
-import nextstep.mvc.tobe.AnnotationHandlerMapping;
-import nextstep.mvc.tobe.HandlerAdapter;
+import nextstep.mvc.tobe.handlermapping.AnnotationHandlerAdapter;
+import nextstep.mvc.tobe.handlermapping.AnnotationHandlerMapping;
+import nextstep.mvc.tobe.handlermapping.HandlerAdapter;
+import nextstep.mvc.tobe.handlermapping.HandlerMapping;
 import nextstep.web.WebApplicationInitializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

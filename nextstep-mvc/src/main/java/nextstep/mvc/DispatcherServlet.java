@@ -1,7 +1,8 @@
 package nextstep.mvc;
 
-import nextstep.mvc.tobe.HandlerAdapter;
 import nextstep.mvc.tobe.ModelAndView;
+import nextstep.mvc.tobe.handlermapping.HandlerAdapter;
+import nextstep.mvc.tobe.handlermapping.HandlerMapping;
 import nextstep.mvc.tobe.view.View;
 import nextstep.mvc.tobe.view.ViewResolver;
 import nextstep.mvc.tobe.view.ViewResolverManager;
