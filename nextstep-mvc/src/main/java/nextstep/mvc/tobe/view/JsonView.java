@@ -21,7 +21,7 @@ public class JsonView implements View {
 
     private String modelParse(Map<String, ?> model) {
         ModelSize modelSize = ModelSize.of(model.size());
-        Function<Map<String, ?>, String> jsonParser = JsonParser.getJsonParser(modelSize);
+        Function<Map<String, ?>, String> jsonParser = JsonParserSelector.getJsonParser(modelSize);
 
         return jsonParser.apply(model);
     }

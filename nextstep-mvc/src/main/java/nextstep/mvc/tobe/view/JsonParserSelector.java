@@ -8,8 +8,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.function.Function;
 
-public class JsonParser {
-
+public class JsonParserSelector {
     private static final ObjectMapper objectMapper = new ObjectMapper();
     private static final Map<ModelSize, Function<Map<String, ?>, String>> parsers = new HashMap<>();
 

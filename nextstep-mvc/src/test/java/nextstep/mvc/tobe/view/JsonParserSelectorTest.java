@@ -15,14 +15,14 @@ import java.util.function.Function;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class JsonParserTest {
+class JsonParserSelectorTest {
 
     private Map<String, Object> testModel;
 
     @Test
     void modelSize가_0인_경우_빈_String_반환_테스트() {
         testModel = Collections.emptyMap();
-        Function<Map<String, ?>, String> jsonParser = JsonParser.getJsonParser(ModelSize.BLANK);
+        Function<Map<String, ?>, String> jsonParser = JsonParserSelector.getJsonParser(ModelSize.BLANK);
 
         assertThat(jsonParser.apply(testModel)).isEqualTo("");
     }
@@ -34,7 +34,7 @@ class JsonParserTest {
         Car expected = new Car("red", "suv");
         testModel.put("car", expected);
 
-        Function<Map<String, ?>, String> jsonParser = JsonParser.getJsonParser(ModelSize.ONE_SIZE);
+        Function<Map<String, ?>, String> jsonParser = JsonParserSelector.getJsonParser(ModelSize.ONE_SIZE);
         String json = jsonParser.apply(testModel);
         Car actual = JsonUtils.toObject(json, Car.class);
 
@@ -48,7 +48,7 @@ class JsonParserTest {
         testModel.put("car", new Car("red", "suv"));
         testModel.put("car2", new Car("blue", "suv"));
 
-        Function<Map<String, ?>, String> jsonParser = JsonParser.getJsonParser(ModelSize.MANY_SIZE);
+        Function<Map<String, ?>, String> jsonParser = JsonParserSelector.getJsonParser(ModelSize.MANY_SIZE);
         String json = jsonParser.apply(testModel);
         ObjectMapper objectMapper = new ObjectMapper();
 
@@ -57,6 +57,6 @@ class JsonParserTest {
 
     @Test
     void modelSize가_null인경우_예외_테스트() {
-        assertThrows(IllegalArgumentException.class, () -> JsonParser.getJsonParser(null));
+        assertThrows(IllegalArgumentException.class, () -> JsonParserSelector.getJsonParser(null));
     }
 }
