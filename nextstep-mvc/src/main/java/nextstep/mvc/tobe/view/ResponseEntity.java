@@ -1,6 +1,9 @@
 package nextstep.mvc.tobe.view;
 
 import nextstep.web.support.MediaType;
+import org.apache.tools.ant.taskdefs.condition.Http;
+
+import javax.servlet.http.HttpServletResponse;
 
 public class ResponseEntity {
     private String mediaType = MediaType.APPLICATION_JSON_UTF8_VALUE;
@@ -51,7 +54,13 @@ public class ResponseEntity {
         return body;
     }
 
-    public int getContentLength() {
+    void setResponseHeader(HttpServletResponse response) {
+        response.setContentType(mediaType);
+        response.setStatus(httpStatus.getStatusCode());;
+        response.setContentLength(getContentLength());
+    }
+
+    private int getContentLength() {
         return body.getBytes().length;
     }
 }

@@ -15,7 +15,6 @@ class ResponseEntityTest {
         assertThat(responseEntity.getMediaType()).isEqualTo(MediaType.APPLICATION_JSON_UTF8_VALUE);
         assertThat(responseEntity.getHttpStatus()).isEqualTo(HttpStatus.OK);
         assertThat(responseEntity.getBody()).isEqualTo(body);
-        assertThat(responseEntity.getContentLength()).isEqualTo(body.getBytes().length);
     }
 
     @Test
@@ -26,6 +25,5 @@ class ResponseEntityTest {
         assertThat(responseEntity.getMediaType()).isEqualTo(MediaType.APPLICATION_JSON_UTF8_VALUE);
         assertThat(responseEntity.getHttpStatus()).isEqualTo(HttpStatus.BAD_REQUEST);
         assertThat(responseEntity.getBody()).isEqualTo(body);
-        assertThat(responseEntity.getContentLength()).isEqualTo(body.getBytes().length);
     }
 }
