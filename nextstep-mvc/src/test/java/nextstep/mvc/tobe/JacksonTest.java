@@ -25,7 +25,8 @@ public class JacksonTest {
         // TODO: 2019-10-10  
         String json2 = "{ \"color\" : \"Black\", \"type\" : \"BMW\" }";
         Map<String, Object> map
-                = objectMapper.readValue(json2, new TypeReference<Map<String,Object>>(){});
+                = objectMapper.readValue(json2, new TypeReference<Map<String, Object>>() {
+        });
 
     }
 }

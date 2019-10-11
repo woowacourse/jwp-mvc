@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 
 @Controller
 public class HomeController {
-private static final Logger log = LoggerFactory.getLogger(HomeController.class);
+    private static final Logger log = LoggerFactory.getLogger(HomeController.class);
 
     @RequestMapping(value = "/", method = {RequestMethod.GET})
     public ModelAndView handle(HttpServletRequest req, HttpServletResponse resp) throws Exception {

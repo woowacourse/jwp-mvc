@@ -24,6 +24,7 @@ public class JsonView implements View {
 
         String json = JsonUtils.toJson(getValues(model));
         log.debug("json data: {}", json);
+
         writer.write(json);
         writer.flush();
         writer.close();
