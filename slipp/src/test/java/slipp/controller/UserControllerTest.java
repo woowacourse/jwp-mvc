@@ -8,6 +8,12 @@ import support.test.CustomWebTestClient;
 import support.test.TestServerRunner;
 
 public class UserControllerTest {
+    private static final String USER_ID1 = "comac";
+    private static final String USER_ID2 = "comac2";
+    private static final String PASSWORD = "pw1234";
+    private static final String NAME = "코맥";
+    private static final String EMAIL = "park@naver.com";
+
     private CustomWebTestClient client;
 
     @BeforeEach
@@ -18,19 +24,19 @@ public class UserControllerTest {
 
     @Test
     void 회원가입_성공() {
-        signUp("codemcd", "pw1234", "코맥", "park@naver.com");
+        signUp(USER_ID1, PASSWORD, NAME, EMAIL);
     }
 
     @Test
     void 로그인_성공() {
-        signUp("codemcd2", "pw1234", "코맥", "park@naver.com");
+        signUp(USER_ID2, PASSWORD, NAME, EMAIL);
 
         client.build()
                 .post()
                 .uri("/users/login")
                 .body(BodyInserters
-                        .fromFormData("userId", "codemcd2")
-                        .with("password", "pw1234"))
+                        .fromFormData("userId", USER_ID2)
+                        .with("password", PASSWORD))
                 .exchange()
                 .expectStatus()
                 .isFound()
