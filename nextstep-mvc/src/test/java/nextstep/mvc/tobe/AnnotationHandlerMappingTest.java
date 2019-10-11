@@ -3,6 +3,7 @@ package nextstep.mvc.tobe;
 import nextstep.db.DataBase;
 import nextstep.mvc.exception.MappingException;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -35,6 +36,7 @@ public class AnnotationHandlerMappingTest {
     }
 
     @Test
+    @DisplayName("중복된 URL이 있을 때")
     void duplicated_mapping_exception() {
         handlerMapping = new AnnotationHandlerMapping("nextstep.mvc.tobe.ExceptionController");
         assertThrows(MappingException.class, () -> handlerMapping.initialize());

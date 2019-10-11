@@ -56,18 +56,10 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     private void addHandlerExecution(Class<?> clazz, Method classMethod) {
         RequestMapping rm = classMethod.getAnnotation(RequestMapping.class);
         String value = rm.value();
-        RequestMethod[] methods = getMethod(rm.method());
+        RequestMethod[] methods = rm.method();
 
         for (RequestMethod method : methods) {
             handlerExecutions.put(createHandlerKey(value, method), createHandlerExecution(clazz, classMethod));
         }
-    }
-
-    private RequestMethod[] getMethod(RequestMethod[] method) {
-        if (method.length == 0) {
-            return RequestMethod.values();
-        }
-
-        return method;
     }
 }
