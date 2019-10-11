@@ -106,13 +106,29 @@ public class UserControllerTest {
 
         client.build()
                 .put()
-                .uri("users/update?userId=" + USER_ID1)
+                .uri("/users/update?userId=" + USER_ID1)
                 .header("Cookie", cookie)
                 .body(BodyInserters
                         .fromFormData("userId", updatedUserId)
                         .with("password", updatedPassword)
                         .with("name", updatedName)
                         .with("email", updatedEmail))
+                .exchange()
+                .expectStatus()
+                .isFound()
+        ;
+    }
+
+    @Test
+    void 로그아웃_정상() {
+        signUp(USER_ID1, PASSWORD, NAME, EMAIL);
+
+        String cookie = getCookie(USER_ID1, PASSWORD);
+
+        client.build()
+                .get()
+                .uri("/users/logout")
+                .header("Cookie", cookie)
                 .exchange()
                 .expectStatus()
                 .isFound()

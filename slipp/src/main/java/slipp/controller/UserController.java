@@ -73,6 +73,13 @@ public class UserController {
         }
     }
 
+    @RequestMapping(value = "/users/logout", method = RequestMethod.GET)
+    public ModelAndView logout(HttpServletRequest request, HttpServletResponse response) {
+        HttpSession session = request.getSession();
+        session.removeAttribute(UserSessionUtils.USER_SESSION_KEY);
+        return new ModelAndView(new RedirectView("redirect:/"));
+    }
+
     @RequestMapping(value = "/users/updateForm", method = RequestMethod.GET)
     public ModelAndView updateForm(HttpServletRequest request, HttpServletResponse response) {
         String userId = request.getParameter("userId");
