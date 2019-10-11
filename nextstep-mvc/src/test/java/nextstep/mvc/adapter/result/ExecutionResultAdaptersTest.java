@@ -19,21 +19,21 @@ class ExecutionResultAdaptersTest {
     }
 
     @Test
-    @DisplayName("String에 맞는 adapter 찾기")
+    @DisplayName("String에 맞는 ExecutionResultAdapter 찾기")
     void findStringAdapter() {
         Object o = "";
         assertThat(adapters.findAdapter(o)).isInstanceOf(StringExecutionResultAdapter.class);
     }
 
     @Test
-    @DisplayName("ModelAndView에 맞는 adapter 찾기")
+    @DisplayName("ModelAndView에 맞는 ExecutionResultAdapter 찾기")
     void findModelAndViewAdapter() {
         Object o = new ModelAndView();
         assertThat(adapters.findAdapter(o)).isInstanceOf(ModelAndViewExecutionResultAdapter.class);
     }
 
     @Test
-    @DisplayName("잘못된 Object로 adapter 찾기")
+    @DisplayName("잘못된 Object로 ExecutionResultAdapter 찾기")
     void findInvalidAdapter() {
         Object o = new Object();
         assertThatThrownBy(() -> adapters.findAdapter(o)).isInstanceOf(IllegalArgumentException.class);

@@ -10,9 +10,13 @@ public class HandlerExecutionAdapter extends ExecutionAdapter {
     private static final Logger log = LoggerFactory.getLogger(HandlerExecutionAdapter.class);
 
     public HandlerExecutionAdapter() {
-        super(HandlerExecution.class);
         log.info("Initialize ExecutionResultAdapters!");
         executionResultAdapters.add(new StringExecutionResultAdapter());
         executionResultAdapters.add(new ModelAndViewExecutionResultAdapter());
+    }
+
+    @Override
+    public boolean matchClass(Object o) {
+        return o instanceof HandlerExecution;
     }
 }

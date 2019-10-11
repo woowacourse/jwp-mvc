@@ -9,8 +9,12 @@ public class ControllerAdapter extends ExecutionAdapter {
     private static final Logger log = LoggerFactory.getLogger(ControllerAdapter.class);
 
     public ControllerAdapter() {
-        super(Controller.class);
         log.info("Initialize ExecutionResultAdapters!");
         executionResultAdapters.add(new StringExecutionResultAdapter());
+    }
+
+    @Override
+    public boolean matchClass(Object o) {
+        return o instanceof Controller;
     }
 }

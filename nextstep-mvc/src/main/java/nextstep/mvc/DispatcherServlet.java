@@ -34,6 +34,7 @@ public class DispatcherServlet extends HttpServlet {
     @Override
     public void init() {
         handlerMappings.forEach(HandlerMapping::initialize);
+
         executionAdapters.add(new ControllerAdapter());
         executionAdapters.add(new HandlerExecutionAdapter());
     }

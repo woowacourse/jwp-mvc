@@ -9,28 +9,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 public abstract class ExecutionAdapter {
-    private final Class<?> type;
-
     final ExecutionResultAdapters executionResultAdapters = new ExecutionResultAdapters();
 
-    ExecutionAdapter(Class type) {
-        if (type == null) {
-            throw new IllegalArgumentException("null로 생성할 수 없습니다.");
-        }
-        this.type = type;
-    }
+    public abstract boolean matchClass(Object o);
 
-    public boolean matchClass(Object o) {
-        return type.equals(o.getClass());
-    }
-
-    public ModelAndView execute(
-            HttpServletRequest req,
-            HttpServletResponse resp,
-            Execution execution
-    ) throws Exception {
-        Object object = execution.execute(req, resp);
-        ExecutionResultAdapter adapter = executionResultAdapters.findAdapter(object);
-        return adapter.handle(req, resp, object);
+    public ModelAndView execute(HttpServletRequest req, HttpServletResponse resp, Execution execution)
+            throws Exception {
+        Object result = execution.execute(req, resp);
+        ExecutionResultAdapter adapter = executionResultAdapters.findAdapter(result);
+        return adapter.handle(req, resp, result);
     }
 }
