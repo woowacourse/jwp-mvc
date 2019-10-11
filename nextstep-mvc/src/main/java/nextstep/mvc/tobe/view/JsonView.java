@@ -1,34 +1,37 @@
 package nextstep.mvc.tobe.view;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import nextstep.mvc.tobe.View;
-import nextstep.web.support.MediaType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.util.Map;
-import java.util.function.Function;
 
 public class JsonView implements View {
+    private static final Logger logger = LoggerFactory.getLogger(JsonView.class);
 
     @Override
     public void render(Map<String, ?> model, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        String json = modelParse(model);
-        setJsonResponseHeader(response, json);
+        ResponseEntity responseEntity = modelParse(model);
+        responseEntity.setResponseHeader(response);
 
         response.getWriter().flush();
     }
 
-    private String modelParse(Map<String, ?> model) {
+    private ResponseEntity modelParse(Map<String, ?> model) {
         ModelSize modelSize = ModelSize.of(model.size());
-        Function<Map<String, ?>, String> jsonParser = JsonParserSelector.getJsonParser(modelSize);
+        ResponseEntity responseEntity = null;
 
-        return jsonParser.apply(model);
-    }
+        try {
+            String body = JsonParserSelector.getJsonParser(modelSize).parse(model);
+            responseEntity = ResponseEntity.ok(body);
+        } catch (JsonProcessingException e) {
+            logger.error("don't parse model to json: {}", e.getMessage());
+            responseEntity = ResponseEntity.badRequest("{\"message\": \"don't parse model to json\"");
+        }
 
-    private void setJsonResponseHeader(HttpServletResponse response, String json) throws IOException {
-        response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
-        response.setContentLength(json.getBytes().length);
-        response.getWriter().write(json);
+        return responseEntity;
     }
 }
