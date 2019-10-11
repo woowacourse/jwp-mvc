@@ -4,7 +4,6 @@ import nextstep.mvc.asis.Controller;
 import nextstep.mvc.handlermapping.HandlerMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import slipp.controller.UpdateUserController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
@@ -17,8 +16,6 @@ public class ManualHandlerMapping implements HandlerMapping {
 
     @Override
     public void initialize() {
-        mappings.put("/users/update", new UpdateUserController());
-
         logger.info("Initialized Request Mapping!");
         mappings.keySet().forEach(path -> {
             logger.info("Path : {}, Controller : {}", path, mappings.get(path).getClass());
