@@ -15,12 +15,12 @@ public class JsonView implements View {
 
     @Override
     public void render(Map<String, ?> model, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        PrintWriter writer = response.getWriter();
-        response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
-
         if (model.isEmpty()) {
             return;
         }
+
+        PrintWriter writer = response.getWriter();
+        response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
 
         String json = JsonUtils.toJson(getValues(model));
         log.debug("json data: {}", json);
