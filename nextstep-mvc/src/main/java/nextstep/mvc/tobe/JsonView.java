@@ -1,5 +1,6 @@
 package nextstep.mvc.tobe;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import nextstep.web.support.MediaType;
 import org.slf4j.Logger;
@@ -19,6 +20,11 @@ public class JsonView implements View {
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
 
         ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.setVisibility(objectMapper.getSerializationConfig().getDefaultVisibilityChecker()
+                .withFieldVisibility(JsonAutoDetect.Visibility.ANY)
+                .withGetterVisibility(JsonAutoDetect.Visibility.ANY)
+                .withSetterVisibility(JsonAutoDetect.Visibility.NONE));
+
         if (model.isEmpty()) {
             return;
         }
@@ -38,9 +44,8 @@ public class JsonView implements View {
     }
 
     private Object getValue(Map<String, ?> model) {
-        for (String key : model.keySet()) {
-            return model.get(key);
-        }
-        return "";
+        return model.values()
+                .iterator()
+                .next();
     }
 }
