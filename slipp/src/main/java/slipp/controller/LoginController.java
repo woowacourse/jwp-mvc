@@ -12,24 +12,41 @@ import slipp.support.db.DataBase;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.util.Objects;
 
 @Controller
 public class LoginController {
+
+    @RequestMapping(value = "/users/loginForm", method = RequestMethod.GET)
+    public ModelAndView showLoginForm(HttpServletRequest req, HttpServletResponse resp) {
+        return new ModelAndView(new JspView("/user/login.jsp"));
+    }
+
     @RequestMapping(value = "/users/login", method = RequestMethod.POST)
-    public ModelAndView execute(HttpServletRequest req, HttpServletResponse resp) {
-        ModelAndView modelAndView;
+    public ModelAndView login(HttpServletRequest req, HttpServletResponse resp) {
         String userId = req.getParameter("userId");
         String password = req.getParameter("password");
         User user = DataBase.findUserById(userId);
 
-        if (user != null && user.matchPassword(password)) {
+        if (isLoginSuccessful(user, password)) {
             HttpSession session = req.getSession();
             session.setAttribute(UserSessionUtils.USER_SESSION_KEY, user);
             return new ModelAndView(new RedirectView("/"));
         }
 
-        modelAndView = new ModelAndView(new JspView("/user/login.jsp"));
-        modelAndView.addObject("loginFailed", true);
-        return modelAndView;
+        return new ModelAndView(new JspView("/user/login.jsp"))
+                .addObject("loginFailed", true);
+    }
+
+    private boolean isLoginSuccessful(final User user, final String password) {
+        return Objects.nonNull(user) && user.matchPassword(password);
+    }
+
+    @RequestMapping(value = "/users/logout", method = RequestMethod.GET)
+    public ModelAndView logout(HttpServletRequest req, HttpServletResponse resp) {
+        HttpSession session = req.getSession();
+        session.removeAttribute(UserSessionUtils.USER_SESSION_KEY);
+
+        return new ModelAndView(new RedirectView("/"));
     }
 }

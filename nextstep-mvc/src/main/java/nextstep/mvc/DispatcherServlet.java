@@ -16,7 +16,7 @@ import java.util.Objects;
 @WebServlet(name = "dispatcher", urlPatterns = "/", loadOnStartup = 1)
 public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
-    private HandlerMapping[] handlerMappings;
+    private final HandlerMapping[] handlerMappings;
 
     public DispatcherServlet(HandlerMapping... handlerMappings) {
         this.handlerMappings = handlerMappings;
