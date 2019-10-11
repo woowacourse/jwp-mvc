@@ -4,11 +4,9 @@ import nextstep.mvc.argumentresolver.*;
 import nextstep.mvc.exception.NotFoundArgumentResolverException;
 import nextstep.mvc.tobe.HandlerExecution;
 import nextstep.mvc.tobe.ModelAndView;
-import org.apache.tools.ant.taskdefs.condition.Http;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -16,7 +14,8 @@ import java.util.stream.Collectors;
 public class AnnotationHandlerAdapter implements HandlerAdapter {
     private final List<ArgumentResolver> argumentResolvers = Arrays.asList(new ServletArgumentResolver(),
             new RequestParamArgumentResolver(),
-            new ModelAttributeArgumentResolver());
+            new ModelAttributeArgumentResolver(),
+            new PathVariableArgumentResolver());
 
     @Override
     public boolean canHandle(Object handler) {

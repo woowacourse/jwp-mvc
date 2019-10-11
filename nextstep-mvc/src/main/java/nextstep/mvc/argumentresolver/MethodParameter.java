@@ -1,10 +1,13 @@
 package nextstep.mvc.argumentresolver;
 
-import nextstep.web.annotation.RequestParam;
+import nextstep.mvc.exception.NotFoundParameterNameException;
+import nextstep.web.annotation.RequestMapping;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class MethodParameter {
     private final Method method;
@@ -35,5 +38,17 @@ public class MethodParameter {
 
     public <T extends Annotation> T getDeclaredAnnotation(Class<T> annotation) {
         return parameter.getDeclaredAnnotation(annotation);
+    }
+
+    public String getPathVariable(String parameterName, String requestUrl) {
+        RequestMapping requestMapping = method.getDeclaredAnnotation(RequestMapping.class);
+        Pattern pattern = Pattern.compile(requestMapping.value()
+                .replace("{" + parameterName + "}", "([a-zA-Z0-9])")
+                .replaceAll("\\{[a-zA-Z0-9]+\\}", "[a-zA-Z0-9]+"));
+        Matcher matcher = pattern.matcher(requestUrl);
+        if(matcher.find()) {
+            return matcher.group(1);
+        }
+        throw new NotFoundParameterNameException();
     }
 }
