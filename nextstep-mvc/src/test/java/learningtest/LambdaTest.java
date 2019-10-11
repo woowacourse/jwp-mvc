@@ -3,7 +3,10 @@ package learningtest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.util.Optional;
 import java.util.function.Supplier;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class LambdaTest {
     @Test
@@ -36,4 +39,16 @@ public class LambdaTest {
             return name;
         }
     }
+
+    @Test
+    @DisplayName("람다 내부에서 발생한 exception 은 외부에서 보이는지")
+    void check_RuntimeExceptionCanBeThrownFromOptionalIfPresent() {
+        assertThrows(NullPointerException.class, () -> {
+            Optional.of(100).ifPresent((i) -> {
+                throw new NullPointerException();
+            });
+        });
+    }
+
+
 }
