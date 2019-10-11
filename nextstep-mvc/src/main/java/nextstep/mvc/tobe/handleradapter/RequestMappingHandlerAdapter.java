@@ -5,6 +5,7 @@ import nextstep.mvc.tobe.MethodParameter;
 import nextstep.mvc.tobe.RequestContext;
 import nextstep.mvc.tobe.RequestContextKey;
 import nextstep.mvc.tobe.argumentresolver.HandlerMethodArgumentResolver;
+import nextstep.mvc.tobe.returnvaluehandler.HandlerMethodReturnValueHandler;
 import nextstep.mvc.tobe.view.Model;
 import nextstep.mvc.tobe.view.ModelAndView;
 import nextstep.mvc.tobe.view.View;
@@ -15,6 +16,7 @@ import java.util.List;
 
 public class RequestMappingHandlerAdapter implements HandlerAdapter {
     private List<HandlerMethodArgumentResolver> argumentResolvers = new ArrayList<>();
+    private List<HandlerMethodReturnValueHandler> returnValueHandlers = new ArrayList<>();
 
     @Override
     public boolean supports(Object handler) {
@@ -22,7 +24,7 @@ public class RequestMappingHandlerAdapter implements HandlerAdapter {
     }
 
     @Override
-    public boolean hasArgumentResolvers() {
+    public boolean hasResolvers() {
         return true;
     }
 
@@ -33,6 +35,21 @@ public class RequestMappingHandlerAdapter implements HandlerAdapter {
         List<MethodParameter> methodParameters = handlerMethod.getMethodParameters();
         Object[] resolvedArguments = getResolvedArguments(requestContext, methodParameters);
         Object returnValue = handlerMethod.invoke(resolvedArguments);
+        postHandle(requestContext, handlerMethod, returnValue);
+
+        return getModelAndView(requestContext, returnValue);
+    }
+
+    private void postHandle(RequestContext requestContext, HandlerMethod handlerMethod, Object returnValue) {
+        returnValueHandlers.stream()
+                .filter(returnValueHandler -> returnValueHandler.supports(handlerMethod))
+                .forEach(returnValueHandler -> returnValueHandler.handle(requestContext, returnValue));
+    }
+
+    private ModelAndView getModelAndView(RequestContext requestContext, Object returnValue) {
+        if (requestContext.isHandled()) {
+            return null;
+        }
 
         setAttributes(requestContext);
 
@@ -44,7 +61,11 @@ public class RequestMappingHandlerAdapter implements HandlerAdapter {
             return new ModelAndView((View) returnValue);
         }
 
-        return (ModelAndView) returnValue;
+        if (returnValue instanceof ModelAndView) {
+            return (ModelAndView) returnValue;
+        }
+
+        throw new ReturnValueCastFailedException();
     }
 
     private void setAttributes(RequestContext requestContext) {
@@ -71,5 +92,10 @@ public class RequestMappingHandlerAdapter implements HandlerAdapter {
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
         this.argumentResolvers.addAll(argumentResolvers);
+    }
+
+    @Override
+    public void addReturnValueHandlers(List<HandlerMethodReturnValueHandler> returnValueHandlers) {
+        this.returnValueHandlers.addAll(returnValueHandlers);
     }
 }

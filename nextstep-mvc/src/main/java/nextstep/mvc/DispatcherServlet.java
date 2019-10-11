@@ -3,6 +3,7 @@ package nextstep.mvc;
 import nextstep.mvc.tobe.RequestContext;
 import nextstep.mvc.tobe.argumentresolver.HandlerMethodArgumentResolver;
 import nextstep.mvc.tobe.handleradapter.HandlerAdapter;
+import nextstep.mvc.tobe.returnvaluehandler.HandlerMethodReturnValueHandler;
 import nextstep.mvc.tobe.view.ErrorView;
 import nextstep.mvc.tobe.view.ModelAndView;
 import nextstep.mvc.tobe.view.View;
@@ -32,6 +33,7 @@ public class DispatcherServlet extends HttpServlet {
     private List<HandlerAdapter> handlerAdapters;
     private List<ViewResolver> viewResolvers;
     private List<HandlerMethodArgumentResolver> argumentResolvers;
+    private List<HandlerMethodReturnValueHandler> returnValueHandlers;
 
     public DispatcherServlet(HandlerMapping... handlerMappings) {
         this.handlerMappings = Arrays.asList(handlerMappings);
@@ -43,10 +45,12 @@ public class DispatcherServlet extends HttpServlet {
     public void init() {
         handlerMappings.forEach(HandlerMapping::initialize);
         this.argumentResolvers = (List<HandlerMethodArgumentResolver>) detectSubTypesOf(HandlerMethodArgumentResolver.class);
+        this.returnValueHandlers = (List<HandlerMethodReturnValueHandler>) detectSubTypesOf(HandlerMethodReturnValueHandler.class);
         this.handlerAdapters = (List<HandlerAdapter>) detectSubTypesOf(HandlerAdapter.class);
         this.viewResolvers = (List<ViewResolver>) detectSubTypesOf(ViewResolver.class);
 
         addArgumentResolvers();
+        addReturnTypeResolvers();
     }
 
     @Override
@@ -57,8 +61,7 @@ public class DispatcherServlet extends HttpServlet {
             Object handler = findHandler(request);
             HandlerAdapter handlerAdapter = findHandlerAdapter(handler);
             ModelAndView modelAndView = handlerAdapter.handle(requestContext, handler);
-            View view = findView(modelAndView);
-            view.render(modelAndView.getModelMap(), requestContext);
+            render(requestContext, modelAndView);
         } catch (HttpServletRequestException e) {
             View errorView = ErrorView.defaultErrorView();
             errorView.render(Collections.singletonMap("httpStatus", e.getHttpStatus()), requestContext);
@@ -67,10 +70,25 @@ public class DispatcherServlet extends HttpServlet {
         }
     }
 
+    private void render(RequestContext requestContext, ModelAndView modelAndView) {
+        if (requestContext.isHandled()) {
+            return;
+        }
+
+        View view = findView(modelAndView);
+        view.render(modelAndView.getModelMap(), requestContext);
+    }
+
     private void addArgumentResolvers() {
         handlerAdapters.stream()
-                .filter(HandlerAdapter::hasArgumentResolvers)
+                .filter(HandlerAdapter::hasResolvers)
                 .forEach(handlerAdapter -> handlerAdapter.addArgumentResolvers(argumentResolvers));
+    }
+
+    private void addReturnTypeResolvers() {
+        handlerAdapters.stream()
+                .filter(HandlerAdapter::hasResolvers)
+                .forEach(handlerAdapter -> handlerAdapter.addReturnValueHandlers(returnValueHandlers));
     }
 
     private List<?> detectSubTypesOf(Class<?> clazz) {

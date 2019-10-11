@@ -3,6 +3,7 @@ package nextstep.mvc.tobe.handleradapter;
 import nextstep.mvc.asis.Controller;
 import nextstep.mvc.tobe.RequestContext;
 import nextstep.mvc.tobe.argumentresolver.HandlerMethodArgumentResolver;
+import nextstep.mvc.tobe.returnvaluehandler.HandlerMethodReturnValueHandler;
 import nextstep.mvc.tobe.view.ModelAndView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +19,7 @@ public class SimpleControllerHandlerAdapter implements HandlerAdapter {
     }
 
     @Override
-    public boolean hasArgumentResolvers() {
+    public boolean hasResolvers() {
         return false;
     }
 
@@ -35,5 +36,11 @@ public class SimpleControllerHandlerAdapter implements HandlerAdapter {
 
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
+        throw new UnsupportedInstanceMethodException();
+    }
+
+    @Override
+    public void addReturnValueHandlers(List<HandlerMethodReturnValueHandler> returnValueHandlers) {
+        throw new UnsupportedInstanceMethodException();
     }
 }
