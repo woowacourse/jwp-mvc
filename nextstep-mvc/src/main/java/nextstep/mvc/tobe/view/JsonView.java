@@ -1,15 +1,12 @@
 package nextstep.mvc.tobe.view;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import nextstep.mvc.tobe.View;
 import nextstep.web.support.MediaType;
 
-import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.*;
+import java.util.Map;
 import java.util.function.Function;
 
 public class JsonView implements View {
@@ -19,8 +16,7 @@ public class JsonView implements View {
         String json = modelParse(model);
         setJsonResponseHeader(response, json);
 
-        RequestDispatcher requestDispatcher = request.getRequestDispatcher(request.getRequestURI());
-        requestDispatcher.forward(request, response);
+        response.getWriter().flush();
     }
 
     private String modelParse(Map<String, ?> model) {
@@ -32,7 +28,7 @@ public class JsonView implements View {
 
     private void setJsonResponseHeader(HttpServletResponse response, String json) throws IOException {
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
-        response.setContentLength(json.length());
+        response.setContentLength(json.getBytes().length);
         response.getWriter().write(json);
     }
 }
