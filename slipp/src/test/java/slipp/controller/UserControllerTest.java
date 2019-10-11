@@ -7,6 +7,8 @@ import org.springframework.web.reactive.function.BodyInserters;
 import support.test.CustomWebTestClient;
 import support.test.TestServerRunner;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 public class UserControllerTest {
     private static final String USER_ID1 = "comac";
     private static final String USER_ID2 = "comac2";
@@ -48,6 +50,12 @@ public class UserControllerTest {
                 .exchange()
                 .expectStatus()
                 .isOk()
+                .expectBody()
+                .consumeWith(response -> {
+                    String responseBody = new String(response.getResponseBody());
+                    assertTrue(responseBody.contains(USER_ID1));
+                    assertTrue(responseBody.contains(USER_ID2));
+                })
         ;
     }
 
