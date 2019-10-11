@@ -1,10 +1,14 @@
 package slipp.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import slipp.domain.User;
 
 import javax.servlet.http.HttpSession;
 
 public class UserSessionUtils {
+    private static final Logger log = LoggerFactory.getLogger(UserSessionUtils.class);
+
     public static final String USER_SESSION_KEY = "user";
 
     public static User getUserFromSession(HttpSession session) {
@@ -12,6 +16,7 @@ public class UserSessionUtils {
         if (user == null) {
             return null;
         }
+        log.info("login user {}", user);
         return (User) user;
     }
 
