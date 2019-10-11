@@ -37,13 +37,13 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     @Override
-    protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException {
-        Object handler = findHandler(req);
+    protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException {
+        Object handler = findHandler(request);
         HandlerAdapter handlerAdapter = getHandlerAdapter(handler);
         try {
-            ModelAndView modelAndView = handlerAdapter.handle(req, resp, handler);
+            ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
             View view = modelAndView.getView();
-            view.render(modelAndView.getModel(), req, resp);
+            view.render(modelAndView.getModel(), request, response);
         } catch (Throwable e) {
             logger.error("Exception : {}", e);
             throw new ServletException(e.getMessage());
