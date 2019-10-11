@@ -3,6 +3,7 @@ package nextstep.mvc.tobe;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -36,6 +37,10 @@ public class HandlerMethod {
             logger.error("Http Request Exception : ", e);
             throw new HandlerMethodInvocationFailedException();
         }
+    }
+
+    public boolean isAnnotatedWith(Class<? extends Annotation> annotation) {
+        return handlerMethod.isAnnotationPresent(annotation);
     }
 
     public List<MethodParameter> getMethodParameters() {
