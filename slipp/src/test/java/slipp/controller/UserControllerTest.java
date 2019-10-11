@@ -31,17 +31,45 @@ public class UserControllerTest {
     void 로그인_성공() {
         signUp(USER_ID2, PASSWORD, NAME, EMAIL);
 
+        login(USER_ID2, PASSWORD);
+    }
+
+    @Test
+    void 유저_리스트_조회() {
+        signUp(USER_ID1, PASSWORD, NAME, EMAIL);
+        signUp(USER_ID2, PASSWORD, NAME, EMAIL);
+
+        String cookie = getCookie(USER_ID2, PASSWORD);
+
         client.build()
+                .get()
+                .uri("/users")
+                .header("Cookie", cookie)
+                .exchange()
+                .expectStatus()
+                .isOk()
+        ;
+    }
+
+    private String getCookie(String userId, String password) {
+        return login(userId, password)
+                .returnResult(String.class)
+                .getResponseHeaders()
+                .getFirst("Set-Cookie")
+                ;
+    }
+
+    private WebTestClient.ResponseSpec login(String userId, String password) {
+        return client.build()
                 .post()
                 .uri("/users/login")
                 .body(BodyInserters
-                        .fromFormData("userId", USER_ID2)
-                        .with("password", PASSWORD))
+                        .fromFormData("userId", userId)
+                        .with("password", password))
                 .exchange()
                 .expectStatus()
                 .isFound()
-        ;
-
+                ;
     }
 
     private WebTestClient.ResponseSpec signUp(String userId, String password, String name, String email) {
@@ -58,4 +86,5 @@ public class UserControllerTest {
                 .isFound()
                 ;
     }
+
 }
