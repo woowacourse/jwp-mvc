@@ -2,21 +2,21 @@ package nextstep.mvc.tobe.view;
 
 import nextstep.mvc.View;
 
-import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 
-public class JspView implements View {
-    private final String viewName;
+public class RedirectView implements View {
+    private static final String DEFAULT_REDIRECT_PREFIX = "redirect:";
 
-    public JspView(String viewName) {
-        this.viewName = viewName;
+    private final String redirectUrl;
+
+    public RedirectView(String redirectUrl) {
+        this.redirectUrl = redirectUrl;
     }
 
     @Override
     public void render(Map<String, ?> model, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        RequestDispatcher rd = request.getRequestDispatcher(viewName);
-        rd.forward(request, response);
+        response.sendRedirect(redirectUrl.substring(DEFAULT_REDIRECT_PREFIX.length()));
     }
 }

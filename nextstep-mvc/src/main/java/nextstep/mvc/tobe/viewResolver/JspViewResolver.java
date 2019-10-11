@@ -6,13 +6,12 @@ import nextstep.mvc.tobe.view.JspView;
 import nextstep.mvc.tobe.view.ModelAndView;
 
 public class JspViewResolver implements ViewResolver {
-    private static final String REDIRECT_PREFIX = "redirect:";
     private static final String JSP_SUFFIX = ".jsp";
 
     @Override
     public boolean supports(ModelAndView mv) {
         String viewName = mv.getViewName();
-        return viewName.startsWith(REDIRECT_PREFIX) || viewName.endsWith(JSP_SUFFIX);
+        return viewName.endsWith(JSP_SUFFIX);
     }
 
     @Override

@@ -9,6 +9,7 @@ import nextstep.mvc.tobe.adapter.AnnotationHandlerMapping;
 import nextstep.mvc.tobe.adapter.HandlerExecutionHandlerAdapter;
 import nextstep.mvc.tobe.viewResolver.JsonViewResolver;
 import nextstep.mvc.tobe.viewResolver.JspViewResolver;
+import nextstep.mvc.tobe.viewResolver.RedirectViewResolver;
 import nextstep.web.WebApplicationInitializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,6 +35,7 @@ public class SlippWebApplicationInitializer implements WebApplicationInitializer
         List<ViewResolver> viewResolvers = new ArrayList<>();
         viewResolvers.add(new JsonViewResolver());
         viewResolvers.add(new JspViewResolver());
+        viewResolvers.add(new RedirectViewResolver());
 
         DispatcherServlet dispatcherServlet = new DispatcherServlet(handlerMappings, handlerAdapters, viewResolvers);
 
