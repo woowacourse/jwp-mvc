@@ -16,11 +16,21 @@ public class HandlerExecutionAdapter implements HandlerAdapter {
         Object result = ((HandlerExecution) handler).handle(request, response);
 
         if (result instanceof String) {
-            return new ModelAndView(new JSPView((String) result));
+            return new ModelAndView((String) result);
         }
+
+        if (result instanceof View) {
+            return new ModelAndView((View) result);
+        }
+
         if (result instanceof ModelAndView) {
             return (ModelAndView) result;
         }
+
+        if (result != null) {
+            return new ModelAndView(result);
+        }
+
         throw new UnsupportedHandlerExecutionReturnType();
     }
 }
