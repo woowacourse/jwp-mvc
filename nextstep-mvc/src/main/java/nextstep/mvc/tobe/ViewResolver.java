@@ -1,7 +1,5 @@
 package nextstep.mvc.tobe;
 
-import nextstep.mvc.tobe.exception.UnsupportedViewException;
-
 public class ViewResolver {
     public View resolve(ModelAndView mav) {
         Object view = mav.getView();
@@ -15,8 +13,9 @@ public class ViewResolver {
         }
 
         if (view != null) {
+            mav.addObject("model", view);
             return new JsonView();
         }
-        throw new UnsupportedViewException();
+        return new EmptyView();
     }
 }

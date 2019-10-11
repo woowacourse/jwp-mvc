@@ -31,6 +31,6 @@ public class HandlerExecutionAdapter implements HandlerAdapter {
             return new ModelAndView(result);
         }
 
-        throw new UnsupportedHandlerExecutionReturnType();
+        return new ModelAndView();
     }
 }
