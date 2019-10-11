@@ -24,11 +24,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     public void initialize() {
         ControllerScanner controllerScanner = new ControllerScanner(basePackage);
         controllerScanner.getControllers()
-                .forEach(clazz -> ReflectionUtils.getAllMethods(clazz, ReflectionUtils.withAnnotation(RequestMapping.class))
-                        .forEach(classMethod -> {
-                            RequestMapping rm = classMethod.getAnnotation(RequestMapping.class);
-                            handlerExecutions.put(createHandlerKey(rm), createHandlerExecution(clazz, classMethod));
-                        }));
+                .forEach(this::getRequestMappingMethod);
     }
 
     @Override
@@ -40,15 +36,8 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         return handlerExecutions.get(handlerKey);
     }
 
-    private RequestMethod[] isRequestMethodEmpty(RequestMethod[] requestMethod) {
-        if (requestMethod.length == 0) {
-            requestMethod = RequestMethod.values();
-        }
-        return requestMethod;
-    }
-
-    private HandlerKey createHandlerKey(RequestMapping rm) {
-        HandlerKey handlerkey = new HandlerKey(rm.value(), isRequestMethodEmpty(rm.method())[0]);
+    private HandlerKey createHandlerKey(String value, RequestMethod method) {
+        HandlerKey handlerkey = new HandlerKey(value, method);
         if (handlerExecutions.containsKey(handlerkey)) {
             throw new MappingException();
         }
@@ -57,5 +46,28 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     private HandlerExecution createHandlerExecution(Class<?> clazz, Method method) {
         return new HandlerExecution(clazz, method);
+    }
+
+    private void getRequestMappingMethod(Class<?> clazz) {
+        ReflectionUtils.getAllMethods(clazz, ReflectionUtils.withAnnotation(RequestMapping.class))
+                .forEach(classMethod -> addHandlerExecution(clazz, classMethod));
+    }
+
+    private void addHandlerExecution(Class<?> clazz, Method classMethod) {
+        RequestMapping rm = classMethod.getAnnotation(RequestMapping.class);
+        String value = rm.value();
+        RequestMethod[] methods = getMethod(rm.method());
+
+        for (RequestMethod method : methods) {
+            handlerExecutions.put(createHandlerKey(value, method), createHandlerExecution(clazz, classMethod));
+        }
+    }
+
+    private RequestMethod[] getMethod(RequestMethod[] method) {
+        if (method.length == 0) {
+            return RequestMethod.values();
+        }
+
+        return method;
     }
 }
