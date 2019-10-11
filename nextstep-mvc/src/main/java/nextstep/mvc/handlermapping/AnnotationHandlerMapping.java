@@ -1,6 +1,7 @@
 package nextstep.mvc.handlermapping;
 
 import com.google.common.collect.Maps;
+import nextstep.mvc.handlermapping.HandlerMapping;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
@@ -65,7 +66,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
             Object instance = method.getDeclaringClass().getDeclaredConstructor().newInstance();
             Stream.of(requestMethods)
                     .forEach(requestMethod -> handlerExecutions.put(new HandlerKey(requestMapping.value(), requestMethod)
-                            , ((request, response) -> method.invoke(instance, request, response))));
+                            , new HandlerExecution(method, instance)));
         }
     }
 

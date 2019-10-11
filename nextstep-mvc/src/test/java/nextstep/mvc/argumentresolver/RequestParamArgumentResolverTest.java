@@ -1,7 +1,7 @@
 package nextstep.mvc.argumentresolver;
 
-import nextstep.mvc.tobe.HandlerExecution;
-import nextstep.mvc.tobe.ModelAndView;
+import nextstep.mvc.handlermapping.HandlerExecution;
+import nextstep.mvc.view.ModelAndView;
 import nextstep.mvc.tobe.TestUserController;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
