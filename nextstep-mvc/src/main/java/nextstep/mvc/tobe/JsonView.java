@@ -1,7 +1,6 @@
 package nextstep.mvc.tobe;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import nextstep.utils.JsonUtils;
 import nextstep.web.support.MediaType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,28 +18,22 @@ public class JsonView implements View {
         PrintWriter writer = response.getWriter();
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.setVisibility(objectMapper.getSerializationConfig().getDefaultVisibilityChecker()
-                .withFieldVisibility(JsonAutoDetect.Visibility.ANY)
-                .withGetterVisibility(JsonAutoDetect.Visibility.ANY)
-                .withSetterVisibility(JsonAutoDetect.Visibility.NONE));
-
         if (model.isEmpty()) {
             return;
         }
 
-        String json = "";
-        if (model.size() == 1) {
-            json = objectMapper.writeValueAsString(getValue(model));
-        }
-
-        if(model.size() > 2) {
-            json = objectMapper.writeValueAsString(model);
-        }
-
+        String json = JsonUtils.toJson(getValues(model));
+        log.debug("json data: {}", json);
         writer.write(json);
         writer.flush();
         writer.close();
+    }
+
+    private Object getValues(Map<String, ?> model) {
+        if (model.size() == 1) {
+            return getValue(model);
+        }
+        return model;
     }
 
     private Object getValue(Map<String, ?> model) {

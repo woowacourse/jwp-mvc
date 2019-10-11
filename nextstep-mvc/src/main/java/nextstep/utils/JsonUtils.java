@@ -1,6 +1,7 @@
 package nextstep.utils;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import nextstep.mvc.tobe.ObjectMapperException;
 
@@ -18,5 +19,10 @@ public class JsonUtils {
         } catch (IOException e) {
             throw new ObjectMapperException(e);
         }
+    }
+
+    public static String toJson(Object model) throws ObjectMapperException, JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        return objectMapper.writeValueAsString(model);
     }
 }
