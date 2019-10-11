@@ -1,12 +1,13 @@
 package nextstep.mvc.tobe.view;
 
-import com.google.gson.Gson;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import nextstep.web.support.MediaType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Map;
 
@@ -18,25 +19,23 @@ public class JsonView implements View {
     @Override
     public void render(Map<String, ?> model, HttpServletRequest request, HttpServletResponse response) throws Exception {
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
-        String body = convertJson(model);
-        logger.debug("model : {}, body : {}", model, body);
-        writeBody(response.getWriter(), body);
+        writeModel(response.getWriter(), model);
     }
 
-    private String convertJson(Map<String, ?> model) {
+    private void writeModel(PrintWriter writer, Map<String, ?> model) throws IOException {
+        Object body = model;
         if (model.size() == MODEL_NO_BODY_SIZE) {
-            return "";
+            return;
         }
         if (model.size() == MODEL_ONE_SIZE) {
             String key = model.keySet().iterator().next();
-            return new Gson().toJson(model.get(key));
+            body = model.get(key);
         }
-        return new Gson().toJson(model);
+        writeBody(writer, body);
     }
 
-    private void writeBody(PrintWriter writer, String body) {
-        writer.write(body);
-        writer.flush();
-        writer.close();
+    private void writeBody(PrintWriter writer, Object body) throws IOException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.writeValue(writer, body);
     }
 }
