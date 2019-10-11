@@ -15,6 +15,10 @@ public abstract class ExecutionResultAdapter<T> {
         this.type = type;
     }
 
+    boolean matchType(ExecutionResultAdapter adapter) {
+        return this.type.equals(adapter.type);
+    }
+
     boolean matchClass(Object o) {
         return type.equals(o.getClass());
     }

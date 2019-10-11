@@ -38,4 +38,11 @@ class ExecutionResultAdaptersTest {
         Object o = new Object();
         assertThatThrownBy(() -> adapters.findAdapter(o)).isInstanceOf(IllegalArgumentException.class);
     }
+
+    @Test
+    @DisplayName("하나의 리턴값 처리 방식을 여러개 등록하려는 경우 예외 발생")
+    void duplicateAdapter() {
+        assertThatThrownBy(() -> adapters.add(new StringExecutionResultAdapter()))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
 }
