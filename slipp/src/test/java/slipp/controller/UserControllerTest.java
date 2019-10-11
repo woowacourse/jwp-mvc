@@ -54,6 +54,19 @@ public class UserControllerTest extends UserControllerTemplate {
     }
 
     @Test
+    void 유저_리스트_조회_오류() {
+        signUp(USER_ID1, PASSWORD, NAME, EMAIL);
+
+        client.build()
+                .get()
+                .uri("/users")
+                .exchange()
+                .expectStatus()
+                .isFound()
+        ;
+    }
+
+    @Test
     void 유저_프로파일_조회() {
         signUp(USER_ID1, PASSWORD, NAME, EMAIL);
 
