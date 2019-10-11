@@ -12,6 +12,12 @@ public class HandlerMappingManager {
         handlerMappings.add(new AnnotationHandlerMapping("slipp.controller"));
     }
 
+    public static void initialize() {
+        for (HandlerMapping handlerMapping : handlerMappings) {
+            handlerMapping.initialize();
+        }
+    }
+
     public static Object getHandlerMapping(HttpServletRequest req) {
         return handlerMappings.stream()
                 .map(handlerMapping -> handlerMapping.getHandler(req))
