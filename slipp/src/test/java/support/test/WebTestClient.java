@@ -4,7 +4,6 @@ import org.apache.logging.log4j.util.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.reactive.function.BodyInserters;
-import slipp.dto.UserLoginDto;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -28,12 +27,12 @@ public class WebTestClient {
                 .baseUrl(baseUrl + ":" + port);
     }
 
-    public <T> org.springframework.test.web.reactive.server.WebTestClient.ResponseSpec loginPostResource(String url, Map<String, String> body, Class<T> clazz) {
+    public <T> org.springframework.test.web.reactive.server.WebTestClient.ResponseSpec loginPostResource(String url, Map<String, String> body) {
         return testClientBuilder.build()
                 .post()
                 .uri(url)
                 .cookie(JSESSTIONID, sessionId)
-                .body(createFormData(clazz, body))
+                .body(createFormData(body))
                 .exchange();
     }
 
@@ -50,10 +49,11 @@ public class WebTestClient {
         Map<String, String> expected = new HashMap<>();
         expected.put("userId", "admin");
         expected.put("password", "password");
+
         testClientBuilder.build()
                 .post()
                 .uri("users/login")
-                .body(createFormData(UserLoginDto.class, expected))
+                .body(createFormData(expected))
                 .exchange()
                 .expectBody()
                 .consumeWith(result -> {
@@ -62,11 +62,11 @@ public class WebTestClient {
                 });
     }
 
-    public <T> org.springframework.test.web.reactive.server.WebTestClient.ResponseSpec postResource(String url, Map<String, String> body, Class<T> clazz) {
+    public <T> org.springframework.test.web.reactive.server.WebTestClient.ResponseSpec postResource(String url, Map<String, String> body) {
         return testClientBuilder.build()
                 .post()
                 .uri(url)
-                .body(createFormData(clazz, body))
+                .body(createFormData(body))
                 .exchange();
     }
 
@@ -85,11 +85,9 @@ public class WebTestClient {
         return new WebTestClient(baseUrl, port);
     }
 
-    private <T> BodyInserters.FormInserter<String> createFormData(Class<T> classType, Map<String, String> parameters) {
+    private <T> BodyInserters.FormInserter<String> createFormData(Map<String, String> parameters) {
         BodyInserters.FormInserter<String> body = BodyInserters.fromFormData(Strings.EMPTY, Strings.EMPTY);
-        for (int i = 0; i < classType.getDeclaredFields().length; i++) {
-            body.with(classType.getDeclaredFields()[i].getName(), parameters.get(classType.getDeclaredFields()[i].getName()));
-        }
+        parameters.keySet().forEach(key -> body.with(key, parameters.get(key)));
         return body;
     }
 }

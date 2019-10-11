@@ -3,7 +3,6 @@ package slipp.controller;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import slipp.dto.UserUpdatedDto;
 import support.test.WebTestClient;
 
 import java.util.HashMap;
@@ -37,7 +36,7 @@ class UserControllerTest {
         expected.put("name", "짜바지기");
         expected.put("email", "pobi@slipp.net");
 
-        webTestClient.loginPostResource("/users/update?userId=admin", expected, UserUpdatedDto.class)
+        webTestClient.loginPostResource("/users/update?userId=admin", expected)
                 .expectBody()
                 .consumeWith(result -> {
                     String location = Objects.requireNonNull(result.getResponseHeaders().get("Location")).get(0);

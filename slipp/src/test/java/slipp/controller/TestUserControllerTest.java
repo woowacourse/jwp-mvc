@@ -1,7 +1,6 @@
 package slipp.controller;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import support.test.WebTestClient;
 
@@ -11,7 +10,7 @@ import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class UserAuthControllerTest {
+class TestUserControllerTest {
     private WebTestClient webTestClient;
 
     @BeforeEach
@@ -20,60 +19,44 @@ class UserAuthControllerTest {
     }
 
     @Test
-    @DisplayName("유저 생성 페이지 노출")
-    void showCreateForm() {
-        webTestClient.getResource("/users/form")
-                .expectStatus()
-                .isOk();
-    }
-
-    @Test
-    @DisplayName("유저 생성 성공")
-    void create() {
-        Map<String, String> expected = new HashMap<>();
-        expected.put("userId", "pobi");
-        expected.put("password", "password");
-        expected.put("name", "짜바지기");
-        expected.put("email", "pobi@slipp.net");
-
-        webTestClient.postResource("/users/create", expected)
-                .expectBody()
-                .consumeWith(result -> {
-                    String location = Objects.requireNonNull(result.getResponseHeaders().get("Location")).get(0);
-                    assertThat(location).isEqualTo("/");
-                });
-    }
-
-    @Test
-    @DisplayName("로그인 페이지 노출")
-    void showLoginForm() {
-        webTestClient.getResource("/users/loginForm")
-                .expectStatus()
-                .isOk();
-    }
-
-    @Test
-    @DisplayName("로그인 성공")
-    void login() {
+    void create_string() {
         Map<String, String> expected = new HashMap<>();
         expected.put("userId", "admin");
         expected.put("password", "password");
-        webTestClient.postResource("/users/login", expected)
+
+        webTestClient.postResource("/test/users/1", expected)
                 .expectBody()
                 .consumeWith(result -> {
                     String location = Objects.requireNonNull(result.getResponseHeaders().get("Location")).get(0);
                     assertThat(location).isEqualTo("/");
-                });
+                });;
     }
 
     @Test
-    @DisplayName("로그아웃")
-    void logout() {
-        webTestClient.getResource("/users/logout")
+    void create_int_long() {
+        Map<String, String> expected = new HashMap<>();
+        expected.put("id", "11111");
+        expected.put("age", "111");
+
+        webTestClient.postResource("/test/users/2", expected)
                 .expectBody()
                 .consumeWith(result -> {
                     String location = Objects.requireNonNull(result.getResponseHeaders().get("Location")).get(0);
                     assertThat(location).isEqualTo("/");
-                });
+                });;
+    }
+
+    @Test
+    void create_javabean() {
+        Map<String, String> expected = new HashMap<>();
+        expected.put("userId", "admin");
+        expected.put("password", "password");
+
+        webTestClient.postResource("/test/users/3", expected)
+                .expectBody()
+                .consumeWith(result -> {
+                    String location = Objects.requireNonNull(result.getResponseHeaders().get("Location")).get(0);
+                    assertThat(location).isEqualTo("/");
+                });;
     }
 }
