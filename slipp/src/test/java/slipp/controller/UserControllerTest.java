@@ -7,6 +7,8 @@ import org.springframework.web.reactive.function.BodyInserters;
 import support.test.CustomWebTestClient;
 import support.test.TestServerRunner;
 
+import java.util.Objects;
+
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class UserControllerTest {
@@ -52,7 +54,7 @@ public class UserControllerTest {
                 .isOk()
                 .expectBody()
                 .consumeWith(response -> {
-                    String responseBody = new String(response.getResponseBody());
+                    String responseBody = new String(Objects.requireNonNull(response.getResponseBody()));
                     assertTrue(responseBody.contains(USER_ID1));
                     assertTrue(responseBody.contains(USER_ID2));
                 })
@@ -88,6 +90,32 @@ public class UserControllerTest {
                 .exchange()
                 .expectStatus()
                 .isOk()
+        ;
+    }
+
+    @Test
+    void 유저_수정_성공() {
+        signUp(USER_ID1, PASSWORD, NAME, EMAIL);
+
+        String cookie = getCookie(USER_ID1, PASSWORD);
+
+        String updatedUserId = "cocomac";
+        String updatedPassword = "pw123456";
+        String updatedName = "코코맥";
+        String updatedEmail = "cocomac@naver.com";
+
+        client.build()
+                .put()
+                .uri("users/update?userId=" + USER_ID1)
+                .header("Cookie", cookie)
+                .body(BodyInserters
+                        .fromFormData("userId", updatedUserId)
+                        .with("password", updatedPassword)
+                        .with("name", updatedName)
+                        .with("email", updatedEmail))
+                .exchange()
+                .expectStatus()
+                .isFound()
         ;
     }
 
