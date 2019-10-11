@@ -1,7 +1,9 @@
-package slipp;
+package nextstep.mvc.tobe;
 
-import nextstep.mvc.*;
-import nextstep.mvc.tobe.AnnotationHandlerMapping;
+import nextstep.mvc.DispatcherServlet;
+import nextstep.mvc.HandlerMapping;
+import nextstep.mvc.tobe.argumentresolver.ArgumentResolver;
+import nextstep.mvc.tobe.argumentresolver.ArgumentResolvers;
 import nextstep.mvc.tobe.handleradapter.HandlerAdapter;
 import nextstep.mvc.tobe.handleradapter.HandlerExecutionHandlerAdapter;
 import nextstep.web.WebApplicationInitializer;
@@ -19,8 +21,11 @@ public class SlippWebApplicationInitializer implements WebApplicationInitializer
 
     @Override
     public void onStartup(ServletContext servletContext) throws ServletException {
+        ArgumentResolvers argumentResolvers = new ArgumentResolvers(
+                ClassScanner.scanSubTypesOf(ArgumentResolver.class, this.getClass().getPackage().getName()));
         List<HandlerMapping> requestMappings = Arrays.asList(new AnnotationHandlerMapping("slipp"));
-        List<HandlerAdapter> handlerAdapters = Arrays.asList(new HandlerExecutionHandlerAdapter());
+        List<HandlerAdapter> handlerAdapters = Arrays.asList(new HandlerExecutionHandlerAdapter(argumentResolvers));
+
         DispatcherServlet dispatcherServlet = new DispatcherServlet(requestMappings, handlerAdapters);
 
         ServletRegistration.Dynamic dispatcher = servletContext.addServlet("dispatcher", dispatcherServlet);
