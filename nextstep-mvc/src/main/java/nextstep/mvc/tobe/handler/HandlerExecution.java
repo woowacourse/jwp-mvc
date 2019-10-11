@@ -1,4 +1,4 @@
-package nextstep.mvc.tobe.handlermapping;
+package nextstep.mvc.tobe.handler;
 
 import nextstep.mvc.tobe.ModelAndView;
 import org.slf4j.Logger;
