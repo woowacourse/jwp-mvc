@@ -61,7 +61,7 @@ https://gist.github.com/joshbuchea/6f47e86d2510bce28f8e7f42ae84c716
 ### 피드백
 - [x] JsonView 에서 상수 사용 (매직넘버 제거!)
 - [x] JsonView 에서 response에 json 만들 때 ObjectMapper의 writeValue를 이용해서 구현하는것도 해보기 (JsonUtils 사용해보기)
-- [ ] RestUserController 에서 service 분리해보기 (그냥 분리해도 괜찮은가..? ```@Service``` 필요 없나..?)
+- [x] RestUserController 에서 service 분리해보기 (그냥 분리해도 괜찮은가..? ```@Service``` 필요 없나..?)
 - [x] HttpUtils에서 getBody하는 부분에서 body 읽어올 때 apache.commons.io의 IOUtils.toString() 사용해보기
 
 ### Advanced
