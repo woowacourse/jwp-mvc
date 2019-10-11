@@ -1,5 +1,7 @@
 package reflection;
 
+import annotation.Array;
+
 import java.util.Date;
 
 public class Question {
@@ -37,6 +39,7 @@ public class Question {
         return writer;
     }
 
+    @Array(name = "abc")
     public String getTitle() {
         return title;
     }

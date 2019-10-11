@@ -4,10 +4,13 @@ import nextstep.mvc.DispatcherServlet;
 import nextstep.mvc.HandlerMapping;
 import nextstep.mvc.asis.Controller;
 import nextstep.mvc.asis.ForwardController;
+import nextstep.mvc.tobe.ControllerAdapter;
+import nextstep.mvc.tobe.HandlerAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import slipp.controller.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,11 +20,8 @@ public class ManualHandlerMapping implements HandlerMapping {
 
     @Override
     public void initialize() {
-        mappings.put("/", new HomeController());
         mappings.put("/users/form", new ForwardController("/user/form.jsp"));
         mappings.put("/users/loginForm", new ForwardController("/user/login.jsp"));
-        mappings.put("/users", new ListUserController());
-        mappings.put("/users/login", new LoginController());
         mappings.put("/users/profile", new ProfileController());
         mappings.put("/users/logout", new LogoutController());
         mappings.put("/users/create", new CreateUserController());
@@ -35,8 +35,10 @@ public class ManualHandlerMapping implements HandlerMapping {
     }
 
     @Override
-    public Controller getHandler(String requestUri) {
-        return mappings.get(requestUri);
+    public HandlerAdapter getHandler(HttpServletRequest request) {
+        String requestUri = request.getRequestURI();
+        Controller controller = mappings.get(requestUri);
+        return ControllerAdapter.of(controller);
     }
 
     void put(String url, Controller controller) {
