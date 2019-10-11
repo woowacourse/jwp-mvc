@@ -5,7 +5,6 @@ import org.apache.catalina.startup.Tomcat;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.platform.engine.TestExecutionResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseCookie;
@@ -14,11 +13,10 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.BodyInserters;
 import slipp.domain.User;
-import support.test.NsWebTestClient;
 
 import java.io.File;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class ControllerAcceptanceTest {
     private static final Logger logger = LoggerFactory.getLogger(UserAcceptanceTest.class);
@@ -138,7 +136,7 @@ public class ControllerAcceptanceTest {
         assertThat(failedLogInContentsAsString).contains("사용자 아이디");
     }
 
-     StatusAssertions getPageResource(String location, String cookie) {
+    StatusAssertions getPageResource(String location, String cookie) {
         return testClientBuilder.build()
                 .get()
                 .uri(location)
@@ -147,7 +145,7 @@ public class ControllerAcceptanceTest {
                 .expectStatus();
     }
 
-     StatusAssertions signUp(String userId, String password, String name, String email) {
+    StatusAssertions signUp(String userId, String password, String name, String email) {
         return testClientBuilder.build()
                 .post()
                 .uri("/users/create")
@@ -171,7 +169,7 @@ public class ControllerAcceptanceTest {
     }
 
     private String extractSessionId(MultiValueMap<String, ResponseCookie> cookies) {
-        cookies.keySet().stream().forEach(key -> logger.debug( "this is the key ==>" + key + " // this is the cookie ==> " + cookies.get(key)));
+        cookies.keySet().stream().forEach(key -> logger.debug("this is the key ==>" + key + " // this is the cookie ==> " + cookies.get(key)));
         String sessionId = cookies.get("JSESSIONID").toString();
 
         return sessionId.substring(1, sessionId.length() - 1);

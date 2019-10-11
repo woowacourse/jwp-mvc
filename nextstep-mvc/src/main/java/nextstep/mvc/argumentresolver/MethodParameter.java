@@ -1,7 +1,5 @@
 package nextstep.mvc.argumentresolver;
 
-import nextstep.web.annotation.RequestParam;
-
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
