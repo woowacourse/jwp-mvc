@@ -7,6 +7,8 @@ import nextstep.mvc.tobe.exception.DuplicateHandlerKeyException;
 import nextstep.mvc.tobe.view.ModelAndView;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
@@ -18,6 +20,8 @@ import static org.reflections.ReflectionUtils.getAllMethods;
 import static org.reflections.ReflectionUtils.withAnnotation;
 
 public class AnnotationHandlerMapping implements HandlerMapping {
+    private static final Logger logger = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
+
     private Object[] basePackage;
 
     private Map<HandlerKey, HandlerExecution> handlerExecutions = Maps.newHashMap();
@@ -28,6 +32,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     @Override
     public void initialize() {
+        logger.info("AnnotationHandlerMapping initialize");
         ControllerScanner controllerScanner = new ControllerScanner(basePackage);
         Map<Class<?>, Object> controllers = controllerScanner.getControllers();
         controllers.forEach(this::handlerMappingForMethodsOf);
@@ -54,7 +59,8 @@ public class AnnotationHandlerMapping implements HandlerMapping {
                                                 Object controller,
                                                 RequestMapping requestMapping) {
         Arrays.stream(requestMethods)
-                .forEach(requestMethod -> handlerExecutions.put(createHandlerKey(requestMapping.value(), requestMethod),
+                .forEach(requestMethod ->
+                    handlerExecutions.put(createHandlerKey(requestMapping.value(), requestMethod),
                             (request, response) -> (ModelAndView) method.invoke(controller, request, response)));
     }
 
@@ -65,24 +71,25 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         return handlerKey;
     }
 
+    private void validDuplicateHandlerKey(HandlerKey handlerKey) {
+        if (handlerExecutions.containsKey(handlerKey)) {
+            logger.error("duplicated key! : {}", handlerKey);
+            throw new DuplicateHandlerKeyException();
+        }
+    }
+
     @Override
     public boolean support(HttpServletRequest request) {
         String requestUrl = request.getRequestURI();
         RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
 
-        return handlerExecutions.containsKey(createHandlerKey(requestUrl, requestMethod));
+        return handlerExecutions.containsKey(new HandlerKey(requestUrl, requestMethod));
     }
 
     @Override
     public Handler getHandler(HttpServletRequest request) {
         String requestUrl = request.getRequestURI();
         RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
-        return handlerExecutions.get(createHandlerKey(requestUrl, requestMethod));
-    }
-
-    private void validDuplicateHandlerKey(HandlerKey handlerKey) {
-        if (handlerExecutions.containsKey(handlerKey)) {
-            throw new DuplicateHandlerKeyException();
-        }
+        return handlerExecutions.get(new HandlerKey(requestUrl, requestMethod));
     }
 }
