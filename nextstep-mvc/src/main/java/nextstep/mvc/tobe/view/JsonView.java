@@ -1,6 +1,5 @@
 package nextstep.mvc.tobe.view;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import nextstep.mvc.View;
 import nextstep.web.support.MediaType;
@@ -18,22 +17,13 @@ public class JsonView implements View {
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
         PrintWriter out = response.getWriter();
 
-        writeIfSingleData(model, out);
-        writeIfMultiData(model, out);
+        if (model.size() == 1) {
+            out.println(objectMapper.writeValueAsString(model.values().toArray()[0]));
+        } else if (model.size() > 1) {
+            out.println(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(model));
+        }
 
         out.flush();
         out.close();
-    }
-
-    private void writeIfSingleData(Map<String, ?> model, PrintWriter out) throws JsonProcessingException {
-        if (model.size() == 1) {
-            out.println(objectMapper.writeValueAsString(model.values().toArray()[0]));
-        }
-    }
-
-    private void writeIfMultiData(Map<String, ?> model, PrintWriter out) throws JsonProcessingException {
-        if (model.size() > 1) {
-            out.println(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(model));
-        }
     }
 }
