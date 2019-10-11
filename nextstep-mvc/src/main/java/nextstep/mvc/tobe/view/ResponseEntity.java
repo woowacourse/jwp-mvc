@@ -1,7 +1,6 @@
 package nextstep.mvc.tobe.view;
 
 import nextstep.web.support.MediaType;
-import org.apache.tools.ant.taskdefs.condition.Http;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -56,7 +55,8 @@ public class ResponseEntity {
 
     void setResponseHeader(HttpServletResponse response) {
         response.setContentType(mediaType);
-        response.setStatus(httpStatus.getStatusCode());;
+        response.setStatus(httpStatus.getStatusCode());
+        ;
         response.setContentLength(getContentLength());
     }
 

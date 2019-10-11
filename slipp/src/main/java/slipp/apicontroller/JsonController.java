@@ -39,7 +39,8 @@ public class JsonController {
 
     @RequestMapping(value = USER_API_URL, method = RequestMethod.POST)
     public ModelAndView create(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        User user = objectMapper.readValue(request.getInputStream(), User.class);;
+        User user = objectMapper.readValue(request.getInputStream(), User.class);
+        ;
         DataBase.addUser(user);
 
         logger.info("create user {}", user.getUserId());

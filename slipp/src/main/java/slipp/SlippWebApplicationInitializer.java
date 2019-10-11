@@ -16,7 +16,7 @@ import javax.servlet.ServletRegistration;
 import java.util.Arrays;
 import java.util.List;
 
-public class SlippWebApplicationInitializer  implements WebApplicationInitializer {
+public class SlippWebApplicationInitializer implements WebApplicationInitializer {
     private static final Logger log = LoggerFactory.getLogger(SlippWebApplicationInitializer.class);
 
     @Override

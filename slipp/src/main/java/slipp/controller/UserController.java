@@ -70,7 +70,7 @@ public class UserController {
         }
         request.setAttribute("user", user);
 
-        return  ModelAndView.forward("/user/updateForm.jsp");
+        return ModelAndView.forward("/user/updateForm.jsp");
     }
 
     @RequestMapping(value = "/users/update", method = RequestMethod.PUT)

@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Maps;
-import nextstep.mvc.tobe.exception.InvalidHandlerAdaptException;
 import nextstep.mvc.tobe.view.exception.InvalidModelSizeException;
 import nextstep.utils.JsonUtils;
 import org.junit.jupiter.api.Test;
@@ -13,7 +12,6 @@ import samples.Car;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Map;
-import java.util.function.Function;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -55,7 +53,8 @@ class ModelToJsonParserSelectorTest {
         String json = jsonParser.parse(testModel);
         ObjectMapper objectMapper = new ObjectMapper();
 
-        assertThat(testModel).isEqualTo(objectMapper.readValue(json, new TypeReference<Map<String, Car>>(){}));
+        assertThat(testModel).isEqualTo(objectMapper.readValue(json, new TypeReference<Map<String, Car>>() {
+        }));
     }
 
     @Test

@@ -60,8 +60,8 @@ public class AnnotationHandlerMapping implements HandlerMapping {
                                                 RequestMapping requestMapping) {
         Arrays.stream(requestMethods)
                 .forEach(requestMethod ->
-                    handlerExecutions.put(createHandlerKey(requestMapping.value(), requestMethod),
-                            (request, response) -> (ModelAndView) method.invoke(controller, request, response)));
+                        handlerExecutions.put(createHandlerKey(requestMapping.value(), requestMethod),
+                                (request, response) -> (ModelAndView) method.invoke(controller, request, response)));
     }
 
     private HandlerKey createHandlerKey(String url, RequestMethod requestMethod) {

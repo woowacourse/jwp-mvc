@@ -28,7 +28,7 @@ public class TestHandlerMapping implements HandlerMapping {
 
     @Override
     public boolean support(HttpServletRequest request) {
-       return mappings.containsKey(request.getRequestURI());
+        return mappings.containsKey(request.getRequestURI());
     }
 
     @Override

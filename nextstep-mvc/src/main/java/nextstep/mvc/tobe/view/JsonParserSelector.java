@@ -3,7 +3,10 @@ package nextstep.mvc.tobe.view;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import nextstep.mvc.tobe.view.exception.InvalidModelSizeException;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class JsonParserSelector {
     private static final ObjectMapper objectMapper = new ObjectMapper();
