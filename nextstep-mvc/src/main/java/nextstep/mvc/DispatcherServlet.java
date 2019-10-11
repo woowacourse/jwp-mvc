@@ -1,7 +1,9 @@
 package nextstep.mvc;
 
+import nextstep.mvc.exception.HttpException;
 import nextstep.mvc.tobe.JspView;
 import nextstep.mvc.tobe.ModelAndView;
+import nextstep.mvc.tobe.View;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,9 +37,10 @@ public class DispatcherServlet extends HttpServlet {
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) {
         logger.debug("Method : {}, Request URI : {}", req.getMethod(), req.getRequestURI());
-        ModelAndView mav = processRequest(req, resp);
         try {
-            new JspView(mav.getViewName()).render(mav.getModel(), req, resp);
+            ModelAndView mav = processRequest(req, resp);
+            View view = new JspView(mav.getViewName());
+            view.render(mav.getModel(), req, resp);
         } catch (Exception e) {
             logger.debug("Exception : {}", e.getMessage());
         }
@@ -52,7 +55,7 @@ public class DispatcherServlet extends HttpServlet {
                 return mav;
             }
         }
-        throw new IllegalArgumentException("404");
+        throw new HttpException(HttpStatus.NOT_FOUND);
     }
 
     private ModelAndView doProcess(HttpServletRequest req, HttpServletResponse resp, Object handler) {

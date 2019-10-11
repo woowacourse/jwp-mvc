@@ -1,5 +1,7 @@
 package nextstep.mvc.tobe;
 
+import nextstep.mvc.HttpStatus;
+import nextstep.mvc.exception.HttpException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,8 +46,7 @@ public class HandlerExecution {
 
         } catch (Exception e) {
             log.debug("Exception : {}", e.getMessage());
-            // 500 에러
-            throw new IllegalArgumentException("500");
+            throw new HttpException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

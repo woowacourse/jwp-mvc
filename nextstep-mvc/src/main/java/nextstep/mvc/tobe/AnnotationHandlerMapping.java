@@ -2,6 +2,8 @@ package nextstep.mvc.tobe;
 
 import com.google.common.collect.Maps;
 import nextstep.mvc.HandlerMapping;
+import nextstep.mvc.HttpStatus;
+import nextstep.mvc.exception.HttpException;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
@@ -57,7 +59,6 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         if (handlerExecutions.containsKey(handlerKey)) {
             return handlerExecutions.get(handlerKey);
         }
-        // 404 에러
-        throw new IllegalArgumentException("404");
+        throw new HttpException(HttpStatus.NOT_FOUND);
     }
 }
