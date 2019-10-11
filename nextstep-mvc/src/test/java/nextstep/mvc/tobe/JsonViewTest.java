@@ -11,6 +11,7 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
+import java.io.ByteArrayInputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -44,7 +45,7 @@ public class JsonViewTest {
 
         view.render(model, request, response);
 
-        Car actual = JsonUtils.toObject(response.getContentAsString(), Car.class);
+        Car actual = JsonUtils.toObject(new ByteArrayInputStream(response.getContentAsString().getBytes()), Car.class);
         assertThat(response.getContentType()).isEqualTo(MediaType.APPLICATION_JSON_UTF8_VALUE);
         assertThat(actual).isEqualTo(expected);
     }

@@ -19,7 +19,7 @@ public class UserRestController {
 
     @RequestMapping(value = "/api/users", method = RequestMethod.POST)
     public ModelAndView create(HttpServletRequest req, HttpServletResponse resp) throws Exception {
-        User user = JsonUtils.toObject(req, User.class);
+        User user = JsonUtils.toObject(req.getInputStream(), User.class);
         logger.debug("User : {}", user);
 
         DataBase.addUser(user);
@@ -45,7 +45,7 @@ public class UserRestController {
     @RequestMapping(value = "/api/users", method = RequestMethod.PUT)
     public ModelAndView update(HttpServletRequest req, HttpServletResponse resp) throws Exception {
         User user = DataBase.findUserById(req.getParameter("userId"));
-        User updateUser = JsonUtils.toObject(req, User.class);
+        User updateUser = JsonUtils.toObject(req.getInputStream(), User.class);
         logger.debug("Update User : {}", updateUser);
         user.update(updateUser);
 
