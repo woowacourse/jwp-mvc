@@ -8,15 +8,16 @@ import java.util.HashMap;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class JspViewTest {
+public class RedirectViewTest {
     @Test
-    public void forwardTest() throws Exception {
+    public void redirectTest() throws Exception {
         MockHttpServletRequest request = new MockHttpServletRequest();
         MockHttpServletResponse response = new MockHttpServletResponse();
 
-        View view = new JspView("home.jsp");
+        View view = new RedirectView("redirect:/");
         view.render(new HashMap<>(), request, response);
 
-        assertThat(response.getStatus()).isEqualTo(200);
+        assertThat(response.getStatus()).isEqualTo(302);
+        assertThat(response.getHeader("Location")).isEqualTo("/");
     }
 }
