@@ -37,14 +37,13 @@ public class DispatcherServlet extends HttpServlet {
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         logger.debug("Method : {}, Request URI : {}", req.getMethod(), req.getRequestURI());
 
-
         Object handler = getHandler(req);
         HandlerAdapter handlerAdapter = getHandlerAdapter(handler);
-        ModelAndView modelAndView = getModelAndView(req, resp, handler, handlerAdapter);
+        ModelAndView modelAndView = doExecute(req, resp, handler, handlerAdapter);
         modelAndView.render(req, resp);
     }
 
-    private ModelAndView getModelAndView(HttpServletRequest req, HttpServletResponse resp, Object handler, HandlerAdapter handlerAdapter) {
+    private ModelAndView doExecute(HttpServletRequest req, HttpServletResponse resp, Object handler, HandlerAdapter handlerAdapter) {
         try {
             return handlerAdapter.execute(handler, req, resp);
         } catch (Exception e) {

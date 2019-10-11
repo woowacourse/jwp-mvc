@@ -18,4 +18,9 @@ public class HomeController {
         request.setAttribute("users", DataBase.findAll());
         return new ModelAndView(new JspView("/home.jsp"));
     }
+
+    @RequestMapping(value = "/users/index.html", method = RequestMethod.GET)
+    public ModelAndView showLoginForm(HttpServletRequest req, HttpServletResponse resp) {
+        return new ModelAndView(new JspView("/home.jsp"));
+    }
 }
