@@ -1,4 +1,4 @@
-package nextstep.mvc.argumentresolver;
+package nextstep.mvc.argumentresolver.support;
 
 import nextstep.mvc.exception.ServletArgumentTypeNotSupportedException;
 import nextstep.mvc.view.ModelAndView;
