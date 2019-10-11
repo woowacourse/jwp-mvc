@@ -20,10 +20,21 @@ public class UserController {
 
     private UserService userService = new UserService();
 
-    @RequestMapping(value = "/users/create", method = RequestMethod.POST)
-    public ModelAndView create(HttpServletRequest req, HttpServletResponse resp) throws Exception {
-        userService.addUser(UserRequestUtils.getUser(req));
+    @RequestMapping(value = "/users/updateForm", method = RequestMethod.GET)
+    public ModelAndView showUpdateForm(HttpServletRequest req, HttpServletResponse resp) throws Exception {
+        User user = userService.findByUserId(UserRequestUtils.getUserId(req));
+        checkUser(req, user);
 
+        ModelAndView modelAndView = new ModelAndView(new JspView("/user/updateForm.jsp"));
+        modelAndView.addObject("user", user);
+        return modelAndView;
+    }
+
+    @RequestMapping(value = "/users/update", method = RequestMethod.POST)
+    public ModelAndView update(HttpServletRequest req, HttpServletResponse resp) throws Exception {
+        User user = userService.findByUserId(UserRequestUtils.getUserId(req));
+        checkUser(req, user);
+        userService.updateUser(UserRequestUtils.getUser(req));
         return new ModelAndView(new RedirectView("/"));
     }
 
@@ -45,5 +56,11 @@ public class UserController {
         ModelAndView modelAndView = new ModelAndView(new JspView("/user/list.jsp"));
         modelAndView.addObject("users", userService.findAll());
         return modelAndView;
+    }
+
+    private void checkUser(HttpServletRequest req, User user) {
+        if (!UserSessionUtils.isSameUser(req.getSession(), user)) {
+            throw new IllegalStateException("다른 사용자의 정보를 수정할 수 없습니다.");
+        }
     }
 }

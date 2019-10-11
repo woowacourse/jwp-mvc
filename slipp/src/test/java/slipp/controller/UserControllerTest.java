@@ -3,12 +3,8 @@ package slipp.controller;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import slipp.dto.UserCreatedDto;
 import support.test.WebTestClient;
 
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -16,37 +12,57 @@ import java.util.Objects;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class UserControllerTest {
-    private static final Logger logger = LoggerFactory.getLogger(UserAcceptanceTest.class);
-
-    private WebTestClient client;
+    private WebTestClient webTestClient;
 
     @BeforeEach
     void setUp() {
-        client = WebTestClient.of(8080);
+        webTestClient = WebTestClient.of(8080);
+        webTestClient.login();
     }
 
     @Test
-    @DisplayName("사용자 회원가입/조회/수정/삭제")
-    void crud() {
+    @DisplayName("유저 업데이트 페이지 노출")
+    void showUpdateForm() {
+        webTestClient.loginGetResource("/users/updateForm?userId=admin")
+                .expectStatus()
+                .isOk();
+    }
+
+    @Test
+    @DisplayName("유저 업데이트")
+    void update() {
         Map<String, String> expected = new HashMap<>();
-        expected.put("userId", "pobi");
         expected.put("password", "password");
         expected.put("name", "짜바지기");
         expected.put("email", "pobi@slipp.net");
 
-        client.postResource("/users/create", expected, UserCreatedDto.class)
+        webTestClient.loginPostResource("/users/update?userId=admin", expected)
                 .expectBody()
                 .consumeWith(result -> {
                     String location = Objects.requireNonNull(result.getResponseHeaders().get("Location")).get(0);
                     assertThat(location).isEqualTo("/");
                 });
+    }
 
-        client.getResource("/users/profile?userId=pobi")
+    @Test
+    @DisplayName("유저 프로필 확인")
+    void showProfile() {
+        webTestClient.getResource("/users/profile?userId=admin")
                 .expectBody()
                 .consumeWith(result -> {
-                    String body = new String(Objects.requireNonNull(result.getResponseBody()), StandardCharsets.UTF_8);
-                    assertThat(body).contains(expected.get("name"));
-                    assertThat(body).contains(expected.get("email"));
+                    String body = new String(Objects.requireNonNull(result.getResponseBody()));
+                    assertThat(body).contains("Profiles");
+                });
+    }
+
+    @Test
+    @DisplayName("유저 리스트 확인")
+    void showUsers() {
+        webTestClient.loginGetResource("/users")
+                .expectBody()
+                .consumeWith(result -> {
+                    String body = new String(Objects.requireNonNull(result.getResponseBody()));
+                    assertThat(body).contains("사용자 아이디", "이름", "이메일");
                 });
     }
 }

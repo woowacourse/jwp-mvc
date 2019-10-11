@@ -22,7 +22,7 @@ public class SlippWebApplicationInitializer implements WebApplicationInitializer
     public void onStartup(ServletContext servletContext) throws ServletException {
         List<HandlerAdapter> adapters = Arrays.asList(new ControllerHandlerAdapter(), new HandlerExecutionAdapter());
 
-        DispatcherServlet dispatcherServlet = new DispatcherServlet(adapters, new ManualHandlerMapping(), new AnnotationHandlerMapping("slipp"));
+        DispatcherServlet dispatcherServlet = new DispatcherServlet(adapters, new AnnotationHandlerMapping("slipp"));
 
         ServletRegistration.Dynamic dispatcher = servletContext.addServlet("dispatcher", dispatcherServlet);
         dispatcher.setLoadOnStartup(1);
