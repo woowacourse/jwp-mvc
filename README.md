@@ -34,7 +34,7 @@ ManualHandlerMapping 은 Controller 가 아니라 ControllerAdaptor 를 리턴�
     Object 로 타입을 변경해준다.
     - [x] DispatcherServlet 에서 ViewResolver 를 사용하도록 로직을 변경한다.
 
-- [ ] JsonView 클래스 구현, JasonViewTest 테스트 코드로 검증
+- [x] JsonView 클래스 구현, JsonViewTest 테스트 코드로 검증
 
 - [ ] UserAcceptanceTest 통과하도록 컨트롤러 추가
 
