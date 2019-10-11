@@ -1,6 +1,6 @@
 package nextstep.mvc.argumentresolver;
 
-import nextstep.mvc.exception.NotSupportedServletArgumentTypeException;
+import nextstep.mvc.exception.ServletArgumentTypeNotSupportedException;
 import nextstep.mvc.tobe.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
@@ -23,11 +23,16 @@ public enum ServletArgumentConverter {
         this.convertFunction = convertFunction;
     }
 
+    public static boolean supports2(Class<?> valueType) {
+        return Arrays.stream(values())
+                .anyMatch(argument -> argument.valueType.equals(valueType));
+    }
+
     public static ServletArgumentConverter supports(Class<?> valueType) {
         return Arrays.stream(values())
                 .filter(argument -> argument.valueType.equals(valueType))
                 .findAny()
-                .orElseThrow(NotSupportedServletArgumentTypeException::new);
+                .orElseThrow(ServletArgumentTypeNotSupportedException::new);
     }
 
     public Object convert(HttpServletRequest request, HttpServletResponse response) {

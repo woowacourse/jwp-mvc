@@ -1,5 +1,6 @@
 package nextstep.mvc.argumentresolver;
 
+import nextstep.mvc.tobe.HandlerExecution;
 import nextstep.mvc.tobe.ModelAndView;
 import nextstep.mvc.tobe.TestUserController;
 import org.junit.jupiter.api.Test;
@@ -9,6 +10,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -24,11 +26,13 @@ class ServletArgumentResolverTest {
         Class clazz = TestUserController.class;
         Method method = getMethod("create_request_response", clazz.getDeclaredMethods());
 
+        List<MethodParameter> methodParameters = new HandlerExecution(method, clazz.getDeclaredConstructor().newInstance()).extractMethodParameters();
+
         ModelAndView mav = (ModelAndView) method.invoke(
                 clazz.getDeclaredConstructor().newInstance(),
-                resolver.resolve(request, response, method, 0),
-                resolver.resolve(request, response, method, 1),
-                resolver.resolve(request, response, method, 2));
+                resolver.resolve(request, response, methodParameters.get(0)),
+                resolver.resolve(request, response, methodParameters.get(1)),
+                resolver.resolve(request, response, methodParameters.get(2)));
 
         assertThat(mav.getObject("request")).isEqualTo(request);
         assertThat(mav.getObject("response")).isEqualTo(response);

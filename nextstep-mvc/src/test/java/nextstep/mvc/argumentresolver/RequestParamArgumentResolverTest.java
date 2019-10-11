@@ -1,5 +1,7 @@
 package nextstep.mvc.argumentresolver;
 
+import nextstep.mvc.tobe.HandlerExecution;
+import nextstep.mvc.tobe.ModelAndView;
 import nextstep.mvc.tobe.TestUserController;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -7,6 +9,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -27,10 +30,11 @@ class RequestParamArgumentResolverTest {
 
         Class clazz = TestUserController.class;
         Method method = getMethod("create_request_param", clazz.getDeclaredMethods());
+        List<MethodParameter> methodParameters = new HandlerExecution(method, clazz.getDeclaredConstructor().newInstance()).extractMethodParameters();
 
-        String resolvedId = (String) resolver.resolve(request, response, method, 0);
-        String resolvedPW = (String) resolver.resolve(request, response, method, 1);
-        int resolvedAge = (int) resolver.resolve(request, response, method, 2);
+        String resolvedId = (String) resolver.resolve(request, response, methodParameters.get(0));
+        String resolvedPW = (String) resolver.resolve(request, response, methodParameters.get(1));
+        int resolvedAge = (int) resolver.resolve(request, response, methodParameters.get(2));
 
         assertThat(resolvedAge).isEqualTo(age);
         assertThat(resolvedId).isEqualTo(userId);
