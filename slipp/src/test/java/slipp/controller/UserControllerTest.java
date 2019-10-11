@@ -16,7 +16,7 @@ class UserControllerTest {
     private String cookie;
 
     @BeforeAll
-    void setUp() {
+    void setUp_회원가입() {
         MultiValueMap<String, String> queryString = new LinkedMultiValueMap<>();
         queryString.add("userId", "id");
         queryString.add("password", "password");
