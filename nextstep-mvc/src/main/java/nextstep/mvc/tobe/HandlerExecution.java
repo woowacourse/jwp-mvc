@@ -20,7 +20,28 @@ public class HandlerExecution {
 
     public ModelAndView handle(HttpServletRequest request, HttpServletResponse response) {
         try {
-            return (ModelAndView) method.invoke(clazz.newInstance(), request, response);
+            Object view = method.invoke(clazz.newInstance(), request, response);
+            if (view instanceof String) {
+                return new ModelAndView((String) view);
+            }
+            if (view instanceof ModelAndView) {
+                return (ModelAndView) view;
+            }
+
+            // Model Object일 경우
+            if (view != null) {
+                String viewName = RequestToViewNameTranslator.getViewName(request);
+                ModelAndView mav = new ModelAndView(viewName);
+                String className = view.getClass().getName();
+                String modelName = className.substring(0, 1).toLowerCase() + className.substring(1);
+                mav.addObject(modelName, view);
+                return mav;
+            }
+
+            // void일 경우
+            String viewName = RequestToViewNameTranslator.getViewName(request);
+            return new ModelAndView(viewName);
+
         } catch (Exception e) {
             log.debug("Exception : {}", e.getMessage());
             // 500 에러
