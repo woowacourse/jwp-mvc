@@ -13,7 +13,7 @@ public class AdapterManager {
 
     public Adapter getHandlerAdapter(Object handler) {
         for (Adapter adapter : adapters) {
-            if (adapter.supports(handler)) {
+            if (adapter.isSupport(handler)) {
                 return adapter;
             }
         }

@@ -6,7 +6,7 @@ import javax.servlet.http.HttpServletResponse;
 
 public class HandleAdapter implements Adapter {
     @Override
-    public boolean supports(Object handler) {
+    public boolean isSupport(Object handler) {
         return handler instanceof HandlerExecution;
     }
 
