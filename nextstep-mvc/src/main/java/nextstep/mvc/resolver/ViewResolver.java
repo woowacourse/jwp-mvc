@@ -3,7 +3,7 @@ package nextstep.mvc.resolver;
 import nextstep.mvc.view.View;
 
 public interface ViewResolver {
-    boolean supports(String viewName);
+    boolean supports(Object view);
 
-    View resolveViewName(String viewName);
+    View resolveView(Object view);
 }

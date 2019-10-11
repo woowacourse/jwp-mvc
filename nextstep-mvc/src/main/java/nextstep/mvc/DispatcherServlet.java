@@ -45,7 +45,7 @@ public class DispatcherServlet extends HttpServlet {
         HandlerAdapter handlerAdapter = getHandlerAdapter(handler);
         try {
             ModelAndView mav = handlerAdapter.handle(req, resp, handler);
-            View view = getViewResolver(mav).resolveViewName(mav.getViewName());
+            View view = getViewResolver(mav).resolveView(mav.getView());
             view.render(mav.getModel(), req, resp);
         } catch (Throwable e) {
             logger.error("Exception : {}", e.getMessage());
@@ -70,7 +70,7 @@ public class DispatcherServlet extends HttpServlet {
 
     private ViewResolver getViewResolver(ModelAndView modelAndView) {
         return resolvers.stream()
-                .filter(r -> r.supports(modelAndView.getViewName()))
+                .filter(r -> r.supports(modelAndView.getView()))
                 .findFirst()
                 .orElseThrow(NoSuchResolverException::new);
     }

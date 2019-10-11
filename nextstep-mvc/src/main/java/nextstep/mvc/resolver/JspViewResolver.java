@@ -7,12 +7,12 @@ public class JspViewResolver implements ViewResolver {
     private static final String JSP_SUFFIX = ".jsp";
 
     @Override
-    public boolean supports(String viewName) {
-        return viewName.endsWith(JSP_SUFFIX);
+    public boolean supports(Object view) {
+        return view != null && ((String) view).endsWith(JSP_SUFFIX);
     }
 
     @Override
-    public View resolveViewName(String viewName) {
-        return new JspView(viewName);
+    public View resolveView(Object view) {
+        return new JspView((String) view);
     }
 }

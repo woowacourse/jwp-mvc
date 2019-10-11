@@ -5,10 +5,7 @@ import nextstep.mvc.HandlerMapping;
 import nextstep.mvc.adapter.AnnotationHandlerAdapter;
 import nextstep.mvc.adapter.HandlerAdapter;
 import nextstep.mvc.handler.AnnotationHandlerMapping;
-import nextstep.mvc.resolver.JsonViewResolver;
-import nextstep.mvc.resolver.JspViewResolver;
-import nextstep.mvc.resolver.RedirectViewResolver;
-import nextstep.mvc.resolver.ViewResolver;
+import nextstep.mvc.resolver.*;
 import nextstep.web.WebApplicationInitializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,6 +28,7 @@ public class SlippWebApplicationInitializer  implements WebApplicationInitialize
                 new AnnotationHandlerAdapter()
         );
         List<ViewResolver> resolvers = Arrays.asList(
+                new DefaultViewResolver(),
                 new RedirectViewResolver(),
                 new JspViewResolver(),
                 new JsonViewResolver()
