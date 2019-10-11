@@ -12,12 +12,9 @@ public class AdapterManager {
     }
 
     public Adapter getHandlerAdapter(Object handler) {
-        for (Adapter adapter : adapters) {
-            if (adapter.isSupport(handler)) {
-                return adapter;
-            }
-        }
-
-        throw new NotFoundAdapterException();
+        return adapters.stream()
+                .filter(adapter -> adapter.isSupport(handler))
+                .findFirst()
+                .orElseThrow(NotFoundAdapterException::new);
     }
 }

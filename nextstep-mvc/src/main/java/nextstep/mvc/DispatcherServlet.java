@@ -48,13 +48,9 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private Object findHandler(HttpServletRequest request) {
-        for (HandlerMapping handlerMapping : handlerMappings) {
-            Object execution = handlerMapping.getHandler(request);
-            if (Objects.nonNull(execution)) {
-                return execution;
-            }
-        }
-
-        throw new IllegalArgumentException();
+        return handlerMappings.stream()
+                .map(handlerMapping -> handlerMapping.getHandler(request))
+                .filter(Objects::nonNull)
+                .findFirst().orElseThrow(IllegalArgumentException::new);
     }
 }
