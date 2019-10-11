@@ -1,4 +1,4 @@
-package slipp.controller;
+package slipp.asis.controller;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
