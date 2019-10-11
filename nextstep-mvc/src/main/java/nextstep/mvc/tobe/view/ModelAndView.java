@@ -7,11 +7,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ModelAndView {
-    private static final String FORMAT_JSON_VIEW = "JsonView";
-
     private String viewName;
     private View view;
-    private Map<String, Object> model = new HashMap<String, Object>();
+    private Map<String, Object> model = new HashMap<>();
 
     public ModelAndView() {
     }
@@ -29,8 +27,8 @@ public class ModelAndView {
         return this;
     }
 
-    public boolean isJsonView() {
-        return FORMAT_JSON_VIEW.equals(viewName);
+    public boolean matchView(String viewName) {
+        return this.viewName.equals(viewName);
     }
 
     public Object getObject(String attributeName) {

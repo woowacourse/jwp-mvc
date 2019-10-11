@@ -7,9 +7,11 @@ import nextstep.mvc.tobe.view.ModelAndView;
 
 public class JsonViewResolver implements ViewResolver {
 
+    private static final String FORMAT_JSON_VIEW = "JsonView";
+
     @Override
     public boolean supports(ModelAndView mv) {
-        return mv.isJsonView();
+        return mv.matchView(FORMAT_JSON_VIEW);
     }
 
     @Override
