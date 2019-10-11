@@ -2,7 +2,8 @@ package nextstep.mvc;
 
 import nextstep.mvc.exception.AdapterNotFoundException;
 import nextstep.mvc.exception.HandlerNotFoundException;
-import nextstep.mvc.tobe.handler.HandlerAdapterRepository;
+import nextstep.mvc.tobe.handler.HandlerAdapters;
+import nextstep.mvc.tobe.handler.HandlerMappings;
 import nextstep.mvc.tobe.view.ModelAndView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,17 +20,17 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger logger = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private HandlerMappingRepository handlerMappingRepository;
-    private HandlerAdapterRepository handlerAdapterRepository;
+    private HandlerMappings handlerMappings;
+    private HandlerAdapters handlerAdapters;
 
-    public DispatcherServlet(HandlerMappingRepository handlerMappingRepository, HandlerAdapterRepository handlerAdapterRepository) {
-        this.handlerMappingRepository = handlerMappingRepository;
-        this.handlerAdapterRepository = handlerAdapterRepository;
+    public DispatcherServlet(HandlerMappings handlerMappings, HandlerAdapters handlerAdapters) {
+        this.handlerMappings = handlerMappings;
+        this.handlerAdapters = handlerAdapters;
     }
 
     @Override
     public void init() {
-        handlerMappingRepository.init();
+        handlerMappings.init();
     }
 
     @Override
@@ -39,7 +40,7 @@ public class DispatcherServlet extends HttpServlet {
 
         try {
             Object handler = findHandler(req);
-            ModelAndView modelAndView = handlerAdapterRepository.adapt(handler, req, resp);
+            ModelAndView modelAndView = handlerAdapters.adapt(handler, req, resp);
             modelAndView.render(req, resp);
 
         } catch (HandlerNotFoundException | AdapterNotFoundException e) {
@@ -52,6 +53,6 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private Object findHandler(HttpServletRequest req) {
-        return handlerMappingRepository.findHandler(req);
+        return handlerMappings.findHandler(req);
     }
 }
