@@ -6,7 +6,7 @@ public class JspViewResolver implements ViewResolver {
 
     @Override
     public boolean support(String viewName) {
-        return Strings.isNullOrEmpty(viewName);
+        return !Strings.isNullOrEmpty(viewName);
     }
 
     @Override
