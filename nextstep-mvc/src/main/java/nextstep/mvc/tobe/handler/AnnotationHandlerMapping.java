@@ -1,9 +1,7 @@
-package nextstep.mvc.tobe.adapter;
+package nextstep.mvc.tobe.handler;
 
 import com.google.common.collect.Maps;
 import nextstep.mvc.HandlerMapping;
-import nextstep.mvc.tobe.handler.HandlerExecution;
-import nextstep.mvc.tobe.handler.HandlerKey;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;

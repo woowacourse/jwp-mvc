@@ -4,7 +4,7 @@ import javassist.NotFoundException;
 import nextstep.mvc.tobe.adapter.NotFoundAdapterException;
 import nextstep.mvc.tobe.handler.NotFoundHandlerException;
 import nextstep.mvc.tobe.view.ModelAndView;
-import nextstep.mvc.tobe.viewResolver.NotFoundViewResolverException;
+import nextstep.mvc.tobe.viewResolver.ViewResolverManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,12 +23,12 @@ public class DispatcherServlet extends HttpServlet {
 
     private final List<HandlerMapping> handlerMappings;
     private final List<HandlerAdapter> handlerAdapters;
-    private final List<ViewResolver> viewResolvers;
+    private final ViewResolverManager viewResolverManager;
 
-    public DispatcherServlet(List<HandlerMapping> handlerMappings, List<HandlerAdapter> handlerAdapters, List<ViewResolver> viewResolvers) {
+    public DispatcherServlet(List<HandlerMapping> handlerMappings, List<HandlerAdapter> handlerAdapters, ViewResolverManager viewResolverManager) {
         this.handlerMappings = handlerMappings;
         this.handlerAdapters = handlerAdapters;
-        this.viewResolvers = viewResolvers;
+        this.viewResolverManager = viewResolverManager;
     }
 
     @Override
@@ -43,7 +43,7 @@ public class DispatcherServlet extends HttpServlet {
             HandlerAdapter handlerAdapter = findHandlerAdapter(handler);
             ModelAndView mv = handlerAdapter.handle(req, resp, handler);
 
-            ViewResolver viewResolver = findViewResolver(mv);
+            ViewResolver viewResolver = viewResolverManager.findViewResolver(mv);
             View view = viewResolver.resolve(mv);
             view.render(mv.getModel(), req, resp);
         } catch (Throwable e) {
@@ -65,12 +65,5 @@ public class DispatcherServlet extends HttpServlet {
                 .filter(handlerAdapter -> handlerAdapter.supports(handler))
                 .findFirst()
                 .orElseThrow(() -> new NotFoundAdapterException("해당하는 HandlerAdapter를 찾을 수 없습니다."));
-    }
-
-    private ViewResolver findViewResolver(ModelAndView mv) throws NotFoundViewResolverException {
-        return viewResolvers.stream()
-                .filter(viewResolver -> viewResolver.supports(mv))
-                .findFirst()
-                .orElseThrow(() -> new NotFoundViewResolverException("해당하는 ViewResolver가 없습니다."));
     }
 }

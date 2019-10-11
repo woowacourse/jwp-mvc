@@ -3,13 +3,10 @@ package slipp;
 import nextstep.mvc.DispatcherServlet;
 import nextstep.mvc.HandlerAdapter;
 import nextstep.mvc.HandlerMapping;
-import nextstep.mvc.ViewResolver;
 import nextstep.mvc.asis.ControllerHandlerAdapter;
-import nextstep.mvc.tobe.adapter.AnnotationHandlerMapping;
 import nextstep.mvc.tobe.adapter.HandlerExecutionHandlerAdapter;
-import nextstep.mvc.tobe.viewResolver.JsonViewResolver;
-import nextstep.mvc.tobe.viewResolver.JspViewResolver;
-import nextstep.mvc.tobe.viewResolver.RedirectViewResolver;
+import nextstep.mvc.tobe.handler.AnnotationHandlerMapping;
+import nextstep.mvc.tobe.viewResolver.ViewResolverManager;
 import nextstep.web.WebApplicationInitializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,12 +29,7 @@ public class SlippWebApplicationInitializer implements WebApplicationInitializer
         handlerAdapters.add(new HandlerExecutionHandlerAdapter());
         handlerAdapters.add(new ControllerHandlerAdapter());
 
-        List<ViewResolver> viewResolvers = new ArrayList<>();
-        viewResolvers.add(new JsonViewResolver());
-        viewResolvers.add(new JspViewResolver());
-        viewResolvers.add(new RedirectViewResolver());
-
-        DispatcherServlet dispatcherServlet = new DispatcherServlet(handlerMappings, handlerAdapters, viewResolvers);
+        DispatcherServlet dispatcherServlet = new DispatcherServlet(handlerMappings, handlerAdapters, new ViewResolverManager());
 
         ServletRegistration.Dynamic dispatcher = servletContext.addServlet("dispatcher", dispatcherServlet);
         dispatcher.setLoadOnStartup(1);
