@@ -24,7 +24,8 @@ public class UserApiController {
         String userId = req.getParameter("userId");
         User user = DataBase.findUserById(userId);
 
-        return new ModelAndView(new JsonView()).addObject("user", user);
+        //return new ModelAndView(new JsonView()).addObject("user", user);
+        return new ModelAndView(req.getContentType()).addObject("user", user);
     }
 
     @RequestMapping(value = "/api/users", method = RequestMethod.POST)
@@ -36,6 +37,8 @@ public class UserApiController {
 
         resp.setStatus(HttpServletResponse.SC_CREATED);
         resp.addHeader("Location", "/api/users?userId=" + user.getUserId());
+
+        String contentType = req.getContentType();
 
         return new ModelAndView(new JsonView());
     }
