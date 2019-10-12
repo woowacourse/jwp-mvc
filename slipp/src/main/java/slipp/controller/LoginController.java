@@ -1,15 +1,25 @@
 package slipp.controller;
 
+import nextstep.web.annotation.Controller;
+import nextstep.web.annotation.RequestMapping;
+import nextstep.web.annotation.RequestMethod;
 import slipp.domain.User;
 import slipp.support.db.DataBase;
-import nextstep.mvc.asis.Controller;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-public class LoginController implements Controller {
-    @Override
+@Controller
+public class LoginController {
+    private static final String LOGIN_FORM = "/user/login.jsp";
+
+    @RequestMapping(value = "/users/loginForm", method = RequestMethod.GET)
+    public String loginForm() {
+        return LOGIN_FORM;
+    }
+
+    @RequestMapping(value = "/users/login", method = RequestMethod.POST)
     public String execute(HttpServletRequest req, HttpServletResponse resp) throws Exception {
         String userId = req.getParameter("userId");
         String password = req.getParameter("password");

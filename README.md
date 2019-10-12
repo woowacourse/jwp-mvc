@@ -7,3 +7,13 @@
 
 ## 우아한테크코스 코드리뷰
 * [온라인 코드 리뷰 과정](https://github.com/woowacourse/woowacourse-docs/blob/master/maincourse/README.md)
+
+
+## Todo
+
+- [x] Handler interface 제거
+- [ ] HandlerAdaptor 인터페이스 생성
+- [ ] HandlerAdaptor 어노테이션 생성
+- [ ] HandlerAdaptor를 구현한 SimpleController, RequestMapping
+- [ ] RequestContext(Path Variable)
+- [ ] ArgumentResolver
