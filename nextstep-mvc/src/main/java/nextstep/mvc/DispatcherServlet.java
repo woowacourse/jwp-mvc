@@ -39,6 +39,11 @@ public class DispatcherServlet extends HttpServlet {
         logger.debug("Method : {}, Request URI : {}", req.getMethod(), req.getRequestURI());
         try {
             ModelAndView mav = processRequest(req, resp);
+            if (Objects.nonNull(mav.getView())) {
+                View view = mav.getView();
+                view.render(mav.getModel(), req, resp);
+                return;
+            }
             View view = new JspView(mav.getViewName());
             view.render(mav.getModel(), req, resp);
         } catch (Exception e) {
