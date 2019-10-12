@@ -11,6 +11,7 @@ import org.reflections.ReflectionUtils;
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import static org.reflections.ReflectionUtils.getAllMethods;
@@ -37,6 +38,14 @@ public class AnnotationHandlerMapping implements HandlerMapping {
                         ((req, resp) -> (ModelAndView) method.invoke(controllerScanner.getController(aClass), req, resp)));
             }
         }
+    }
+
+    @Override
+    public boolean supports(HttpServletRequest request) {
+        String url = request.getRequestURI();
+        RequestMethod[] requestMethod = {RequestMethod.valueOf(request.getMethod())};
+
+        return Objects.nonNull(handlerExecutions.get(new HandlerKey(url, requestMethod)));
     }
 
     @Override
