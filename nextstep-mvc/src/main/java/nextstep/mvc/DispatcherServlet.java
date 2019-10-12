@@ -1,8 +1,8 @@
 package nextstep.mvc;
 
+import nextstep.mvc.exception.ExceptionFunction;
 import nextstep.mvc.tobe.HandlerExecution;
 import nextstep.mvc.tobe.adapter.HandlerAdapter;
-import nextstep.mvc.tobe.resolver.JspViewResolver;
 import nextstep.mvc.tobe.resolver.ViewResolver;
 import nextstep.mvc.tobe.view.ModelAndView;
 import nextstep.mvc.tobe.view.View;
@@ -15,10 +15,10 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @WebServlet(name = "dispatcher", urlPatterns = "/", loadOnStartup = 1)
@@ -61,33 +61,25 @@ public class DispatcherServlet extends HttpServlet {
         Set<Class<? extends ViewResolver>> classes = reflections.getSubTypesOf(ViewResolver.class);
 
         return classes.stream()
-                .map(aClass -> {
-                    try {
-                        return aClass.getDeclaredConstructor().newInstance();
-                    } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-                        return new JspViewResolver();
-                    }
-                })
+                .map(wrapper(aClass -> aClass.getDeclaredConstructor().newInstance()))
                 .collect(Collectors.toList());
     }
 
     private HandlerExecution getHandler(HttpServletRequest req) throws ServletException {
         return handlerMappings.stream()
-                .filter(handlerMapping -> Objects.nonNull(handlerMapping.getHandler(req)))
+                .filter(handlerMapping -> handlerMapping.supports(req))
                 .findFirst()
                 .orElseThrow(ServletException::new)
                 .getHandler(req);
     }
 
     private void resolveView(ModelAndView mav) throws ServletException {
-        if (Objects.isNull(mav.getView())) {
-            View view = this.viewResolvers.stream()
-                    .filter(viewResolver -> viewResolver.supports(mav))
-                    .findFirst()
-                    .orElseThrow(ServletException::new)
-                    .resolveViewName(mav.getViewName());
-            mav.setView(view);
-        }
+        View view = this.viewResolvers.stream()
+                .filter(viewResolver -> viewResolver.supports(mav))
+                .findFirst()
+                .orElseThrow(ServletException::new)
+                .resolveViewName(mav.getViewName());
+        mav.setView(view);
     }
 
     private void renderView(HttpServletRequest req, HttpServletResponse resp, ModelAndView mav) throws ServletException {
@@ -95,7 +87,18 @@ public class DispatcherServlet extends HttpServlet {
             mav.getView().render(mav.getModel(), req, resp);
         } catch (Exception e) {
             logger.error("Exception : {}", e.getMessage());
+            e.printStackTrace();
             throw new ServletException(e.getMessage());
         }
+    }
+
+    private <T, R, E extends Exception> Function<T, R> wrapper(ExceptionFunction<T, R, E> f) {
+        return t -> {
+            try {
+                return f.apply(t);
+            } catch (Exception e) {
+                throw new RuntimeException(e.getMessage());
+            }
+        };
     }
 }

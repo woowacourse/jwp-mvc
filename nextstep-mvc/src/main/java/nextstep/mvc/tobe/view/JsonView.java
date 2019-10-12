@@ -30,7 +30,7 @@ public class JsonView implements View {
         if (model.size() == 1) {
             return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(model.values().toArray()[0]);
         }
-        if (model.size() > 1) {
+        else if (model.size() > 1) {
             return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(model);
         }
         return "";
