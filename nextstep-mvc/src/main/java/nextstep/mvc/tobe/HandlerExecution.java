@@ -1,10 +1,21 @@
 package nextstep.mvc.tobe;
 
+import nextstep.mvc.tobe.view.ModelAndView;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 
 public class HandlerExecution {
-    public ModelAndView handle(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        return null;
+    private final Method method;
+
+    HandlerExecution(final Method method) {
+        this.method = method;
+    }
+
+    public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        final Constructor constructor = this.method.getDeclaringClass().getDeclaredConstructor();
+        return (ModelAndView) method.invoke(constructor.newInstance(), request, response);
     }
 }
