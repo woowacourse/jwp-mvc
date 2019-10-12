@@ -1,6 +1,7 @@
 package nextstep.mvc;
 
 import nextstep.mvc.asis.Controller;
+import nextstep.mvc.exception.NotFoundHandlerException;
 import nextstep.mvc.tobe.AnnotationHandlerMapping;
 import nextstep.mvc.tobe.HandlerExecution;
 import nextstep.mvc.tobe.ModelAndView;
@@ -14,6 +15,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 
 @WebServlet(name = "dispatcher", urlPatterns = "/", loadOnStartup = 1)
 public class DispatcherServlet extends HttpServlet {
@@ -21,18 +25,15 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger logger = LoggerFactory.getLogger(DispatcherServlet.class);
     private static final String DEFAULT_REDIRECT_PREFIX = "redirect:";
 
-    private HandlerMapping rm;
-    private AnnotationHandlerMapping annotationHandlerMapping;
+    private List<HandlerMapping> handlerMappings;
 
-    public DispatcherServlet(HandlerMapping rm, AnnotationHandlerMapping annotationHandlerMapping) {
-        this.rm = rm;
-        this.annotationHandlerMapping = annotationHandlerMapping;
+    public DispatcherServlet(HandlerMapping handlerMapping, AnnotationHandlerMapping annotationHandlerMapping) {
+        this.handlerMappings = Arrays.asList(handlerMapping, annotationHandlerMapping);
     }
 
     @Override
     public void init() throws ServletException {
-        rm.initialize();
-        annotationHandlerMapping.initialize();
+        handlerMappings.forEach(HandlerMapping::initialize);
     }
 
     @Override
@@ -40,13 +41,20 @@ public class DispatcherServlet extends HttpServlet {
         String requestUri = req.getRequestURI();
         logger.debug("Method : {}, Request URI : {}", req.getMethod(), requestUri);
 
-        Object object = rm.getHandler(req) == null ? annotationHandlerMapping.getHandler(req) : rm.getHandler(req);
+        Object handler = handlerMappings.stream()
+                .map(handlerMapping -> handlerMapping.getHandler(req))
+                .filter(Objects::nonNull)
+                .findAny()
+                .orElseThrow(NotFoundHandlerException::new);
+
         try {
-            if (object instanceof HandlerExecution) {
-                ModelAndView modelAndView = ((HandlerExecution) object).handle(req, resp);
+            if (handler instanceof HandlerExecution) {
+                ModelAndView modelAndView = ((HandlerExecution) handler).handle(req, resp);
                 modelAndView.render(req, resp);
-            } else {
-                String viewName = ((Controller) object).execute(req, resp);
+            }
+
+            if (handler instanceof Controller) {
+                String viewName = ((Controller) handler).execute(req, resp);
                 move(viewName, req, resp);
             }
         } catch (Throwable e) {
