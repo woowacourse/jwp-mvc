@@ -37,6 +37,9 @@ public class ObjectArgumentResolver implements ArgumentResolver {
         return parameterInstance;
     }
 
+    /**
+     * @throws ConstructorException 기본 생성자가 없으면 발생합니다.
+     */
     private Object getInstance(Class<?> type) {
         try {
             Constructor constructor = type.getDeclaredConstructor();
@@ -44,17 +47,21 @@ public class ObjectArgumentResolver implements ArgumentResolver {
             return constructor.newInstance();
         } catch (ReflectiveOperationException e) {
             logger.error("Cannot create Instance: {}", type.toGenericString(), e);
-            throw new ConstructorException();
+            throw new ConstructorException(e);
         }
     }
 
+    /**
+     * @throws FinalFieldSetException final field 를 set 할 때 발생합니다.
+     */
     private void setField(Object instance, Field field, Object value) {
         try {
             field.setAccessible(true);
             field.set(instance, value);
         } catch (IllegalAccessException e) {
-            logger.error("Cannot set instance field - instance: {}, field - {}", instance.toString(), field.toGenericString());
-            throw new FinalFieldSetException();
+            logger.error("Cannot set instance field - instance: {}, field - {}",
+                    instance.toString(), field.toGenericString(), e);
+            throw new FinalFieldSetException(e);
         }
     }
 }
