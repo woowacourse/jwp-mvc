@@ -1,6 +1,7 @@
 package nextstep.mvc.tobe.handler;
 
 import nextstep.mvc.tobe.ModelAndView;
+import nextstep.mvc.tobe.exception.ReturnTypeNotSupportedException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -20,7 +21,13 @@ public class HandlerExecution {
             throws InvocationTargetException, IllegalAccessException {
         final Class<?> returnType = method.getReturnType();
 
-        if (returnType instanceof ModelAndView) {
-        return (ModelAndView) method.invoke(handler, request, response);
+        if (returnType.isAssignableFrom(ModelAndView.class)) {
+            return (ModelAndView) method.invoke(handler, request, response);
+        }
+        if (returnType.isAssignableFrom(String.class)) {
+            String path = (String) method.invoke(handler, request, response);
+            return new ModelAndView(path);
+        }
+        throw new ReturnTypeNotSupportedException();
     }
 }

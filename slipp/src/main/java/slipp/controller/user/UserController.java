@@ -40,7 +40,7 @@ public class UserController {
     @RequestMapping(value = "/users/create", method = RequestMethod.POST)
     public ModelAndView createUser(HttpServletRequest request, HttpServletResponse response) {
         User user = new User(request.getParameter("userId"), request.getParameter("password"), request.getParameter("name"),
-            request.getParameter("email"));
+                request.getParameter("email"));
         logger.debug("User : {}", user);
 
         DataBase.addUser(user);
@@ -87,21 +87,21 @@ public class UserController {
             throw new IllegalStateException("다른 사용자의 정보를 수정할 수 없습니다.");
         }
         request.setAttribute("user", user);
-        return new ModelAndView(new JspView("/user/updateForm.jsp"));
+        return new ModelAndView("/user/updateForm.jsp");
     }
 
     @RequestMapping(value = "/users/loginForm", method = RequestMethod.GET)
-    public ModelAndView forwardLoginForm(HttpServletRequest request, HttpServletResponse response) {
-        return new ModelAndView("/user/login.jsp");
+    public String forwardLoginForm(HttpServletRequest request, HttpServletResponse response) {
+        return "/user/login.jsp";
     }
 
     @RequestMapping(value = "/users/form", method = RequestMethod.GET)
-    public ModelAndView forwardUserForm(HttpServletRequest request, HttpServletResponse response) {
-        return new ModelAndView("/user/form.jsp");
+    public String forwardUserForm(HttpServletRequest request, HttpServletResponse response) {
+        return "/user/form.jsp";
     }
 
     @RequestMapping(value = "/users", method = RequestMethod.GET)
-    public ModelAndView retriveUsers(HttpServletRequest request, HttpServletResponse response) {
+    public ModelAndView retrieveUsers(HttpServletRequest request, HttpServletResponse response) {
         if (!UserSessionUtils.isLogined(request.getSession())) {
             return new ModelAndView("redirect:/users/loginForm");
         }
