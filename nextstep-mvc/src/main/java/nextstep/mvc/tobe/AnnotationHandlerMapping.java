@@ -2,65 +2,64 @@ package nextstep.mvc.tobe;
 
 import com.google.common.collect.Maps;
 import nextstep.mvc.HandlerMapping;
+import nextstep.mvc.exception.KeyNotFoundException;
 import nextstep.mvc.exception.MappingException;
-import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
-import org.reflections.Reflections;
+import org.reflections.ReflectionUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.Map;
-import java.util.Set;
 
 public class AnnotationHandlerMapping implements HandlerMapping {
     private Object[] basePackage;
 
-    private Map<HandlerKey, nextstep.mvc.asis.Controller> handlerExecutions = Maps.newHashMap();
+    private Map<HandlerKey, HandlerExecution> handlerExecutions = Maps.newHashMap();
 
     public AnnotationHandlerMapping(Object... basePackage) {
         this.basePackage = basePackage;
     }
 
     public void initialize() {
-        Reflections reflection = new Reflections(basePackage);
-        Set<Class<?>> controllers = reflection.getTypesAnnotatedWith(Controller.class);
-
-        for (Class<?> controller : controllers) {
-            Method[] methods = controller.getDeclaredMethods();
-            for (Method method : methods) {
-                putHandlerExecution(controller, method);
-            }
-        }
+        ControllerScanner controllerScanner = new ControllerScanner(basePackage);
+        controllerScanner.getControllers()
+                .forEach(this::getRequestMappingMethod);
     }
 
     @Override
-    public nextstep.mvc.asis.Controller getHandler(HttpServletRequest request) {
+    public HandlerExecution getHandler(HttpServletRequest request) {
         HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), RequestMethod.of(request.getMethod()));
+        if (!handlerExecutions.containsKey(handlerKey)) {
+            throw new KeyNotFoundException();
+        }
         return handlerExecutions.get(handlerKey);
     }
 
-    private void putHandlerExecution(Class<?> controller, Method method) {
-        if (method.isAnnotationPresent(RequestMapping.class)) {
-            String url = method.getAnnotation(RequestMapping.class).value();
-            RequestMethod[] requestMethod = method.getAnnotation(RequestMapping.class).method();
-            requestMethod = isRequestMethodEmpty(requestMethod);
-
-            HandlerKey handlerKey = new HandlerKey(url, requestMethod[0]);
-
-            if (handlerExecutions.containsKey(handlerKey)) {
-                throw new MappingException();
-            }
-
-            handlerExecutions.put(handlerKey,
-                    (request, response) -> method.invoke(controller.newInstance(), request, response));
+    private HandlerKey createHandlerKey(String value, RequestMethod method) {
+        HandlerKey handlerkey = new HandlerKey(value, method);
+        if (handlerExecutions.containsKey(handlerkey)) {
+            throw new MappingException();
         }
+        return handlerkey;
     }
 
-    private RequestMethod[] isRequestMethodEmpty(RequestMethod[] requestMethod) {
-        if (requestMethod.length == 0) {
-            requestMethod = RequestMethod.values();
+    private HandlerExecution createHandlerExecution(Class<?> clazz, Method method) {
+        return new HandlerExecution(clazz, method);
+    }
+
+    private void getRequestMappingMethod(Class<?> clazz) {
+        ReflectionUtils.getAllMethods(clazz, ReflectionUtils.withAnnotation(RequestMapping.class))
+                .forEach(classMethod -> addHandlerExecution(clazz, classMethod));
+    }
+
+    private void addHandlerExecution(Class<?> clazz, Method classMethod) {
+        RequestMapping rm = classMethod.getAnnotation(RequestMapping.class);
+        String value = rm.value();
+        RequestMethod[] methods = rm.method();
+
+        for (RequestMethod method : methods) {
+            handlerExecutions.put(createHandlerKey(value, method), createHandlerExecution(clazz, classMethod));
         }
-        return requestMethod;
     }
 }
