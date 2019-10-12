@@ -50,10 +50,6 @@ public class User {
         return userId.equals(user.userId);
     }
 
-    public boolean isSameEmail(String email) {
-        return this.email.equals(email);
-    }
-
     @Override
     public int hashCode() {
         final int prime = 31;
