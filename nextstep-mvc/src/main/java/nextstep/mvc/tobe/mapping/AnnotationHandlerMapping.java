@@ -7,8 +7,6 @@ import nextstep.mvc.tobe.handler.HandlerKey;
 import nextstep.mvc.tobe.support.ControllerScanner;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
-import nextstep.web.support.HttpRequestUri;
-import nextstep.web.support.RequestUri;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,9 +65,8 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     @Override
     @Nullable
     public HandlerExecution getHandler(HttpServletRequest request) {
-        RequestUri uri = new HttpRequestUri(request.getRequestURI());
         final RequestMethod method = RequestMethod.valueOf(request.getMethod());
-        final HandlerKey key = new HandlerKey(uri.extract(), method);
+        final HandlerKey key = new HandlerKey(request.getRequestURI(), method);
         return handlerExecutions.get(key);
     }
 }
