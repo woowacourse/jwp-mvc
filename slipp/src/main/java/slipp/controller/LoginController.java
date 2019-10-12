@@ -1,5 +1,6 @@
 package slipp.controller;
 
+import slipp.controller.exception.NotFoundUserException;
 import slipp.domain.User;
 import slipp.support.db.DataBase;
 import nextstep.mvc.asis.Controller;
@@ -13,7 +14,8 @@ public class LoginController implements Controller {
     public String execute(HttpServletRequest req, HttpServletResponse resp) throws Exception {
         String userId = req.getParameter("userId");
         String password = req.getParameter("password");
-        User user = DataBase.findUserById(userId);
+        User user = DataBase.findUserById(userId)
+                .orElseThrow(NotFoundUserException::new);
         if (user == null) {
             req.setAttribute("loginFailed", true);
             return "/user/login.jsp";
