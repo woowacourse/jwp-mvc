@@ -1,6 +1,5 @@
 package slipp.controller;
 
-import nextstep.mvc.tobe.view.JspView;
 import nextstep.mvc.tobe.view.ModelAndView;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
@@ -31,16 +30,16 @@ public class UserController {
         logger.debug("User : {}", user);
 
         DataBase.addUser(user);
-        return new ModelAndView(new JspView("redirect:/"));
+        return new ModelAndView("redirect:/");
     }
 
     @RequestMapping(value = "/users", method = RequestMethod.GET)
     public ModelAndView showUserList(HttpSession session) {
         if (!UserSessionUtils.isLogined(session)) {
-            return new ModelAndView(new JspView("redirect:/users/loginForm"));
+            return new ModelAndView("redirect:/users/loginForm");
         }
         session.setAttribute("users", DataBase.findAll());
-        return new ModelAndView(new JspView("/user/list.jsp"));
+        return new ModelAndView("/user/list.jsp");
     }
 
     @RequestMapping(value = "/users/login", method = RequestMethod.POST)
@@ -48,16 +47,16 @@ public class UserController {
         User user = DataBase.findUserById(userId);
         if (user != null && user.matchPassword(password)) {
             session.setAttribute(UserSessionUtils.USER_SESSION_KEY, user);
-            return new ModelAndView(new JspView("redirect:/"));
+            return new ModelAndView("redirect:/");
         }
         session.removeAttribute(UserSessionUtils.USER_SESSION_KEY);
-        return new ModelAndView(new JspView("/user/login.jsp"));
+        return new ModelAndView("/user/login.jsp");
     }
 
     @RequestMapping(value = "/users/logout", method = RequestMethod.GET)
     public ModelAndView logout(HttpSession session) {
         session.removeAttribute(UserSessionUtils.USER_SESSION_KEY);
-        return new ModelAndView(new JspView("redirect:/"));
+        return new ModelAndView("redirect:/");
     }
 
     @RequestMapping(value = "/users/profile", method = RequestMethod.GET)
@@ -67,7 +66,7 @@ public class UserController {
             throw new NotFoundUserException(userId);
         }
         req.setAttribute("user", user);
-        return new ModelAndView(new JspView("/user/profile.jsp"));
+        return new ModelAndView("/user/profile.jsp");
     }
 
     @RequestMapping(value = "/users/updateForm", method = RequestMethod.GET)
@@ -77,7 +76,7 @@ public class UserController {
             throw new UnAuthorizedException(userId);
         }
         req.setAttribute("user", user);
-        return new ModelAndView(new JspView("/user/updateForm.jsp"));
+        return new ModelAndView("/user/updateForm.jsp");
     }
 
     @RequestMapping(value = "/users/update", method = RequestMethod.POST)
@@ -94,16 +93,16 @@ public class UserController {
 
         logger.debug("Update User : {}", updateUser);
         user.update(updateUser);
-        return new ModelAndView(new JspView("redirect:/"));
+        return new ModelAndView("redirect:/");
     }
 
     @RequestMapping(value = "/users/form", method = RequestMethod.GET)
-    public ModelAndView showUserForm() {
-        return new ModelAndView(new JspView("/user/form.jsp"));
+    public String showUserForm() {
+        return "/user/form.jsp";
     }
 
     @RequestMapping(value = "/users/loginForm", method = RequestMethod.GET)
-    public ModelAndView showLoginForm() {
-        return new ModelAndView(new JspView("/user/login.jsp"));
+    public String showLoginForm() {
+        return "/user/login.jsp";
     }
 }

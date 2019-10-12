@@ -8,7 +8,9 @@ import nextstep.mvc.tobe.argumentresolver.ObjectArgumentResolver;
 import nextstep.mvc.tobe.argumentresolver.PrimitiveArgumentResolver;
 import nextstep.mvc.tobe.argumentresolver.ServletArgumentResolver;
 import nextstep.mvc.tobe.exception.NotSupportedArgumentResolverException;
+import nextstep.mvc.tobe.exception.NotSupportedReturnValueException;
 import nextstep.mvc.tobe.view.ModelAndView;
+import nextstep.mvc.tobe.view.View;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -43,7 +45,24 @@ public class HandlerExecution implements Handler {
             arguments[i] = resolve(methodParameters.get(i), request, response);
         }
 
-        return (ModelAndView) method.invoke(object, arguments);
+
+        return getModelAndView(method.invoke(object, arguments));
+    }
+
+    private ModelAndView getModelAndView(Object returnValue) {
+        if (returnValue instanceof String) {
+            return new ModelAndView((String) returnValue);
+        }
+
+        if (returnValue instanceof View) {
+            return new ModelAndView((View) returnValue);
+        }
+
+        if (returnValue instanceof ModelAndView) {
+            return (ModelAndView) returnValue;
+        }
+
+        throw new NotSupportedReturnValueException();
     }
 
     private Object resolve(MethodParameter methodParameter, HttpServletRequest request, HttpServletResponse response) {

@@ -3,8 +3,13 @@ package nextstep.mvc;
 import nextstep.mvc.tobe.Handler;
 import nextstep.mvc.tobe.exception.NotFoundAdapterException;
 import nextstep.mvc.tobe.exception.NotFoundHandlerException;
+import nextstep.mvc.tobe.exception.NotFoundViewException;
 import nextstep.mvc.tobe.handleradapter.HandlerAdapter;
 import nextstep.mvc.tobe.view.ModelAndView;
+import nextstep.mvc.tobe.view.View;
+import nextstep.mvc.tobe.viewresolver.JspViewResolver;
+import nextstep.mvc.tobe.viewresolver.RedirectViewResolver;
+import nextstep.mvc.tobe.viewresolver.ViewResolver;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +19,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -24,10 +30,12 @@ public class DispatcherServlet extends HttpServlet {
 
     private List<HandlerMapping> mappings;
     private List<HandlerAdapter> handlerAdapters;
+    private List<ViewResolver> viewResolvers;
 
     public DispatcherServlet(List<HandlerMapping> mappings, List<HandlerAdapter> handlerAdapters) {
         this.mappings = mappings;
         this.handlerAdapters = handlerAdapters;
+        this.viewResolvers = Arrays.asList(new JspViewResolver(), new RedirectViewResolver());
     }
 
     @Override
@@ -43,7 +51,8 @@ public class DispatcherServlet extends HttpServlet {
             Handler handler = getHandler(req);
             HandlerAdapter handlerAdapter = getHandlerAdapter(handler);
             ModelAndView mav = handlerAdapter.handle(req, resp, handler);
-            mav.render(req, resp);
+            View view = getView(mav);
+            view.render(mav.getModel(), req, resp);
         } catch (Throwable e) {
             logger.error("Exception: {}", ExceptionUtils.getStackTrace(e));
             throw new ServletException(e);
@@ -63,5 +72,13 @@ public class DispatcherServlet extends HttpServlet {
                 .filter(adapter -> adapter.supports(handler))
                 .findFirst()
                 .orElseThrow(NotFoundAdapterException::new);
+    }
+
+    private View getView(ModelAndView mav) {
+        return viewResolvers.stream()
+                .map(viewResolver -> viewResolver.resolve(mav.getViewName()))
+                .filter(Objects::nonNull)
+                .findFirst()
+                .orElseThrow(NotFoundViewException::new);
     }
 }
