@@ -5,6 +5,7 @@ import nextstep.mvc.tobe.ModelAndView;
 import nextstep.mvc.tobe.view.JsonView;
 import nextstep.utils.JsonUtils;
 import nextstep.web.annotation.Controller;
+import nextstep.web.annotation.RequestBody;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
 import slipp.domain.User;
@@ -20,10 +21,7 @@ import static javax.servlet.http.HttpServletResponse.SC_CREATED;
 public class UserApiController {
 
     @RequestMapping(value = "/api/users", method = RequestMethod.POST)
-    public ModelAndView create(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        User user = JsonUtils.toObject(
-                CharStreams.toString(request.getReader()), User.class);
-
+    public ModelAndView create(@RequestBody User user, HttpServletResponse response) {
         DataBase.addUser(user);
 
         response.setStatus(SC_CREATED);
@@ -32,7 +30,7 @@ public class UserApiController {
     }
 
     @RequestMapping(value = "/api/users", method = RequestMethod.GET)
-    public ModelAndView find(HttpServletRequest request, HttpServletResponse response) {
+    public ModelAndView find(HttpServletRequest request) {
         String userId = request.getParameter("userId");
         User user = DataBase.findUserById(userId);
 
@@ -41,7 +39,7 @@ public class UserApiController {
     }
 
     @RequestMapping(value = "/api/users", method = RequestMethod.PUT)
-    public ModelAndView update(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public ModelAndView update(HttpServletRequest request) throws IOException {
         User user = DataBase.findUserById(request.getParameter("userId"));
         User updateUser = JsonUtils.toObject(
                 CharStreams.toString(request.getReader()), User.class);

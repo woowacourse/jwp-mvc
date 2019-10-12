@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 public class IndexController {
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
-    public ModelAndView index(HttpServletRequest request, HttpServletResponse response) {
+    public ModelAndView index() {
         return new ModelAndView(new JspView("home.jsp"));
     }
 }

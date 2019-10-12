@@ -3,6 +3,7 @@ package slipp.controller;
 import nextstep.mvc.tobe.ModelAndView;
 import nextstep.mvc.tobe.view.JspView;
 import nextstep.web.annotation.Controller;
+import nextstep.web.annotation.ModelAttribute;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
 import org.slf4j.Logger;
@@ -19,19 +20,14 @@ public class UserController {
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
 
     @RequestMapping(value = "/users/create", method = RequestMethod.POST)
-    public ModelAndView save(HttpServletRequest request, HttpServletResponse response) {
-        User user = new User(
-                request.getParameter("userId"),
-                request.getParameter("password"),
-                request.getParameter("name"),
-                request.getParameter("email"));
-
+    public ModelAndView save(@ModelAttribute User user) {
+        log.debug("User : {}", user);
         DataBase.addUser(user);
         return new ModelAndView(new JspView("redirect:/"));
     }
 
     @RequestMapping(value = "/users", method = RequestMethod.GET)
-    public ModelAndView list(HttpServletRequest request, HttpServletResponse response) {
+    public ModelAndView list(HttpServletRequest request) {
         if (!UserSessionUtils.isLogined(request.getSession())) {
             return new ModelAndView(new JspView("redirect:/users/loginForm"));
         }
@@ -41,17 +37,17 @@ public class UserController {
     }
 
     @RequestMapping(value = "/users/form", method = RequestMethod.GET)
-    public ModelAndView renderUserForm(HttpServletRequest request, HttpServletResponse response) {
+    public ModelAndView renderUserForm() {
         return new ModelAndView(new JspView("/user/form.jsp"));
     }
 
     @RequestMapping(value = "/users/loginForm", method = RequestMethod.GET)
-    public ModelAndView renderUserLoginForm(HttpServletRequest request, HttpServletResponse response) {
+    public ModelAndView renderUserLoginForm() {
         return new ModelAndView(new JspView("/user/login.jsp"));
     }
 
     @RequestMapping(value = "/users/updateForm", method = RequestMethod.GET)
-    public ModelAndView renderUserUpdateForm(HttpServletRequest request, HttpServletResponse response) {
+    public ModelAndView renderUserUpdateForm(HttpServletRequest request) {
         String userId = request.getParameter("userId");
         User user = DataBase.findUserById(userId);
 
@@ -64,7 +60,7 @@ public class UserController {
     }
 
     @RequestMapping(value = "/users/update", method = RequestMethod.POST)
-    public ModelAndView update(HttpServletRequest request, HttpServletResponse response) {
+    public ModelAndView update(HttpServletRequest request) {
         String userId = request.getParameter("userId");
         User user = DataBase.findUserById(userId);
 
@@ -86,7 +82,7 @@ public class UserController {
     }
 
     @RequestMapping(value = "/users/profile", method = RequestMethod.GET)
-    public ModelAndView renderUserProfile(HttpServletRequest request, HttpServletResponse response) {
+    public ModelAndView renderUserProfile(HttpServletRequest request) {
         String userId = request.getParameter("userId");
         User user = DataBase.findUserById(userId);
         if (user == null) {
