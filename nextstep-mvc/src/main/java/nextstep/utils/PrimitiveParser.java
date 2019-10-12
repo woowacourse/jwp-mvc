@@ -1,11 +1,11 @@
-package nextstep.mvc.tobe;
+package nextstep.utils;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
 public class PrimitiveParser {
-    private static Map<Class, Function<String, Object>> primitives = new HashMap<>();
+    private static final Map<Class, Function<String, Object>> primitives = new HashMap<>();
 
     static {
         primitives.put(Boolean.class, Boolean::parseBoolean);
