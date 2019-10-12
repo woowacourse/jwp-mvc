@@ -1,9 +1,9 @@
 package nextstep.mvc;
 
-import nextstep.mvc.tobe.HandlerExecution;
 import nextstep.mvc.tobe.ModelAndView;
 import nextstep.mvc.tobe.View;
 import nextstep.mvc.tobe.handlerAdapter.HandlerAdapter;
+import nextstep.mvc.tobe.handlerAdapter.exception.NotFoundHandlerAdapterException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,24 +46,25 @@ public class DispatcherServlet extends HttpServlet {
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException {
         logger.debug("Method : {}, Request URI : {}", req.getMethod(), req.getRequestURI());
 
-        Optional<HandlerExecution> handlerExecution = findHandlerExecution(req);
+        Optional<Object> handler = findHandler(req);
 
-        if (handlerExecution.isPresent()) {
-            renderByHandler(req, resp, handlerExecution.get());
+        if (handler.isPresent()) {
+            renderByHandler(req, resp, handler.get());
             return;
         }
     }
 
-    private Optional<HandlerExecution> findHandlerExecution(HttpServletRequest req) {
+    private Optional<Object> findHandler(HttpServletRequest req) {
         return handlerMappings.stream()
                 .filter(handler -> handler.containsKey(req))
                 .map(handler -> handler.getHandler(req))
                 .findFirst();
     }
 
-    private void renderByHandler(HttpServletRequest req, HttpServletResponse resp, HandlerExecution handler) throws ServletException {
+    private void renderByHandler(HttpServletRequest req, HttpServletResponse resp, Object handler) throws ServletException {
         try {
-            ModelAndView mav = handler.handle(req, resp);
+            HandlerAdapter handlerAdapter = findHandlerAdapter(handler);
+            ModelAndView mav = handlerAdapter.handle(req, resp, handler);
             View view = mav.getView();
 
             if (view != null) {
@@ -73,5 +74,12 @@ public class DispatcherServlet extends HttpServlet {
             logger.debug(e.getMessage());
             throw new ServletException();
         }
+    }
+
+    private HandlerAdapter findHandlerAdapter(Object handler) {
+        return handlerAdapters.stream()
+                .filter(handlerAdapter -> handlerAdapter.supports(handler))
+                .findFirst()
+                .orElseThrow(NotFoundHandlerAdapterException::new);
     }
 }
