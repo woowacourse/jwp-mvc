@@ -34,7 +34,19 @@ public class LoginControllerTest {
         Map<String, String> params = new HashMap<>();
         params.put("userId","admin");
         params.put("password", "password");
-        assertThat(nsWebTestClient.postForm("/users/login", params)).isEqualTo(URI.create("/"));
+        assertThat(nsWebTestClient.postForm("/users/getLoginCookie", params)).isEqualTo(URI.create("/"));
+    }
+
+    @Test
+    void logout() {
+        Map<String, String> params = new HashMap<>();
+        params.put("userId","admin");
+        params.put("password", "password");
+        String cookie = nsWebTestClient.getLoginCookie("/users/getLoginCookie", params);
+
+        nsWebTestClient.getCookieResponse("/users/logout", cookie)
+        .expectStatus()
+        .is3xxRedirection();
     }
 
     @Test
@@ -42,6 +54,6 @@ public class LoginControllerTest {
         Map<String, String> params = new HashMap<>();
         params.put("userId", "admin");
         params.put("password", "password!@");
-        nsWebTestClient.postResponse("/users/login", params);
+        nsWebTestClient.postResponse("/users/getLoginCookie", params);
     }
 }

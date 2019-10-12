@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 @Controller
-public class LoginController2 {
+public class LoginController {
 
     @RequestMapping(value = "/users/loginForm", method = RequestMethod.GET)
     public ModelAndView loginForm(HttpServletRequest req, HttpServletResponse rep) {
@@ -26,13 +26,19 @@ public class LoginController2 {
         String userId = req.getParameter("userId");
         String password = req.getParameter("password");
         User user = DataBase.findUserById(userId);
-
         if (user == null) {
             req.setAttribute("loginFailed", true);
             return new ModelAndView(new JSPView("/user/login.jsp"));
         }
 
         return view(req, user, password);
+    }
+
+    @RequestMapping(value = "/users/logout", method = RequestMethod.GET)
+    public ModelAndView logout(HttpServletRequest req, HttpServletResponse resp) throws Exception {
+        HttpSession session = req.getSession();
+        session.removeAttribute(UserSessionUtils.USER_SESSION_KEY);
+        return new ModelAndView(new JSPView("redirect:/"));
     }
 
     private ModelAndView view(HttpServletRequest req, User user, String password) {
