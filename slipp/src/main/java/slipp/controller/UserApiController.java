@@ -40,7 +40,7 @@ public class UserApiController {
     }
 
     @RequestMapping(value = "/api/users", method = RequestMethod.GET)
-    public ModelAndView showUser(HttpServletRequest request, HttpServletResponse response) {
+    public ModelAndView showUser(HttpServletRequest request) {
         String userId = request.getParameter("userId");
         User user = DataBase.findUserById(userId);
 

@@ -15,7 +15,6 @@ import slipp.dto.UserUpdatedDto;
 import slipp.support.db.DataBase;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 @Controller
@@ -23,7 +22,7 @@ public class UserController {
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
     @RequestMapping(value = "/users/create", method = RequestMethod.POST)
-    public ModelAndView createUser(UserCreatedDto userCreatedDto, HttpServletRequest req, HttpServletResponse resp) {
+    public ModelAndView createUser(UserCreatedDto userCreatedDto) {
         User user = new User(userCreatedDto.getUserId(),
                 userCreatedDto.getPassword(),
                 userCreatedDto.getName(),
@@ -36,7 +35,7 @@ public class UserController {
     }
 
     @RequestMapping(value = "/users", method = RequestMethod.GET)
-    public ModelAndView showUserList(HttpServletRequest req, HttpServletResponse resp) {
+    public ModelAndView showUserList(HttpServletRequest req) {
         if (!UserSessionUtils.isLogined(req.getSession())) {
             return new ModelAndView(new JspView("redirect:/users/loginForm"));
         }
@@ -45,7 +44,7 @@ public class UserController {
     }
 
     @RequestMapping(value = "/users/login", method = RequestMethod.POST)
-    public ModelAndView login(String userId, String password, HttpServletRequest req, HttpServletResponse resp) {
+    public ModelAndView login(String userId, String password, HttpServletRequest req) {
         User user = DataBase.findUserById(userId);
         if (user != null && user.matchPassword(password)) {
             HttpSession session = req.getSession();
@@ -57,14 +56,14 @@ public class UserController {
     }
 
     @RequestMapping(value = "/users/logout", method = RequestMethod.GET)
-    public ModelAndView logout(HttpServletRequest req, HttpServletResponse resp) {
+    public ModelAndView logout(HttpServletRequest req) {
         HttpSession session = req.getSession();
         session.removeAttribute(UserSessionUtils.USER_SESSION_KEY);
         return new ModelAndView(new JspView("redirect:/"));
     }
 
     @RequestMapping(value = "/users/profile", method = RequestMethod.GET)
-    public ModelAndView showProfile(String userId, HttpServletRequest req, HttpServletResponse resp) {
+    public ModelAndView showProfile(String userId, HttpServletRequest req) {
         User user = DataBase.findUserById(userId);
         if (user == null) {
             throw new NotFoundUserException(userId);
@@ -74,7 +73,7 @@ public class UserController {
     }
 
     @RequestMapping(value = "/users/updateForm", method = RequestMethod.GET)
-    public ModelAndView showUpdateForm(String userId, HttpServletRequest req, HttpServletResponse resp) {
+    public ModelAndView showUpdateForm(String userId, HttpServletRequest req) {
         User user = DataBase.findUserById(userId);
         if (!UserSessionUtils.isSameUser(req.getSession(), user)) {
             throw new UnAuthorizedException(userId);
@@ -85,7 +84,7 @@ public class UserController {
 
     @RequestMapping(value = "/users/update", method = RequestMethod.POST)
     public ModelAndView updateUser(String userId, UserUpdatedDto userUpdatedDto,
-                                   HttpServletRequest req, HttpServletResponse resp) {
+                                   HttpServletRequest req) {
         User user = DataBase.findUserById(userId);
         if (!UserSessionUtils.isSameUser(req.getSession(), user)) {
             throw new UnAuthorizedException(userId);
@@ -102,12 +101,12 @@ public class UserController {
     }
 
     @RequestMapping(value = "/users/form", method = RequestMethod.GET)
-    public ModelAndView showUserForm(HttpServletRequest req, HttpServletResponse resp) {
+    public ModelAndView showUserForm() {
         return new ModelAndView(new JspView("/user/form.jsp"));
     }
 
     @RequestMapping(value = "/users/loginForm", method = RequestMethod.GET)
-    public ModelAndView showLoginForm(HttpServletRequest req, HttpServletResponse resp) {
+    public ModelAndView showLoginForm() {
         return new ModelAndView(new JspView("/user/login.jsp"));
     }
 }
