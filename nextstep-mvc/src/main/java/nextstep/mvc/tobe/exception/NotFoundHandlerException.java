@@ -1,4 +1,4 @@
-package nextstep.mvc;
+package nextstep.mvc.tobe.exception;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

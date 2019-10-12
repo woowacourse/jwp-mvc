@@ -1,6 +1,8 @@
 package nextstep.mvc;
 
 import nextstep.mvc.tobe.Handler;
+import nextstep.mvc.tobe.exception.NotFoundAdapterException;
+import nextstep.mvc.tobe.exception.NotFoundHandlerException;
 import nextstep.mvc.tobe.handleradapter.HandlerAdapter;
 import nextstep.mvc.tobe.view.ModelAndView;
 import org.apache.commons.lang3.exception.ExceptionUtils;

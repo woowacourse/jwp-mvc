@@ -6,6 +6,7 @@ import nextstep.mvc.tobe.argumentresolver.MethodParameters;
 import nextstep.mvc.tobe.argumentresolver.ObjectArgumentResolver;
 import nextstep.mvc.tobe.argumentresolver.PrimitiveArgumentResolver;
 import nextstep.mvc.tobe.argumentresolver.ServletArgumentResolver;
+import nextstep.mvc.tobe.exception.NotSupportedArgumentResolverException;
 import nextstep.mvc.tobe.view.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
