@@ -1,5 +1,6 @@
 package nextstep.mvc.tobe;
 
+import nextstep.mvc.tobe.view.JsonView;
 import nextstep.mvc.tobe.view.View;
 import nextstep.mvc.tobe.view.ViewResolver;
 
@@ -13,9 +14,7 @@ public class ModelAndView {
     private Map<String, Object> model = new HashMap<String, Object>();
 
     public ModelAndView() {
-        this.view = (model, request, response) -> {
-
-        };
+        this.view = new JsonView();
     }
 
     public ModelAndView(final String viewName) {

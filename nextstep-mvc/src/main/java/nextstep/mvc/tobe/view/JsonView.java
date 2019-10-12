@@ -5,7 +5,6 @@ import nextstep.web.support.MediaType;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.PrintWriter;
 import java.util.Map;
 
 public class JsonView implements View {
