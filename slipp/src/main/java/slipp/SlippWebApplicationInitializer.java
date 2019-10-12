@@ -1,7 +1,7 @@
 package slipp;
 
 import nextstep.mvc.DispatcherServlet;
-import nextstep.mvc.HandlerMapping;
+import nextstep.mvc.tobe.mapping.HandlerMapping;
 import nextstep.mvc.tobe.adapter.HandlerAdapter;
 import nextstep.mvc.tobe.adapter.HandlerExecutionAdapter;
 import nextstep.mvc.tobe.mapping.AnnotationHandlerMapping;

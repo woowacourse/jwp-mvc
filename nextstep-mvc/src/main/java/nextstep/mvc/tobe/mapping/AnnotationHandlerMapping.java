@@ -1,7 +1,6 @@
 package nextstep.mvc.tobe.mapping;
 
 import com.google.common.collect.Maps;
-import nextstep.mvc.HandlerMapping;
 import nextstep.mvc.tobe.handler.HandlerExecution;
 import nextstep.mvc.tobe.handler.HandlerKey;
 import nextstep.mvc.tobe.support.ControllerScanner;
