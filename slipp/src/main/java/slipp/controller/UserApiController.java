@@ -6,7 +6,6 @@ import nextstep.utils.JsonUtils;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
-import org.apache.commons.io.IOUtils;
 import slipp.domain.User;
 import slipp.dto.UserCreatedDto;
 import slipp.dto.UserUpdatedDto;
@@ -22,13 +21,14 @@ public class UserApiController {
     @RequestMapping(value = "/api/users", method = RequestMethod.POST)
     public ModelAndView createUser(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         UserCreatedDto userCreatedDto = JsonUtils.toObject(
-                IOUtils.toString(req.getReader()),
+                req.getInputStream(),
                 UserCreatedDto.class
         );
 
         DataBase.addUser(userCreatedDto.toUser());
 
-        return new ModelAndView(new JsonView().created("/api/users?userId=" + userCreatedDto.getUserId()));
+        return new ModelAndView(new JsonView()
+                .created("/api/users?userId=" + userCreatedDto.getUserId()));
     }
 
     @RequestMapping(value = "/api/users", method = RequestMethod.GET)
@@ -42,7 +42,7 @@ public class UserApiController {
     @RequestMapping(value = "/api/users", method = RequestMethod.PUT)
     public ModelAndView updateUser(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         UserUpdatedDto userCreatedDto = JsonUtils.toObject(
-                IOUtils.toString(req.getReader()),
+                req.getInputStream(),
                 UserUpdatedDto.class
         );
 
