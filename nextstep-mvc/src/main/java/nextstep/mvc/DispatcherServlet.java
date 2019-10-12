@@ -28,9 +28,9 @@ public class DispatcherServlet extends HttpServlet {
 
     private static final String VIEW_RESOLVER_BASE_PACKAGE = "nextstep.mvc.tobe.resolver";
 
-    private List<HandlerMapping> handlerMappings;
-    private HandlerAdapter handlerAdapter;
-    private List<ViewResolver> viewResolvers;
+    private final List<HandlerMapping> handlerMappings;
+    private final HandlerAdapter handlerAdapter;
+    private final List<ViewResolver> viewResolvers;
 
     public DispatcherServlet(List<HandlerMapping> handlerMappings, HandlerAdapter handlerAdapter) throws ServletException {
         this.handlerMappings = handlerMappings;
@@ -53,7 +53,7 @@ public class DispatcherServlet extends HttpServlet {
         HandlerExecution handler = getHandler(req);
         ModelAndView mav = handlerAdapter.handle(req, resp, handler);
         resolveView(mav);
-        renderView(req, resp, mav);
+        applyView(req, resp, mav);
     }
 
     private List<ViewResolver> initViewResolvers() {
@@ -74,6 +74,10 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private void resolveView(ModelAndView mav) throws ServletException {
+        if (Objects.nonNull(mav.getView())) {
+            return;
+        }
+
         View view = this.viewResolvers.stream()
                 .filter(viewResolver -> viewResolver.supports(mav))
                 .findFirst()
@@ -82,7 +86,7 @@ public class DispatcherServlet extends HttpServlet {
         mav.setView(view);
     }
 
-    private void renderView(HttpServletRequest req, HttpServletResponse resp, ModelAndView mav) throws ServletException {
+    private void applyView(HttpServletRequest req, HttpServletResponse resp, ModelAndView mav) throws ServletException {
         try {
             mav.getView().render(mav.getModel(), req, resp);
         } catch (Exception e) {

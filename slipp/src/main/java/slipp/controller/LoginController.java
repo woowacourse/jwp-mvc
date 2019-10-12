@@ -11,6 +11,7 @@ import slipp.support.utils.UserSessionUtils;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.util.Objects;
 
 @Controller
 public class LoginController {
@@ -25,18 +26,19 @@ public class LoginController {
         String userId = req.getParameter("userId");
         String password = req.getParameter("password");
         User user = DataBase.findUserById(userId);
-        if (user == null) {
-            req.setAttribute("loginFailed", true);
-            return new ModelAndView("/user/login.jsp");
-        }
-        if (user.matchPassword(password)) {
+
+        if (isValidLogin(password, user)) {
             HttpSession session = req.getSession();
             session.setAttribute(UserSessionUtils.USER_SESSION_KEY, user);
             return new ModelAndView("redirect:/");
-        } else {
-            req.setAttribute("loginFailed", true);
-            return new ModelAndView("/user/login.jsp");
         }
+
+        req.setAttribute("loginFailed", true);
+        return new ModelAndView("/user/login.jsp");
+    }
+
+    private boolean isValidLogin(String password, User user) {
+        return Objects.nonNull(user) && user.matchPassword(password);
     }
 
     @RequestMapping(value = "/users/logout", method = RequestMethod.GET)
