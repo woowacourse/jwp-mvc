@@ -39,10 +39,10 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         if (isRequestMethodEmpty(annotationRequestMethod)) {
             Arrays.stream(RequestMethod.values())
                     .filter(requestMethod -> isNotRegistered(annotation, requestMethod))
-                    .forEach(requestMethod -> annotationRequestMethod.add(requestMethod));
+                    .forEach(annotationRequestMethod::add);
         }
 
-        annotationRequestMethod.stream()
+        annotationRequestMethod
                 .forEach(x -> {
                     HandlerKey handlerKey = new HandlerKey(annotation.value(), x);
                     handlerExecutions.put(handlerKey, handlerExecution);
@@ -61,7 +61,6 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     public HandlerExecution getHandler(HttpServletRequest request) {
         String uri = request.getRequestURI();
         RequestMethod method = RequestMethod.valueOf(request.getMethod());
-        HandlerExecution handlerExecution = handlerExecutions.get(new HandlerKey(uri, method));
-        return handlerExecution;
+        return handlerExecutions.get(new HandlerKey(uri, method));
     }
 }
