@@ -12,6 +12,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRegistration;
 import java.util.Arrays;
+import java.util.Collections;
 
 public class SlippWebApplicationInitializer implements WebApplicationInitializer {
     private static final Logger logger = LoggerFactory.getLogger(SlippWebApplicationInitializer.class);
@@ -19,7 +20,7 @@ public class SlippWebApplicationInitializer implements WebApplicationInitializer
     @Override
     public void onStartup(final ServletContext servletContext) throws ServletException {
         final DispatcherServlet dispatcherServlet = new DispatcherServlet(
-                Arrays.asList(new ManualHandlerMapping(), new AnnotationHandlerMapping("slipp.controller")),
+                Collections.singletonList(new AnnotationHandlerMapping("slipp.controller")),
                 Arrays.asList(new ControllerHandlerAdapter(), new HandlerExecutionHandlerAdapter()));
 
         final ServletRegistration.Dynamic dispatcher = servletContext.addServlet("dispatcher", dispatcherServlet);
