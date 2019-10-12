@@ -2,6 +2,7 @@ package slipp.controller;
 
 import nextstep.mvc.tobe.view.JspView;
 import nextstep.mvc.tobe.view.ModelAndView;
+import nextstep.mvc.tobe.view.RedirectView;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
@@ -21,7 +22,7 @@ public class UserController {
     @RequestMapping(value = "/users", method = RequestMethod.GET)
     public ModelAndView show(HttpServletRequest request, HttpServletResponse response) {
         if (!UserSessionUtils.isLogined(request.getSession())) {
-            return new ModelAndView(new JspView("redirect:/users/loginForm"));
+            return new ModelAndView(new RedirectView("/users/loginForm"));
         }
 
         request.setAttribute("users", DataBase.findAll());
@@ -39,6 +40,35 @@ public class UserController {
 
         DataBase.addUser(user);
 
-        return new ModelAndView(new JspView("redirect:/users"));
+        return new ModelAndView(new RedirectView("/"));
+    }
+
+    @RequestMapping(value = "/users/form")
+    public ModelAndView createForm(HttpServletRequest request, HttpServletResponse response) {
+        return new ModelAndView(new JspView("/user/form.jsp"));
+    }
+
+    @RequestMapping(value = "/users/updateForm")
+    public ModelAndView updateForm(HttpServletRequest request, HttpServletResponse response) {
+        String userId = request.getParameter("userId");
+        User user = DataBase.findUserById(userId);
+        if (!UserSessionUtils.isSameUser(request.getSession(), user)) {
+            throw new IllegalStateException("다른 사용자의 정보를 수정할 수 없습니다.");
+        }
+        request.setAttribute("user", user);
+        return new ModelAndView(new JspView("/user/updateForm.jsp"));
+    }
+
+    @RequestMapping(value = "/users/update", method = RequestMethod.POST)
+    public ModelAndView update(HttpServletRequest request, HttpServletResponse response) {
+        User user = DataBase.findUserById(request.getParameter("userId"));
+        if (!UserSessionUtils.isSameUser(request.getSession(), user)) {
+            throw new IllegalStateException("다른 사용자의 정보를 수정할 수 없습니다.");
+        }
+        User updateUser = new User(request.getParameter("userId"), request.getParameter("password"), request.getParameter("name"),
+                request.getParameter("email"));
+        log.debug("Update User : {}", updateUser);
+        user.update(updateUser);
+        return new ModelAndView(new RedirectView("/"));
     }
 }

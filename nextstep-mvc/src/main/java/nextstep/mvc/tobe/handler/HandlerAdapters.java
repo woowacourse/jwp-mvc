@@ -7,10 +7,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
-public class HandlerAdapterRepository {
+public class HandlerAdapters {
     private final List<HandlerAdapter> handlerAdapters;
 
-    public HandlerAdapterRepository(List<HandlerAdapter> handlerAdapters) {
+    public HandlerAdapters(List<HandlerAdapter> handlerAdapters) {
         this.handlerAdapters = handlerAdapters;
     }
 

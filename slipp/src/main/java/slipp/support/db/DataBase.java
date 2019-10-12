@@ -24,4 +24,11 @@ public class DataBase {
     public static Collection<User> findAll() {
         return users.values();
     }
+
+    public static void replace(User updatedUser) {
+        if (!users.keySet().contains(updatedUser.getUserId())) {
+            throw new UnfoundUserException();
+        }
+        users.replace(updatedUser.getUserId(), updatedUser);
+    }
 }

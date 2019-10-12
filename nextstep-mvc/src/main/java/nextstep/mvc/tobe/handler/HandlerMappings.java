@@ -1,4 +1,4 @@
-package nextstep.mvc;
+package nextstep.mvc.tobe.handler;
 
 import nextstep.mvc.exception.HandlerNotFoundException;
 
@@ -6,10 +6,10 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Objects;
 
-public class HandlerMappingRepository {
+public class HandlerMappings {
     private final List<HandlerMapping> handlerMappings;
 
-    public HandlerMappingRepository(List<HandlerMapping> handlerMappings) {
+    public HandlerMappings(List<HandlerMapping> handlerMappings) {
         this.handlerMappings = handlerMappings;
     }
 
