@@ -1,12 +1,13 @@
 package nextstep.mvc.tobe;
 
+import nextstep.mvc.tobe.controllermapper.ControllerParameterMapper;
+import nextstep.mvc.tobe.controllermapper.ParameterAdeptersFactory;
 import nextstep.mvc.tobe.view.ModelAndView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 public class HandlerExecution {
@@ -20,8 +21,8 @@ public class HandlerExecution {
 
     }
 
-    public ModelAndView handle(HttpServletRequest request, HttpServletResponse response) throws InvocationTargetException, IllegalAccessException {
-        ControllerParameterMapper controllerParameterMapper = new ControllerParameterMapper(method);
+    public ModelAndView handle(HttpServletRequest request, HttpServletResponse response) throws Exception{
+        ControllerParameterMapper controllerParameterMapper = new ControllerParameterMapper(method, ParameterAdeptersFactory.getAdepters());
         Object[] objects = controllerParameterMapper.getObjects(request, response);
         log.debug("object : {}", objects);
         return (ModelAndView) method.invoke(declaredObject, objects);
