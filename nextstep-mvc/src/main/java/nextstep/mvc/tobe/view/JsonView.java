@@ -12,6 +12,7 @@ import java.util.Map;
 public class JsonView implements View {
     private static final int EMPTY_DATA = 0;
     private static final int SINGLE_DATA = 1;
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     private int status = 200;
     private String location;
@@ -51,13 +52,10 @@ public class JsonView implements View {
             data = getSingleData(model);
         }
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        return objectMapper.writeValueAsString(data);
+        return OBJECT_MAPPER.writeValueAsString(data);
     }
 
     private Object getSingleData(Map<String, ?> model) {
-        return model.values().stream()
-                .findFirst()
-                .orElseThrow(IllegalArgumentException::new);
+        return model.values().toArray()[0];
     }
 }
