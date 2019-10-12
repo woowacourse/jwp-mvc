@@ -3,6 +3,7 @@ package nextstep.mvc;
 import nextstep.mvc.tobe.HandlerExecution;
 import nextstep.mvc.tobe.ModelAndView;
 import nextstep.mvc.tobe.View;
+import nextstep.mvc.tobe.handlerAdapter.HandlerAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,13 +22,19 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
     private List<HandlerMapping> handlerMappings;
+    private List<HandlerAdapter> handlerAdapters;
 
     public DispatcherServlet() {
         handlerMappings = new ArrayList<>();
+        handlerAdapters = new ArrayList<>();
     }
 
     public void addHandlerMapping(HandlerMapping handlerMapping) {
         handlerMappings.add(handlerMapping);
+    }
+
+    public void addHandlerAdapter(HandlerAdapter handlerAdapter) {
+        handlerAdapters.add(handlerAdapter);
     }
 
     @Override
