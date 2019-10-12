@@ -55,16 +55,20 @@ public class ControllerParameterMapper {
         return objects;
     }
 
-    private Object getJavaBean(HttpServletRequest request, Class aClass) {
+    private Object getJavaBean(HttpServletRequest request, Class clazz) {
         try {
-            Object object = aClass.newInstance();
-            for (Field declaredField : aClass.getDeclaredFields()) {
-                declaredField.setAccessible(true);
-                declaredField.set(object, request.getParameter(declaredField.getName()));
-            }
+            Object object = clazz.newInstance();
+            setParameter(request, clazz.getDeclaredFields(), object);
             return object;
         } catch (InstantiationException | IllegalAccessException e) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("JavaBean 생성 불가");
+        }
+    }
+
+    private void setParameter(HttpServletRequest request, Field[] fields, Object object) throws IllegalAccessException {
+        for (Field field : fields) {
+            field.setAccessible(true);
+            field.set(object, request.getParameter(field.getName()));
         }
     }
 
