@@ -1,6 +1,6 @@
 package reflection;
 
-import annotation.Array;
+import examples.annotation.Array;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

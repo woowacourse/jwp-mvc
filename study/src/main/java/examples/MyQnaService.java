@@ -1,7 +1,7 @@
 package examples;
 
-import annotation.Inject;
-import annotation.Service;
+import examples.annotation.Inject;
+import examples.annotation.Service;
 
 @Service
 public class MyQnaService {

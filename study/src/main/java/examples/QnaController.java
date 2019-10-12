@@ -1,7 +1,7 @@
 package examples;
 
-import annotation.Controller;
-import annotation.Inject;
+import examples.annotation.Controller;
+import examples.annotation.Inject;
 
 @Controller
 public class QnaController {

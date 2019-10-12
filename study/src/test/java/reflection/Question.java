@@ -1,6 +1,6 @@
 package reflection;
 
-import annotation.Array;
+import examples.annotation.Array;
 
 import java.util.Date;
 
