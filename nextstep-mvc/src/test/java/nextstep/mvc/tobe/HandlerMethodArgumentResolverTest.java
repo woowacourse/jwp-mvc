@@ -1,11 +1,13 @@
 package nextstep.mvc.tobe;
 
+import nextstep.mvc.tobe.view.ModelAndView;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.LocalVariableTableParameterNameDiscoverer;
 import org.springframework.core.ParameterNameDiscoverer;
 import org.springframework.mock.web.MockHttpServletRequest;
+import samples.TestUserController;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;

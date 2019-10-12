@@ -1,14 +1,15 @@
-package nextstep.mvc.tobe;
+package jackson;
 
 import java.util.Objects;
 
-public class Car {
+public class CarTest {
     private String color;
     private String type;
 
-    private Car() {}
+    public CarTest() {
+    }
 
-    public Car(String color, String type) {
+    public CarTest(String color, String type) {
         this.color = color;
         this.type = type;
     }
@@ -17,17 +18,25 @@ public class Car {
         return color;
     }
 
+    public void setColor(String color) {
+        this.color = color;
+    }
+
     public String getType() {
         return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Car car = (Car) o;
-        return color.equals(car.color) &&
-                type.equals(car.type);
+        CarTest carTest = (CarTest) o;
+        return Objects.equals(color, carTest.color) &&
+                Objects.equals(type, carTest.type);
     }
 
     @Override
@@ -37,7 +46,7 @@ public class Car {
 
     @Override
     public String toString() {
-        return "Car{" +
+        return "CarTest{" +
                 "color='" + color + '\'' +
                 ", type='" + type + '\'' +
                 '}';

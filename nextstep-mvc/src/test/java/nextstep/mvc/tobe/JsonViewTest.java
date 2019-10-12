@@ -1,5 +1,7 @@
 package nextstep.mvc.tobe;
 
+import nextstep.mvc.tobe.view.JsonView;
+import nextstep.mvc.tobe.view.View;
 import nextstep.utils.JsonUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -8,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import samples.Car;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,7 +18,7 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class JsonViewTest {
-    private static final Logger logger = LoggerFactory.getLogger( JsonViewTest.class );
+    private static final Logger logger = LoggerFactory.getLogger(JsonViewTest.class);
     private MockHttpServletRequest request;
     private MockHttpServletResponse response;
     private View view;
@@ -53,6 +56,20 @@ public class JsonViewTest {
         Car expected = new Car("Black", "Sonata");
         model.put("car", expected);
         model.put("name", "포비");
+
+        view.render(model, request, response);
+
+        assertThat(response.getContentType()).isEqualTo(MediaType.APPLICATION_JSON_UTF8_VALUE);
+        logger.debug("response body : {}", response.getContentAsString());
+    }
+
+    @Test
+    void render_over_three_element() throws Exception {
+        Map<String, Object> model = new HashMap<>();
+        Car expected = new Car("Black", "Sonata");
+        model.put("car", expected);
+        model.put("name", "포비");
+        model.put("this", "what");
 
         view.render(model, request, response);
 
