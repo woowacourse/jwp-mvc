@@ -58,4 +58,9 @@ public class MyController {
         request.setAttribute("test", true);
         return "/test.jsp";
     }
+
+    @RequestMapping(value = "/test3", method= RequestMethod.GET)
+    public int test_not_support_string(HttpServletRequest request, HttpServletResponse response) {
+        return 1;
+    }
 }
