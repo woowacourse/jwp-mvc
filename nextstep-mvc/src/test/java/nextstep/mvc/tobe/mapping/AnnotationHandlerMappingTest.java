@@ -1,6 +1,7 @@
-package nextstep.mvc.tobe;
+package nextstep.mvc.tobe.mapping;
 
 import nextstep.db.DataBase;
+import nextstep.mvc.tobe.User;
 import nextstep.mvc.tobe.handler.HandlerExecution;
 import nextstep.mvc.tobe.mapping.AnnotationHandlerMapping;
 import nextstep.mvc.tobe.support.ControllerScanner;
