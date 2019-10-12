@@ -1,6 +1,5 @@
 package slipp.controller;
 
-import nextstep.mvc.tobe.view.JsonView;
 import nextstep.mvc.tobe.view.ModelAndView;
 import nextstep.utils.JsonUtils;
 import nextstep.web.annotation.Controller;
@@ -40,17 +39,17 @@ public class UserApiController {
     }
 
     @RequestMapping(value = "/api/users", method = RequestMethod.GET)
-    public ModelAndView showUser(HttpServletRequest request) {
-        String userId = request.getParameter("userId");
+    public ModelAndView showUser(String userId, HttpServletRequest request) {
         User user = DataBase.findUserById(userId);
 
-        return new ModelAndView(new JsonView()).addObject("User", user);
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.addObject("user", user);
+        return modelAndView;
     }
 
     @RequestMapping(value = "/api/users", method = RequestMethod.PUT)
-    public ModelAndView updateUser(HttpServletRequest request, HttpServletResponse response) {
+    public ModelAndView updateUser(String userId, HttpServletRequest request, HttpServletResponse response) {
         try {
-            String userId = request.getParameter("userId");
             User user = JsonUtils.toObject(BodyParser.getBody(request), User.class);
             logger.debug("Update User: {} ", user);
             DataBase.findUserById(userId).update(user);

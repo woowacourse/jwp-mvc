@@ -7,8 +7,6 @@ import nextstep.mvc.tobe.exception.NotFoundViewException;
 import nextstep.mvc.tobe.handleradapter.HandlerAdapter;
 import nextstep.mvc.tobe.view.ModelAndView;
 import nextstep.mvc.tobe.view.View;
-import nextstep.mvc.tobe.viewresolver.JspViewResolver;
-import nextstep.mvc.tobe.viewresolver.RedirectViewResolver;
 import nextstep.mvc.tobe.viewresolver.ViewResolver;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
@@ -19,7 +17,6 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -32,10 +29,12 @@ public class DispatcherServlet extends HttpServlet {
     private List<HandlerAdapter> handlerAdapters;
     private List<ViewResolver> viewResolvers;
 
-    public DispatcherServlet(List<HandlerMapping> mappings, List<HandlerAdapter> handlerAdapters) {
+    public DispatcherServlet(List<HandlerMapping> mappings,
+                             List<HandlerAdapter> handlerAdapters,
+                             List<ViewResolver> viewResolvers) {
         this.mappings = mappings;
         this.handlerAdapters = handlerAdapters;
-        this.viewResolvers = Arrays.asList(new JspViewResolver(), new RedirectViewResolver());
+        this.viewResolvers = viewResolvers;
     }
 
     @Override
@@ -76,8 +75,8 @@ public class DispatcherServlet extends HttpServlet {
 
     private View getView(ModelAndView mav) {
         return viewResolvers.stream()
+                .filter(viewResolver -> viewResolver.supports(mav.getViewName()))
                 .map(viewResolver -> viewResolver.resolve(mav.getViewName()))
-                .filter(Objects::nonNull)
                 .findFirst()
                 .orElseThrow(NotFoundViewException::new);
     }

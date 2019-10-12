@@ -13,7 +13,6 @@ import slipp.dto.UserCreatedDto;
 import slipp.dto.UserUpdatedDto;
 import slipp.support.db.DataBase;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 @Controller
@@ -60,23 +59,27 @@ public class UserController {
     }
 
     @RequestMapping(value = "/users/profile", method = RequestMethod.GET)
-    public ModelAndView showProfile(String userId, HttpServletRequest req) {
+    public ModelAndView showProfile(String userId) {
         User user = DataBase.findUserById(userId);
         if (user == null) {
             throw new NotFoundUserException(userId);
         }
-        req.setAttribute("user", user);
-        return new ModelAndView("/user/profile.jsp");
+
+        ModelAndView modelAndView = new ModelAndView("/user/profile.jsp");
+        modelAndView.addObject("user", user);
+        return modelAndView;
     }
 
     @RequestMapping(value = "/users/updateForm", method = RequestMethod.GET)
-    public ModelAndView showUpdateForm(String userId, HttpServletRequest req, HttpSession session) {
+    public ModelAndView showUpdateForm(String userId, HttpSession session) {
         User user = DataBase.findUserById(userId);
         if (!UserSessionUtils.isSameUser(session, user)) {
             throw new UnAuthorizedException(userId);
         }
-        req.setAttribute("user", user);
-        return new ModelAndView("/user/updateForm.jsp");
+
+        ModelAndView modelAndView = new ModelAndView("/user/updateForm.jsp");
+        modelAndView.addObject("user", user);
+        return modelAndView;
     }
 
     @RequestMapping(value = "/users/update", method = RequestMethod.POST)
