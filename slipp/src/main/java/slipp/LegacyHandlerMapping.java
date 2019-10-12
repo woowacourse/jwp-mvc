@@ -2,7 +2,7 @@ package slipp;
 
 import nextstep.mvc.asis.Controller;
 
-public interface LegacyHandlerMapping { // TODO 이름 좀..
+public interface LegacyHandlerMapping {
     void initialize();
 
     Controller getHandler(String requestUri);

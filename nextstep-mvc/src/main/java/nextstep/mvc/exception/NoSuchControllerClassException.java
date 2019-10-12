@@ -1,4 +1,4 @@
-package nextstep.mvc;
+package nextstep.mvc.exception;
 
 public class NoSuchControllerClassException extends RuntimeException {
     public NoSuchControllerClassException() {
