@@ -11,14 +11,16 @@ public class HandlerExecution {
     private Object handler;
     private final Method method;
 
-    public HandlerExecution(Object newInstance, Method method) {
-        this.handler = newInstance;
+    public HandlerExecution(Object handler, Method method) {
+        this.handler = handler;
         this.method = method;
     }
 
     public ModelAndView handle(HttpServletRequest request, HttpServletResponse response)
             throws InvocationTargetException, IllegalAccessException {
+        final Class<?> returnType = method.getReturnType();
 
+        if (returnType instanceof ModelAndView) {
         return (ModelAndView) method.invoke(handler, request, response);
     }
 }
