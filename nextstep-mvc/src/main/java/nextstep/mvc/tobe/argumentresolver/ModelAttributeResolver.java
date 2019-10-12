@@ -1,6 +1,7 @@
 package nextstep.mvc.tobe.argumentresolver;
 
 import com.google.common.collect.Lists;
+import nextstep.utils.ClassUtil;
 import nextstep.web.annotation.ModelAttribute;
 import nextstep.web.support.MethodParameter;
 import org.springframework.core.LocalVariableTableParameterNameDiscoverer;
@@ -9,7 +10,7 @@ import org.springframework.core.ParameterNameDiscoverer;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Objects;
 
@@ -25,24 +26,59 @@ public class ModelAttributeResolver implements HandlerMethodArgumentResolver {
     @Override
     public Object resolve(MethodParameter parameter, HttpServletRequest request, HttpServletResponse response) {
         Class<?> type = parameter.getParameterType();
-        Constructor[] constructors = type.getConstructors();
+        Constructor[] constructors = type.getDeclaredConstructors();
 
         for (Constructor constructor : constructors) {
-            Class<?>[] constructorParamTypes = constructor.getParameterTypes();
-            String[] constructorParamNames = NAME_DISCOVERER.getParameterNames(constructor);
-            List<Object> constructorValues =
-                    getArguments(request, constructorParamTypes, constructorParamNames);
-
-            try {
-                return constructor.newInstance(constructorValues.toArray());
-            } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
-                e.getStackTrace();
+            if (hasOnlyDefaultConstructor(constructors, constructor)) {
+                return getArgumentWithDefaultConstructor(request, constructor, parameter.getParameterType());
             }
+
+            if (constructor.getParameterCount() == 0) {
+                continue;
+            }
+
+            List<Object> arguments =
+                    getArgumentWithParamConstructor(request, constructor.getParameterTypes(),
+                            NAME_DISCOVERER.getParameterNames(constructor));
+
+            return ClassUtil.getNewInstanceWithConstructor(constructor, arguments.toArray());
         }
         throw new IllegalArgumentException("fail to resolve object arguments!");
     }
 
-    private List<Object> getArguments(HttpServletRequest request, Class<?>[] constructorParamTypes, String[] constructorParamNames) {
+    private boolean hasOnlyDefaultConstructor(Constructor[] constructors, Constructor constructor) {
+        return constructors.length == 1 && constructor.getParameterCount() == 0;
+    }
+
+    private Object getArgumentWithDefaultConstructor(
+            HttpServletRequest request, Constructor constructor, Class<?> clazz) {
+
+        Object value = ClassUtil.getNewInstance(constructor.getClass());
+        Field[] fields = clazz.getDeclaredFields();
+
+        for (Field field : fields) {
+            field.setAccessible(true);
+            if (field.getType().isPrimitive()) {
+                setField(field, value, WrapperClass.parsePrimitive(field.getType(), request.getParameter(field.getName())));
+                continue;
+            }
+            setField(field, value, WrapperClass.parseWrapper(field.getType(), request.getParameter(field.getName())));
+        }
+
+        return value;
+    }
+
+    private void setField(Field field, Object instance, Object value) {
+        try {
+            field.set(instance, value);
+        } catch (IllegalAccessException e) {
+            throw new IllegalArgumentException("error when setting fields with default constructor");
+        }
+    }
+
+    private List<Object> getArgumentWithParamConstructor(
+            HttpServletRequest request, Class<?>[] constructorParamTypes, String[] constructorParamNames) {
+
         List<Object> constructorValues = Lists.newArrayList();
 
         for (int j = 0; j < constructorParamNames.length; j++) {
@@ -52,7 +88,7 @@ public class ModelAttributeResolver implements HandlerMethodArgumentResolver {
                     constructorValues.add(WrapperClass.parsePrimitive(constructorParamTypes[j], constructorParamValue));
                     continue;
                 }
-                constructorValues.add(constructorParamValue);
+                constructorValues.add(WrapperClass.parseWrapper(constructorParamTypes[j], constructorParamValue));
             }
         }
 
