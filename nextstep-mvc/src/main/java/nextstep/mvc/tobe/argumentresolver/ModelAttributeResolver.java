@@ -41,7 +41,7 @@ public class ModelAttributeResolver implements HandlerMethodArgumentResolver {
                     getArgumentWithParamConstructor(request, constructor.getParameterTypes(),
                             NAME_DISCOVERER.getParameterNames(constructor));
 
-            return ClassUtil.getNewInstanceWithConstructor(constructor, arguments.toArray());
+            return ClassUtil.getNewInstance(constructor, arguments.toArray());
         }
         throw new IllegalArgumentException("fail to resolve object arguments!");
     }
@@ -53,7 +53,7 @@ public class ModelAttributeResolver implements HandlerMethodArgumentResolver {
     private Object getArgumentWithDefaultConstructor(
             HttpServletRequest request, Constructor constructor, Class<?> clazz) {
 
-        Object value = ClassUtil.getNewInstance(constructor.getClass());
+        Object value = ClassUtil.getNewInstance(constructor);
         Field[] fields = clazz.getDeclaredFields();
 
         for (Field field : fields) {
