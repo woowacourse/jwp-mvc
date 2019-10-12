@@ -1,7 +1,6 @@
 package nextstep.mvc.tobe;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import nextstep.utils.JsonUtils;
 import nextstep.web.support.MediaType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,23 +20,8 @@ public class JsonView implements View {
             return;
         }
 
-        String json = toJson(model);
+        String json = JsonUtils.toJson(model);
         logger.debug("Json : {}", json);
         response.getWriter().write(json);
-    }
-
-    private String toJson(Map<String, ?> model) throws JsonProcessingException {
-        ObjectMapper mapper = new ObjectMapper();
-
-        if (model.size() == 1) {
-            Object value = model.values()
-                    .stream()
-                    .findFirst()
-                    .orElseThrow(IllegalArgumentException::new);
-
-            return mapper.writeValueAsString(value);
-        }
-
-        return mapper.writeValueAsString(model);
     }
 }
