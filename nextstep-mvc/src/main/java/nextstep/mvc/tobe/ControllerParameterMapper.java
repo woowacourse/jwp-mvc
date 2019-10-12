@@ -15,11 +15,11 @@ import java.util.Map;
 public class ControllerParameterMapper {
     private static final Logger log = LoggerFactory.getLogger(ControllerParameterMapper.class);
 
-    static Map<Class<?>, Function> primitiveCast = new HashMap<>();
+    private static final Map<Class<?>, Function> primitiveCast = new HashMap<>();
     static {
-        primitiveCast.put(int.class, Integer::valueOf);
-        primitiveCast.put(String.class, (obj)-> obj);
-        primitiveCast.put(long.class, Long::valueOf);
+        primitiveCast.put(int.class, (obj) -> Integer.valueOf((String) obj));
+        primitiveCast.put(String.class, String::valueOf);
+        primitiveCast.put(long.class, (obj) -> Long.valueOf((String) obj));
     }
 
     private final Method method;
@@ -33,26 +33,28 @@ public class ControllerParameterMapper {
 
         String[] parameterNames = nameDiscoverer.getParameterNames(method);
         Class[] classes = method.getParameterTypes();
+
         log.debug("Method : {} parameterNames : {}, classes : {}", method, parameterNames, classes);
 
         Object[] objects = new Object[classes.length];
 
         for (int i = 0; i < classes.length; i++) {
-            if (primitiveCast.containsKey(classes[i])) {
-                objects[i] = primitiveCast.get(classes[i]).apply(request.getParameter(parameterNames[i]));
-                continue;
-            }
-            if (classes[i].equals(HttpServletRequest.class)) {
-                objects[i] = request;
-                continue;
-            }
-            if (classes[i].equals(HttpServletResponse.class)) {
-                objects[i] = response;
-                continue;
-            }
-            objects[i] = getJavaBean(request, classes[i]);
+            objects[i] = getObject(classes[i], parameterNames[i], request, response);
         }
         return objects;
+    }
+
+    private Object getObject(Class clazz, String parameterName, HttpServletRequest request, HttpServletResponse response) {
+        if (primitiveCast.containsKey(clazz)) {
+            return primitiveCast.get(clazz).apply(request.getParameter(parameterName));
+        }
+        if (clazz.equals(HttpServletRequest.class)) {
+            return request;
+        }
+        if (clazz.equals(HttpServletResponse.class)) {
+            return response;
+        }
+        return getJavaBean(request, clazz);
     }
 
     private Object getJavaBean(HttpServletRequest request, Class clazz) {
@@ -74,6 +76,6 @@ public class ControllerParameterMapper {
 
     @FunctionalInterface
     interface Function<T> {
-        T apply(String t);
+        T apply(Object t);
     }
 }
