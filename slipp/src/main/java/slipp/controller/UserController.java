@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import slipp.domain.User;
 import slipp.support.db.DataBase;
+import slipp.util.UserSessionUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -26,7 +27,7 @@ public class UserController {
     }
 
     @RequestMapping(value = "/users/form", method = RequestMethod.GET)
-    public String showUserForm(HttpServletRequest request, HttpServletResponse response) {
+    public String showSignUpForm(HttpServletRequest request, HttpServletResponse response) {
         return "/user/form.jsp";
     }
 
