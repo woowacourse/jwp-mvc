@@ -10,6 +10,8 @@ import org.slf4j.LoggerFactory;
 import slipp.controller.exception.NotFoundUserException;
 import slipp.controller.exception.UnAuthorizedException;
 import slipp.domain.User;
+import slipp.dto.UserCreatedDto;
+import slipp.dto.UserUpdatedDto;
 import slipp.support.db.DataBase;
 
 import javax.servlet.http.HttpServletRequest;
@@ -21,9 +23,12 @@ public class UserController {
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
     @RequestMapping(value = "/users/create", method = RequestMethod.POST)
-    public ModelAndView createUser(HttpServletRequest req, HttpServletResponse resp) {
-        User user = new User(req.getParameter("userId"), req.getParameter("password"), req.getParameter("name"),
-                req.getParameter("email"));
+    public ModelAndView createUser(UserCreatedDto userCreatedDto, HttpServletRequest req, HttpServletResponse resp) {
+        User user = new User(userCreatedDto.getUserId(),
+                userCreatedDto.getPassword(),
+                userCreatedDto.getName(),
+                userCreatedDto.getEmail());
+
         logger.debug("User : {}", user);
 
         DataBase.addUser(user);
@@ -40,9 +45,7 @@ public class UserController {
     }
 
     @RequestMapping(value = "/users/login", method = RequestMethod.POST)
-    public ModelAndView login(HttpServletRequest req, HttpServletResponse resp) {
-        String userId = req.getParameter("userId");
-        String password = req.getParameter("password");
+    public ModelAndView login(String userId, String password, HttpServletRequest req, HttpServletResponse resp) {
         User user = DataBase.findUserById(userId);
         if (user != null && user.matchPassword(password)) {
             HttpSession session = req.getSession();
@@ -61,8 +64,7 @@ public class UserController {
     }
 
     @RequestMapping(value = "/users/profile", method = RequestMethod.GET)
-    public ModelAndView showProfile(HttpServletRequest req, HttpServletResponse resp) {
-        String userId = req.getParameter("userId");
+    public ModelAndView showProfile(String userId, HttpServletRequest req, HttpServletResponse resp) {
         User user = DataBase.findUserById(userId);
         if (user == null) {
             throw new NotFoundUserException(userId);
@@ -72,8 +74,7 @@ public class UserController {
     }
 
     @RequestMapping(value = "/users/updateForm", method = RequestMethod.GET)
-    public ModelAndView showUpdateForm(HttpServletRequest req, HttpServletResponse resp) {
-        String userId = req.getParameter("userId");
+    public ModelAndView showUpdateForm(String userId, HttpServletRequest req, HttpServletResponse resp) {
         User user = DataBase.findUserById(userId);
         if (!UserSessionUtils.isSameUser(req.getSession(), user)) {
             throw new UnAuthorizedException(userId);
@@ -83,15 +84,18 @@ public class UserController {
     }
 
     @RequestMapping(value = "/users/update", method = RequestMethod.POST)
-    public ModelAndView updateUser(HttpServletRequest req, HttpServletResponse resp) {
-        String userId = req.getParameter("userId");
+    public ModelAndView updateUser(String userId, UserUpdatedDto userUpdatedDto,
+                                   HttpServletRequest req, HttpServletResponse resp) {
         User user = DataBase.findUserById(userId);
         if (!UserSessionUtils.isSameUser(req.getSession(), user)) {
             throw new UnAuthorizedException(userId);
         }
 
-        User updateUser = new User(req.getParameter("userId"), req.getParameter("password"), req.getParameter("name"),
-                req.getParameter("email"));
+        User updateUser = new User(userId,
+                userUpdatedDto.getPassword(),
+                userUpdatedDto.getName(),
+                userUpdatedDto.getEmail());
+
         logger.debug("Update User : {}", updateUser);
         user.update(updateUser);
         return new ModelAndView(new JspView("redirect:/"));
