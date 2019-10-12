@@ -41,9 +41,9 @@ public class ObjectArgumentResolver implements ArgumentResolver {
             constructor.setAccessible(true);
             return constructor.newInstance();
         } catch (ReflectiveOperationException e) {
-            logger.error("Cannot create Instance: {}", type.toGenericString());
+            logger.error("Cannot create Instance: {}", type.toGenericString(), e);
+            throw new ConstructorException();
         }
-        return null;
     }
 
     private void setField(Object instance, Field field, Object value) {
@@ -52,6 +52,7 @@ public class ObjectArgumentResolver implements ArgumentResolver {
             field.set(instance, value);
         } catch (IllegalAccessException e) {
             logger.error("Cannot set instance field - instance: {}, field - {}", instance.toString(), field.toGenericString());
+            throw new FinalFieldSetException();
         }
     }
 }

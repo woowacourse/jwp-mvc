@@ -49,6 +49,6 @@ public class HandlerExecution implements Handler {
                 return argumentResolver.resolve(methodParameter, request, response);
             }
         }
-        return null;
+        throw new NotSupportedArgumentResolverException();
     }
 }
