@@ -14,7 +14,7 @@ public class MethodParameters {
 
     private final List<MethodParameter> methodParameters;
 
-    public MethodParameters(List<MethodParameter> methodParameters) {
+    private MethodParameters(List<MethodParameter> methodParameters) {
         this.methodParameters = methodParameters;
     }
 
