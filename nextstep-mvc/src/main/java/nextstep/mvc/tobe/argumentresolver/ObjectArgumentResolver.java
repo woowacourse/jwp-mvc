@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 
@@ -18,8 +19,9 @@ public class ObjectArgumentResolver implements ArgumentResolver {
     //TODO: Annotation 기반으로 or 다른 방식으로 어떻게 할 수 있을까
     @Override
     public boolean supports(MethodParameter methodParameter) {
-        return (!HttpServletRequest.class.equals(methodParameter.getParameterType()) &&
-                !HttpServletResponse.class.equals(methodParameter.getParameterType())) &&
+        return !HttpServletRequest.class.equals(methodParameter.getParameterType()) &&
+                !HttpServletResponse.class.equals(methodParameter.getParameterType()) &&
+                !HttpSession.class.equals(methodParameter.getParameterType()) &&
                 !methodParameter.getParameterType().isPrimitive() &&
                 !methodParameter.getParameterType().equals(String.class) &&
                 Object.class.isAssignableFrom(methodParameter.getParameterType());

@@ -35,29 +35,27 @@ public class UserController {
     }
 
     @RequestMapping(value = "/users", method = RequestMethod.GET)
-    public ModelAndView showUserList(HttpServletRequest req) {
-        if (!UserSessionUtils.isLogined(req.getSession())) {
+    public ModelAndView showUserList(HttpSession session) {
+        if (!UserSessionUtils.isLogined(session)) {
             return new ModelAndView(new JspView("redirect:/users/loginForm"));
         }
-        req.setAttribute("users", DataBase.findAll());
+        session.setAttribute("users", DataBase.findAll());
         return new ModelAndView(new JspView("/user/list.jsp"));
     }
 
     @RequestMapping(value = "/users/login", method = RequestMethod.POST)
-    public ModelAndView login(String userId, String password, HttpServletRequest req) {
+    public ModelAndView login(String userId, String password, HttpSession session) {
         User user = DataBase.findUserById(userId);
         if (user != null && user.matchPassword(password)) {
-            HttpSession session = req.getSession();
             session.setAttribute(UserSessionUtils.USER_SESSION_KEY, user);
             return new ModelAndView(new JspView("redirect:/"));
         }
-        req.setAttribute("loginFailed", true);
+        session.removeAttribute(UserSessionUtils.USER_SESSION_KEY);
         return new ModelAndView(new JspView("/user/login.jsp"));
     }
 
     @RequestMapping(value = "/users/logout", method = RequestMethod.GET)
-    public ModelAndView logout(HttpServletRequest req) {
-        HttpSession session = req.getSession();
+    public ModelAndView logout(HttpSession session) {
         session.removeAttribute(UserSessionUtils.USER_SESSION_KEY);
         return new ModelAndView(new JspView("redirect:/"));
     }
@@ -73,9 +71,9 @@ public class UserController {
     }
 
     @RequestMapping(value = "/users/updateForm", method = RequestMethod.GET)
-    public ModelAndView showUpdateForm(String userId, HttpServletRequest req) {
+    public ModelAndView showUpdateForm(String userId, HttpServletRequest req, HttpSession session) {
         User user = DataBase.findUserById(userId);
-        if (!UserSessionUtils.isSameUser(req.getSession(), user)) {
+        if (!UserSessionUtils.isSameUser(session, user)) {
             throw new UnAuthorizedException(userId);
         }
         req.setAttribute("user", user);
@@ -83,10 +81,9 @@ public class UserController {
     }
 
     @RequestMapping(value = "/users/update", method = RequestMethod.POST)
-    public ModelAndView updateUser(String userId, UserUpdatedDto userUpdatedDto,
-                                   HttpServletRequest req) {
+    public ModelAndView updateUser(String userId, UserUpdatedDto userUpdatedDto, HttpSession session) {
         User user = DataBase.findUserById(userId);
-        if (!UserSessionUtils.isSameUser(req.getSession(), user)) {
+        if (!UserSessionUtils.isSameUser(session, user)) {
             throw new UnAuthorizedException(userId);
         }
 

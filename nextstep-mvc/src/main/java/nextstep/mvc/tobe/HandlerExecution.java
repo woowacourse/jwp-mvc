@@ -1,6 +1,7 @@
 package nextstep.mvc.tobe;
 
 import nextstep.mvc.tobe.argumentresolver.ArgumentResolver;
+import nextstep.mvc.tobe.argumentresolver.HttpSessionArgumentResolver;
 import nextstep.mvc.tobe.argumentresolver.MethodParameter;
 import nextstep.mvc.tobe.argumentresolver.MethodParameters;
 import nextstep.mvc.tobe.argumentresolver.ObjectArgumentResolver;
@@ -24,6 +25,7 @@ public class HandlerExecution implements Handler {
         argumentResolvers.add(new ObjectArgumentResolver());
         argumentResolvers.add(new PrimitiveArgumentResolver());
         argumentResolvers.add(new ServletArgumentResolver());
+        argumentResolvers.add(new HttpSessionArgumentResolver());
     }
 
 
