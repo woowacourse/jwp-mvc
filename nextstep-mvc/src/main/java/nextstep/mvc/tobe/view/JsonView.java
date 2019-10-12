@@ -13,7 +13,8 @@ public class JsonView implements View {
     public void render(Map<String, ?> model, HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         setContentType(response);
-        response.getOutputStream().write(JsonUtils.toJsonString(model).getBytes());
+        response.getOutputStream()
+                .write(JsonUtils.toJsonString(model).getBytes());
     }
 
     private void setContentType(HttpServletResponse response) {
