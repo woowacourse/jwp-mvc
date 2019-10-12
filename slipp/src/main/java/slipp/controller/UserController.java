@@ -21,7 +21,7 @@ public class UserController {
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public ModelAndView goIndex(HttpServletRequest request, HttpServletResponse response) {
-        return new ModelAndView(new JspView("home"));
+        return new ModelAndView("home.jsp");
     }
 
     @RequestMapping(value = "/users/login", method = RequestMethod.POST)
@@ -42,7 +42,7 @@ public class UserController {
             return new ModelAndView(new RedirectView("/"));
         }
         request.setAttribute("loginFailed", true);
-        return new ModelAndView(new JspView("/user/login"));
+        return new ModelAndView(new JspView("/user/login.jsp"));
     }
 
     @RequestMapping(value = "/users/profile", method = RequestMethod.GET)
@@ -54,7 +54,7 @@ public class UserController {
             throw new NullPointerException("사용자를 찾을 수 없습니다.");
         }
         request.setAttribute("user", user);
-        return new ModelAndView(new JspView("/user/profile"));
+        return new ModelAndView(new JspView("/user/profile.jsp"));
     }
 
     @RequestMapping(value = "/users", method = RequestMethod.GET)
@@ -64,7 +64,7 @@ public class UserController {
         }
 
         request.setAttribute("users", DataBase.findAll());
-        return new ModelAndView(new JspView("/user/list"));
+        return new ModelAndView(new JspView("/user/list.jsp"));
     }
 
     @RequestMapping(value = "/users/logout", method = RequestMethod.GET)
@@ -86,12 +86,12 @@ public class UserController {
 
     @RequestMapping(value = "/users/form", method = RequestMethod.GET)
     public ModelAndView a(HttpServletRequest request, HttpServletResponse response) {
-        return new ModelAndView(new JspView("/user/form"));
+        return new ModelAndView(new JspView("/user/form.jsp"));
     }
 
     @RequestMapping(value = "/users/loginForm", method = RequestMethod.GET)
     public ModelAndView goLoginForm(HttpServletRequest request, HttpServletResponse response) {
-        return new ModelAndView(new JspView("/user/login"));
+        return new ModelAndView(new JspView("/user/login.jsp"));
     }
 
     @RequestMapping(value = "/users/updateForm", method = RequestMethod.GET)
@@ -102,7 +102,7 @@ public class UserController {
             throw new IllegalStateException("다른 사용자의 정보를 수정할 수 없습니다.");
         }
         request.setAttribute("user", user);
-        return new ModelAndView(new JspView("/user/updateForm"));
+        return new ModelAndView(new JspView("/user/updateForm.jsp"));
     }
 
     // TODO: 2019-10-10 Not Support PUT method in JSP...?

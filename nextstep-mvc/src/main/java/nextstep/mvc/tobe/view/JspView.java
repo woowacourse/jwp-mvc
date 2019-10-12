@@ -7,19 +7,10 @@ import java.util.Map;
 import java.util.Objects;
 
 public class JspView implements View {
-    private static final String SUFFIX = ".jsp";
-
     private final String view;
 
     public JspView(String view) {
-        this.view = processViewName(view);
-    }
-
-    private String processViewName(String view) {
-        if (view.endsWith(SUFFIX)) {
-            return view;
-        }
-        return view + SUFFIX;
+        this.view = view;
     }
 
     public String getView() {

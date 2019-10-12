@@ -4,6 +4,10 @@ import nextstep.mvc.tobe.view.ModelAndView;
 import nextstep.mvc.tobe.exception.NotFoundHandlerException;
 import nextstep.mvc.tobe.exception.NotSupportHandlerAdapterException;
 import nextstep.mvc.tobe.handleradapter.HandlerAdapter;
+import nextstep.mvc.tobe.view.View;
+import nextstep.mvc.tobe.viewresolver.JspViewResolver;
+import nextstep.mvc.tobe.viewresolver.RedirectViewResolver;
+import nextstep.mvc.tobe.viewresolver.ViewResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,6 +16,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -22,10 +27,13 @@ public class DispatcherServlet extends HttpServlet {
 
     private final List<HandlerMapping> handlerMappings;
     private final List<HandlerAdapter> handlerAdapters;
+    private final List<ViewResolver> viewResolvers;
 
     public DispatcherServlet(final List<HandlerMapping> handlerMappings, final List<HandlerAdapter> handlerAdapters) {
         this.handlerMappings = new ArrayList<>(handlerMappings);
         this.handlerAdapters = new ArrayList<>(handlerAdapters);
+
+        this.viewResolvers = Arrays.asList(new JspViewResolver(), new RedirectViewResolver());
     }
 
     @Override
@@ -43,7 +51,7 @@ public class DispatcherServlet extends HttpServlet {
 
         try {
             final ModelAndView mav = handlerAdapter.handle(request, response, handler);
-            mav.render(request, response);
+            render(request, response, mav);
         } catch (Exception e) {
             logger.info("!! ERROR : {}", e.getMessage());
         }
@@ -62,5 +70,22 @@ public class DispatcherServlet extends HttpServlet {
                 .filter(ha -> ha.supports(handler))
                 .findAny()
                 .orElseThrow(() -> new NotSupportHandlerAdapterException("지원하지 않는 handler adapter"));
+    }
+
+    private void render(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) throws Exception {
+        View view = findView(mav);
+        view.render(mav.getModel(), request, response);
+    }
+
+    private View findView(ModelAndView modelAndView) {
+        if (modelAndView.isViewClass()) {
+            return (View) modelAndView.getView();
+        }
+        String viewName = (String) modelAndView.getView();
+        return viewResolvers.stream()
+                .filter(viewResolver -> viewResolver.supports(viewName))
+                .findAny()
+                .map(viewResolver -> viewResolver.resolve(viewName))
+                .orElseThrow(IllegalArgumentException::new);
     }
 }
