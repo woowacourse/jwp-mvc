@@ -51,6 +51,4 @@ public class UserApiController {
         resp.setStatus(200);
         return new ModelAndView(new JsonView()).addObject("user", user);
     }
-
-
 }

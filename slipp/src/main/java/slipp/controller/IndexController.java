@@ -11,7 +11,6 @@ import javax.servlet.http.HttpServletResponse;
 
 @Controller
 public class IndexController {
-
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public ModelAndView index(HttpServletRequest req, HttpServletResponse resp) throws Exception {
         req.setAttribute("users", DataBase.findAll());
