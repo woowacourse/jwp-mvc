@@ -1,5 +1,6 @@
 package slipp.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import nextstep.mvc.view.JsonView;
 import nextstep.mvc.view.ModelAndView;
 import nextstep.utils.JsonUtils;
@@ -22,14 +23,12 @@ import java.util.Scanner;
 @Controller
 public class ApiController {
     private static final Logger log = LoggerFactory.getLogger(ApiController.class);
+    private static ObjectMapper objectMapper = new ObjectMapper();
 
     @RequestMapping(value = "/api/users", method = RequestMethod.POST)
     public ModelAndView createUser(HttpServletRequest request, HttpServletResponse response) throws IOException {
         User user = extractPostRequestBody(request);
         log.debug("User : {}", user);
-
-//        Map<String, Object> model = new HashMap<>();
-//        model.put("user", user);
 
         DataBase.addUser(user);
         response.setStatus(201);
@@ -63,8 +62,7 @@ public class ApiController {
 
     User extractPostRequestBody(HttpServletRequest request) throws IOException {
         if ("POST".equalsIgnoreCase(request.getMethod()) || "PUT".equalsIgnoreCase(request.getMethod())) {
-            Scanner s = new Scanner(request.getInputStream(), StandardCharsets.UTF_8).useDelimiter("\\A");
-            return s.hasNext() ? JsonUtils.toObject(s.next(), User.class) : null;
+            return objectMapper.readValue(request.getInputStream(), User.class);
         }
         return null;
     }

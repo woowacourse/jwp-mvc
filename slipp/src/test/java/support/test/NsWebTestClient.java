@@ -5,6 +5,7 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Mono;
 
 import java.net.URI;
+import java.time.Duration;
 
 import static org.springframework.web.reactive.function.client.ExchangeFilterFunctions.basicAuthentication;
 
@@ -29,7 +30,8 @@ public class NsWebTestClient {
     }
 
     public <T> URI createResource(String url, T body, Class<T> clazz) {
-        EntityExchangeResult<byte[]> response = testClientBuilder.build()
+        EntityExchangeResult<byte[]> response = testClientBuilder.responseTimeout(Duration.ofMillis(30000))
+                .build()
                 .post()
                 .uri(url)
                 .body(Mono.just(body), clazz)
@@ -41,7 +43,8 @@ public class NsWebTestClient {
     }
 
     public <T> void updateResource(URI location, T body, Class<T> clazz) {
-        testClientBuilder.build()
+        testClientBuilder.responseTimeout(Duration.ofMillis(30000))
+                .build()
                 .put()
                 .uri(location.toString())
                 .body(Mono.just(body), clazz)
@@ -50,7 +53,8 @@ public class NsWebTestClient {
     }
 
     public <T> T getResource(URI location, Class<T> clazz) {
-        return testClientBuilder.build()
+        return testClientBuilder.responseTimeout(Duration.ofMillis(30000))
+                .build()
                 .get()
                 .uri(location.toString())
                 .exchange()
