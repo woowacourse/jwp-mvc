@@ -44,4 +44,8 @@ subprojects {
 			freeCompilerArgs = listOf("-Xjsr305=strict")
 		}
 	}
+
+	tasks.test {
+		useJUnitPlatform()
+	}
 }
