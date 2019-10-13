@@ -50,6 +50,7 @@ public class DispatcherServlet extends HttpServlet {
             modelAndView.getView().render(modelAndView.getModel(), req, resp);
 
         } catch (Exception e) {
+            resp.sendError(400);
             e.printStackTrace();
         }
     }
