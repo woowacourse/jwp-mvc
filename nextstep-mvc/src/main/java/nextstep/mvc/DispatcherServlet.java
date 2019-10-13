@@ -5,6 +5,7 @@ import nextstep.mvc.adapter.ExecutionAdapter;
 import nextstep.mvc.adapter.HandlerExecutionAdapter;
 import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.View;
+import nextstep.utils.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,6 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @WebServlet(name = "dispatcher", urlPatterns = "/", loadOnStartup = 1)
 public class DispatcherServlet extends HttpServlet {
@@ -55,20 +57,21 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private ModelAndView handle(HttpServletRequest req, HttpServletResponse resp) throws Exception {
-        Execution execution = findExecution(req);
-        if (execution == null) {
-            return new ModelAndView(new JspView(NOT_FOUND_PAGE));
-        }
-        ExecutionAdapter adapter = findExecutionAdapter(execution);
-        return adapter.execute(req, resp, execution);
+        return findExecution(req)
+                .map(ExceptionUtils.wrapper(execution -> execute(execution, req, resp)))
+                .orElseGet(() -> new ModelAndView(new JspView(NOT_FOUND_PAGE)));
     }
 
-    private Execution findExecution(HttpServletRequest request) {
+    private Optional<Execution> findExecution(HttpServletRequest request) {
         return handlerMappings.stream()
                 .map(handlerMapping -> handlerMapping.getHandler(request))
                 .filter(Objects::nonNull)
-                .findFirst()
-                .orElse(null);
+                .findFirst();
+    }
+
+    private ModelAndView execute(Execution execution, HttpServletRequest req, HttpServletResponse resp) throws Exception {
+        ExecutionAdapter adapter = findExecutionAdapter(execution);
+        return adapter.execute(req, resp, execution);
     }
 
     private ExecutionAdapter findExecutionAdapter(Execution execution) {
