@@ -49,8 +49,7 @@ public class UserApiController {
     }
 
     private User createUser(HttpServletRequest req) throws IOException {
-        String body = req.getReader().readLine();
-        UserCreatedDto createdUser = JsonUtils.toObject(body, UserCreatedDto.class);
+        UserCreatedDto createdUser = JsonUtils.toObject(req.getInputStream(), UserCreatedDto.class);
         User user = new User(
                 createdUser.getUserId(),
                 createdUser.getPassword(),
@@ -74,8 +73,7 @@ public class UserApiController {
     private User updateUser(HttpServletRequest req) throws IOException {
         User user = DataBase.findUserById(req.getParameter(USER_ID));
 
-        String body = req.getReader().readLine();
-        UserUpdatedDto updateUserDto = JsonUtils.toObject(body, UserUpdatedDto.class);
+        UserUpdatedDto updateUserDto = JsonUtils.toObject(req.getInputStream(), UserUpdatedDto.class);
         User updateUser = new User(
                 user.getUserId(),
                 updateUserDto.getPassword(),
