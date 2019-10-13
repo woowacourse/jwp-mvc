@@ -1,10 +1,7 @@
 package nextstep.mvc.tobe;
 
 import nextstep.mvc.modelandview.ModelAndView;
-import nextstep.web.annotation.PathVariable;
-import nextstep.web.annotation.RequestMapping;
-import nextstep.web.annotation.RequestMethod;
-import nextstep.web.annotation.RequestParam;
+import nextstep.web.annotation.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,6 +51,14 @@ public class TestUserController {
 
     @RequestMapping(value = "/users", method = RequestMethod.POST)
     public ModelAndView create_javabean(TestUser testUser) {
+        logger.debug("testUser: {}", testUser);
+        ModelAndView mav = new ModelAndView();
+        mav.addObject("testUser", testUser);
+        return mav;
+    }
+
+    @RequestMapping(value = "/users", method = RequestMethod.POST)
+    public ModelAndView request_body(@RequestBody TestUser testUser) {
         logger.debug("testUser: {}", testUser);
         ModelAndView mav = new ModelAndView();
         mav.addObject("testUser", testUser);
