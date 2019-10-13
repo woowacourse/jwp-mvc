@@ -4,7 +4,7 @@ import nextstep.mvc.DispatcherServlet;
 import nextstep.mvc.handleradapter.HandlerAdapter;
 import nextstep.mvc.handlermapping.HandlerMapping;
 import nextstep.mvc.handlermapping.InOrderHandlerMapping;
-import nextstep.mvc.tobe.AnnotationHandlerMapping;
+import nextstep.mvc.handlermapping.AnnotationHandlerMapping;
 import nextstep.web.WebApplicationInitializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

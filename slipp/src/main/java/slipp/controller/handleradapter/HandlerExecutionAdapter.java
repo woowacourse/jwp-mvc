@@ -1,7 +1,7 @@
 package slipp.controller.handleradapter;
 
 import nextstep.mvc.handleradapter.HandlerAdapter;
-import nextstep.mvc.tobe.HandlerExecution;
+import nextstep.mvc.handlermapping.HandlerExecution;
 import nextstep.mvc.tobe.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
