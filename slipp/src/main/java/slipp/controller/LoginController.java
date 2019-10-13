@@ -1,7 +1,6 @@
 package slipp.controller;
 
-import nextstep.mvc.tobe.view.JspView;
-import nextstep.mvc.tobe.view.ModelAndView;
+import nextstep.mvc.view.ModelAndView;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
@@ -21,15 +20,15 @@ public class LoginController {
         User user = DataBase.findUserById(userId);
         if (user == null) {
             req.setAttribute("loginFailed", true);
-            return new ModelAndView(new JspView("/user/login.jsp"));
+            return new ModelAndView("/user/login.jsp");
         }
         if (user.matchPassword(password)) {
             HttpSession session = req.getSession();
             session.setAttribute(UserSessionUtils.USER_SESSION_KEY, user);
-            return new ModelAndView(new JspView("redirect:/"));
+            return new ModelAndView("redirect:/");
         } else {
             req.setAttribute("loginFailed", true);
-            return new ModelAndView(new JspView("/user/login.jsp"));
+            return new ModelAndView("/user/login.jsp");
         }
     }
 }
