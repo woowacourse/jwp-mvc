@@ -30,7 +30,7 @@ public class JsonUtils {
             if (modelSize == 1) {
                 return OBJECT_MAPPER.writeValueAsString(
                         model.values().stream().findFirst().get());
-            }
+            }else if(modelSize > 1)
             return OBJECT_MAPPER.writeValueAsString(model);
         } catch (JsonProcessingException e) {
             e.printStackTrace();

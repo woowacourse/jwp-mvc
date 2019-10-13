@@ -43,12 +43,14 @@ public class UserApiController {
     @RequestMapping(value = "/api/users", method = RequestMethod.PUT)
     public ModelAndView update(HttpServletRequest req, HttpServletResponse resp) throws Exception {
         String userId = req.getParameter("userId");
-        UserUpdatedDto userUpdatedDtor = JsonUtils.toObject(req.getReader().lines().collect(Collectors.joining(System.lineSeparator())), UserUpdatedDto.class);
+        UserUpdatedDto userUpdatedDto = JsonUtils.toObject(req.getReader().lines().collect(Collectors.joining(System.lineSeparator())), UserUpdatedDto.class);
 
         User user = DataBase.findUserById(userId);
-        user.update(userUpdatedDtor.toUser(userId));
+        user.update(userUpdatedDto.toUser(userId));
 
         resp.setStatus(200);
         return new ModelAndView(new JsonView()).addObject("user", user);
     }
+
+
 }
