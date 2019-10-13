@@ -41,4 +41,11 @@ class UserControllerTest {
         params.put("email", "moomin@woowahan.com");
         assertThat(nsWebTestClient.postForm("/users", params)).isEqualTo(URI.create("/"));
     }
+
+    @Test
+    void updateFormTest() {
+        String result = nsWebTestClient.getResponse("/users/update?userId=admin").toString();
+        assertThat(result).contains("사용자 아이디");
+        assertThat(result).contains("admin");
+    }
 }
