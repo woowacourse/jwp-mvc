@@ -1,15 +1,19 @@
 package slipp.controller;
 
-import slipp.support.db.DataBase;
 import nextstep.mvc.asis.Controller;
+import slipp.support.db.DataBase;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public class HomeController implements Controller {
+public class LegacyListUserController implements Controller {
     @Override
     public String execute(HttpServletRequest req, HttpServletResponse resp) throws Exception {
+        if (!UserSessionUtils.isLogined(req.getSession())) {
+            return "redirect:/users/loginForm";
+        }
+
         req.setAttribute("users", DataBase.findAll());
-        return "home.jsp";
+        return "/user/list.jsp";
     }
 }

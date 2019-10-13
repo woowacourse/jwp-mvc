@@ -1,16 +1,16 @@
 package slipp.controller;
 
-import slipp.domain.User;
-import slipp.support.db.DataBase;
 import nextstep.mvc.asis.Controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import slipp.domain.User;
+import slipp.support.db.DataBase;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public class UpdateUserController implements Controller {
-    private static final Logger log = LoggerFactory.getLogger(UpdateUserController.class);
+public class LegacyUpdateUserController implements Controller {
+    private static final Logger log = LoggerFactory.getLogger(LegacyUpdateUserController.class);
 
     @Override
     public String execute(HttpServletRequest req, HttpServletResponse resp) throws Exception {

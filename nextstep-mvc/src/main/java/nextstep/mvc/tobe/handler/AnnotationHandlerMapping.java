@@ -1,4 +1,4 @@
-package nextstep.mvc.tobe;
+package nextstep.mvc.tobe.handler;
 
 import com.google.common.collect.Maps;
 import nextstep.mvc.HandlerMapping;
@@ -14,12 +14,6 @@ import java.util.Map;
 import java.util.Set;
 
 public class AnnotationHandlerMapping implements HandlerMapping {
-    private static Map<Class, ViewResolver> viewResolvers = Maps.newHashMap();
-
-    static {
-        viewResolvers.put(String.class, new JspViewResolver());
-    }
-
     private Object[] basePackage;
     private Map<HandlerKey, HandlerExecution> handlerExecutions = Maps.newHashMap();
 
@@ -32,19 +26,27 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         Reflections reflections = new Reflections(basePackage);
         Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
 
-
         controllers.forEach(this::fillHandlerExecutions);
     }
 
     private void fillHandlerExecutions(Class clazz) {
+        Object instance = getInstance(clazz);
         Arrays.stream(clazz.getMethods())
                 .filter(method -> method.isAnnotationPresent(RequestMapping.class))
-                .forEach(method -> fillHandlerExecution(method, clazz));
+                .forEach(method -> fillHandlerExecution(method, instance));
     }
 
-    private void fillHandlerExecution(Method method, Class clazz) {
+    private Object getInstance(Class clazz) {
+        try {
+            return clazz.getConstructor().newInstance();
+        } catch (Exception e) {
+            throw new IllegalArgumentException(String.format("%s not found Constructor", clazz.getName()));
+        }
+    }
+
+    private void fillHandlerExecution(Method method, Object instance) {
         RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-        handlerExecutions.put(new HandlerKey(requestMapping.value(), requestMapping.method()), new HandlerExecution(method, clazz, viewResolvers.get(method.getReturnType())));
+        handlerExecutions.put(new HandlerKey(requestMapping.value(), requestMapping.method()), new HandlerExecution(method, instance));
     }
 
     @Override
@@ -56,10 +58,5 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         String url = request.getRequestURI();
         String method = request.getMethod();
         return new HandlerKey(url, RequestMethod.valueOf(method));
-    }
-
-    @Override
-    public boolean supports(HttpServletRequest req) {
-        return getHandler(req) != null;
     }
 }

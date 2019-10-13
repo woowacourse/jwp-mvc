@@ -1,16 +1,21 @@
-package nextstep.mvc.tobe;
+package nextstep.mvc.tobe.view;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import nextstep.mvc.View;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 public class ModelAndView {
+    private String viewName;
     private View view;
-    private Map<String, Object> model = new HashMap<String, Object>();
+    private Map<String, Object> model = new HashMap<>();
 
     public ModelAndView() {
+    }
+
+    public ModelAndView(String viewName) {
+        this.viewName = viewName;
     }
 
     public ModelAndView(View view) {
@@ -20,6 +25,10 @@ public class ModelAndView {
     public ModelAndView addObject(String attributeName, Object attributeValue) {
         model.put(attributeName, attributeValue);
         return this;
+    }
+
+    public boolean matchView(String viewName) {
+        return this.viewName.equals(viewName);
     }
 
     public Object getObject(String attributeName) {
@@ -34,7 +43,7 @@ public class ModelAndView {
         return view;
     }
 
-    public void render(HttpServletRequest req, HttpServletResponse resp) throws Exception {
-        view.render(model, req, resp);
+    public String getViewName() {
+        return viewName;
     }
 }
