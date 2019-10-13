@@ -5,9 +5,9 @@ import nextstep.mvc.exception.InstantiationException;
 import java.lang.reflect.Constructor;
 
 public class ClassUtils {
-    public static Object createInstance(Class<?> clazz) {
+    public static <T> T createInstance(Class<T> clazz) {
         try {
-            Constructor<?> constructor = clazz.getDeclaredConstructor();
+            Constructor<T> constructor = clazz.getDeclaredConstructor();
             constructor.setAccessible(true);
             return constructor.newInstance();
         } catch (Exception e) {

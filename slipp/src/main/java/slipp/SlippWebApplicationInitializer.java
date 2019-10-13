@@ -17,6 +17,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRegistration;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,13 +27,13 @@ public class SlippWebApplicationInitializer implements WebApplicationInitializer
 
     @Override
     public void onStartup(ServletContext servletContext) throws ServletException {
-        List<ArgumentResolver> argumentResolvers = (List<ArgumentResolver>) getAllSubtypesOf(ArgumentResolver.class);
+        List<ArgumentResolver> argumentResolvers = getAllSubtypesOf(ArgumentResolver.class);
         ArgumentResolvers argumentResolversCollections = new ArgumentResolvers(argumentResolvers);
-        List<HandlerAdapter> handlerAdapters = (List<HandlerAdapter>) getAllSubtypesOf(HandlerAdapter.class);
+        List<HandlerAdapter> handlerAdapters = getAllSubtypesOf(HandlerAdapter.class);
         inject(handlerAdapters, argumentResolversCollections);
 
-        List<ViewResolver> viewResolvers = (List<ViewResolver>) getAllSubtypesOf(ViewResolver.class);
-        List<HandlerMapping> handlerMappings = Arrays.asList(new AnnotationHandlerMapping("slipp"));
+        List<ViewResolver> viewResolvers = getAllSubtypesOf(ViewResolver.class);
+        List<HandlerMapping> handlerMappings = Collections.singletonList(new AnnotationHandlerMapping("slipp"));
 
         DispatcherServlet dispatcherServlet = new DispatcherServlet(handlerMappings, handlerAdapters, viewResolvers);
 
@@ -49,11 +50,10 @@ public class SlippWebApplicationInitializer implements WebApplicationInitializer
                 .forEach(handlerAdapter -> handlerAdapter.addArugmentResolvers(argumentResolvers1));
     }
 
-    private List<?> getAllSubtypesOf(Class<?> clazz) {
+    private <T> List<T> getAllSubtypesOf(Class<T> clazz) {
         return reflections.getSubTypesOf(clazz)
                 .stream()
                 .map(ClassUtils::createInstance)
-                .map(clazz::cast)
                 .collect(Collectors.toList());
     }
 }
