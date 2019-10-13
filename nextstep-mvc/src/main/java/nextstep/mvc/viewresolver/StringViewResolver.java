@@ -10,7 +10,8 @@ public class StringViewResolver implements ViewResolver {
 
     @Override
     public boolean canHandle(ModelAndView modelAndView) {
-        return modelAndView.getViewName() != null;
+//        return modelAndView.getViewName() != null;
+        return modelAndView.isStringInstance();
     }
 
     @Override

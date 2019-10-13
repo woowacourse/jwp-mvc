@@ -34,6 +34,14 @@ public class ModelAndView {
         return this;
     }
 
+    public boolean isViewInstance() {
+        return view instanceof View;
+    }
+
+    public boolean isStringInstance() {
+        return view instanceof String;
+    }
+
     public Object getObject(String attributeName) {
         return model.get(attributeName);
     }

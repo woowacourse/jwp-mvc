@@ -7,7 +7,7 @@ public class DefaultViewResolver implements ViewResolver {
 
     @Override
     public boolean canHandle(ModelAndView modelAndView) {
-        return modelAndView.getView() instanceof View;
+        return modelAndView.isViewInstance();
     }
 
     @Override

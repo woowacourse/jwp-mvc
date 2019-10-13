@@ -15,6 +15,7 @@ import org.springframework.web.reactive.function.BodyInserters;
 import slipp.domain.User;
 
 import java.io.File;
+import java.time.Duration;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -137,7 +138,9 @@ public class ControllerAcceptanceTest {
     }
 
     StatusAssertions getPageResource(String location, String cookie) {
-        return testClientBuilder.build()
+        return testClientBuilder
+                .responseTimeout(Duration.ofMillis(30000))
+                .build()
                 .get()
                 .uri(location)
                 .header("Cookie", cookie)
@@ -146,7 +149,9 @@ public class ControllerAcceptanceTest {
     }
 
     StatusAssertions signUp(String userId, String password, String name, String email) {
-        return testClientBuilder.build()
+        return testClientBuilder
+                .responseTimeout(Duration.ofMillis(30000))
+                .build()
                 .post()
                 .uri("/users/create")
                 .body(BodyInserters.fromFormData("userId", userId)
@@ -159,7 +164,9 @@ public class ControllerAcceptanceTest {
 
 
     StatusAssertions logIn(String id, String password) {
-        return testClientBuilder.build()
+        return testClientBuilder
+                .responseTimeout(Duration.ofMillis(30000))
+                .build()
                 .post()
                 .uri("/users/login")
                 .body(BodyInserters.fromFormData("userId", id)
