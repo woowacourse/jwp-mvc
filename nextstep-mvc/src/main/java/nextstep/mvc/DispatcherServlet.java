@@ -8,7 +8,6 @@ import nextstep.mvc.tobe.handleradapter.HandlerAdapter;
 import nextstep.mvc.tobe.view.ModelAndView;
 import nextstep.mvc.tobe.view.View;
 import nextstep.mvc.tobe.viewresolver.ViewResolver;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,7 +52,7 @@ public class DispatcherServlet extends HttpServlet {
             View view = getView(mav);
             view.render(mav.getModel(), req, resp);
         } catch (Throwable e) {
-            logger.error("Exception: {}", ExceptionUtils.getStackTrace(e));
+            logger.error("Service Fail", e);
             throw new ServletException(e);
         }
     }

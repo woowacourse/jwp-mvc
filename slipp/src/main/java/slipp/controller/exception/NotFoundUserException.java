@@ -9,6 +9,6 @@ public class NotFoundUserException extends RuntimeException {
 
     public NotFoundUserException(String userId) {
         super(MESSAGE);
-        logger.debug("Requested User ID: {}", userId);
+        logger.info("Requested User ID: {}", userId);
     }
 }

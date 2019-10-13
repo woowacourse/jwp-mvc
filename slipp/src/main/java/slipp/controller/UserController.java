@@ -26,7 +26,7 @@ public class UserController {
                 userCreatedDto.getName(),
                 userCreatedDto.getEmail());
 
-        logger.debug("User : {}", user);
+        logger.debug("Created User : {}", user);
 
         DataBase.addUser(user);
         return new ModelAndView("redirect:/");
@@ -94,7 +94,7 @@ public class UserController {
                 userUpdatedDto.getName(),
                 userUpdatedDto.getEmail());
 
-        logger.debug("Update User : {}", updateUser);
+        logger.debug("Updated User : {}", updateUser);
         user.update(updateUser);
         return new ModelAndView("redirect:/");
     }

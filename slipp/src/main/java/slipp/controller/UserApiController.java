@@ -5,7 +5,6 @@ import nextstep.utils.JsonUtils;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import slipp.domain.User;
@@ -29,7 +28,7 @@ public class UserApiController {
             response.setStatus(HttpServletResponse.SC_CREATED);
             response.addHeader("Location", "/api/users?userId=" + user.getUserId());
         } catch (IOException e) {
-            logger.error("Sign Up Fail: {}", ExceptionUtils.getStackTrace(e));
+            logger.error("Sign Up Fail", e);
             return new ModelAndView("redirect:/");
         }
 
@@ -53,7 +52,7 @@ public class UserApiController {
             DataBase.findUserById(userId).update(user);
             response.setStatus(HttpServletResponse.SC_OK);
         } catch (IOException e) {
-            logger.error("Update Fail: {}", ExceptionUtils.getStackTrace(e));
+            logger.error("Update Fail", e);
             return new ModelAndView("redirect:/");
         }
 
