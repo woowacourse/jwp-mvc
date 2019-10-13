@@ -2,15 +2,12 @@ package nextstep.mvc.tobe;
 
 import nextstep.web.annotation.Controller;
 import org.reflections.Reflections;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
 public class ControllerScanner {
-    private static final Logger log = LoggerFactory.getLogger(ControllerScanner.class);
     private final Map<Class<?>, Object> controllers = new HashMap<>();
 
     private final Reflections reflections;
@@ -31,7 +28,7 @@ public class ControllerScanner {
             try {
                 fe.apply((T) arg);
             } catch (Exception e) {
-                throw new RuntimeException();
+                throw new ScannerException(this.getClass().toString());
             }
         };
     }
