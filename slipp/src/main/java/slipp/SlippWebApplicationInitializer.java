@@ -4,9 +4,12 @@ import nextstep.mvc.DispatcherServlet;
 import nextstep.mvc.handleradapter.HandlerAdapter;
 import nextstep.mvc.handlermapping.HandlerMapping;
 import nextstep.mvc.handlermapping.InOrderHandlerMapping;
+import nextstep.mvc.tobe.AnnotationHandlerMapping;
 import nextstep.web.WebApplicationInitializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import slipp.controller.HomeController;
+import slipp.controller.handleradapter.ControllerAdaptor;
 import slipp.controller.handleradapter.HandlerExecutionAdapter;
 
 import javax.servlet.ServletContext;
@@ -21,10 +24,13 @@ public class SlippWebApplicationInitializer implements WebApplicationInitializer
     @Override
     public void onStartup(ServletContext servletContext) throws ServletException {
         HandlerMapping mapping = InOrderHandlerMapping.from(Arrays.asList(
-                new ManualHandlerMapping(),
+                ManualHandlerMapping.builder()
+                        .urlAndController("/", new HomeController())
+                        .build(),
                 new AnnotationHandlerMapping("slipp")));
         List<HandlerAdapter> adapters = Arrays.asList(
-                HandlerExecutionAdapter.getInstance()
+                HandlerExecutionAdapter.getInstance(),
+                ControllerAdaptor.getInstance()
         );
         DispatcherServlet dispatcherServlet = new DispatcherServlet(mapping, adapters);
 

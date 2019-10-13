@@ -12,6 +12,17 @@ import javax.servlet.http.HttpServletResponse;
 public class ControllerAdaptor implements HandlerAdapter {
     private static final String DEFAULT_REDIRECT_PREFIX = "redirect:";
 
+    private ControllerAdaptor() {
+    }
+
+    private static class SingletonHolder {
+        private static final ControllerAdaptor INSTANCE = new ControllerAdaptor();
+    }
+
+    public static ControllerAdaptor getInstance() {
+        return SingletonHolder.INSTANCE;
+    }
+
     @Override
     public boolean supports(Object handler) {
         return handler instanceof Controller;

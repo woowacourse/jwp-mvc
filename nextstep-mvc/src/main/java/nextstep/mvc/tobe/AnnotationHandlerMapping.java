@@ -1,6 +1,7 @@
 package nextstep.mvc.tobe;
 
 import com.google.common.collect.Maps;
+import nextstep.mvc.handlermapping.HandlerMapping;
 import nextstep.utils.ComponentScanner;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
@@ -13,9 +14,10 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Map;
+import java.util.Optional;
 
-public class AnnotationHandlerMapping {
-    private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
+public class AnnotationHandlerMapping implements HandlerMapping {
+    private static final Logger log = LoggerFactory.getLogger(nextstep.mvc.tobe.AnnotationHandlerMapping.class);
 
     private Object[] basePackages;
     private Map<HandlerKey, HandlerExecution> handlerExecutions = Maps.newHashMap();
@@ -25,6 +27,7 @@ public class AnnotationHandlerMapping {
     }
 
     public void initialize() {
+        log.info("Initialized !");
         for (Object basePackage : basePackages) {
             if (!(basePackage instanceof String)) {
                 log.error("not supported basePackage: {}", basePackage.getClass());
@@ -39,6 +42,7 @@ public class AnnotationHandlerMapping {
 
         Map<Class<?>, Object> controllers = componentScanner.scan(Controller.class);
         for (final Class<?> controllerClass : controllers.keySet()) {
+            log.info("controllerClass :{}", controllerClass);
             Arrays.asList(controllerClass.getDeclaredMethods()).stream()
                     .filter(method -> method.isAnnotationPresent(RequestMapping.class))
                     .forEach(method -> {
@@ -48,6 +52,7 @@ public class AnnotationHandlerMapping {
                         handlerExecutions.put(handlerKey, handlerExecution);
                     });
         }
+        log.info("excutions: {}", handlerExecutions);
     }
 
     private HandlerKey makeHandlerKey(Method method) {
@@ -68,15 +73,16 @@ public class AnnotationHandlerMapping {
         };
     }
 
-    public HandlerExecution getHandler(HttpServletRequest request) {
+    public Optional<Object> getHandler(HttpServletRequest request) {
         log.debug("URI: {}", request.getRequestURI());
         HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod()));
 
         if (handlerExecutions.containsKey(handlerKey)) {
-            return handlerExecutions.get(handlerKey);
+            return Optional.of(handlerExecutions.get(handlerKey));
         }
 
         HandlerKey emptyMethodHandlerKey = new HandlerKey(request.getRequestURI(), null);
-        return handlerExecutions.get(emptyMethodHandlerKey);
+        return Optional.ofNullable(handlerExecutions.get(emptyMethodHandlerKey));
     }
 }
+
