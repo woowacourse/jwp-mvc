@@ -1,6 +1,6 @@
 package nextstep.mvc.argumentresolver.support;
 
-import nextstep.mvc.exception.NotSupportedPrimitiveTypeException;
+import nextstep.mvc.exception.NotSupportedTypeParserException;
 
 import java.util.Arrays;
 import java.util.function.Function;
@@ -29,7 +29,7 @@ public enum TypeParser {
         TypeParser parser = Arrays.stream(values())
                 .filter(type -> type.valueType.equals(valueType))
                 .findAny()
-                .orElseThrow(NotSupportedPrimitiveTypeException::new);
+                .orElseThrow(NotSupportedTypeParserException::new);
 
         if (source == null) {
             return parser.defaultValue;
