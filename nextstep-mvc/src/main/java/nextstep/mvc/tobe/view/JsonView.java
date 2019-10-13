@@ -18,7 +18,7 @@ public class JsonView implements View {
     public void render(Map<String, ?> model, HttpServletRequest request, HttpServletResponse response) throws Exception {
         String body = modelParse(model);
 
-        response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
+        setContentHeaderOfResponse(response, body);
         response.getWriter().write(body);
         response.getWriter().flush();
     }
@@ -32,5 +32,10 @@ public class JsonView implements View {
             logger.error("don't parse model to json: {}", e.getMessage());
             return "{\"message\": \"don't parse model to json\"}";
         }
+    }
+
+    private void setContentHeaderOfResponse(HttpServletResponse response, String body) {
+        response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
+        response.setContentLength(body.getBytes().length);
     }
 }
