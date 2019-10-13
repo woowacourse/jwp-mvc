@@ -37,7 +37,7 @@ public class ComponentScanner {
         return instances;
     }
 
-    public Set<Class<?>> scanAnnotatedClasses(Class<? extends Annotation> annotation) {
+    private Set<Class<?>> scanAnnotatedClasses(Class<? extends Annotation> annotation) {
         return reflections.getTypesAnnotatedWith(annotation);
     }
 }
