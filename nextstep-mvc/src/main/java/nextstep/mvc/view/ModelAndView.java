@@ -27,6 +27,10 @@ public class ModelAndView {
         return view;
     }
 
+    public String getViewName() {
+        return (view instanceof String) ? (String) view : "";
+    }
+
     public Object getObject(String attributeName) {
         return model.get(attributeName);
     }

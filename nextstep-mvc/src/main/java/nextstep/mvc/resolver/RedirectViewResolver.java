@@ -1,5 +1,6 @@
 package nextstep.mvc.resolver;
 
+import nextstep.mvc.view.ModelAndView;
 import nextstep.mvc.view.RedirectView;
 import nextstep.mvc.view.View;
 
@@ -7,8 +8,8 @@ public class RedirectViewResolver implements ViewResolver {
     private static final String REDIRECT_PREFIX = "redirect:";
 
     @Override
-    public boolean supports(Object view) {
-        return view != null && ((String) view).startsWith(REDIRECT_PREFIX);
+    public boolean supports(ModelAndView mav) {
+        return mav.getViewName().startsWith(REDIRECT_PREFIX);
     }
 
     @Override

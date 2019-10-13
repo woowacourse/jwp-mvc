@@ -68,9 +68,9 @@ public class DispatcherServlet extends HttpServlet {
                 .orElseThrow(NoSuchAdapterException::new);
     }
 
-    private ViewResolver getViewResolver(ModelAndView modelAndView) {
+    private ViewResolver getViewResolver(ModelAndView mav) {
         return resolvers.stream()
-                .filter(r -> r.supports(modelAndView.getView()))
+                .filter(r -> r.supports(mav))
                 .findFirst()
                 .orElseThrow(NoSuchResolverException::new);
     }
