@@ -18,7 +18,7 @@ public class LegacyHandlerAdapter implements HandlerAdapter {
     }
 
     @Override
-    public ModelAndView adapt(Object handler, HttpServletRequest req, HttpServletResponse resp) throws Exception {
+    public ModelAndView handleInternal(Object handler, HttpServletRequest req, HttpServletResponse resp) throws Exception {
         Controller controller = (Controller) handler;
         String viewName = controller.execute(req, resp);
         return new ModelAndView(createView(viewName));

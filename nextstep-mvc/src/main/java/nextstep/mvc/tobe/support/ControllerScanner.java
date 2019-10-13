@@ -1,4 +1,4 @@
-package nextstep.mvc.tobe;
+package nextstep.mvc.tobe.support;
 
 import nextstep.mvc.tobe.exception.InstanceCreationFailedException;
 import nextstep.web.annotation.Controller;
@@ -10,7 +10,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class ControllerScanner {
+public class ControllerScanner  {
     private static final Logger logger = LoggerFactory.getLogger(ControllerScanner.class);
     private final Reflections reflections;
     private Map<Class<?>, Object> controllers;

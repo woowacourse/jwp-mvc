@@ -1,7 +1,7 @@
 package nextstep.mvc;
 
 import nextstep.mvc.tobe.AnnotationHandlerMapping;
-import nextstep.mvc.tobe.handlerAdapter.CommonHandlerAdapter;
+import nextstep.mvc.tobe.handlerAdapter.ControllerHandlerAdapter;
 import nextstep.mvc.tobe.handlerAdapter.HandlerAdapter;
 import nextstep.mvc.tobe.handlerAdapter.LegacyHandlerAdapter;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,7 +22,7 @@ class DispatcherServletTest {
     @BeforeEach
     void setup() {
         List<HandlerMapping> HandlerMappings = Arrays.asList(new ManualHandlerMapping(), new AnnotationHandlerMapping("slipp"));
-        List<HandlerAdapter> HandlerAdapters = Arrays.asList(new CommonHandlerAdapter(), new LegacyHandlerAdapter());
+        List<HandlerAdapter> HandlerAdapters = Arrays.asList(new ControllerHandlerAdapter(), new LegacyHandlerAdapter());
         dispatcherServlet = new DispatcherServlet(HandlerMappings, HandlerAdapters);
         dispatcherServlet.init();
     }

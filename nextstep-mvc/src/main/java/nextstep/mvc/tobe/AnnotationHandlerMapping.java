@@ -2,32 +2,26 @@ package nextstep.mvc.tobe;
 
 import com.google.common.collect.Maps;
 import nextstep.mvc.HandlerMapping;
+import nextstep.mvc.tobe.support.AnnotationApplicationContext;
+import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
 
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class AnnotationHandlerMapping implements HandlerMapping {
-    private Object[] basePackage;
-
     private Map<HandlerKey, HandlerExecution> handlerExecutions = Maps.newHashMap();
 
-    public AnnotationHandlerMapping(Object... basePackage) {
-        this.basePackage = basePackage;
-    }
-
     @Override
-    public void initialize() {
-        ControllerScanner controllerScanner = new ControllerScanner(basePackage);
-        for (Class controller : controllerScanner.getControllers().keySet()) {
+    public void initialize(AnnotationApplicationContext context) {
+        context.scanBeans(Controller.class);
+        Map<Class<?>, Object> controllers = context.getBeans();
+        for (Class controller : controllers.keySet()) {
             Arrays.stream(controller.getDeclaredMethods())
                     .filter(method -> method.isAnnotationPresent(RequestMapping.class))
-                    .forEach(method -> mappingHandlers(method, controllerScanner.getInstance(controller)));
+                    .forEach(method -> mappingHandlers(method, context.getInstance(controller)));
         }
     }
 

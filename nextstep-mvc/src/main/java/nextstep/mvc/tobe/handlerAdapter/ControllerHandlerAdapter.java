@@ -6,14 +6,15 @@ import nextstep.mvc.tobe.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public class CommonHandlerAdapter implements HandlerAdapter {
+public class ControllerHandlerAdapter implements HandlerAdapter {
+
     @Override
     public boolean canAdapt(Object handler) {
         return handler instanceof HandlerExecution;
     }
 
     @Override
-    public ModelAndView adapt(Object handler, HttpServletRequest req, HttpServletResponse resp) throws Exception {
+    public ModelAndView handleInternal(Object handler, HttpServletRequest req, HttpServletResponse resp) throws Exception {
         HandlerExecution handlerExecution = (HandlerExecution)handler;
         return handlerExecution.handle(req,resp);
     }

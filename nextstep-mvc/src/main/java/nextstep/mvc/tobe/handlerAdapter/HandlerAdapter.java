@@ -8,5 +8,5 @@ import javax.servlet.http.HttpServletResponse;
 public interface HandlerAdapter {
     boolean canAdapt(Object handler);
 
-    ModelAndView adapt(Object handler, HttpServletRequest req, HttpServletResponse resp) throws Exception;
+    ModelAndView handleInternal(Object handler, HttpServletRequest req, HttpServletResponse resp) throws Exception;
 }

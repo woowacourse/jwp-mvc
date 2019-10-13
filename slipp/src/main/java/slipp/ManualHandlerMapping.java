@@ -3,6 +3,7 @@ package slipp;
 import nextstep.mvc.DispatcherServlet;
 import nextstep.mvc.HandlerMapping;
 import nextstep.mvc.asis.Controller;
+import nextstep.mvc.tobe.support.AnnotationApplicationContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,7 +16,7 @@ public class ManualHandlerMapping implements HandlerMapping {
     private Map<String, Controller> mappings = new HashMap<>();
 
     @Override
-    public void initialize() {
+    public void initialize(AnnotationApplicationContext context) {
 
         logger.info("Initialized Request Mapping!");
         mappings.keySet().forEach(path -> {
