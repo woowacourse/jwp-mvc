@@ -33,7 +33,7 @@ public class DispatcherServletTests {
 
     @Test
     void service() throws ServletException, IOException {
-        dispatcherServlet = new DispatcherServlet(Arrays.asList(new ControllerHandlerAdaptor(), new HandlerExecutionAdaptor()),
+        dispatcherServlet = new DispatcherServlet(Arrays.asList(new ControllerHandlerAdapter(), new HandlerExecutionAdapter()),
             Arrays.asList(new AnnotationHandlerMapping("nextstep")));
         dispatcherServlet.init();
 
@@ -44,7 +44,7 @@ public class DispatcherServletTests {
 
     @Test
     void HandlerAdapterNotFound() {
-        List<HandlerAdaptor> list = new ArrayList<>();
+        List<HandlerAdapter> list = new ArrayList<>();
         dispatcherServlet = new DispatcherServlet(list,
             Arrays.asList(new AnnotationHandlerMapping("nextstep")));
         dispatcherServlet.init();
@@ -58,7 +58,7 @@ public class DispatcherServletTests {
     @Test
     void HandlerNotFound() {
         List<HandlerMapping> list = new ArrayList<>();
-        dispatcherServlet = new DispatcherServlet(Arrays.asList(new ControllerHandlerAdaptor(), new HandlerExecutionAdaptor()), list);
+        dispatcherServlet = new DispatcherServlet(Arrays.asList(new ControllerHandlerAdapter(), new HandlerExecutionAdapter()), list);
         dispatcherServlet.init();
         makeRequest();
 
