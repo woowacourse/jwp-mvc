@@ -15,7 +15,6 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class UserControllerTest {
-    private static final Logger logger = LoggerFactory.getLogger(UserControllerTest.class);
     private NsWebTestClient nsWebTestClient;
 
     @BeforeEach
