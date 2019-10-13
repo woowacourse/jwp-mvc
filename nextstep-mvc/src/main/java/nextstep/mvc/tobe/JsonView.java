@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.PrintWriter;
 import java.util.Map;
 
 public class JsonView implements View {
@@ -17,13 +18,20 @@ public class JsonView implements View {
     public void render(Map<String, ?> models, HttpServletRequest request, HttpServletResponse response) throws Exception {
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
 
-        if (models.size() == 1) {
-            response.getWriter().write(objectMapper.writeValueAsString(models.values().toArray()[0]));
+        PrintWriter responseWriter = response.getWriter();
+
+        if (!models.isEmpty()) {
+            responseWriter.write(objectMapper.writeValueAsString(getModelValue(models)));
         }
 
-        if (models.size() >= 2) {
-            response.getWriter().write(objectMapper.writeValueAsString(models));
+        responseWriter.flush();
+    }
+
+    private Object getModelValue(Map<String,?> models) {
+        if (models.size() == 1) {
+            return models.values().toArray()[0];
         }
+        return models;
     }
 
     @Override
