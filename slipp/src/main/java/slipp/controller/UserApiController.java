@@ -8,7 +8,6 @@ import nextstep.web.annotation.RequestMethod;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import slipp.controller.exception.BodyParseException;
 import slipp.domain.User;
 import slipp.support.db.DataBase;
 import slipp.support.utils.BodyParser;
@@ -30,9 +29,8 @@ public class UserApiController {
             response.setStatus(HttpServletResponse.SC_CREATED);
             response.addHeader("Location", "/api/users?userId=" + user.getUserId());
         } catch (IOException e) {
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             logger.error("Sign Up Fail: {}", ExceptionUtils.getStackTrace(e));
-            throw new BodyParseException();
+            return new ModelAndView("redirect:/");
         }
 
         return new ModelAndView();
@@ -55,9 +53,8 @@ public class UserApiController {
             DataBase.findUserById(userId).update(user);
             response.setStatus(HttpServletResponse.SC_OK);
         } catch (IOException e) {
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             logger.error("Update Fail: {}", ExceptionUtils.getStackTrace(e));
-            throw new BodyParseException();
+            return new ModelAndView("redirect:/");
         }
 
         return new ModelAndView();
