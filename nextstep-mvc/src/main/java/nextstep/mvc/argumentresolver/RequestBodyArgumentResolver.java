@@ -8,6 +8,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 public class RequestBodyArgumentResolver implements ArgumentResolver {
+    private static final ObjectMapper objectMapper = new ObjectMapper();
+
     @Override
     public boolean canResolve(MethodParameter methodParameter) {
         return methodParameter.isAnnotationPresent(RequestBody.class);
@@ -16,8 +18,7 @@ public class RequestBodyArgumentResolver implements ArgumentResolver {
     @Override
     public Object resolve(HttpServletRequest request, HttpServletResponse response, MethodParameter methodParameter) {
         try {
-            ObjectMapper mapper = new ObjectMapper();
-            return mapper.readValue(request.getInputStream(), methodParameter.getType());
+            return objectMapper.readValue(request.getInputStream(), methodParameter.getType());
         } catch (Exception e) {
             throw new ObjectMapperException();
         }
