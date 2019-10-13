@@ -11,6 +11,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -35,12 +36,20 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     @Override
-    protected void service(HttpServletRequest req, HttpServletResponse resp) {
+    protected void service(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         logger.debug("Method : {}, Request URI : {}", req.getMethod(), req.getRequestURI());
         try {
             ModelAndView mav = processRequest(req, resp);
+            if (Objects.nonNull(mav.getView())) {
+                View view = mav.getView();
+                view.render(mav.getModel(), req, resp);
+                return;
+            }
             View view = new JspView(mav.getViewName());
             view.render(mav.getModel(), req, resp);
+        } catch (HttpException e) {
+            logger.debug("Exception : {}", e.getMessage());
+            resp.sendError(Integer.parseInt(e.getCode()), e.getMessage());
         } catch (Exception e) {
             logger.debug("Exception : {}", e.getMessage());
         }
