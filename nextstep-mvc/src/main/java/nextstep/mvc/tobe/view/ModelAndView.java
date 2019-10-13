@@ -1,7 +1,5 @@
 package nextstep.mvc.tobe.view;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -41,11 +39,5 @@ public class ModelAndView {
 
     public String getViewName() {
         return viewName;
-    }
-
-    public void render(HttpServletRequest req, HttpServletResponse resp) throws Exception {
-        if (this.view != null) {
-            view.render(model, req, resp);
-        }
     }
 }
