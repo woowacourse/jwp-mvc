@@ -20,7 +20,8 @@ public class JsonView implements View {
         String body = "";
         if (modelKeys.size() <= 1) {
             for (String key : modelKeys) {
-                body = objectMapper.writeValueAsString(model.get(key));;
+                body = objectMapper.writeValueAsString(model.get(key));
+                ;
             }
         } else {
             body = objectMapper.writeValueAsString(model);
