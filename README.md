@@ -38,4 +38,8 @@ ManualHandlerMapping 은 Controller 가 아니라 ControllerAdaptor 를 리턴�
 
 - [x] UserAcceptanceTest 통과하도록 UserRestController 추가
 
-- [ ] DispatcherServlet 테스트 코드 작성 (MockHttpServletRequest, MockHttpServletResponse)
+- [ ] slipp 의 asis 컨트롤러들 tobe 로 변경 (애너테이션 기반)
+
+- [ ] ArgumentResolver 구현
+
+[ ] DispatcherServlet 테스트 코드 작성 (MockHttpServletRequest, MockHttpServletResponse)
