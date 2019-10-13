@@ -4,6 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.test.web.reactive.server.EntityExchangeResult;
 import support.test.NsWebTestClient;
 import support.test.NsWebTestServer;
@@ -44,8 +45,28 @@ class UserControllerTest {
 
     @Test
     void updateFormTest() {
+        login("admin", "password");
         String result = nsWebTestClient.getResponse("/users/update?userId=admin").toString();
         assertThat(result).contains("사용자 아이디");
         assertThat(result).contains("admin");
+    }
+
+    @Test
+    void loginFormTest() {
+        EntityExchangeResult<byte[]> result = nsWebTestClient.getResponse("/users/login");
+        assertThat(result.getStatus()).isEqualTo(HttpStatus.OK);
+    }
+
+    @Test
+    void loginSuccessTest() {
+        URI redirectUrl =  login("admin", "password");
+        assertThat(redirectUrl.toString()).isEqualTo("/");
+    }
+
+    private URI login(String userId, String password) {
+        Map<String, String> params = new HashMap<>();
+        params.put("userId", userId);
+        params.put("password", password);
+        return nsWebTestClient.postForm("/users/login", params);
     }
 }
