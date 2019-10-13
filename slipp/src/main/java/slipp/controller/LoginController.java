@@ -6,10 +6,10 @@ import nextstep.mvc.tobe.RedirectView;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
-import slipp.dto.UserCreatedDto;
 import slipp.dto.UserRequestLoginDto;
 import slipp.service.LoginService;
 import slipp.service.UserSearchService;
+import slipp.support.db.DataBase;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -35,9 +35,7 @@ public class LoginController {
 
         if (loginService.matchLoginData(loginDto)) {
             HttpSession session = request.getSession();
-            UserCreatedDto userCreatedDto = userSearchService.findUserById(loginDto.getUserId());
-
-            session.setAttribute(UserSessionUtils.USER_SESSION_KEY, userCreatedDto);
+            session.setAttribute(UserSessionUtils.USER_SESSION_KEY, DataBase.findUserById(loginDto.getUserId()));
             return new ModelAndView(new RedirectView("/"));
         }
 
