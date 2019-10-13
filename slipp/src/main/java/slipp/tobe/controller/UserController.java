@@ -12,6 +12,7 @@ import slipp.support.db.DataBase;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Collection;
 
 @Controller
 public class UserController {
@@ -19,12 +20,8 @@ public class UserController {
 
     @RequestMapping(value = "/users", method = RequestMethod.GET)
     public String get(HttpServletRequest req, HttpServletResponse res) {
-        String userId = req.getParameter("userId");
-        User user = DataBase.findUserById(userId);
-        if (user == null) {
-            throw new UserNotFoundException();
-        }
-        req.setAttribute("user", user);
+        Collection<User> users = DataBase.findAll();
+        req.setAttribute("users", users);
         return "/user/profile.jsp";
     }
 

@@ -26,14 +26,14 @@ class UserControllerTest {
     }
 
     @Test
-    void getUserProfile() {
-        EntityExchangeResult<byte[]> result = nsWebTestClient.getResponse("/users?userId=admin");
+    void getUserListTest() {
+        EntityExchangeResult<byte[]> result = nsWebTestClient.getResponse("/users");
         String response = result.toString();
         assertThat(response).contains("자바지기");
     }
 
     @Test
-    void postUser() {
+    void signUpTest() {
         Map<String, String> params = new HashMap<>();
         params.put("userId", "1");
         params.put("name", "무민");
