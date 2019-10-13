@@ -13,6 +13,7 @@ import java.util.Map;
 public class JsonView implements View {
     private static final Logger logger = LoggerFactory.getLogger(JsonView.class);
 
+
     @Override
     public void render(Map<String, ?> model, HttpServletRequest request, HttpServletResponse response) throws Exception {
         String body = modelParse(model);
@@ -23,10 +24,10 @@ public class JsonView implements View {
     }
 
     private String modelParse(Map<String, ?> model) {
-        ModelSize modelSize = ModelSize.of(model.size());
+        ModelToJsonParser<Map<String, ?>, String> jsonParser = JsonParserSelector.select(model.size());
 
         try {
-            return JsonParserSelector.getJsonParser(modelSize).parse(model);
+            return jsonParser.parse(model);
         } catch (JsonProcessingException e) {
             logger.error("don't parse model to json: {}", e.getMessage());
             return "{\"message\": \"don't parse model to json\"}";

@@ -23,7 +23,7 @@ class ModelToJsonParserSelectorTest {
     @Test
     void modelSize가_0인_경우_빈_String_반환_테스트() throws JsonProcessingException {
         testModel = Collections.emptyMap();
-        ModelToJsonParser<Map<String, ?>, String> jsonParser = JsonParserSelector.getJsonParser(ModelSize.BLANK);
+        ModelToJsonParser<Map<String, ?>, String> jsonParser = JsonParserSelector.select(0);
 
         assertThat(jsonParser.parse(testModel)).isEqualTo("");
     }
@@ -35,7 +35,7 @@ class ModelToJsonParserSelectorTest {
         Car expected = new Car("red", "suv");
         testModel.put("car", expected);
 
-        ModelToJsonParser<Map<String, ?>, String> jsonParser = JsonParserSelector.getJsonParser(ModelSize.ONE_SIZE);
+        ModelToJsonParser<Map<String, ?>, String> jsonParser = JsonParserSelector.select(1);
         String json = jsonParser.parse(testModel);
         Car actual = JsonUtils.toObject(json, Car.class);
 
@@ -49,16 +49,15 @@ class ModelToJsonParserSelectorTest {
         testModel.put("car", new Car("red", "suv"));
         testModel.put("car2", new Car("blue", "suv"));
 
-        ModelToJsonParser<Map<String, ?>, String> jsonParser = JsonParserSelector.getJsonParser(ModelSize.MANY_SIZE);
+        ModelToJsonParser<Map<String, ?>, String> jsonParser = JsonParserSelector.select(2);
         String json = jsonParser.parse(testModel);
         ObjectMapper objectMapper = new ObjectMapper();
 
-        assertThat(testModel).isEqualTo(objectMapper.readValue(json, new TypeReference<Map<String, Car>>() {
-        }));
+        assertThat(testModel).isEqualTo(objectMapper.readValue(json, new TypeReference<Map<String, Car>>(){}));
     }
 
     @Test
     void modelSize가_null인경우_예외_테스트() {
-        assertThrows(InvalidModelSizeException.class, () -> JsonParserSelector.getJsonParser(null));
+        assertThrows(InvalidModelSizeException.class, () -> JsonParserSelector.select(-1));
     }
 }
