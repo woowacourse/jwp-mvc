@@ -72,20 +72,8 @@ public class DispatcherServlet extends HttpServlet {
                 .orElseThrow(() -> new NotSupportHandlerAdapterException("지원하지 않는 handler adapter"));
     }
 
-    private void render(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) throws Exception {
-        View view = findView(mav);
+    private void render(final HttpServletRequest request, final HttpServletResponse response, final ModelAndView mav) throws Exception {
+        final View view = mav.getView(viewResolvers);
         view.render(mav.getModel(), request, response);
-    }
-
-    private View findView(ModelAndView modelAndView) {
-        if (modelAndView.isViewClass()) {
-            return (View) modelAndView.getView();
-        }
-        String viewName = (String) modelAndView.getView();
-        return viewResolvers.stream()
-                .filter(viewResolver -> viewResolver.supports(viewName))
-                .findAny()
-                .map(viewResolver -> viewResolver.resolve(viewName))
-                .orElseThrow(IllegalArgumentException::new);
     }
 }

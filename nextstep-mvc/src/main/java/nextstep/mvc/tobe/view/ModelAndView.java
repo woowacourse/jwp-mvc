@@ -1,18 +1,20 @@
 package nextstep.mvc.tobe.view;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import nextstep.mvc.tobe.exception.NotFoundViewResolverException;
+import nextstep.mvc.tobe.viewresolver.ViewResolver;
+
+import java.util.*;
 
 public class ModelAndView {
-    private Object view;
+    private String viewName;
+    private View view;
     private Map<String, Object> model = new HashMap<>();
 
     public ModelAndView() {
     }
 
-    public ModelAndView(String view) {
-        this.view = view;
+    public ModelAndView(String viewName) {
+        this.viewName = viewName;
     }
 
     public ModelAndView(View view) {
@@ -23,7 +25,7 @@ public class ModelAndView {
         this.model = model;
     }
 
-    public ModelAndView(Object view, Map<String, Object> model) {
+    public ModelAndView(View view, Map<String, Object> model) {
         this.view = view;
         this.model = model;
     }
@@ -37,15 +39,26 @@ public class ModelAndView {
         return model.get(attributeName);
     }
 
-    public boolean isViewClass() {
-        return view instanceof View;
-    }
-
     public Map<String, Object> getModel() {
         return Collections.unmodifiableMap(model);
     }
 
-    public Object getView() {
+    public View getView() {
         return view;
+    }
+
+    public View getView(final List<ViewResolver> viewResolvers) {
+        return Optional.ofNullable(view)
+                .orElseGet(() -> findView(viewResolvers));
+    }
+
+    private View findView(final List<ViewResolver> viewResolvers) {
+        return viewResolvers.stream()
+                .filter(viewResolver -> viewResolver.supports(viewName))
+                .findAny()
+                .map(viewResolver -> viewResolver.resolve(viewName))
+                .orElseThrow(() -> new NotFoundViewResolverException(
+                        String.format("viewName: %s, View resolver 를 찾을 수 없습니다.", viewName)
+                ));
     }
 }
