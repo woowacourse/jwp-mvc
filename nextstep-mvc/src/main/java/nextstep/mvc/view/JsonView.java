@@ -19,6 +19,14 @@ public class JsonView implements View {
     public void render(Map<String, ?> model, HttpServletRequest request, HttpServletResponse response) throws Exception {
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE.getType());
         PrintWriter writer = response.getWriter();
-        JsonSerializers.serialize(model, mapper, writer);
+        if (model.isEmpty()) {
+            writer.print("");
+            return;
+        }
+        if (model.size() == 1) {
+            writer.print(mapper.writeValueAsString(model.values().toArray()[0]));
+            return;
+        }
+        writer.print(mapper.writeValueAsString(model));
     }
 }
