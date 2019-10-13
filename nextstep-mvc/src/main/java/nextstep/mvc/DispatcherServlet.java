@@ -3,6 +3,7 @@ package nextstep.mvc;
 import nextstep.mvc.tobe.ModelAndView;
 import nextstep.mvc.tobe.NotFoundHandlerException;
 import nextstep.mvc.tobe.View;
+import nextstep.mvc.tobe.WebRequestContext;
 import nextstep.mvc.tobe.handlerAdapter.HandlerAdapter;
 import nextstep.mvc.tobe.support.AnnotationApplicationContext;
 import nextstep.mvc.tobe.support.ApplicationContext;
@@ -32,8 +33,8 @@ public class DispatcherServlet extends HttpServlet {
     public DispatcherServlet(ApplicationContext context) {
         this.context = context;
         context.scanBeans(HandlerAdapter.class, HandlerMapping.class, ViewResolver.class);
-        handlerAdapters = Collections.unmodifiableSet((Set<HandlerAdapter>) context.getBean(HandlerAdapter.class));
         handlerMappings = Collections.unmodifiableSet((Set<HandlerMapping>) context.getBean(HandlerMapping.class));
+        handlerAdapters = Collections.unmodifiableSet((Set<HandlerAdapter>) context.getBean(HandlerAdapter.class));
         viewResolvers = Collections.unmodifiableSet((Set<ViewResolver>) context.getBean(ViewResolver.class));
     }
 
@@ -46,23 +47,21 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException {
-        String requestUri = request.getRequestURI();
-        logger.debug("Method : {}, Request URI : {}", request.getMethod(), requestUri);
-
+        final WebRequestContext webRequest = new WebRequestContext(request, response);
+        logger.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
         try {
-            Object handler = getHandler(request);
-
-            HandlerAdapter handlerAdapter = getHandlerAdapter(handler);
-            ModelAndView mv = handlerAdapter.handleInternal(handler, request, response);
-            move(mv, request, response);
+            doDispatch(request, response);
         } catch (Throwable e) {
             logger.error("Exception : {}", e);
             throw new ServletException(e.getMessage());
         }
     }
 
-    protected void doDispatch(HttpServletRequest request, HttpServletResponse response) {
-
+    private void doDispatch(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        Object handler = getHandler(request);
+        HandlerAdapter handlerAdapter = getHandlerAdapter(handler);
+        ModelAndView mv = handlerAdapter.handleInternal(handler, request, response);
+        processDispatchResult(mv, request, response);
     }
 
     private HandlerAdapter getHandlerAdapter(Object handler) {
@@ -80,8 +79,24 @@ public class DispatcherServlet extends HttpServlet {
                 .orElseThrow(NotFoundHandlerException::new);
     }
 
-    private void move(ModelAndView mv, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        View view = mv.getView();
+    private void processDispatchResult(ModelAndView mv, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        View view = resolveView(mv);
         view.render(mv.getModel(), request, response);
+    }
+
+    private View resolveView(ModelAndView mv) {
+        String viewName = mv.getViewName();
+        if (viewName != null) {
+            return resolve(viewName);
+        }
+        return mv.getView();
+    }
+
+    private View resolve(String viewName) {
+        return viewResolvers.stream()
+                .filter(x -> x.canHandle(viewName))
+                .findFirst()
+                .orElseThrow()
+                .resolveViewName(viewName);
     }
 }

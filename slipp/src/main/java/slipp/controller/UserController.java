@@ -20,7 +20,12 @@ public class UserController {
 
     UserService userService = new UserService();
 
-    @RequestMapping(value = "/users/loginForm", method = RequestMethod.POST)
+    @RequestMapping(value = "/users/form")
+    public String createForm(HttpServletRequest req, HttpServletResponse resp){
+        return "/user/form.jsp";
+    }
+
+    @RequestMapping(value = "/users/create", method = RequestMethod.POST)
     public String create(HttpServletRequest req, HttpServletResponse resp) {
         userService.create(req.getParameter("userId"), req.getParameter("password"), req.getParameter("name"), req.getParameter("email"));
         return "redirect:/";
@@ -33,6 +38,6 @@ public class UserController {
         }
 
         req.setAttribute("users", DataBase.findAll());
-        return new ModelAndView(new JspView("/user/list.jsp"));
+        return new ModelAndView("/user/list.jsp");
     }
 }

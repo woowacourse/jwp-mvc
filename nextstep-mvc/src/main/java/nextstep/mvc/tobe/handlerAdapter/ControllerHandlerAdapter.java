@@ -16,7 +16,11 @@ public class ControllerHandlerAdapter implements HandlerAdapter {
     @Override
     public ModelAndView handleInternal(Object handler, HttpServletRequest req, HttpServletResponse resp) throws Exception {
         HandlerExecution handlerExecution = (HandlerExecution)handler;
-        return handlerExecution.handle(req,resp);
+        Object result = handlerExecution.handle(req,resp);
+        if(result instanceof String){
+            return new ModelAndView((String)result);
+        }
+        return (ModelAndView)result;
     }
 }
 

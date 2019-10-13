@@ -14,6 +14,6 @@ public class HomeController {
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public ModelAndView index(HttpServletRequest req, HttpServletResponse resp) throws Exception {
         req.setAttribute("users", DataBase.findAll());
-        return new ModelAndView(new JspView("home.jsp"));
+        return new ModelAndView("home.jsp");
     }
 }

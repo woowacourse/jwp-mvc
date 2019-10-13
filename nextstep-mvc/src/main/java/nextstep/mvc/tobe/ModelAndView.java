@@ -6,10 +6,14 @@ import java.util.Map;
 import java.util.Objects;
 
 public class ModelAndView {
-    private View view;
+    private Object view;
     private Map<String, Object> model = new HashMap<String, Object>();
 
     public ModelAndView() {
+    }
+
+    public ModelAndView(String view){
+        this.view = view;
     }
 
     public ModelAndView(View view) {
@@ -30,7 +34,11 @@ public class ModelAndView {
     }
 
     public View getView() {
-        return view;
+        return view instanceof View ? (View) view : null;
+    }
+
+    public String getViewName() {
+        return view instanceof String ? (String) view : null;
     }
 
     @Override
@@ -46,4 +54,6 @@ public class ModelAndView {
     public int hashCode() {
         return Objects.hash(view, model);
     }
+
+
 }

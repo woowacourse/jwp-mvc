@@ -6,7 +6,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -26,7 +25,7 @@ public class ApplicationContext<T> {
     public void scanBeans(Class... classes) {
         for (Class clazz : classes) {
             Set<Class<? extends T>> scanClasses = reflections.getSubTypesOf(clazz);
-            beans.put(clazz, scanClasses.stream().map(x->createInstance(x)).collect(Collectors.toSet()));
+            beans.put(clazz, scanClasses.stream().map(x -> createInstance(x)).collect(Collectors.toSet()));
         }
     }
 

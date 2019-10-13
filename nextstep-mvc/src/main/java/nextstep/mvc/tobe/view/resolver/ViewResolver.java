@@ -4,4 +4,6 @@ import nextstep.mvc.tobe.View;
 
 public interface ViewResolver {
     View resolveViewName(String name);
+
+    Boolean canHandle(String viewName);
 }

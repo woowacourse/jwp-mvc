@@ -17,7 +17,6 @@ public class AnnotationApplicationContext<T> extends ApplicationContext {
     public AnnotationApplicationContext(Object... basePackage) {
         super(basePackage);
         reflections = new Reflections(basePackage);
-
     }
 
     @Override
