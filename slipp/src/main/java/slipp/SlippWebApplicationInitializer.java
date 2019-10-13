@@ -27,9 +27,9 @@ public class SlippWebApplicationInitializer implements WebApplicationInitializer
     @Override
     public void onStartup(ServletContext servletContext) throws ServletException {
         List<ArgumentResolver> argumentResolvers = (List<ArgumentResolver>) getAllSubtypesOf(ArgumentResolver.class);
-        ArgumentResolvers argumentResolvers1 = new ArgumentResolvers(argumentResolvers);
+        ArgumentResolvers argumentResolversCollections = new ArgumentResolvers(argumentResolvers);
         List<HandlerAdapter> handlerAdapters = (List<HandlerAdapter>) getAllSubtypesOf(HandlerAdapter.class);
-        inject(handlerAdapters, argumentResolvers1);
+        inject(handlerAdapters, argumentResolversCollections);
 
         List<ViewResolver> viewResolvers = (List<ViewResolver>) getAllSubtypesOf(ViewResolver.class);
         List<HandlerMapping> handlerMappings = Arrays.asList(new AnnotationHandlerMapping("slipp"));
