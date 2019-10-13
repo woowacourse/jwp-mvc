@@ -1,7 +1,6 @@
 package nextstep.mvc.tobe.handleradapter;
 
 import nextstep.mvc.asis.Controller;
-import nextstep.mvc.tobe.view.JspView;
 import nextstep.mvc.tobe.view.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
@@ -14,8 +13,8 @@ public class ManualHandlerAdapter implements HandlerAdapter {
     }
 
     @Override
-    public ModelAndView handle(HttpServletRequest req, HttpServletResponse resp, Object handler) throws Exception {
-        String viewName = ((Controller) handler).execute(req, resp);
-        return new ModelAndView(new JspView(viewName));
+    public ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        String viewName = ((Controller) handler).execute(request, response);
+        return new ModelAndView(viewName);
     }
 }

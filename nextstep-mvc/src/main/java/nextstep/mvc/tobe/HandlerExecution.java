@@ -1,6 +1,6 @@
 package nextstep.mvc.tobe;
 
-import nextstep.mvc.tobe.view.ModelAndView;
+import nextstep.web.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -15,7 +15,11 @@ public class HandlerExecution {
         this.method = method;
     }
 
-    public ModelAndView handle(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        return (ModelAndView) method.invoke(declaredObject, request, response);
+    public Object handle(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        return method.invoke(declaredObject, request, response);
+    }
+
+    public boolean hasResponseBodyAnnotation() {
+        return method.getAnnotation(ResponseBody.class) != null;
     }
 }
