@@ -2,7 +2,6 @@ package nextstep.mvc;
 
 import nextstep.mvc.handleradapter.HandlerAdapter;
 import nextstep.mvc.handlermapping.HandlerMapping;
-import nextstep.mvc.tobe.ModelAndView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,22 +38,21 @@ public class DispatcherServlet extends HttpServlet {
         String requestUri = request.getRequestURI();
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestUri);
 
-        final Object object = rm.getHandler(request)
+        final Object handler = getHandler(request);
+        log.debug("handler: {}", handler);
+
+        getAdapter(handler).render(request, response, handler);
+    }
+
+    private Object getHandler(HttpServletRequest request) {
+        return rm.getHandler(request)
                 .orElseThrow(() -> BadHttpRequestException.from(request));
+    }
 
-        log.debug("handler: {}", object);
-
-        supportedAdapters.stream()
-                .filter(adapter -> adapter.supports(object))
+    private HandlerAdapter getAdapter(Object handler) {
+        return supportedAdapters.stream()
+                .filter(adapter -> adapter.supports(handler))
                 .findFirst()
-                .ifPresent(adapter -> {
-                    try {
-                        ModelAndView modelAndView = adapter.handle(request, response, object);
-                        modelAndView.getView().render(modelAndView.getModel(), request, response);
-                    } catch (Exception e) {
-                        log.error("Exception : {}", e);
-                        throw new IllegalStateException(e);
-                    }
-                });
+                .orElseThrow(() -> NotSupportedHandler.ofHandler(handler));
     }
 }
