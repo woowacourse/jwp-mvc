@@ -3,11 +3,11 @@ package support.test;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.EntityExchangeResult;
 import org.springframework.test.web.reactive.server.WebTestClient;
-import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.reactive.function.BodyInserters;
 import reactor.core.publisher.Mono;
 
 import java.net.URI;
+import java.time.Duration;
 import java.util.Map;
 
 import static org.springframework.web.reactive.function.client.ExchangeFilterFunctions.basicAuthentication;
@@ -24,7 +24,8 @@ public class NsWebTestClient {
         this.port = port;
         this.testClientBuilder = WebTestClient
                 .bindToServer()
-                .baseUrl(baseUrl + ":" + port);
+                .baseUrl(baseUrl + ":" + port)
+                .responseTimeout(Duration.ofMillis(30000));
     }
 
     public NsWebTestClient basicAuth(String username, String password) {
