@@ -2,6 +2,7 @@ package support.test;
 
 import org.springframework.test.web.reactive.server.EntityExchangeResult;
 import org.springframework.test.web.reactive.server.WebTestClient;
+import org.springframework.web.reactive.function.BodyInserters;
 import reactor.core.publisher.Mono;
 
 import java.net.URI;
@@ -38,6 +39,17 @@ public class NsWebTestClient {
                 .expectBody()
                 .returnResult();
         return response.getResponseHeaders().getLocation();
+    }
+
+    public void loginUser(String loginId, String loginPassword) {
+        testClientBuilder.build()
+                .post()
+                .uri("/users/login")
+                .body(BodyInserters.fromFormData("userId", loginId)
+                        .with("password", loginPassword))
+                .exchange()
+                .expectBody()
+        ;
     }
 
     public <T> void updateResource(URI location, T body, Class<T> clazz) {
