@@ -2,6 +2,7 @@ package nextstep.mvc.tobe;
 
 import com.google.common.collect.Maps;
 import nextstep.mvc.HandlerMapping;
+import nextstep.utils.ClassUtils;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
@@ -18,7 +19,7 @@ import java.util.stream.Collectors;
 public class AnnotationHandlerMapping implements HandlerMapping {
     private Object[] basePackage;
 
-    private Map<HandlerKey, HandlerExecution> handlerExecutions = Maps.newHashMap();
+    private Map<HandlerKey, HandlerMethod> handlerExecutions = Maps.newHashMap();
 
     public AnnotationHandlerMapping(Object... basePackage) {
         this.basePackage = basePackage;
@@ -28,19 +29,10 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     public void initialize() {
         Reflections reflections = new Reflections(basePackage);
         List<Object> handlers = reflections.getTypesAnnotatedWith(Controller.class).stream()
-                .map(this::createInstance)
+                .map(ClassUtils::newInstance)
                 .collect(Collectors.toList());
 
         handlers.forEach(this::registerHandlerExecution);
-    }
-
-    private Object createInstance(Class clazz) {
-        try {
-            return clazz.newInstance();
-        } catch (InstantiationException | IllegalAccessException e) {
-            e.printStackTrace();
-            return null;
-        }
     }
 
     private void registerHandlerExecution(Object handler) {
@@ -53,14 +45,14 @@ public class AnnotationHandlerMapping implements HandlerMapping {
             Arrays.stream(annotation.method())
                     .forEach(requestMethod -> {
                         HandlerKey handlerKey = new HandlerKey(annotation.value(), requestMethod);
-                        HandlerExecution handlerExecution = new HandlerExecution(handler, method);
-                        handlerExecutions.put(handlerKey, handlerExecution);
+                        HandlerMethod handlerMethod = new HandlerMethod(handler, method);
+                        handlerExecutions.put(handlerKey, handlerMethod);
                     });
         }
     }
 
     @Override
-    public Handler getHandler(HttpServletRequest request) {
+    public Object getHandler(HttpServletRequest request) {
         HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod()));
         return handlerExecutions.get(handlerKey);
     }

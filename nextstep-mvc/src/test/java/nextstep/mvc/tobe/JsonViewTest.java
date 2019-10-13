@@ -1,5 +1,7 @@
 package nextstep.mvc.tobe;
 
+import nextstep.mvc.tobe.view.JsonView;
+import nextstep.mvc.tobe.view.View;
 import nextstep.utils.JsonUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,18 +20,20 @@ public class JsonViewTest {
     private static final Logger logger = LoggerFactory.getLogger( JsonViewTest.class );
     private MockHttpServletRequest request;
     private MockHttpServletResponse response;
+    private RequestContext requestContext;
     private View view;
 
     @BeforeEach
     void setUp() {
         request = new MockHttpServletRequest();
         response = new MockHttpServletResponse();
+        requestContext = new RequestContext(request, response);
         view = new JsonView();
     }
 
     @Test
     void render_no_element() throws Exception {
-        view.render(new HashMap<>(), request, response);
+        view.render(new HashMap<>(), requestContext);
         assertThat(response.getContentType()).isEqualTo(MediaType.APPLICATION_JSON_UTF8_VALUE);
         assertThat(response.getContentAsString()).isBlank();
     }
@@ -40,7 +44,7 @@ public class JsonViewTest {
         Car expected = new Car("Black", "Sonata");
         model.put("car", expected);
 
-        view.render(model, request, response);
+        view.render(model, requestContext);
 
         Car actual = JsonUtils.toObject(response.getContentAsString(), Car.class);
         assertThat(response.getContentType()).isEqualTo(MediaType.APPLICATION_JSON_UTF8_VALUE);
@@ -54,7 +58,7 @@ public class JsonViewTest {
         model.put("car", expected);
         model.put("name", "포비");
 
-        view.render(model, request, response);
+        view.render(model, requestContext);
 
         assertThat(response.getContentType()).isEqualTo(MediaType.APPLICATION_JSON_UTF8_VALUE);
         logger.debug("response body : {}", response.getContentAsString());

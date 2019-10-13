@@ -1,21 +1,25 @@
 package slipp.controller;
 
+import nextstep.mvc.tobe.view.ModelAndView;
+import nextstep.web.annotation.Controller;
+import nextstep.web.annotation.RequestMapping;
+import nextstep.web.annotation.RequestParam;
 import slipp.domain.User;
 import slipp.support.db.DataBase;
-import nextstep.mvc.asis.Controller;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import static nextstep.web.annotation.RequestMethod.GET;
 
-public class ProfileController implements Controller {
-    @Override
-    public String execute(HttpServletRequest req, HttpServletResponse resp) throws Exception {
-        String userId = req.getParameter("userId");
+@Controller
+public class ProfileController {
+    @RequestMapping(value = "/users/profile", method = GET)
+    public ModelAndView execute(@RequestParam("userId") String userId) {
         User user = DataBase.findUserById(userId);
         if (user == null) {
             throw new NullPointerException("사용자를 찾을 수 없습니다.");
         }
-        req.setAttribute("user", user);
-        return "/user/profile.jsp";
+
+        ModelAndView modelAndView = new ModelAndView("/user/profile.jsp");
+        modelAndView.addObject("user", user);
+        return modelAndView;
     }
 }
