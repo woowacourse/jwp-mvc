@@ -19,13 +19,10 @@ public class HandlerMappingManager {
     }
 
     public Handler getHandler(HttpServletRequest request) {
-        for (HandlerMapping handlerMapping : handlerMappings) {
-            Handler handler = handlerMapping.getHandler(request);
-            if (handler != null) {
-                return handler;
-            }
-        }
-
-        throw new NotFoundException();
+        return handlerMappings.stream()
+                .filter(handlerMapping -> handlerMapping.support(request))
+                .findFirst()
+                .orElseThrow(NotFoundException::new)
+                .getHandler(request);
     }
 }

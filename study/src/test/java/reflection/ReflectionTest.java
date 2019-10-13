@@ -55,7 +55,7 @@ public class ReflectionTest {
     }
 
     @Test
-    public void privateFieldAccess() {
+    public void privateFieldAccess() throws NoSuchFieldException, IllegalAccessException {
         Class<Student> clazz = Student.class;
         logger.debug(clazz.getName());
 
@@ -64,19 +64,14 @@ public class ReflectionTest {
 
         String testName = "pkch";
         int testAge = 27;
-        try {
-            Field name = clazz.getDeclaredField(NAME_FIELD);
-            name.setAccessible(true);
-            name.set(student, testName);
 
-            Field age = clazz.getDeclaredField(AGE_FIELD);
-            age.setAccessible(true);
-            age.set(student, testAge);
-        } catch (NoSuchFieldException e) {
-            logger.error("정의 된 필드가 아닙니다! {}", e.getMessage());
-        } catch (IllegalAccessException e) {
-            logger.error("값을 세팅할 수 없습니다. {}", e.getMessage());
-        }
+        Field name = clazz.getDeclaredField(NAME_FIELD);
+        name.setAccessible(true);
+        name.set(student, testName);
+
+        Field age = clazz.getDeclaredField(AGE_FIELD);
+        age.setAccessible(true);
+        age.set(student, testAge);
 
         assertThat(student.getName()).isEqualTo(testName);
         assertThat(student.getAge()).isEqualTo(testAge);

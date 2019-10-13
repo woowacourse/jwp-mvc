@@ -16,12 +16,12 @@ import javax.servlet.ServletRegistration;
 import java.util.Arrays;
 import java.util.List;
 
-public class SlippWebApplicationInitializer  implements WebApplicationInitializer {
+public class SlippWebApplicationInitializer implements WebApplicationInitializer {
     private static final Logger log = LoggerFactory.getLogger(SlippWebApplicationInitializer.class);
 
     @Override
     public void onStartup(ServletContext servletContext) throws ServletException {
-        List<HandlerMapping> handlerMappings = Arrays.asList(new ManualHandlerMapping(), new AnnotationHandlerMapping());
+        List<HandlerMapping> handlerMappings = Arrays.asList(new AnnotationHandlerMapping("slipp"), new ManualHandlerMapping());
         List<HandlerAdapter> handlerAdapters = Arrays.asList(new ControllerHandlerAdapter(), new HandlerExecutionAdapter());
         DispatcherServlet dispatcherServlet = new DispatcherServlet(handlerMappings, handlerAdapters);
 
