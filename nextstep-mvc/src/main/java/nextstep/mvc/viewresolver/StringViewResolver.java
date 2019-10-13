@@ -1,7 +1,7 @@
 package nextstep.mvc.viewresolver;
 
 import nextstep.mvc.view.JspView;
-import nextstep.mvc.view.ModelAndView;
+import nextstep.mvc.modelandview.ModelAndView;
 import nextstep.mvc.view.RedirectView;
 import nextstep.mvc.view.View;
 

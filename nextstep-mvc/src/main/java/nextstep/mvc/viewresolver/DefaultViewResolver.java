@@ -1,6 +1,6 @@
 package nextstep.mvc.viewresolver;
 
-import nextstep.mvc.view.ModelAndView;
+import nextstep.mvc.modelandview.ModelAndView;
 import nextstep.mvc.view.View;
 
 public class DefaultViewResolver implements ViewResolver {

@@ -5,7 +5,7 @@ import nextstep.mvc.exception.NotFoundHandlerException;
 import nextstep.mvc.exception.NotFoundViewResolverExcepetion;
 import nextstep.mvc.handleradapter.HandlerAdapter;
 import nextstep.mvc.handlermapping.HandlerMapping;
-import nextstep.mvc.view.ModelAndView;
+import nextstep.mvc.modelandview.ModelAndView;
 import nextstep.mvc.view.View;
 import nextstep.mvc.viewresolver.ViewResolver;
 import org.slf4j.Logger;
@@ -45,19 +45,15 @@ public class DispatcherServlet extends HttpServlet {
         logger.debug("Method : {}, Request URI : {}", req.getMethod(), req.getRequestURI());
 
         try {
-
             Object handler = getHandler(req);
             HandlerAdapter handlerAdapter = getHandlerAdapter(handler);
             ModelAndView modelAndView = handlerAdapter.handle(req, resp, handler);
             ViewResolver viewResolver = getViewResolver(modelAndView);
             View view = viewResolver.resolveView(modelAndView);
             view.render(modelAndView.getModel(), req, resp);
-
         } catch (Exception e) {
-
             logger.error(e.getMessage());
             resp.sendError(404);
-
         }
     }
 

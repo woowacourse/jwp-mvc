@@ -1,7 +1,7 @@
 package nextstep.mvc.argumentresolver.support;
 
 import nextstep.mvc.exception.ServletArgumentTypeNotSupportedException;
-import nextstep.mvc.view.ModelAndView;
+import nextstep.mvc.modelandview.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

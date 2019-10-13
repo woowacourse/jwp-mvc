@@ -1,4 +1,6 @@
-package nextstep.mvc.view;
+package nextstep.mvc.modelandview;
+
+import nextstep.mvc.view.View;
 
 import java.util.Collections;
 import java.util.HashMap;

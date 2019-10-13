@@ -2,7 +2,7 @@ package slipp.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import nextstep.mvc.view.JsonView;
-import nextstep.mvc.view.ModelAndView;
+import nextstep.mvc.modelandview.ModelAndView;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;

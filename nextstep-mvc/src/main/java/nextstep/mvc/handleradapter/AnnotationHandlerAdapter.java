@@ -3,7 +3,7 @@ package nextstep.mvc.handleradapter;
 import nextstep.mvc.argumentresolver.ArgumentResolvers;
 import nextstep.mvc.argumentresolver.MethodParameter;
 import nextstep.mvc.handlermapping.HandlerExecution;
-import nextstep.mvc.view.ModelAndView;
+import nextstep.mvc.modelandview.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
