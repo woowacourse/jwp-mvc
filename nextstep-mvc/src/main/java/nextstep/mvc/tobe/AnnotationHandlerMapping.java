@@ -5,7 +5,6 @@ import nextstep.mvc.HandlerMapping;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,7 +49,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
                     .map(m -> new HandlerKey(value, m))
                     .forEach(key -> handlerExecutions.put(key, handlerExecution));
         } catch (Exception e) {
-            logger.debug("New Instance Exception: {}", ExceptionUtils.getStackTrace(e));
+            logger.info("Fail to create instance", e);
         }
 
     }

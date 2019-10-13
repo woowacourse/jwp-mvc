@@ -1,9 +1,13 @@
 package nextstep.mvc;
 
 import nextstep.mvc.tobe.Handler;
-import nextstep.mvc.tobe.HandlerAdapter;
-import nextstep.mvc.tobe.ModelAndView;
-import org.apache.commons.lang3.exception.ExceptionUtils;
+import nextstep.mvc.tobe.exception.NotFoundAdapterException;
+import nextstep.mvc.tobe.exception.NotFoundHandlerException;
+import nextstep.mvc.tobe.exception.NotFoundViewException;
+import nextstep.mvc.tobe.handleradapter.HandlerAdapter;
+import nextstep.mvc.tobe.view.ModelAndView;
+import nextstep.mvc.tobe.view.View;
+import nextstep.mvc.tobe.viewresolver.ViewResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,10 +26,14 @@ public class DispatcherServlet extends HttpServlet {
 
     private List<HandlerMapping> mappings;
     private List<HandlerAdapter> handlerAdapters;
+    private List<ViewResolver> viewResolvers;
 
-    public DispatcherServlet(List<HandlerMapping> mappings, List<HandlerAdapter> handlerAdapters) {
+    public DispatcherServlet(List<HandlerMapping> mappings,
+                             List<HandlerAdapter> handlerAdapters,
+                             List<ViewResolver> viewResolvers) {
         this.mappings = mappings;
         this.handlerAdapters = handlerAdapters;
+        this.viewResolvers = viewResolvers;
     }
 
     @Override
@@ -41,9 +49,10 @@ public class DispatcherServlet extends HttpServlet {
             Handler handler = getHandler(req);
             HandlerAdapter handlerAdapter = getHandlerAdapter(handler);
             ModelAndView mav = handlerAdapter.handle(req, resp, handler);
-            mav.render(req, resp);
+            View view = getView(mav);
+            view.render(mav.getModel(), req, resp);
         } catch (Throwable e) {
-            logger.error("Exception: {}", ExceptionUtils.getStackTrace(e));
+            logger.error("Service Fail", e);
             throw new ServletException(e);
         }
     }
@@ -61,5 +70,13 @@ public class DispatcherServlet extends HttpServlet {
                 .filter(adapter -> adapter.supports(handler))
                 .findFirst()
                 .orElseThrow(NotFoundAdapterException::new);
+    }
+
+    private View getView(ModelAndView mav) {
+        return viewResolvers.stream()
+                .filter(viewResolver -> viewResolver.supports(mav.getViewName()))
+                .map(viewResolver -> viewResolver.resolve(mav.getViewName()))
+                .findFirst()
+                .orElseThrow(NotFoundViewException::new);
     }
 }
