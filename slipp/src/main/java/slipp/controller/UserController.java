@@ -60,21 +60,23 @@ public class UserController {
     public ModelAndView update(HttpServletRequest request, HttpServletResponse response) throws IOException {
         UserCreatedDto userDto = OBJECT_MAPPER.readValue(request.getReader(), UserCreatedDto.class);
 
-        User updateUser = new User(userDto.getUserId(),
+        String userId = request.getParameter("userId");
+
+        User updateUser = new User(userId,
                 userDto.getPassword(),
                 userDto.getName(),
                 userDto.getEmail());
 
-        if (!UserSessionUtils.isLogined(request.getSession())) {
+        if (!UserSessionUtils.isSameUser(request.getSession(), updateUser)) {
             throw new LoginUserException();
         }
 
-        if (UserSessionUtils.isSameUser(request.getSession(), updateUser)) {
-            User user = UserSessionUtils.getUserFromSession(request.getSession());
-            user.update(updateUser);
-        }
+        User user = UserSessionUtils.getUserFromSession(request.getSession());
+        user.update(updateUser);
 
+        ModelAndView modelAndView = new ModelAndView(new JsonView());
+        modelAndView.addObject("user", user);
         response.setStatus(HttpServletResponse.SC_OK);
-        return new ModelAndView(new JsonView());
+        return modelAndView;
     }
 }
