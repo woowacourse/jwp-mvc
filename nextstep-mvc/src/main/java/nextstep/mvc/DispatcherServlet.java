@@ -3,13 +3,10 @@ package nextstep.mvc;
 import nextstep.mvc.exception.NotFoundHandlerAdapterException;
 import nextstep.mvc.exception.NotFoundHandlerException;
 import nextstep.mvc.exception.NotFoundViewResolverExcepetion;
-import nextstep.mvc.handleradapter.AnnotationHandlerAdapter;
 import nextstep.mvc.handleradapter.HandlerAdapter;
 import nextstep.mvc.handlermapping.HandlerMapping;
 import nextstep.mvc.view.ModelAndView;
 import nextstep.mvc.view.View;
-import nextstep.mvc.viewresolver.DefaultViewResolver;
-import nextstep.mvc.viewresolver.StringViewResolver;
 import nextstep.mvc.viewresolver.ViewResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,7 +17,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 
 @WebServlet(name = "dispatcher", urlPatterns = "/", loadOnStartup = 1)
@@ -32,17 +28,16 @@ public class DispatcherServlet extends HttpServlet {
     private List<HandlerAdapter> handlerAdapters;
     private List<ViewResolver> viewResolvers;
 
-    public DispatcherServlet(List<HandlerMapping> handlerMappings) {
+    public DispatcherServlet(List<HandlerMapping> handlerMappings, List<HandlerAdapter> handlerAdapters, List<ViewResolver> viewResolvers) {
         this.handlerMappings = handlerMappings;
+        this.handlerAdapters = handlerAdapters;
+        this.viewResolvers = viewResolvers;
     }
 
     @Override
     public void init() throws ServletException {
-        for (HandlerMapping handlerMapping : handlerMappings) {
-            handlerMapping.initialize();
-        }
-        handlerAdapters = Arrays.asList(new AnnotationHandlerAdapter());
-        viewResolvers = Arrays.asList(new StringViewResolver(), new DefaultViewResolver());
+        handlerMappings
+                .forEach(HandlerMapping::initialize);
     }
 
     @Override

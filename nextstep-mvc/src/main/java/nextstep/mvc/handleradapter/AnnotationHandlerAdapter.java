@@ -10,9 +10,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class AnnotationHandlerAdapter implements HandlerAdapter {
-    private final ArgumentResolvers argumentResolvers = new ArgumentResolvers(Arrays.asList(new ServletArgumentResolver(),
-            new RequestParamArgumentResolver(),
-            new ModelAttributeArgumentResolver()));
+    private  ArgumentResolvers argumentResolvers;
 
     @Override
     public boolean canHandle(Object handler) {
@@ -32,5 +30,10 @@ public class AnnotationHandlerAdapter implements HandlerAdapter {
         }
         String viewName = (String) result;
         return new ModelAndView(viewName);
+    }
+
+    @Override
+    public void addArugmentResolvers(ArgumentResolvers argumentResolvers1) {
+        argumentResolvers = argumentResolvers1;
     }
 }
