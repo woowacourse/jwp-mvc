@@ -60,16 +60,25 @@ public class AnnotationHandlerMapping implements HandlerMapping {
                                                 RequestMapping requestMapping) {
         Arrays.stream(requestMethods)
                 .forEach(requestMethod ->
-                        handlerExecutions.put(createHandlerKey(requestMapping.value(), requestMethod),
+                        handlerExecutions.put(initHandlerKey(requestMapping.value(), requestMethod),
                                 (request, response) -> (ModelAndView) method.invoke(controller, request, response)));
     }
 
-    private HandlerKey createHandlerKey(String url, RequestMethod requestMethod) {
-        HandlerKey handlerKey = new HandlerKey(url, requestMethod);
+    private HandlerKey initHandlerKey(String url, RequestMethod requestMethod) {
+        HandlerKey handlerKey = createHandlerKey(url, requestMethod);
         validDuplicateHandlerKey(handlerKey);
 
         return handlerKey;
     }
+
+    private HandlerKey createHandlerKey(String url, RequestMethod requestMethod) {
+        return new HandlerKey(url, requestMethod);
+    }
+
+    private HandlerKey createHandlerKey(HttpServletRequest request) {
+        return createHandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod()));
+    }
+
 
     private void validDuplicateHandlerKey(HandlerKey handlerKey) {
         if (handlerExecutions.containsKey(handlerKey)) {
@@ -80,16 +89,11 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     @Override
     public boolean support(HttpServletRequest request) {
-        String requestUrl = request.getRequestURI();
-        RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
-
-        return handlerExecutions.containsKey(new HandlerKey(requestUrl, requestMethod));
+        return handlerExecutions.containsKey(createHandlerKey(request));
     }
 
     @Override
     public Handler getHandler(HttpServletRequest request) {
-        String requestUrl = request.getRequestURI();
-        RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
-        return handlerExecutions.get(new HandlerKey(requestUrl, requestMethod));
+        return handlerExecutions.get(createHandlerKey(request));
     }
 }
