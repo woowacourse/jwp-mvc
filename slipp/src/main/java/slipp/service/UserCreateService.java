@@ -8,8 +8,8 @@ import slipp.support.db.DataBase;
 
 import javax.servlet.http.HttpServletRequest;
 
-public class CreateUserService {
-    private static final Logger logger = LoggerFactory.getLogger(CreateUserService.class);
+public class UserCreateService {
+    private static final Logger logger = LoggerFactory.getLogger(UserCreateService.class);
 
     public UserCreatedDto addUser(HttpServletRequest request) {
         User user = new User(request.getParameter("userId"),
