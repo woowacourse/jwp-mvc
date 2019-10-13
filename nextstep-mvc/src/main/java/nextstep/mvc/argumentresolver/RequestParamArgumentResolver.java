@@ -1,6 +1,6 @@
 package nextstep.mvc.argumentresolver;
 
-import nextstep.mvc.argumentresolver.support.PrimitiveValueParser;
+import nextstep.mvc.argumentresolver.support.TypeParser;
 import nextstep.web.annotation.RequestParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,7 +16,7 @@ public class RequestParamArgumentResolver implements ArgumentResolver {
     public boolean canResolve(MethodParameter methodParameter) {
         return methodParameter.isAnnotationPresent(RequestParam.class) ||
                 (methodParameter.hasNoDeclaredAnnotation() &&
-                        PrimitiveValueParser.canParse(methodParameter.getType()));
+                        TypeParser.canParse(methodParameter.getType()));
     }
 
     @Override
@@ -25,7 +25,7 @@ public class RequestParamArgumentResolver implements ArgumentResolver {
         Class<?> paramType = methodParameter.getType();
         logger.debug("parameter : {} / {}", parameterName, paramType.getName());
 
-        return PrimitiveValueParser.parse(request.getParameter(parameterName), paramType);
+        return TypeParser.parse(request.getParameter(parameterName), paramType);
     }
 
     private String getParameterName(MethodParameter methodParameter) {

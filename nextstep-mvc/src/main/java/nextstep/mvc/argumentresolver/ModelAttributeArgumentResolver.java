@@ -1,6 +1,6 @@
 package nextstep.mvc.argumentresolver;
 
-import nextstep.mvc.argumentresolver.support.PrimitiveValueParser;
+import nextstep.mvc.argumentresolver.support.TypeParser;
 import nextstep.mvc.argumentresolver.support.ServletArgumentConverter;
 import nextstep.mvc.exception.InstantiationException;
 
@@ -13,7 +13,7 @@ public class ModelAttributeArgumentResolver implements ArgumentResolver {
     public boolean canResolve(MethodParameter methodParameter) {
         Class<?> type = methodParameter.getType();
         return methodParameter.hasNoDeclaredAnnotation() &&
-                !PrimitiveValueParser.canParse(type) &&
+                !TypeParser.canParse(type) &&
                 !ServletArgumentConverter.supports(type);
     }
 
@@ -26,7 +26,7 @@ public class ModelAttributeArgumentResolver implements ArgumentResolver {
             for (Field field : fields) {
                 field.setAccessible(true);
                 Class<?> fieldType = field.getType();
-                field.set(instance, PrimitiveValueParser.parse(request.getParameter(field.getName()), fieldType));
+                field.set(instance, TypeParser.parse(request.getParameter(field.getName()), fieldType));
             }
             return instance;
         } catch (Exception e) {
