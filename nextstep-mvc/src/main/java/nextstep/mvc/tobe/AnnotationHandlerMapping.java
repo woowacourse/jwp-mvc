@@ -2,7 +2,8 @@ package nextstep.mvc.tobe;
 
 import com.google.common.collect.Maps;
 import nextstep.mvc.HandlerMapping;
-import nextstep.mvc.NoSuchControllerClassException;
+import nextstep.mvc.exception.NoSuchControllerClassException;
+import nextstep.mvc.tobe.view.ModelAndView;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
 import org.reflections.ReflectionUtils;
@@ -10,18 +11,16 @@ import org.reflections.ReflectionUtils;
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import static org.reflections.ReflectionUtils.getAllMethods;
 
 public class AnnotationHandlerMapping implements HandlerMapping {
-    private final Object[] basePackage;
-
     private final Map<HandlerKey, HandlerExecution> handlerExecutions = Maps.newHashMap();
     private final ControllerScanner controllerScanner;
 
     public AnnotationHandlerMapping(Object... basePackage) {
-        this.basePackage = basePackage;
         try {
             this.controllerScanner = new ControllerScanner(basePackage);
         } catch (IllegalAccessException | InstantiationException e) {
@@ -36,9 +35,17 @@ public class AnnotationHandlerMapping implements HandlerMapping {
             for (Method method : allMethods) {
                 RequestMapping rm = method.getAnnotation(RequestMapping.class);
                 handlerExecutions.put(createHandlerKey(rm),
-                        ((request, response) -> (ModelAndView) method.invoke(aClass.newInstance(), request, response)));
+                        ((req, resp) -> (ModelAndView) method.invoke(controllerScanner.getController(aClass), req, resp)));
             }
         }
+    }
+
+    @Override
+    public boolean supports(HttpServletRequest request) {
+        String url = request.getRequestURI();
+        RequestMethod[] requestMethod = {RequestMethod.valueOf(request.getMethod())};
+
+        return Objects.nonNull(handlerExecutions.get(new HandlerKey(url, requestMethod)));
     }
 
     @Override
