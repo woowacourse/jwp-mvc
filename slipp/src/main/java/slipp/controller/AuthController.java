@@ -31,18 +31,14 @@ public class AuthController {
         User user = DataBase.findUserById(userId);
 
         logger.info("user {} login!", user);
-        if (user == null) {
+        if (user == null || !user.matchPassword(password)) {
             request.setAttribute("loginFailed", true);
             return ModelAndView.forward("/user/login.jsp");
         }
-        if (user.matchPassword(password)) {
-            HttpSession session = request.getSession();
-            session.setAttribute(UserSessionUtils.USER_SESSION_KEY, user);
-            return ModelAndView.redirect("/");
-        } else {
-            request.setAttribute("loginFailed", true);
-            return ModelAndView.forward("/user/login.jsp");
-        }
+
+        HttpSession session = request.getSession();
+        session.setAttribute(UserSessionUtils.USER_SESSION_KEY, user);
+        return ModelAndView.redirect("/");
     }
 
     @RequestMapping(value = "/users/logout", method = RequestMethod.POST)
