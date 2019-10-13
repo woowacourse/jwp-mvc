@@ -10,7 +10,7 @@ public class HandlerExecutionAdapter implements HandlerAdapter {
 
     @Override
     public boolean isHandle(Object handler) {
-        return HandlerExecution.class.isAssignableFrom(handler.getClass());
+        return handler instanceof HandlerExecution;
     }
 
     @Override

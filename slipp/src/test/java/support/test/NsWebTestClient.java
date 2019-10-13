@@ -59,6 +59,16 @@ public class NsWebTestClient {
                 .returnResult().getResponseBody();
     }
 
+    public String forwardUpdateForm(String uri) {
+        return testClientBuilder.build()
+                .get()
+                .uri(uri)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(String.class)
+                .returnResult().getResponseBody();
+    }
+
     public static NsWebTestClient of(int port) {
         return of(BASE_URL, port);
     }

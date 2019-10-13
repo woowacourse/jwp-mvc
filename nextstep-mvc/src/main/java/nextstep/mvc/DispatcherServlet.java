@@ -1,7 +1,8 @@
 package nextstep.mvc;
 
-import nextstep.mvc.tobe.adapter.HandlerAdapter;
 import nextstep.mvc.tobe.ModelAndView;
+import nextstep.mvc.tobe.adapter.HandlerAdapter;
+import nextstep.mvc.tobe.mapping.HandlerMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,7 +45,7 @@ public class DispatcherServlet extends HttpServlet {
         } catch (Exception e) {
             e.printStackTrace();
             logger.error("Exception : {}", e.getMessage());
-            throw new ServletException();
+            throw new ServletException(e);
         }
     }
 

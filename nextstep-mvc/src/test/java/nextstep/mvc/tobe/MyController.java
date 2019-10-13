@@ -52,4 +52,15 @@ public class MyController {
         request.setAttribute("test_empty_url", true);
         return new ModelAndView("/home.jsp");
     }
+
+    @RequestMapping(value = "/test2", method= RequestMethod.GET)
+    public String test_return_string(HttpServletRequest request, HttpServletResponse response) {
+        request.setAttribute("test", true);
+        return "/test.jsp";
+    }
+
+    @RequestMapping(value = "/test3", method= RequestMethod.GET)
+    public int test_not_support_string(HttpServletRequest request, HttpServletResponse response) {
+        return 1;
+    }
 }

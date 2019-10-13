@@ -1,11 +1,10 @@
 package slipp;
 
 import nextstep.mvc.DispatcherServlet;
-import nextstep.mvc.HandlerMapping;
-import nextstep.mvc.tobe.adapter.ControllerAdapter;
 import nextstep.mvc.tobe.adapter.HandlerAdapter;
 import nextstep.mvc.tobe.adapter.HandlerExecutionAdapter;
 import nextstep.mvc.tobe.mapping.AnnotationHandlerMapping;
+import nextstep.mvc.tobe.mapping.HandlerMapping;
 import nextstep.mvc.tobe.support.ControllerScanner;
 import nextstep.web.WebApplicationInitializer;
 import org.slf4j.Logger;
@@ -15,7 +14,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRegistration;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class SlippWebApplicationInitializer implements WebApplicationInitializer {
@@ -25,13 +24,11 @@ public class SlippWebApplicationInitializer implements WebApplicationInitializer
     public void onStartup(ServletContext servletContext) throws ServletException {
         ControllerScanner scanner = createControllerScanner();
 
-        final List<HandlerMapping> handlerMappings = Arrays.asList(
-                new ManualHandlerMapping(),
+        final List<HandlerMapping> handlerMappings = Collections.singletonList(
                 new AnnotationHandlerMapping(scanner)
         );
 
-        final List<HandlerAdapter> handlerAdapters = Arrays.asList(
-                new ControllerAdapter(),
+        final List<HandlerAdapter> handlerAdapters = Collections.singletonList(
                 new HandlerExecutionAdapter()
         );
 
