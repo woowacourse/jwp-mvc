@@ -3,6 +3,7 @@ package reflection;
 import java.util.Date;
 
 public class Question {
+    public static final String HELLO = "hello";
 
     private static final String name = "abc";
 
