@@ -33,8 +33,7 @@ public class JsonView implements View {
 
     private Object getValueFrom(Map<String, ?> model) {
         if (model.size() == ONE_ELEMENT) {
-            Map.Entry<String, ?> entry = model.entrySet().iterator().next();
-            return entry.getValue();
+            return model.values().iterator().next();
         }
         return model;
     }
