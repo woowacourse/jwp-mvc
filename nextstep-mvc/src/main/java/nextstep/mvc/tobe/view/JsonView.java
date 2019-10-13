@@ -17,7 +17,7 @@ public class JsonView implements View {
 
         if (model.size() > 0) {
             response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
-            writer.write(OBJECT_MAPPER.writeValueAsString(getValue(model)));
+            OBJECT_MAPPER.writeValue(writer, getValue(model));
         }
 
         writer.close();
