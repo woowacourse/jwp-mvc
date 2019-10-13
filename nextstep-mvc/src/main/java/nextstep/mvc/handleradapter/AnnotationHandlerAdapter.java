@@ -1,7 +1,6 @@
 package nextstep.mvc.handleradapter;
 
 import nextstep.mvc.argumentresolver.*;
-import nextstep.mvc.exception.NotFoundArgumentResolverException;
 import nextstep.mvc.handlermapping.HandlerExecution;
 import nextstep.mvc.view.ModelAndView;
 
@@ -9,12 +8,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class AnnotationHandlerAdapter implements HandlerAdapter {
-    private final List<ArgumentResolver> argumentResolvers = Arrays.asList(new ServletArgumentResolver(),
+    private final ArgumentResolvers argumentResolvers = new ArgumentResolvers(Arrays.asList(new ServletArgumentResolver(),
             new RequestParamArgumentResolver(),
-            new ModelAttributeArgumentResolver());
+            new ModelAttributeArgumentResolver()));
 
     @Override
     public boolean canHandle(Object handler) {
@@ -26,7 +24,7 @@ public class AnnotationHandlerAdapter implements HandlerAdapter {
         HandlerExecution castHandler = (HandlerExecution) handler;
         List<MethodParameter> methodParameters = castHandler.extractMethodParameters();
 
-        List<Object> values = collectValues(request, response, methodParameters);
+        List<Object> values = argumentResolvers.collectValues(request, response, methodParameters);
         Object result = castHandler.handle(values.toArray());
 
         if (result instanceof ModelAndView) {
@@ -34,23 +32,5 @@ public class AnnotationHandlerAdapter implements HandlerAdapter {
         }
         String viewName = (String) result;
         return new ModelAndView(viewName);
-    }
-
-    private List<Object> collectValues(HttpServletRequest request, HttpServletResponse response, List<MethodParameter> methodParameters) {
-        return methodParameters.stream()
-                .map(methodParameter -> resolveArgument(request, response, methodParameter))
-                .collect(Collectors.toList());
-    }
-
-    private Object resolveArgument(HttpServletRequest request, HttpServletResponse response, MethodParameter methodParameter) {
-        ArgumentResolver argumentResolver = getArgumentResolver(methodParameter);
-        return argumentResolver.resolve(request, response, methodParameter);
-    }
-
-    private ArgumentResolver getArgumentResolver(MethodParameter methodParameter) {
-        return argumentResolvers.stream()
-                .filter(ar -> ar.canResolve(methodParameter))
-                .findAny()
-                .orElseThrow(NotFoundArgumentResolverException::new);
     }
 }

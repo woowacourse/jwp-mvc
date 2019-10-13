@@ -3,7 +3,6 @@ package slipp.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import nextstep.mvc.view.JsonView;
 import nextstep.mvc.view.ModelAndView;
-import nextstep.utils.JsonUtils;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
@@ -15,10 +14,8 @@ import slipp.support.db.DataBase;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Scanner;
 
 @Controller
 public class ApiController {
@@ -27,7 +24,7 @@ public class ApiController {
 
     @RequestMapping(value = "/api/users", method = RequestMethod.POST)
     public ModelAndView createUser(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        User user = extractPostRequestBody(request);
+        User user = extractRequestBody(request);
         log.debug("User : {}", user);
 
         DataBase.addUser(user);
@@ -52,7 +49,7 @@ public class ApiController {
         String userId = request.getParameter("userId");
         User user = DataBase.findUserById(userId);
 
-        User updatedUser = extractPostRequestBody(request);
+        User updatedUser = extractRequestBody(request);
         user.update(updatedUser);
 
         Map<String, Object> model = new HashMap<>();
@@ -60,7 +57,7 @@ public class ApiController {
         return new ModelAndView(model, new JsonView());
     }
 
-    User extractPostRequestBody(HttpServletRequest request) throws IOException {
+    User extractRequestBody(HttpServletRequest request) throws IOException {
         if ("POST".equalsIgnoreCase(request.getMethod()) || "PUT".equalsIgnoreCase(request.getMethod())) {
             return objectMapper.readValue(request.getInputStream(), User.class);
         }
