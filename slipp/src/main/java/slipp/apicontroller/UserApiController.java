@@ -16,8 +16,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @Controller
-public class JsonController {
-    private static final Logger logger = LoggerFactory.getLogger(JsonController.class);
+public class UserApiController {
+    private static final Logger logger = LoggerFactory.getLogger(UserApiController.class);
 
     private static final String USER_API_URL = "/api/users";
     private static final String LOCATION = "Location";
