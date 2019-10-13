@@ -3,6 +3,7 @@ package slipp.service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import slipp.domain.User;
+import slipp.dto.UserCreatedDto;
 import slipp.support.db.DataBase;
 
 import javax.servlet.http.HttpServletRequest;
@@ -10,7 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 public class CreateUserService {
     private static final Logger logger = LoggerFactory.getLogger(CreateUserService.class);
 
-    public String addUser(HttpServletRequest request) {
+    public UserCreatedDto addUser(HttpServletRequest request) {
         User user = new User(request.getParameter("userId"),
                 request.getParameter("password"),
                 request.getParameter("name"),
@@ -19,6 +20,6 @@ public class CreateUserService {
         logger.debug("User : {}", user);
 
         DataBase.addUser(user);
-        return user.getUserId();
+        return new UserCreatedDto(user.getUserId(), user.getPassword(), user.getName(), user.getEmail());
     }
 }
