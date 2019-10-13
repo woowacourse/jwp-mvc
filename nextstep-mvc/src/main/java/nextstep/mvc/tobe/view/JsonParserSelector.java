@@ -10,16 +10,12 @@ import java.util.Map;
 import java.util.function.Predicate;
 
 public enum JsonParserSelector {
-    BLANK(size -> size == 0, (model) -> ""),
+    BLANK(size -> size == 0, (model) -> Constants.BLANK),
     ONE_SIZE(size -> size == 1, model -> {
-        ObjectMapper objectMapper = new ObjectMapper();
         List<?> temp = new ArrayList<>(model.values());
-        return objectMapper.writeValueAsString(temp.get(0));
+        return Constants.objectMapper.writeValueAsString(temp.get(Constants.FIRST_INDEX));
     }),
-    MANY_SIZE(size -> size >= 2, model -> {
-        ObjectMapper objectMapper = new ObjectMapper();
-        return objectMapper.writeValueAsString(model);
-    });
+    MANY_SIZE(size -> size >= 2, Constants.objectMapper::writeValueAsString);
 
     private final Predicate<Integer> sizeChecker;
     private final ModelToJsonParser<Map<String, ?>, String> jsonParser;
@@ -36,4 +32,10 @@ public enum JsonParserSelector {
                 .orElseThrow(InvalidModelSizeException::new)
                 .jsonParser;
     }
+}
+
+class Constants {
+    static final ObjectMapper objectMapper = new ObjectMapper();
+    static final String BLANK = "";
+    static final int FIRST_INDEX = 0;
 }
