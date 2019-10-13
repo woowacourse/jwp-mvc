@@ -1,6 +1,5 @@
 package nextstep.mvc.tobe;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import nextstep.web.support.MediaType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,9 +9,10 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
 import java.util.Map;
 
+import static nextstep.utils.JsonUtils.OBJECT_MAPPER;
+
 public class JsonView implements View {
     private static final Logger log = LoggerFactory.getLogger(JsonView.class);
-    private static final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
     public void render(Map<String, ?> models, HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -21,7 +21,7 @@ public class JsonView implements View {
         PrintWriter responseWriter = response.getWriter();
 
         if (!models.isEmpty()) {
-            responseWriter.write(objectMapper.writeValueAsString(getModelValue(models)));
+            responseWriter.write(OBJECT_MAPPER.writeValueAsString(getModelValue(models)));
         }
 
         responseWriter.flush();
