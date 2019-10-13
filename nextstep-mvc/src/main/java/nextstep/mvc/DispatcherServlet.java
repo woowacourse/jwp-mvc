@@ -1,7 +1,5 @@
 package nextstep.mvc;
 
-import nextstep.mvc.asis.Controller;
-import nextstep.mvc.exception.NotFoundHandlerException;
 import nextstep.mvc.tobe.AnnotationHandlerMapping;
 import nextstep.mvc.tobe.HandlerExecution;
 import nextstep.mvc.tobe.ModelAndView;
@@ -15,9 +13,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
 
 @WebServlet(name = "dispatcher", urlPatterns = "/", loadOnStartup = 1)
 public class DispatcherServlet extends HttpServlet {
@@ -25,15 +20,15 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger logger = LoggerFactory.getLogger(DispatcherServlet.class);
     private static final String DEFAULT_REDIRECT_PREFIX = "redirect:";
 
-    private List<HandlerMapping> handlerMappings;
+    private AnnotationHandlerMapping annotationHandlerMapping;
 
-    public DispatcherServlet(HandlerMapping handlerMapping, AnnotationHandlerMapping annotationHandlerMapping) {
-        this.handlerMappings = Arrays.asList(handlerMapping, annotationHandlerMapping);
+    public DispatcherServlet(AnnotationHandlerMapping annotationHandlerMapping) {
+        this.annotationHandlerMapping = annotationHandlerMapping;
     }
 
     @Override
     public void init() throws ServletException {
-        handlerMappings.forEach(HandlerMapping::initialize);
+        annotationHandlerMapping.initialize();
     }
 
     @Override
@@ -41,22 +36,11 @@ public class DispatcherServlet extends HttpServlet {
         String requestUri = req.getRequestURI();
         logger.debug("Method : {}, Request URI : {}", req.getMethod(), requestUri);
 
-        Object handler = handlerMappings.stream()
-                .map(handlerMapping -> handlerMapping.getHandler(req))
-                .filter(Objects::nonNull)
-                .findAny()
-                .orElseThrow(NotFoundHandlerException::new);
+        HandlerExecution HandlerExecution = annotationHandlerMapping.getHandler(req);
 
         try {
-            if (handler instanceof HandlerExecution) {
-                ModelAndView modelAndView = ((HandlerExecution) handler).handle(req, resp);
-                modelAndView.render(req, resp);
-            }
-
-            if (handler instanceof Controller) {
-                String viewName = ((Controller) handler).execute(req, resp);
-                move(viewName, req, resp);
-            }
+            ModelAndView modelAndView = HandlerExecution.handle(req, resp);
+            modelAndView.render(req, resp);
         } catch (Throwable e) {
             logger.error("Exception : {}", e);
             throw new ServletException(e.getMessage());
