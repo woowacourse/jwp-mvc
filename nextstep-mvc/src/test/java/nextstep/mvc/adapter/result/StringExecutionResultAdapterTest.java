@@ -25,18 +25,6 @@ class StringExecutionResultAdapterTest {
     }
 
     @Test
-    void match() {
-        Object o = "";
-        assertThat(adapter.matchClass(o)).isTrue();
-    }
-
-    @Test
-    void misMatch() {
-        Object o = 1;
-        assertThat(adapter.matchClass(o)).isFalse();
-    }
-
-    @Test
     void redirectView() {
         ModelAndView modelAndView = adapter.handle(request, response, "redirect:test");
 
