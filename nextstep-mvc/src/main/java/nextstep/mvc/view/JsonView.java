@@ -17,21 +17,17 @@ public class JsonView implements View {
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
         PrintWriter writer = response.getWriter();
 
-        Object body = getBody(model);
+        Object body = getBody(model, writer);
         objectMapper.writeValue(writer, body);
     }
 
-    private Object getBody(Map<String, ?> model) {
+    private Object getBody(Map<String, ?> model, PrintWriter writer) {
         if (model.isEmpty()) {
             return StringUtils.EMPTY;
         }
 
         if (model.size() == 1) {
-            return model.entrySet()
-                    .stream()
-                    .findAny()
-                    .orElseThrow(IllegalArgumentException::new)
-                    .getValue();
+            return model.values().iterator().next();
         }
 
         return model;
