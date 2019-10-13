@@ -10,31 +10,36 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import static slipp.controller.UserSessionUtils.USER_SESSION_KEY;
+
 @Controller
 public class LoginController {
     @RequestMapping(value = "/users/login", method = RequestMethod.POST)
     public String login(HttpServletRequest req, HttpServletResponse resp) {
         String userId = req.getParameter("userId");
         String password = req.getParameter("password");
-        User user = DataBase.findUserById(userId);
-        if (user == null) {
-            req.setAttribute("loginFailed", true);
-            return "/user/login.jsp";
-        }
-        if (user.matchPassword(password)) {
+
+        try {
+            User user = getValidUser(userId, password);
             HttpSession session = req.getSession();
-            session.setAttribute(UserSessionUtils.USER_SESSION_KEY, user);
+            session.setAttribute(USER_SESSION_KEY, user);
             return "redirect:/";
-        } else {
+        } catch (NullPointerException e) {
             req.setAttribute("loginFailed", true);
             return "/user/login.jsp";
         }
     }
 
+    private User getValidUser(String userId, String password) {
+        return DataBase.findUserById(userId)
+                .filter(user -> user.matchPassword(password))
+                .orElseThrow(NullPointerException::new);
+    }
+
     @RequestMapping(value = "/users/logout", method = RequestMethod.GET)
     public String logout(HttpServletRequest req, HttpServletResponse resp) throws Exception {
         HttpSession session = req.getSession();
-        session.removeAttribute(UserSessionUtils.USER_SESSION_KEY);
+        session.removeAttribute(USER_SESSION_KEY);
         return "redirect:/";
     }
 

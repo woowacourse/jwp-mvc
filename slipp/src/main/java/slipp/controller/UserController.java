@@ -1,7 +1,5 @@
 package slipp.controller;
 
-import nextstep.mvc.ModelAndView;
-import nextstep.mvc.view.JspView;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
@@ -34,7 +32,8 @@ public class UserController {
     @RequestMapping(value = "/users/updateForm", method = RequestMethod.GET)
     public String showUserUpdateForm(HttpServletRequest req, HttpServletResponse resp) throws Exception {
         String userId = req.getParameter("userId");
-        User user = DataBase.findUserById(userId);
+        User user = DataBase.findUserById(userId)
+                .orElseThrow(() -> new NullPointerException("사용자를 찾을 수 없습니다."));
         if (!UserSessionUtils.isSameUser(req.getSession(), user)) {
             throw new IllegalStateException("다른 사용자의 정보를 수정할 수 없습니다.");
         }
@@ -45,10 +44,8 @@ public class UserController {
     @RequestMapping(value = "/users/profile", method = RequestMethod.GET)
     public String showUserProfile(HttpServletRequest req, HttpServletResponse resp) throws Exception {
         String userId = req.getParameter("userId");
-        User user = DataBase.findUserById(userId);
-        if (user == null) {
-            throw new NullPointerException("사용자를 찾을 수 없습니다.");
-        }
+        User user = DataBase.findUserById(userId)
+                .orElseThrow(() -> new NullPointerException("사용자를 찾을 수 없습니다."));
         req.setAttribute("user", user);
         return "/user/profile.jsp";
     }
@@ -65,7 +62,8 @@ public class UserController {
 
     @RequestMapping(value = "/users/update", method = RequestMethod.PUT)
     public String userUpdate(HttpServletRequest req, HttpServletResponse resp) throws Exception {
-        User user = DataBase.findUserById(req.getParameter("userId"));
+        User user = DataBase.findUserById(req.getParameter("userId"))
+                .orElseThrow(() -> new NullPointerException("사용자를 찾을 수 없습니다."));
         if (!UserSessionUtils.isSameUser(req.getSession(), user)) {
             throw new IllegalStateException("다른 사용자의 정보를 수정할 수 없습니다.");
         }

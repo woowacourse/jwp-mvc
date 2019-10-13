@@ -30,7 +30,8 @@ public class UserApiController {
 
     @RequestMapping(value = "/api/users", method = RequestMethod.GET)
     public ModelAndView show(HttpServletRequest req, HttpServletResponse resp) throws Exception {
-        User user = DataBase.findUserById(req.getParameter(USER_ID));
+        User user = DataBase.findUserById(req.getParameter(USER_ID))
+                .orElseThrow(() -> new NullPointerException("사용자를 찾을 수 없습니다."));
 
         ModelAndView modelAndView = new ModelAndView(new JsonView());
         return modelAndView.addObject(USER_ATTRIBUTE_NAME, user);
@@ -71,7 +72,8 @@ public class UserApiController {
     }
 
     private User updateUser(HttpServletRequest req) throws IOException {
-        User user = DataBase.findUserById(req.getParameter(USER_ID));
+        User user = DataBase.findUserById(req.getParameter(USER_ID))
+                .orElseThrow(() -> new NullPointerException("사용자를 찾을 수 없습니다."));
 
         UserUpdatedDto updateUserDto = JsonUtils.toObject(req.getInputStream(), UserUpdatedDto.class);
         User updateUser = new User(
