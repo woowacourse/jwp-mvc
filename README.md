@@ -38,7 +38,8 @@ ManualHandlerMapping 은 Controller 가 아니라 ControllerAdaptor 를 리턴�
 
 - [x] UserAcceptanceTest 통과하도록 UserRestController 추가
 
-- [ ] slipp 의 asis 컨트롤러들 tobe 로 변경 (애너테이션 기반)
+- [x] slipp 의 asis 컨트롤러들 tobe 로 변경 (애너테이션 기반)
+    - [x] NsWebTestClient 에 로그인 세션 ID 유지하도록 메서드에 set-cookie 추가
 
 - [ ] ArgumentResolver 구현
 

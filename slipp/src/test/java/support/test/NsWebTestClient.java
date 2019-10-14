@@ -8,6 +8,7 @@ import reactor.core.publisher.Mono;
 
 import java.net.URI;
 import java.time.Duration;
+import java.util.HashMap;
 import java.util.Map;
 
 import static org.springframework.web.reactive.function.client.ExchangeFilterFunctions.basicAuthentication;
@@ -16,6 +17,7 @@ public class NsWebTestClient {
     private static final String BASE_URL = "http://localhost";
 
     private String baseUrl = BASE_URL;
+    private String sessionId = "";
     private int port;
     private WebTestClient.Builder testClientBuilder;
 
@@ -37,6 +39,7 @@ public class NsWebTestClient {
         EntityExchangeResult<byte[]> response = testClientBuilder.build()
                 .post()
                 .uri(url)
+                .cookie("JSESSIONID", sessionId)
                 .body(Mono.just(body), clazz)
                 .exchange()
                 .expectStatus().isCreated()
@@ -49,6 +52,7 @@ public class NsWebTestClient {
         testClientBuilder.build()
                 .put()
                 .uri(location.toString())
+                .cookie("JSESSIONID", sessionId)
                 .body(Mono.just(body), clazz)
                 .exchange()
                 .expectStatus().isOk();
@@ -58,6 +62,7 @@ public class NsWebTestClient {
         return testClientBuilder.build()
                 .get()
                 .uri(location.toString())
+                .cookie("JSESSIONID", sessionId)
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody(clazz)
@@ -69,6 +74,7 @@ public class NsWebTestClient {
         return testClientBuilder.build()
                 .get()
                 .uri(url)
+                .cookie("JSESSIONID", sessionId)
                 .exchange()
                 .expectBody()
                 .returnResult();
@@ -82,7 +88,7 @@ public class NsWebTestClient {
         return new NsWebTestClient(baseUrl, port);
     }
 
-    public URI postForm(String url, Map<String, String> params) {
+    public EntityExchangeResult<byte[]> postForm(String url, Map<String, String> params) {
         BodyInserters.FormInserter<String> body = BodyInserters.fromFormData("", "");
         for (String key : params.keySet()) {
             body.with(key, params.get(key));
@@ -91,6 +97,7 @@ public class NsWebTestClient {
         EntityExchangeResult<byte[]> response = testClientBuilder.build()
             .post()
             .uri(url)
+            .cookie("JSESSIONID", sessionId)
             .contentType(MediaType.APPLICATION_FORM_URLENCODED)
             .body(body)
             .exchange()
@@ -98,6 +105,25 @@ public class NsWebTestClient {
             .is3xxRedirection()
             .expectBody()
             .returnResult();
-        return response.getResponseHeaders().getLocation();
+        return response;
+    }
+
+    public void login(String userId, String password) {
+        BodyInserters.FormInserter<String> body = BodyInserters.fromFormData("", "");
+        body.with("userId", userId);
+        body.with("password", password);
+
+        EntityExchangeResult<byte[]> response = testClientBuilder.build()
+                .post()
+                .uri("/users/login")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .body(body)
+                .exchange()
+                .expectStatus()
+                .is3xxRedirection()
+                .expectBody()
+                .returnResult();
+        sessionId = response.getResponseHeaders().getFirst("Set-Cookie").split(";")[0].split("=")[1];
+
     }
 }

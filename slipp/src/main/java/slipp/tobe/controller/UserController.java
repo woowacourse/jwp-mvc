@@ -14,7 +14,6 @@ import slipp.support.db.DataBase;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.util.Collection;
 
 @Controller
 public class UserController {
@@ -22,9 +21,12 @@ public class UserController {
 
     @RequestMapping(value = "/users", method = RequestMethod.GET)
     public String readUserList(HttpServletRequest req, HttpServletResponse res) {
-        Collection<User> users = DataBase.findAll();
-        req.setAttribute("users", users);
-        return "/user/profile.jsp";
+        if (!UserSessionUtils.isLogined(req.getSession())) {
+            return "redirect:/users/login";
+        }
+
+        req.setAttribute("users", DataBase.findAll());
+        return "/user/list.jsp";
     }
 
     @RequestMapping(value = "/users", method = RequestMethod.POST)
@@ -69,5 +71,23 @@ public class UserController {
             req.setAttribute("loginFailed", true);
             return "/user/login.jsp";
         }
+    }
+
+    @RequestMapping(value = "/users/logout", method = RequestMethod.GET)
+    public String logout(HttpServletRequest req, HttpServletResponse res) {
+        HttpSession session = req.getSession();
+        session.removeAttribute(UserSessionUtils.USER_SESSION_KEY);
+        return "redirect:/";
+    }
+
+    @RequestMapping(value = "/users/profile", method = RequestMethod.GET)
+    public String profile(HttpServletRequest req, HttpServletResponse resp) {
+        String userId = req.getParameter("userId");
+        User user = DataBase.findUserById(userId);
+        if (user == null) {
+            throw new NullPointerException("사용자를 찾을 수 없습니다.");
+        }
+        req.setAttribute("user", user);
+        return "/user/profile.jsp";
     }
 }

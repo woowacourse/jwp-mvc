@@ -14,7 +14,6 @@
         <div class="panel panel-default">
             <div class="panel-heading"><h4>Profiles</h4></div>
             <div class="panel-body">
-            <c:forEach items="${users}" var="user">
                 <div class="well well-sm">
                     <div class="media">
                         <a class="thumbnail pull-left" href="#">
@@ -28,7 +27,6 @@
                         </div>
                     </div>
                 </div>
-            </c:forEach>
             </div>
         </div>
     </div>

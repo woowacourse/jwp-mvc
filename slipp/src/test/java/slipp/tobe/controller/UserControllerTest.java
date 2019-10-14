@@ -24,6 +24,7 @@ class UserControllerTest {
         NsWebTestServer nsWebTestServer = new NsWebTestServer(8080);
         nsWebTestServer.start();
         nsWebTestClient = NsWebTestClient.of(8080);
+        nsWebTestClient.login("admin", "password");
     }
 
     @Test
@@ -40,12 +41,12 @@ class UserControllerTest {
         params.put("name", "무민");
         params.put("password", "password");
         params.put("email", "moomin@woowahan.com");
-        assertThat(nsWebTestClient.postForm("/users", params)).isEqualTo(URI.create("/"));
+        assertThat(nsWebTestClient.postForm("/users", params).getResponseHeaders().getLocation()).isEqualTo(URI.create("/"));
     }
 
     @Test
     void updateFormTest() {
-        login("admin", "password");
+        nsWebTestClient.login("admin", "password");
         String result = nsWebTestClient.getResponse("/users/update?userId=admin").toString();
         assertThat(result).contains("사용자 아이디");
         assertThat(result).contains("admin");
@@ -59,14 +60,27 @@ class UserControllerTest {
 
     @Test
     void loginSuccessTest() {
-        URI redirectUrl =  login("admin", "password");
+        URI redirectUrl = login("admin", "password");
         assertThat(redirectUrl.toString()).isEqualTo("/");
+    }
+
+    @Test
+    void logoutSuccessTest() {
+        EntityExchangeResult<byte[]> result = nsWebTestClient.getResponse("/users/logout");
+        assertThat(result.getStatus().is3xxRedirection()).isTrue();
+    }
+
+    @Test
+    void profileTest() {
+        EntityExchangeResult<byte[]> result = nsWebTestClient.getResponse("/users/profile?userId=admin");
+        String response = result.toString();
+        assertThat(response).contains("자바지기");
     }
 
     private URI login(String userId, String password) {
         Map<String, String> params = new HashMap<>();
         params.put("userId", userId);
         params.put("password", password);
-        return nsWebTestClient.postForm("/users/login", params);
+        return nsWebTestClient.postForm("/users/login", params).getResponseHeaders().getLocation();
     }
 }
