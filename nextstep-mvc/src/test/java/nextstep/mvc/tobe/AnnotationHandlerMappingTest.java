@@ -8,17 +8,17 @@ import org.springframework.mock.web.MockHttpServletResponse;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class AnnotationHandlerMappingTest {
+class AnnotationHandlerMappingTest {
     private AnnotationHandlerMapping handlerMapping;
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         handlerMapping = new AnnotationHandlerMapping("nextstep.mvc.tobe");
         handlerMapping.initialize();
     }
 
     @Test
-    public void create_find() throws Exception {
+    void create_find() throws Exception {
         User user = new User("pobi", "password", "포비", "pobi@nextstep.camp");
         createUser(user);
         assertThat(DataBase.findUserById(user.getUserId())).isEqualTo(user);
@@ -26,8 +26,8 @@ public class AnnotationHandlerMappingTest {
         MockHttpServletRequest request = new MockHttpServletRequest("GET", "/users");
         request.setParameter("userId", user.getUserId());
         MockHttpServletResponse response = new MockHttpServletResponse();
-        HandlerExecution execution = handlerMapping.getHandler(request);
-        execution.handle(request, response);
+        ModelAndView execution = handlerMapping.execute(request, response);
+        execution.render(request, response);
 
         assertThat(request.getAttribute("user")).isEqualTo(user);
     }
@@ -39,7 +39,7 @@ public class AnnotationHandlerMappingTest {
         request.setParameter("name", user.getName());
         request.setParameter("email", user.getEmail());
         MockHttpServletResponse response = new MockHttpServletResponse();
-        HandlerExecution execution = handlerMapping.getHandler(request);
-        execution.handle(request, response);
+        ModelAndView execution = handlerMapping.execute(request, response);
+        execution.render(request, response);
     }
 }

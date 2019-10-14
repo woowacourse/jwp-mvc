@@ -12,7 +12,7 @@ public class TestUserController {
     @RequestMapping(value = "/users", method = RequestMethod.POST)
     public ModelAndView create_string(String userId, String password) {
         logger.debug("userId: {}, password: {}", userId, password);
-        ModelAndView mav = new ModelAndView();
+        ModelAndView mav = new ModelAndView(new JspView("/index"));
         mav.addObject("userId", userId);
         mav.addObject("password", password);
         return mav;
@@ -21,7 +21,7 @@ public class TestUserController {
     @RequestMapping(value = "/users", method = RequestMethod.POST)
     public ModelAndView create_int_long(long id, int age) {
         logger.debug("id: {}, age: {}", id, age);
-        ModelAndView mav = new ModelAndView();
+        ModelAndView mav = new ModelAndView(new JspView("/index"));
         mav.addObject("id", id);
         mav.addObject("age", age);
         return mav;
@@ -30,7 +30,7 @@ public class TestUserController {
     @RequestMapping(value = "/users", method = RequestMethod.POST)
     public ModelAndView create_javabean(TestUser testUser) {
         logger.debug("testUser: {}", testUser);
-        ModelAndView mav = new ModelAndView();
+        ModelAndView mav = new ModelAndView(new JspView("/index"));
         mav.addObject("testUser", testUser);
         return mav;
     }
@@ -39,7 +39,7 @@ public class TestUserController {
     @RequestMapping(value = "/users/{id}", method = RequestMethod.GET)
     public ModelAndView show_pathvariable(@PathVariable long id) {
         logger.debug("userId: {}", id);
-        ModelAndView mav = new ModelAndView();
+        ModelAndView mav = new ModelAndView(new JspView("/index"));
         mav.addObject("id", id);
         return mav;
     }
