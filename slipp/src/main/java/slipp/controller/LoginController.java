@@ -17,7 +17,6 @@ public class LoginController {
 
     @RequestMapping(value = "/users/login", method = RequestMethod.POST)
     public ModelAndView login(@RequestParam String userId, @RequestParam String password, HttpServletRequest request) {
-        ;
         User user = DataBase.findUserById(userId);
 
         if (user == null || !user.matchPassword(password)) {
