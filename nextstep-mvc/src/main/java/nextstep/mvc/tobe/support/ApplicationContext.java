@@ -31,7 +31,6 @@ public class ApplicationContext<T> {
         }
     }
 
-
     public Object getBean(Class<?> clazz) {
         return beans.get(clazz);
     }

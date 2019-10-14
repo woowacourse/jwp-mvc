@@ -36,6 +36,7 @@ public class RequestHandlerAdapter implements HandlerAdapter {
         Object[] resolvedArguments = methodParameters.stream()
                 .map(methodParameter -> resolve(methodParameter, request, response))
                 .toArray();
+
         Object result = handlerExecution.handle(resolvedArguments);
 
 

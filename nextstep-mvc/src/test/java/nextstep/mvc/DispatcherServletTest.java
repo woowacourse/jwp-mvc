@@ -3,6 +3,7 @@ package nextstep.mvc;
 import nextstep.mvc.tobe.AbstractHandlerMapping;
 import nextstep.mvc.tobe.handlerAdapter.RequestHandlerAdapter;
 import nextstep.mvc.tobe.handlerAdapter.HandlerAdapter;
+import nextstep.mvc.tobe.support.ApplicationContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -20,15 +21,14 @@ class DispatcherServletTest {
 
     @BeforeEach
     void setup() {
-        List<HandlerMapping> HandlerMappings = Arrays.asList(new ManualHandlerMapping(), new AbstractHandlerMapping("slipp"));
-        List<HandlerAdapter> HandlerAdapters = Arrays.asList(new RequestHandlerAdapter(), new LegacyHandlerAdapter());
-        dispatcherServlet = new DispatcherServlet(HandlerMappings, HandlerAdapters);
+        ApplicationContext applicationContext = new ApplicationContext("nextstep.mvc.tobe","slipp");
+        dispatcherServlet = new DispatcherServlet(applicationContext);
         dispatcherServlet.init();
     }
 
     @Test
     void getHandlerAdapter() throws ServletException {
-        MockHttpServletRequest request = new MockHttpServletRequest("GET", "/notexiestUrl");
+        MockHttpServletRequest request = new MockHttpServletRequest("GET", "/notExistUrl");
         MockHttpServletResponse response = new MockHttpServletResponse();
         assertThatThrownBy(() -> dispatcherServlet.service(request, response))
                 .isInstanceOf(ServletException.class)
