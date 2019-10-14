@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 
 public class ApplicationContext<T> {
     private final Reflections reflections;
-    private Logger logger = LoggerFactory.getLogger(ApplicationContext.class);
+    private final Logger logger = LoggerFactory.getLogger(ApplicationContext.class);
     private Object[] basePackage;
     private Map<Class<?>, Object> beans = new HashMap<>();
 
@@ -24,7 +24,6 @@ public class ApplicationContext<T> {
     public void scanBeans(Class... classes) {
         for (Class clazz : classes) {
             Set<Class<? extends T>> scanClasses = reflections.getSubTypesOf(clazz);
-
             beans.put(clazz, scanClasses.stream()
                     .map(BeanUtils::createInstance)
                     .collect(Collectors.toSet()));

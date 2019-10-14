@@ -15,7 +15,7 @@ public class SlippWebApplicationInitializer implements WebApplicationInitializer
 
     @Override
     public void onStartup(ServletContext servletContext) throws ServletException {
-        ApplicationContext applicationContext = new ApplicationContext("nextstep.mvc.tobe","slipp");
+        ApplicationContext applicationContext = new ApplicationContext("nextstep.mvc.tobe", "slipp");
         DispatcherServlet dispatcherServlet = new DispatcherServlet(applicationContext);
 
         ServletRegistration.Dynamic dispatcher = servletContext.addServlet("dispatcher", dispatcherServlet);
