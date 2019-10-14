@@ -15,7 +15,7 @@ public class ViewResolverManager {
 
     public static ViewResolver getView(ModelAndView modelAndView) {
         return viewResolvers.stream()
-                .filter(viewResolver -> viewResolver.support(modelAndView.getViewName()))
+                .filter(viewResolver -> viewResolver.support(modelAndView.getViewType()))
                 .findAny()
                 .orElse(null);
     }
