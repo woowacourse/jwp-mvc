@@ -29,6 +29,7 @@ class JspViewReturnTypeResolverTest {
     void supportFail() {
         assertThat(jspViewReturnTypeResolver.support(new ModelAndView())).isFalse();
         assertThat(jspViewReturnTypeResolver.support(new Car("red", "Bus"))).isFalse();
+        assertThat(jspViewReturnTypeResolver.support(null)).isFalse();
     }
 
     @Test

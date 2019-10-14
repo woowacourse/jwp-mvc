@@ -28,6 +28,7 @@ class ModelAndViewReturnTypeResolverTest {
     void supportFail() {
         assertThat(modelAndViewReturnTypeResolver.support(new String())).isFalse();
         assertThat(modelAndViewReturnTypeResolver.support(new Car("red", "Bus"))).isFalse();
+        assertThat(modelAndViewReturnTypeResolver.support(null)).isFalse();
     }
 
     @Test

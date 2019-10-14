@@ -28,6 +28,7 @@ class JsonViewReturnTypeResolverTest {
     void supportFail() {
         assertThat(jsonViewReturnTypeResolver.support(new String())).isFalse();
         assertThat(jsonViewReturnTypeResolver.support(new ModelAndView())).isFalse();
+        assertThat(jsonViewReturnTypeResolver.support(null)).isFalse();
     }
 
     @Test
