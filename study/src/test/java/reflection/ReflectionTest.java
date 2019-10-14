@@ -60,8 +60,6 @@ public class ReflectionTest {
         Class<Student> clazz = Student.class;
         logger.debug(clazz.getName());
 
-        clazz.getDeclaredMethods();
-
         Constructor<Student> constructor = clazz.getConstructor();
         Student student = constructor.newInstance();
 

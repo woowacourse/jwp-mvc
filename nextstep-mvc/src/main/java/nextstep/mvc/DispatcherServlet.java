@@ -1,5 +1,6 @@
 package nextstep.mvc;
 
+import nextstep.mvc.tobe.AnnotationHandlerMapping;
 import nextstep.mvc.tobe.JspView;
 import nextstep.mvc.tobe.ModelAndView;
 import org.slf4j.Logger;
@@ -28,9 +29,19 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     public void init() throws ServletException {
+        initDefaultHandlerMappings();
+        initDefaultHandlerAdapters();
         for (HandlerMapping handlerMapping : handlerMappings) {
             handlerMapping.initialize();
         }
+    }
+
+    private void initDefaultHandlerMappings() {
+        handlerMappings.add(new AnnotationHandlerMapping("slipp.controller"));
+    }
+
+    private void initDefaultHandlerAdapters() {
+        handlerAdapters.add(new AnnotationHandlerAdapter());
     }
 
     @Override
