@@ -9,9 +9,11 @@ import java.io.IOException;
 import java.util.Map;
 
 public class JsonUtils {
+    private static ObjectMapper objectMapper = new ObjectMapper();
+
     public static <T> T toObject(String json, Class<T> clazz) throws ObjectMapperException {
         try {
-            ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper = new ObjectMapper();
             objectMapper.setVisibility(objectMapper.getSerializationConfig().getDefaultVisibilityChecker()
                     .withFieldVisibility(JsonAutoDetect.Visibility.ANY)
                     .withGetterVisibility(JsonAutoDetect.Visibility.ANY)
@@ -25,7 +27,6 @@ public class JsonUtils {
 
     public static String toJson(Map<String, ?> model) {
         try {
-            ObjectMapper objectMapper = new ObjectMapper();
             if (model.size() == 0) {
                 return StringUtils.EMPTY;
             }
