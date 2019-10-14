@@ -19,6 +19,7 @@ import java.util.Objects;
 public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger logger = LoggerFactory.getLogger(DispatcherServlet.class);
+    public static final String NOT_SUPPORTED_VIEW_TYPE_ERROR = "지원하지 않음";
 
     private List<HandlerMapping> handlerMappings;
     private List<ViewResolver> viewResolvers;
@@ -67,6 +68,6 @@ public class DispatcherServlet extends HttpServlet {
         return viewResolvers.stream()
                 .filter(resolver -> resolver.canResolve(view))
                 .findFirst()
-                .orElseThrow(() -> new NotSupportedViewTypeException("지원하지 않음"));
+                .orElseThrow(() -> new NotSupportedViewTypeException(NOT_SUPPORTED_VIEW_TYPE_ERROR));
     }
 }

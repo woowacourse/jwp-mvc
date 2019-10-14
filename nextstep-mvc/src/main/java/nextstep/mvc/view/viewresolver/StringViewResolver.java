@@ -9,6 +9,7 @@ public class StringViewResolver implements ViewResolver {
 
     private static final String DEFAULT_REDIRECT_PREFIX = "redirect:";
     private static final String DEFAULT_JSP_EXTENSION = ".jsp";
+    private static final String NOT_SUPPORTED_VIEW_TYPE_ERROR = "지원하지 않는 View 형식";
 
     @Override
     public boolean canResolve(Object view) {
@@ -24,6 +25,6 @@ public class StringViewResolver implements ViewResolver {
         if (name.endsWith(DEFAULT_JSP_EXTENSION)) {
             return new ModelAndView(new JspView(name));
         }
-        throw new NotSupportedViewTypeException("지원하지 않는 View 형식");
+        throw new NotSupportedViewTypeException(NOT_SUPPORTED_VIEW_TYPE_ERROR);
     }
 }

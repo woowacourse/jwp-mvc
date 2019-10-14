@@ -3,7 +3,7 @@ package nextstep.mvc;
 import com.google.common.collect.Maps;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
-import nextstep.web.annotation.RequestMethod;
+import nextstep.web.support.RequestMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

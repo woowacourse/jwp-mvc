@@ -5,7 +5,7 @@ import nextstep.mvc.view.ModelAndView;
 import nextstep.mvc.view.RedirectView;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
-import nextstep.web.annotation.RequestMethod;
+import nextstep.web.support.RequestMethod;
 import slipp.domain.User;
 import slipp.support.db.DataBase;
 
@@ -15,10 +15,14 @@ import javax.servlet.http.HttpSession;
 
 @Controller
 public class AuthenticateController {
+
+    private static final String USER_ID = "userId";
+    private static final String PASSWORD = "password";
+
     @RequestMapping(value = "/users/login", method = RequestMethod.POST)
     public ModelAndView login(HttpServletRequest req, HttpServletResponse resp) {
-        String userId = req.getParameter("userId");
-        String password = req.getParameter("password");
+        String userId = req.getParameter(USER_ID);
+        String password = req.getParameter(PASSWORD);
         User user = DataBase.findUserById(userId);
         if (user == null) {
             req.setAttribute("loginFailed", true);

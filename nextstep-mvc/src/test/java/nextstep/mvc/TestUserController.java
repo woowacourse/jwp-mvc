@@ -1,9 +1,9 @@
-package nextstep.mvc.tobe;
+package nextstep.mvc;
 
 import nextstep.mvc.view.ModelAndView;
 import nextstep.web.annotation.PathVariable;
 import nextstep.web.annotation.RequestMapping;
-import nextstep.web.annotation.RequestMethod;
+import nextstep.web.support.RequestMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

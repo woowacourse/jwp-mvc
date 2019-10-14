@@ -1,5 +1,7 @@
 package nextstep.mvc.view;
 
+import nextstep.mvc.exception.NotSupportedViewTypeException;
+
 import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -7,6 +9,7 @@ import java.util.Map;
 
 public class JspView implements View {
 
+    public static final String NOT_SUPPORTED_VIEW_TYPE_ERROR = "올바른 타입이 아닙니다.";
     private String viewName;
 
     public JspView(String viewName) {
@@ -20,7 +23,7 @@ public class JspView implements View {
 
     private void checkType(Object viewName) {
         if (!(viewName instanceof String)) {
-            throw new IllegalArgumentException("올바른 타입이 아닙니다.");
+            throw new NotSupportedViewTypeException(NOT_SUPPORTED_VIEW_TYPE_ERROR);
         }
     }
 

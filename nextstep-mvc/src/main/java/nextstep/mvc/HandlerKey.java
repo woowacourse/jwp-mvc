@@ -1,6 +1,6 @@
 package nextstep.mvc;
 
-import nextstep.web.annotation.RequestMethod;
+import nextstep.web.support.RequestMethod;
 
 public class HandlerKey {
     private String url;

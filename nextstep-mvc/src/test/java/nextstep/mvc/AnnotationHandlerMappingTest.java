@@ -1,8 +1,7 @@
-package nextstep.mvc.tobe;
+package nextstep.mvc;
 
 import nextstep.db.DataBase;
-import nextstep.mvc.AnnotationHandlerMapping;
-import nextstep.mvc.HandlerExecution;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -23,7 +22,7 @@ public class AnnotationHandlerMappingTest {
     public void create_find() throws Exception {
         User user = new User("pobi", "password", "포비", "pobi@nextstep.camp");
         createUser(user);
-        assertThat(DataBase.findUserById(user.getUserId())).isEqualTo(user);
+        Assertions.assertThat(DataBase.findUserById(user.getUserId())).isEqualTo(user);
 
         MockHttpServletRequest request = new MockHttpServletRequest("GET", "/users");
         request.setParameter("userId", user.getUserId());
