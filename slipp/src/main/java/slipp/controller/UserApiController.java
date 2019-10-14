@@ -1,6 +1,5 @@
 package slipp.controller;
 
-import com.google.common.io.CharStreams;
 import nextstep.mvc.tobe.ModelAndView;
 import nextstep.mvc.tobe.view.JsonView;
 import nextstep.utils.JsonUtils;
@@ -13,7 +12,6 @@ import slipp.support.db.DataBase;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 
 import static javax.servlet.http.HttpServletResponse.SC_CREATED;
 
@@ -39,10 +37,9 @@ public class UserApiController {
     }
 
     @RequestMapping(value = "/api/users", method = RequestMethod.PUT)
-    public ModelAndView update(HttpServletRequest request) throws IOException {
+    public ModelAndView update(HttpServletRequest request) {
         User user = DataBase.findUserById(request.getParameter("userId"));
-        User updateUser = JsonUtils.toObject(
-                CharStreams.toString(request.getReader()), User.class);
+        User updateUser = JsonUtils.createObject(request, User.class);
 
         user.update(updateUser);
 
