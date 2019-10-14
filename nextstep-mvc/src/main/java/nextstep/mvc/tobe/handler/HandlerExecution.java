@@ -1,6 +1,8 @@
 package nextstep.mvc.tobe.handler;
 
 import nextstep.mvc.tobe.ModelAndView;
+import nextstep.mvc.tobe.view.returntyperesolver.ViewReturnTypeResolver;
+import nextstep.mvc.tobe.view.returntyperesolver.ViewReturnTypeResolverManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,9 +22,9 @@ public class HandlerExecution {
     }
 
     public ModelAndView handle(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        String viewName = (String) method.invoke(target, request, response);
-        logger.debug("JSP support() viewName : {}", viewName);
+        Object handlerResult = method.invoke(target, request, response);
+        ViewReturnTypeResolver viewReturnTypeResolver = ViewReturnTypeResolverManager.getViewReturnTypeResolver(handlerResult);
 
-        return new ModelAndView(viewName);
+        return viewReturnTypeResolver.resolve(handlerResult);
     }
 }
