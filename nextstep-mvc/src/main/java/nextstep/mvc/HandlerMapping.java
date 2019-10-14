@@ -1,7 +1,5 @@
 package nextstep.mvc;
 
-import nextstep.mvc.tobe.HandlerExecution;
-
 import javax.servlet.http.HttpServletRequest;
 
 public interface HandlerMapping {
@@ -9,5 +7,5 @@ public interface HandlerMapping {
 
     boolean canHandle(HttpServletRequest request);
 
-    HandlerExecution getHandler(HttpServletRequest request);
+    Object getHandler(HttpServletRequest request);
 }

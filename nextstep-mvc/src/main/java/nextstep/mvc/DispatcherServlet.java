@@ -2,7 +2,12 @@ package nextstep.mvc;
 
 import nextstep.mvc.exception.NotFoundHandlerAdapterException;
 import nextstep.mvc.exception.NotFoundHandlerException;
-import nextstep.mvc.tobe.HandlerExecution;
+import nextstep.mvc.handleradapter.AnnotationHandlerAdapter;
+import nextstep.mvc.handleradapter.HandlerAdapter;
+import nextstep.mvc.handleradapter.LegacyHandlerAdapter;
+import nextstep.mvc.tobe.ModelAndView;
+import nextstep.mvc.tobe.view.View;
+import nextstep.mvc.tobe.view.ViewResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,6 +25,7 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger logger = LoggerFactory.getLogger(DispatcherServlet.class);
 
+    private ViewResolver viewResolver = new ViewResolver();
     private List<HandlerMapping> handlerMappings;
     private List<HandlerAdapter> handlerAdapters;
 
@@ -32,25 +38,35 @@ public class DispatcherServlet extends HttpServlet {
         for (HandlerMapping handlerMapping : handlerMappings) {
             handlerMapping.initialize();
         }
-        handlerAdapters = Arrays.asList(new StringHandlerAdapter());
+        handlerAdapters = Arrays.asList(new LegacyHandlerAdapter(), new AnnotationHandlerAdapter());
     }
 
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         logger.debug("Method : {}, Request URI : {}", req.getMethod(), req.getRequestURI());
-
-        HandlerExecution handlerExecution = getHandler(req);
+        Object handler = getHandler(req);
         try {
-            Object result = handlerExecution.handle(req, resp);
-            HandlerAdapter handlerAdapter = getHandlerAdapter(result);
-            handlerAdapter.handle(result, req, resp);
+            HandlerAdapter handlerAdapter = getHandlerAdapter(handler);
+            ModelAndView modelAndView = handlerAdapter.handle(req, resp, handler);
+            render(req, resp, modelAndView);
         } catch (Exception e) {
             logger.error(e.getMessage());
             resp.sendError(404);
         }
     }
 
-    private HandlerExecution getHandler(HttpServletRequest req) {
+    private void render(HttpServletRequest req, HttpServletResponse resp, ModelAndView modelAndView) throws Exception {
+        String viewName = modelAndView.getViewName();
+        if (viewName != null) {
+            View view = viewResolver.resolveViewName(viewName);
+            view.render(modelAndView.getModel(), req, resp);
+            return;
+        }
+        View view = modelAndView.getView();
+        view.render(modelAndView.getModel(), req, resp);
+    }
+
+    private Object getHandler(HttpServletRequest req) {
         return handlerMappings.stream()
                 .filter(handlerMapping -> handlerMapping.canHandle(req))
                 .findAny()
@@ -58,9 +74,9 @@ public class DispatcherServlet extends HttpServlet {
                 .getHandler(req);
     }
 
-    private HandlerAdapter getHandlerAdapter(Object result) {
+    private HandlerAdapter getHandlerAdapter(Object handler) {
         return handlerAdapters.stream()
-                .filter(adapter -> adapter.canHandle(result))
+                .filter(adapter -> adapter.canHandle(handler))
                 .findAny()
                 .orElseThrow(NotFoundHandlerAdapterException::new);
     }

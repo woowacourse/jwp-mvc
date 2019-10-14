@@ -2,13 +2,21 @@ package nextstep.mvc.tobe;
 
 import nextstep.web.annotation.RequestMethod;
 
+import java.util.regex.Pattern;
+
 public class HandlerKey {
+    private Pattern pattern;
     private String url;
     private RequestMethod requestMethod;
 
     public HandlerKey(String url, RequestMethod requestMethod) {
         this.url = url;
         this.requestMethod = requestMethod;
+        this.pattern = Pattern.compile(url.replaceAll("\\{[a-zA-Z0-9]+\\}", "[a-zA-Z0-9]+"));
+    }
+
+    public boolean matchPattern(String requestUrl) {
+        return pattern.matcher(requestUrl).find();
     }
 
     @Override

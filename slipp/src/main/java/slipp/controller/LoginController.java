@@ -1,6 +1,8 @@
 package slipp.controller;
 
-import nextstep.mvc.asis.Controller;
+import nextstep.web.annotation.Controller;
+import nextstep.web.annotation.RequestMapping;
+import nextstep.web.annotation.RequestMethod;
 import slipp.domain.User;
 import slipp.support.db.DataBase;
 
@@ -8,9 +10,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-public class LoginController implements Controller {
-
-    public String execute(HttpServletRequest req, HttpServletResponse resp) throws Exception {
+@Controller
+public class LoginController {
+    @RequestMapping(value = "/users/login", method = RequestMethod.POST)
+    public String logIn(HttpServletRequest req, HttpServletResponse resp) throws Exception {
         String userId = req.getParameter("userId");
         String password = req.getParameter("password");
         User user = DataBase.findUserById(userId);
@@ -26,5 +29,18 @@ public class LoginController implements Controller {
             req.setAttribute("loginFailed", true);
             return "/user/login.jsp";
         }
+    }
+
+    @RequestMapping(value = "/users/logout", method = RequestMethod.GET)
+    public String execute(HttpServletRequest req, HttpServletResponse resp) throws Exception {
+        User user = DataBase.findUserById(req.getParameter("userId"));
+        if (!UserSessionUtils.isSameUser(req.getSession(), user)) {
+            throw new IllegalStateException("다른 사용자의 정보를 수정할 수 없습니다.");
+        }
+
+        User updateUser = new User(req.getParameter("userId"), req.getParameter("password"), req.getParameter("name"),
+                req.getParameter("email"));
+        user.update(updateUser);
+        return "redirect:/";
     }
 }

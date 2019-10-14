@@ -16,7 +16,7 @@ public class SlippWebApplicationInitializer implements WebApplicationInitializer
 
     @Override
     public void onStartup(ServletContext servletContext) throws ServletException {
-        DispatcherServlet dispatcherServlet = new DispatcherServlet(List.of(new ManualHandlerMapping(), new AnnotationHandlerMapping("slipp")));
+        DispatcherServlet dispatcherServlet = new DispatcherServlet(List.of(new AnnotationHandlerMapping("slipp")));
 
         ServletRegistration.Dynamic dispatcher = servletContext.addServlet("dispatcher", dispatcherServlet);
         dispatcher.setLoadOnStartup(1);

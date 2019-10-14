@@ -7,6 +7,7 @@ import org.springframework.core.LocalVariableTableParameterNameDiscoverer;
 import org.springframework.core.ParameterNameDiscoverer;
 import org.springframework.mock.web.MockHttpServletRequest;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 
@@ -38,6 +39,102 @@ public class HandlerMethodArgumentResolverTest {
         ModelAndView mav = (ModelAndView) method.invoke(clazz.newInstance(), values);
         assertThat(mav.getObject("userId")).isEqualTo(userId);
         assertThat(mav.getObject("password")).isEqualTo(password);
+    }
+
+    @Test
+    void int_long() throws Exception {
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        long id = 1L;
+        int age = 2;
+        request.addParameter("id", String.valueOf(id));
+        request.addParameter("age", String.valueOf(age));
+
+        Class clazz = TestUserController.class;
+        Method method = getMethod("create_int_long", clazz.getDeclaredMethods());
+        String[] parameterNames = nameDiscoverer.getParameterNames(method);
+        Class<?>[] paramTypes = method.getParameterTypes();
+        Object[] values = new Object[parameterNames.length];
+
+        for (int i = 0; i < parameterNames.length; i++) {
+            String parameterName = parameterNames[i];
+            Class<?> paramType = paramTypes[i];
+
+            logger.debug("parameter : {} / {}", parameterName, paramType.getName());
+            if (paramType == long.class) {
+                values[i] = Long.parseLong(request.getParameter(parameterName));
+                continue;
+            }
+            if (paramType == int.class) {
+                values[i] = Integer.parseInt(request.getParameter(parameterName));
+                continue;
+            }
+        }
+
+        ModelAndView mav = (ModelAndView) method.invoke(clazz.newInstance(), values);
+        assertThat(mav.getObject("id")).isEqualTo(id);
+        assertThat(mav.getObject("age")).isEqualTo(age);
+    }
+
+    @Test
+    void java_bean() throws Exception{
+        String userId = "id";
+        String password = "password";
+        int age = 1;
+
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.addParameter("userId", userId);
+        request.addParameter("password", password);
+        request.addParameter("age", String.valueOf(age));
+        Class clazz = TestUserController.class;
+        Method method = getMethod("create_javabean", clazz.getDeclaredMethods());
+
+
+        String[] parameterNames = nameDiscoverer.getParameterNames(method);
+        Class<?>[] paramTypes = method.getParameterTypes();
+        Object[] values = new Object[parameterNames.length];
+
+        for (int i = 0; i < parameterNames.length; i++) {
+            String parameterName = parameterNames[i];
+            Class<?> paramType = paramTypes[i];
+
+            logger.debug("parameter : {} / {}", parameterName, paramType.getName());
+            if (paramType.isPrimitive()) {
+                if (paramType == long.class) {
+                    values[i] = Long.parseLong(request.getParameter(parameterName));
+                    continue;
+                }
+                if (paramType == int.class) {
+                    values[i] = Integer.parseInt(request.getParameter(parameterName));
+                    continue;
+                }
+            }
+            Field[] fields = paramType.getDeclaredFields();
+            Object instance = paramType.getDeclaredConstructor().newInstance();
+            for (Field field : fields) {
+                field.setAccessible(true);
+                Class<?> fieldType = field.getType();
+                if (fieldType.isPrimitive()) {
+                    if (fieldType == long.class) {
+                        field.set(instance, Long.parseLong(request.getParameter(field.getName())));
+                        continue;
+                    }
+                    if (fieldType == int.class) {
+                        field.set(instance, Integer.parseInt(request.getParameter(field.getName())));
+                        continue;
+                    }
+                }
+                if (fieldType == String.class) {
+                    field.set(instance, request.getParameter(field.getName()));
+                }
+            }
+            values[i] = instance;
+        }
+
+        ModelAndView mav = (ModelAndView) method.invoke(clazz.newInstance(), values);
+        TestUser testUser = (TestUser) mav.getObject("testUser");
+        assertThat(testUser.getAge()).isEqualTo(age);
+        assertThat(testUser.getPassword()).isEqualTo(password);
+        assertThat(testUser.getUserId()).isEqualTo(userId);
     }
 
     private Method getMethod(String name, Method[] methods) {

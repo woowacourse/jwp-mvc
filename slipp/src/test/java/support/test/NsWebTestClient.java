@@ -66,4 +66,8 @@ public class NsWebTestClient {
     public static NsWebTestClient of(String baseUrl, int port) {
         return new NsWebTestClient(baseUrl, port);
     }
+
+    public WebTestClient.Builder builder() {
+        return testClientBuilder;
+    }
 }
