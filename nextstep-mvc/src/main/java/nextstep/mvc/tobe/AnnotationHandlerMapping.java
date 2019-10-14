@@ -2,6 +2,7 @@ package nextstep.mvc.tobe;
 
 import com.google.common.collect.Maps;
 import nextstep.mvc.HandlerMapping;
+import nextstep.mvc.tobe.controllermapper.ParameterAdapters;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
 import org.reflections.ReflectionUtils;
@@ -22,6 +23,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     private Object[] basePackage;
     private Map<HandlerKey, HandlerExecution> handlerExecutions = Maps.newHashMap();
+    private ParameterAdapters parameterAdapters;
 
     public AnnotationHandlerMapping(Object... basePackage) {
         this.basePackage = basePackage;
@@ -30,6 +32,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     public void initialize() {
         Map<Class<?>, Object> controllers = new ControllerScanner(basePackage).getControllers();
         Map<Class<?>, Set<Method>> requestMappingMethods = getRequestMappingMethods(controllers.keySet());
+        this.parameterAdapters = new ParameterAdapters(basePackage);
 
         requestMappingMethods.keySet()
                 .forEach(clazz -> turnRequestMappingMethods(controllers.get(clazz), requestMappingMethods.get(clazz)));
@@ -41,7 +44,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     private void putHandlerExecution(Object instance, Method method) {
         createHandlerKeys(method.getAnnotation(RequestMapping.class)).forEach(handlerKey ->
-                handlerExecutions.put(handlerKey, new HandlerExecution(method, instance)));
+                handlerExecutions.put(handlerKey, new HandlerExecution(method, instance, parameterAdapters)));
     }
 
     private Map<Class<?>, Set<Method>> getRequestMappingMethods(Set<Class<?>> clazzes) {
