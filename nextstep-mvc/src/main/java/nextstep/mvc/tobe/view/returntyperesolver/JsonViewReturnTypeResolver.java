@@ -6,6 +6,10 @@ import nextstep.mvc.tobe.view.ViewType;
 public class JsonViewReturnTypeResolver implements ViewReturnTypeResolver {
     @Override
     public boolean support(Object handlerResult) {
+        if (handlerResult == null) {
+            return false;
+        }
+
         return !(handlerResult instanceof String || handlerResult instanceof ModelAndView);
     }
 
