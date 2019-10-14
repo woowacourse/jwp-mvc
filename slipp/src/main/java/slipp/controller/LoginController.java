@@ -1,30 +1,36 @@
 package slipp.controller;
 
+import nextstep.mvc.tobe.JspView;
+import nextstep.mvc.tobe.ModelAndView;
+import nextstep.mvc.tobe.RedirectView;
+import nextstep.web.annotation.Controller;
+import nextstep.web.annotation.RequestMapping;
+import nextstep.web.annotation.RequestMethod;
 import slipp.domain.User;
 import slipp.support.db.DataBase;
-import nextstep.mvc.asis.Controller;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-public class LoginController implements Controller {
-    @Override
-    public String execute(HttpServletRequest req, HttpServletResponse resp) throws Exception {
-        String userId = req.getParameter("userId");
-        String password = req.getParameter("password");
+@Controller
+public class LoginController {
+    @RequestMapping(value = "/users/login", method = RequestMethod.POST)
+    public ModelAndView login(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        String userId = request.getParameter("userId");
+        String password = request.getParameter("password");
         User user = DataBase.findUserById(userId);
         if (user == null) {
-            req.setAttribute("loginFailed", true);
-            return "/user/login.jsp";
+            request.setAttribute("loginFailed", true);
+            return new ModelAndView(new JspView("/user/login"));
         }
         if (user.matchPassword(password)) {
-            HttpSession session = req.getSession();
+            HttpSession session = request.getSession();
             session.setAttribute(UserSessionUtils.USER_SESSION_KEY, user);
-            return "redirect:/";
+            return new ModelAndView(new RedirectView("/"));
         } else {
-            req.setAttribute("loginFailed", true);
-            return "/user/login.jsp";
+            request.setAttribute("loginFailed", true);
+            return new ModelAndView(new JspView("/user/login"));
         }
     }
 }
