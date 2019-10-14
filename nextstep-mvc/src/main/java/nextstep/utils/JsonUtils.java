@@ -8,9 +8,11 @@ import nextstep.mvc.tobe.ObjectMapperException;
 import java.io.IOException;
 
 public class JsonUtils {
+    private static ObjectMapper objectMapper = new ObjectMapper();
+
     public static <T> T toObject(String json, Class<T> clazz) throws ObjectMapperException {
         try {
-            ObjectMapper objectMapper = new ObjectMapper();
+            ObjectMapper objectMapper = getInstance();
             objectMapper.setVisibility(objectMapper.getSerializationConfig().getDefaultVisibilityChecker()
                     .withFieldVisibility(JsonAutoDetect.Visibility.ANY)
                     .withGetterVisibility(JsonAutoDetect.Visibility.ANY)
@@ -22,7 +24,11 @@ public class JsonUtils {
     }
 
     public static String toJson(Object model) throws ObjectMapperException, JsonProcessingException {
-        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectMapper objectMapper = getInstance();
         return objectMapper.writeValueAsString(model);
+    }
+
+    public static ObjectMapper getInstance() {
+        return objectMapper;
     }
 }

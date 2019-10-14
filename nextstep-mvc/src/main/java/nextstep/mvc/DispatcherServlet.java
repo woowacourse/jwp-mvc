@@ -39,8 +39,7 @@ public class DispatcherServlet extends HttpServlet {
         String requestUri = req.getRequestURI();
         logger.debug("Method : {}, Request URI : {}", req.getMethod(), requestUri);
 
-        HandlerMapping handlerMapping = findHandlerMapping(req);
-        Object handler = handlerMapping.getHandler(req);
+        Object handler = findHandler(req);
         HandlerAdapter handlerAdapter = findAdapter(handler);
 
         try {
@@ -51,10 +50,12 @@ public class DispatcherServlet extends HttpServlet {
         }
     }
 
-    private HandlerMapping findHandlerMapping(HttpServletRequest req) {
+    private Object findHandler(HttpServletRequest req) {
         return handlerMappings.stream()
-                .filter(handlerMapping -> Objects.nonNull(handlerMapping.getHandler(req)))
-                .findFirst().orElseThrow(NotSupportedHandlerMethod::new);
+                .map(handlerMapping -> handlerMapping.getHandler(req))
+                .filter(Objects::nonNull)
+                .findFirst()
+                .orElseThrow(NotSupportedHandlerMethod::new);
     }
 
     private HandlerAdapter findAdapter(Object handler) {

@@ -66,4 +66,13 @@ public class NsWebTestClient {
                 .expectBody(clazz)
                 .returnResult().getResponseBody();
     }
+
+    public void getResourceWithoutBody(String location) {
+        testClientBuilder.build()
+                .get()
+                .uri(location)
+                .exchange()
+                .expectStatus().isOk();
+    }
+
 }
