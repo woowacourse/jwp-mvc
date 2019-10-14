@@ -8,8 +8,8 @@ import slipp.domain.User;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public class UserParameterAdepter implements ParameterAdepter {
-    private static final Logger log = LoggerFactory.getLogger(UserParameterAdepter.class);
+public class UserParameterAdapter implements ParameterAdapter {
+    private static final Logger log = LoggerFactory.getLogger(UserParameterAdapter.class);
     private Class clazz;
 
     @Override

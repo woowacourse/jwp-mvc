@@ -3,7 +3,7 @@ package nextstep.mvc.tobe.controllermapper.adepter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public interface ParameterAdepter {
+public interface ParameterAdapter {
     boolean supports(Class<?> clazz);
 
     Object cast(

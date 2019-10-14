@@ -1,6 +1,6 @@
 package nextstep.mvc.tobe.controllermapper;
 
-import nextstep.mvc.tobe.controllermapper.adepter.ParameterAdepter;
+import nextstep.mvc.tobe.controllermapper.adepter.ParameterAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.LocalVariableTableParameterNameDiscoverer;
@@ -14,10 +14,10 @@ import java.util.List;
 public class ControllerParameterMapper {
     private static final Logger log = LoggerFactory.getLogger(ControllerParameterMapper.class);
 
-    private List<ParameterAdepter> adepters;
+    private List<ParameterAdapter> adepters;
     private final Method method;
 
-    public ControllerParameterMapper(Method method, List<ParameterAdepter> adepters) {
+    public ControllerParameterMapper(Method method, List<ParameterAdapter> adepters) {
         this.method = method;
         this.adepters = adepters;
     }

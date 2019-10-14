@@ -3,14 +3,14 @@ package nextstep.mvc.tobe.controllermapper.adepter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public class ResponseParameterAdepter implements ParameterAdepter {
+public class LongParameterAdapter implements ParameterAdapter {
     @Override
     public boolean supports(Class<?> clazz) {
-        return clazz.equals(HttpServletResponse.class);
+        return clazz.equals(long.class);
     }
 
     @Override
     public Object cast(HttpServletRequest request, HttpServletResponse response, String parameterName) throws Exception {
-        return response;
+        return Long.valueOf(request.getParameter(parameterName));
     }
 }

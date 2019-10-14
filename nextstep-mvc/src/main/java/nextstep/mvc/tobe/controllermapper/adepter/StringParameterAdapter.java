@@ -3,7 +3,7 @@ package nextstep.mvc.tobe.controllermapper.adepter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public class StringParameterAdepter implements ParameterAdepter {
+public class StringParameterAdapter implements ParameterAdapter {
     @Override
     public boolean supports(Class<?> clazz) {
         return clazz.equals(String.class);

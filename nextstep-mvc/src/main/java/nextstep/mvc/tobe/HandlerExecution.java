@@ -1,7 +1,7 @@
 package nextstep.mvc.tobe;
 
 import nextstep.mvc.tobe.controllermapper.ControllerParameterMapper;
-import nextstep.mvc.tobe.controllermapper.ParameterAdeptersFactory;
+import nextstep.mvc.tobe.controllermapper.ParameterAdaptersFactory;
 import nextstep.mvc.tobe.view.ModelAndView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,7 +22,7 @@ public class HandlerExecution {
     }
 
     public ModelAndView handle(HttpServletRequest request, HttpServletResponse response) throws Exception{
-        ControllerParameterMapper controllerParameterMapper = new ControllerParameterMapper(method, ParameterAdeptersFactory.getAdepters());
+        ControllerParameterMapper controllerParameterMapper = new ControllerParameterMapper(method, ParameterAdaptersFactory.getAdepters());
         Object[] objects = controllerParameterMapper.getObjects(request, response);
         log.debug("object : {}", objects);
         return (ModelAndView) method.invoke(declaredObject, objects);
