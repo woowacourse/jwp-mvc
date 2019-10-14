@@ -1,4 +1,4 @@
-package nextstep.mvc.tobe;
+package nextstep.mvc.handlermapping;
 
 import nextstep.web.annotation.RequestMethod;
 
@@ -6,9 +6,21 @@ public class HandlerKey {
     private String url;
     private RequestMethod requestMethod;
 
-    public HandlerKey(String url, RequestMethod requestMethod) {
+    private HandlerKey(String url, RequestMethod requestMethod) {
         this.url = url;
         this.requestMethod = requestMethod;
+    }
+
+    public static HandlerKey fromUrlAndRequestMethod(String url, RequestMethod requestMethod) {
+        return new HandlerKey(url, requestMethod);
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public RequestMethod getRequestMethod() {
+        return requestMethod;
     }
 
     @Override

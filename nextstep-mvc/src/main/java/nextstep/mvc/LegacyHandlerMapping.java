@@ -2,7 +2,7 @@ package nextstep.mvc;
 
 import nextstep.mvc.asis.Controller;
 
-public interface HandlerMapping {
+public interface LegacyHandlerMapping {
     void initialize();
 
     Controller getHandler(String requestUri);

@@ -3,7 +3,11 @@ package reflection;
 import java.util.Date;
 
 public class Question {
-    private long questionId;
+    public static final String HELLO = "hello";
+
+    private static final String name = "abc";
+
+    private final long questionId;
 
     private String writer;
 
@@ -14,6 +18,15 @@ public class Question {
     private Date createdDate;
 
     private int countOfComment;
+
+    public int test1;
+
+    int test2;
+
+    private Question(String writer) {
+        this.writer = writer;
+        this.questionId = -1;
+    }
 
     public Question(String writer, String title, String contents) {
         this(0, writer, title, contents, new Date(), 0);
@@ -65,7 +78,7 @@ public class Question {
     @Override
     public String toString() {
         return "Question [questionId=" + questionId + ", writer=" + writer + ", title=" + title + ", contents="
-                + contents + ", createdDate=" + createdDate + ", countOfComment=" + countOfComment + "]";
+            + contents + ", createdDate=" + createdDate + ", countOfComment=" + countOfComment + "]";
     }
 
     @Override

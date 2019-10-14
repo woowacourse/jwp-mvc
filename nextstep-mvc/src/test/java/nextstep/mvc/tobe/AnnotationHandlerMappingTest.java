@@ -1,10 +1,14 @@
 package nextstep.mvc.tobe;
 
 import nextstep.db.DataBase;
+import nextstep.mvc.handlermapping.AnnotationHandlerMapping;
+import nextstep.mvc.handlermapping.HandlerExecution;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+
+import java.lang.reflect.InvocationTargetException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -12,7 +16,7 @@ public class AnnotationHandlerMappingTest {
     private AnnotationHandlerMapping handlerMapping;
 
     @BeforeEach
-    public void setup() {
+    public void setup() throws InvocationTargetException, IllegalAccessException {
         handlerMapping = new AnnotationHandlerMapping("nextstep.mvc.tobe");
         handlerMapping.initialize();
     }
@@ -26,7 +30,7 @@ public class AnnotationHandlerMappingTest {
         MockHttpServletRequest request = new MockHttpServletRequest("GET", "/users");
         request.setParameter("userId", user.getUserId());
         MockHttpServletResponse response = new MockHttpServletResponse();
-        HandlerExecution execution = handlerMapping.getHandler(request);
+        HandlerExecution execution = (HandlerExecution) handlerMapping.getHandler(request).get();
         execution.handle(request, response);
 
         assertThat(request.getAttribute("user")).isEqualTo(user);
@@ -39,7 +43,7 @@ public class AnnotationHandlerMappingTest {
         request.setParameter("name", user.getName());
         request.setParameter("email", user.getEmail());
         MockHttpServletResponse response = new MockHttpServletResponse();
-        HandlerExecution execution = handlerMapping.getHandler(request);
+        HandlerExecution execution = (HandlerExecution) handlerMapping.getHandler(request).get();
         execution.handle(request, response);
     }
 }
