@@ -13,7 +13,7 @@ public class ModelAttributeArgumentResolver implements ArgumentResolver {
     @Override
     public boolean supports(MethodParameter methodParameter) {
         return methodParameter.isAnnotationPresent(ModelAttribute.class) ||
-                (methodParameter.hasNoAnnotation() && !TypeConverter.supports(methodParameter.getType()));
+                (methodParameter.hasNoAnnotation() && !ServletArgument.supports(methodParameter.getType()));
     }
 
     @Override
