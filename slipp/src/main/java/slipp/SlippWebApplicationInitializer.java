@@ -8,6 +8,8 @@ import nextstep.mvc.tobe.argumentresolver.ArgumentResolver;
 import nextstep.mvc.tobe.argumentresolver.ArgumentResolvers;
 import nextstep.mvc.tobe.handleradapter.HandlerAdapter;
 import nextstep.mvc.tobe.handleradapter.HandlerExecutionHandlerAdapter;
+import nextstep.mvc.tobe.viewresolver.ViewResolver;
+import nextstep.mvc.tobe.viewresolver.ViewResolvers;
 import nextstep.web.WebApplicationInitializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,8 +29,9 @@ public class SlippWebApplicationInitializer implements WebApplicationInitializer
                 ClassScanner.scanSubTypesOf(ArgumentResolver.class, "nextstep.mvc"));
         List<HandlerMapping> requestMappings = Arrays.asList(new AnnotationHandlerMapping("slipp"));
         List<HandlerAdapter> handlerAdapters = Arrays.asList(new HandlerExecutionHandlerAdapter(argumentResolvers));
-
-        DispatcherServlet dispatcherServlet = new DispatcherServlet(requestMappings, handlerAdapters);
+        ViewResolvers viewResolvers = new ViewResolvers(
+                ClassScanner.scanSubTypesOf(ViewResolver.class, "nextstep.mvc"));
+        DispatcherServlet dispatcherServlet = new DispatcherServlet(requestMappings, handlerAdapters, viewResolvers);
 
         ServletRegistration.Dynamic dispatcher = servletContext.addServlet("dispatcher", dispatcherServlet);
         dispatcher.setLoadOnStartup(1);

@@ -5,6 +5,7 @@ import nextstep.mvc.tobe.view.JspView;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
+import nextstep.web.annotation.RequestParam;
 import slipp.domain.User;
 import slipp.support.db.DataBase;
 
@@ -15,13 +16,12 @@ import javax.servlet.http.HttpSession;
 @Controller
 public class LoginController {
     @RequestMapping(value = "/users/loginForm", method = RequestMethod.GET)
-    public String loginForm(HttpServletRequest req, HttpServletResponse resp) throws Exception {
+    public String loginForm() throws Exception {
         return "/user/login.jsp";
     }
 
     @RequestMapping(value = "/users/login", method = RequestMethod.POST)
-    public ModelAndView login(HttpServletRequest req, HttpServletResponse resp) throws Exception {
-        String userId = req.getParameter("userId");
+    public Object login(HttpServletRequest req, @RequestParam(name = "userId") String userId) throws Exception {
         String password = req.getParameter("password");
         User user = DataBase.findUserById(userId);
 
@@ -32,7 +32,7 @@ public class LoginController {
 
         HttpSession session = req.getSession();
         session.setAttribute(UserSessionUtils.USER_SESSION_KEY, user);
-        return new ModelAndView(new JspView("redirect:/"));
+        return "redirect:/";
     }
 
     private boolean loginFailed(User user, String password) {
