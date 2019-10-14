@@ -7,6 +7,7 @@ import nextstep.mvc.tobe.ObjectMapperException;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.io.Writer;
 
 public class JsonUtils {
     private static final ObjectMapper objectMapper = new ObjectMapper();
@@ -36,5 +37,13 @@ public class JsonUtils {
 
     public static String toJson(Object value) throws JsonProcessingException {
         return objectMapper.writeValueAsString(value);
+    }
+
+    public static void writeValue(Writer writer, Object value) throws ObjectMapperException {
+        try {
+            objectMapper.writeValue(writer, value);
+        } catch (IOException e) {
+            throw new ObjectMapperException(e);
+        }
     }
 }
