@@ -39,6 +39,21 @@ public class AnnotationHandlerMappingTest {
     }
 
     @Test
+    public void create_find_with_PathVariable() throws Exception {
+        User user = new User("iva", "password", "이바", "pobi@nextstep.camp");
+        createUser(user);
+        assertThat(DataBase.findUserById(user.getUserId())).isEqualTo(user);
+
+        MockHttpServletRequest request = new MockHttpServletRequest("GET", "/users/" + user.getUserId());
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        Object handler = handlerMapping.getHandler(request);
+        HandlerAdapter adapter = new HandlerExecutionHandlerAdapter();
+        adapter.handle(request, response, handler);
+
+        assertThat(request.getAttribute("user")).isEqualTo(user);
+    }
+
+    @Test
     void duplicated_mapping_exception() {
         handlerMapping = new AnnotationHandlerMapping("nextstep.mvc.tobe.ExceptionController");
         assertThrows(MappingException.class, () -> handlerMapping.initialize());

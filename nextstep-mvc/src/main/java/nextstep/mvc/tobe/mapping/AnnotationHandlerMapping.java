@@ -1,6 +1,7 @@
 package nextstep.mvc.tobe.mapping;
 
 import com.google.common.collect.Maps;
+import nextstep.mvc.tobe.exception.NotMatchHandlerKeyException;
 import nextstep.mvc.tobe.argumentresolver.HandlerMethodArgumentResolverManager;
 import nextstep.mvc.tobe.exception.MappingException;
 import nextstep.web.annotation.RequestMapping;
@@ -9,10 +10,7 @@ import org.reflections.ReflectionUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class AnnotationHandlerMapping implements HandlerMapping {
     private Object[] basePackage;
@@ -39,7 +37,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
                 if (requestMethods.isEmpty()) {
                     putAllRequestMethod(newInstance, method, url);
-                    return;
+                    continue;
                 }
 
                 for (RequestMethod requestMethod : requestMethods) {
@@ -52,14 +50,13 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     private void putAllRequestMethod(Object instance, Method method, String url) {
         for (RequestMethod value : RequestMethod.values()) {
             HandlerKey handlerKey = new HandlerKey(url, value);
-            if (handlerExecutions.containsKey(handlerKey)) {
-                throw new MappingException();
-            }
+//            checkDuplicatedHandlerKey(handlerKey);
             putHandler(instance, method, handlerKey);
         }
     }
 
     private void putHandler(Object instance, Method method, HandlerKey handlerKey) {
+        checkDuplicatedHandlerKey(handlerKey);
         handlerExecutions.put(handlerKey,
                 (request, response) ->
                         method.invoke(instance,
@@ -67,9 +64,20 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         );
     }
 
+    private void checkDuplicatedHandlerKey(HandlerKey handlerKey) {
+        if (handlerExecutions.containsKey(handlerKey)) {
+            throw new MappingException();
+        }
+    }
+
     @Override
     public HandlerExecution getHandler(HttpServletRequest request) {
-        HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), RequestMethod.of(request.getMethod()));
-        return handlerExecutions.get(handlerKey);
+        String path = request.getRequestURI();
+        RequestMethod requestMethod = RequestMethod.of(request.getMethod());
+        return handlerExecutions.get(
+                handlerExecutions.keySet().stream()
+                        .filter(key -> key.matches(path, requestMethod))
+                        .findFirst()
+                        .orElseThrow(NotMatchHandlerKeyException::new));
     }
 }

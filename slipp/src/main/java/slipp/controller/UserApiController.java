@@ -2,10 +2,7 @@ package slipp.controller;
 
 import nextstep.mvc.tobe.ModelAndView;
 import nextstep.mvc.tobe.view.JsonView;
-import nextstep.web.annotation.Controller;
-import nextstep.web.annotation.RequestBody;
-import nextstep.web.annotation.RequestMapping;
-import nextstep.web.annotation.RequestMethod;
+import nextstep.web.annotation.*;
 import slipp.domain.User;
 import slipp.support.db.DataBase;
 
@@ -22,22 +19,24 @@ public class UserApiController {
         DataBase.addUser(user);
 
         response.setStatus(SC_CREATED);
-        response.setHeader("Location", "/api/users?userId=" + user.getUserId());
+//        response.setHeader("Location", "/api/users?userId=" + user.getUserId());
+        response.setHeader("Location", "/api/users/" + user.getUserId());
         return new ModelAndView(new JsonView());
     }
 
-    @RequestMapping(value = "/api/users", method = RequestMethod.GET)
-    public ModelAndView find(HttpServletRequest request) {
-        String userId = request.getParameter("userId");
+    @RequestMapping(value = "/api/users/{userId}", method = RequestMethod.GET)
+    public ModelAndView find(@PathVariable String userId, HttpServletRequest request) {
+//        String userId = request.getParameter("userId");
         User user = DataBase.findUserById(userId);
 
         return new ModelAndView(new JsonView())
                 .addObject("user", user);
     }
 
-    @RequestMapping(value = "/api/users", method = RequestMethod.PUT)
-    public ModelAndView update(@RequestBody User updateUser, HttpServletRequest request) {
-        User user = DataBase.findUserById(request.getParameter("userId"));
+    @RequestMapping(value = "/api/users/{userId}", method = RequestMethod.PUT)
+    public ModelAndView update(@PathVariable String userId, @RequestBody User updateUser, HttpServletRequest request) {
+//        User user = DataBase.findUserById(request.getParameter("userId"));
+        User user = DataBase.findUserById(userId);
 
         user.update(updateUser);
 

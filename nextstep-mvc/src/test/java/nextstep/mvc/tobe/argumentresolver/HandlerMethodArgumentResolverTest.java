@@ -20,8 +20,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class HandlerMethodArgumentResolverTest {
     private static final Logger logger = LoggerFactory.getLogger(HandlerMethodArgumentResolverTest.class);
 
-    private ParameterNameDiscoverer nameDiscoverer = new LocalVariableTableParameterNameDiscoverer();
-
     @Test
     void requestParam_string() throws Exception {
         MockHttpServletRequest request = new MockHttpServletRequest();

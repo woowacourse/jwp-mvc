@@ -6,11 +6,18 @@ import java.lang.reflect.Parameter;
 public class MethodParameter {
     private final Parameter parameter;
     private final String name;
+    private final String path;
 
-    public MethodParameter(Parameter parameter, String name) {
+    public MethodParameter(Parameter parameter, String name, String path) {
         this.parameter = parameter;
         this.name = name;
+        this.path = path;
     }
+
+//    public MethodParameter(Parameter parameter, String name) {
+//        this.parameter = parameter;
+//        this.name = name;
+//    }
 
     public String getParameterName() {
         return this.name;
@@ -22,6 +29,10 @@ public class MethodParameter {
 
     public Parameter getParameter() {
         return this.parameter;
+    }
+
+    public String getPath() {
+        return this.path;
     }
 
     public boolean hasAnnotation(Class<? extends Annotation> annotation) {

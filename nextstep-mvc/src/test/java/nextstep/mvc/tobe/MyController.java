@@ -2,6 +2,7 @@ package nextstep.mvc.tobe;
 
 import nextstep.db.DataBase;
 import nextstep.web.annotation.Controller;
+import nextstep.web.annotation.PathVariable;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
 import org.slf4j.Logger;
@@ -18,6 +19,14 @@ public class MyController {
     public ModelAndView findUserId(HttpServletRequest request, HttpServletResponse response) {
         String userId = request.getParameter("userId");
         logger.debug("Find UserId : {}", userId);
+        User user = DataBase.findUserById(userId);
+        request.setAttribute("user", user);
+        return null;
+    }
+
+    @RequestMapping(value = "/users/{userId}", method = RequestMethod.GET)
+    public ModelAndView findByUserId(@PathVariable String userId, HttpServletRequest request) {
+        logger.debug("Find UserId With PathVariable Annotation : {}", userId);
         User user = DataBase.findUserById(userId);
         request.setAttribute("user", user);
         return null;
