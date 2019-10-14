@@ -4,6 +4,7 @@ import nextstep.mvc.tobe.ModelAndView;
 import nextstep.mvc.tobe.NotFoundHandlerException;
 import nextstep.mvc.tobe.View;
 import nextstep.mvc.tobe.WebRequestContext;
+import nextstep.mvc.tobe.argumentResolver.HandlerMethodArgumentResolver;
 import nextstep.mvc.tobe.handlerAdapter.HandlerAdapter;
 import nextstep.mvc.tobe.support.AnnotationApplicationContext;
 import nextstep.mvc.tobe.support.ApplicationContext;
@@ -32,7 +33,7 @@ public class DispatcherServlet extends HttpServlet {
 
     public DispatcherServlet(ApplicationContext context) {
         this.context = context;
-        context.scanBeans(HandlerAdapter.class, HandlerMapping.class, ViewResolver.class);
+        context.scanBeans(HandlerAdapter.class, HandlerMapping.class, ViewResolver.class, HandlerMethodArgumentResolver.class);
         handlerMappings = Collections.unmodifiableSet((Set<HandlerMapping>) context.getBean(HandlerMapping.class));
         handlerAdapters = Collections.unmodifiableSet((Set<HandlerAdapter>) context.getBean(HandlerAdapter.class));
         viewResolvers = Collections.unmodifiableSet((Set<ViewResolver>) context.getBean(ViewResolver.class));
@@ -40,9 +41,8 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     public void init() {
-        handlerMappings
-                .forEach(handlerMapping -> handlerMapping.initialize(new AnnotationApplicationContext(context.getBasePackage())));
-
+        handlerMappings.forEach(handlerMapping -> handlerMapping.initialize(new AnnotationApplicationContext()));
+        handlerAdapters.stream().forEach(x -> x.setResolver((Set<HandlerMethodArgumentResolver>) context.getBean(HandlerMethodArgumentResolver.class)));
     }
 
     @Override

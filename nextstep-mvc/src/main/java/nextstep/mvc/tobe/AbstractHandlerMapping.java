@@ -3,6 +3,7 @@ package nextstep.mvc.tobe;
 import com.google.common.collect.Maps;
 import nextstep.mvc.HandlerMapping;
 import nextstep.mvc.tobe.support.AnnotationApplicationContext;
+import nextstep.mvc.tobe.support.ApplicationContext;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
@@ -11,9 +12,9 @@ import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.*;
 
-public class AnnotationHandlerMapping implements HandlerMapping {
+public class AbstractHandlerMapping implements HandlerMapping {
     private Map<HandlerKey, HandlerExecution> handlerExecutions = Maps.newHashMap();
-
+    private ApplicationContext applicationContext;
     @Override
     public void initialize(AnnotationApplicationContext context) {
         context.scanBeans(Controller.class);
@@ -35,7 +36,6 @@ public class AnnotationHandlerMapping implements HandlerMapping {
                     .filter(requestMethod -> isNotRegistered(annotation, requestMethod))
                     .forEach(annotationRequestMethod::add);
         }
-
         annotationRequestMethod
                 .forEach(x -> {
                     HandlerKey handlerKey = new HandlerKey(annotation.value(), x);

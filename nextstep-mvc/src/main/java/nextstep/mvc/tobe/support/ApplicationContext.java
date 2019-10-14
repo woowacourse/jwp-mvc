@@ -1,11 +1,10 @@
 package nextstep.mvc.tobe.support;
 
-import nextstep.mvc.tobe.exception.InstanceCreationFailedException;
+import nextstep.utils.BeanUtils;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -25,24 +24,19 @@ public class ApplicationContext<T> {
     public void scanBeans(Class... classes) {
         for (Class clazz : classes) {
             Set<Class<? extends T>> scanClasses = reflections.getSubTypesOf(clazz);
-            beans.put(clazz, scanClasses.stream().map(x -> createInstance(x)).collect(Collectors.toSet()));
+
+            beans.put(clazz, scanClasses.stream()
+                    .map(BeanUtils::createInstance)
+                    .collect(Collectors.toSet()));
         }
     }
 
-    protected Object createInstance(Class<?> clazz) {
-        try {
-            return clazz.getConstructor().newInstance();
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            logger.debug("Error: {}", e);
-        }
-        throw new InstanceCreationFailedException("Error: 인스턴스 생성 실패");
-    }
 
     public Object getBean(Class<?> clazz) {
         return beans.get(clazz);
     }
 
-    public Object[] getBasePackage() {
+    Object[] getBasePackage() {
         return basePackage;
     }
 

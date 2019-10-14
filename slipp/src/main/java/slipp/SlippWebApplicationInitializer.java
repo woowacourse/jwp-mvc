@@ -1,11 +1,6 @@
 package slipp;
 
 import nextstep.mvc.DispatcherServlet;
-import nextstep.mvc.HandlerMapping;
-import nextstep.mvc.tobe.AnnotationHandlerMapping;
-import nextstep.mvc.tobe.handlerAdapter.ControllerHandlerAdapter;
-import nextstep.mvc.tobe.handlerAdapter.HandlerAdapter;
-import nextstep.mvc.tobe.handlerAdapter.LegacyHandlerAdapter;
 import nextstep.mvc.tobe.support.ApplicationContext;
 import nextstep.web.WebApplicationInitializer;
 import org.slf4j.Logger;
@@ -14,8 +9,6 @@ import org.slf4j.LoggerFactory;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRegistration;
-import java.util.Arrays;
-import java.util.List;
 
 public class SlippWebApplicationInitializer implements WebApplicationInitializer {
     private static final Logger log = LoggerFactory.getLogger(SlippWebApplicationInitializer.class);

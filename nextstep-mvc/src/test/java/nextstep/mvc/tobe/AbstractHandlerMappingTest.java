@@ -14,12 +14,12 @@ import java.lang.reflect.Method;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class AnnotationHandlerMappingTest {
-    private AnnotationHandlerMapping handlerMapping;
+public class AbstractHandlerMappingTest {
+    private AbstractHandlerMapping handlerMapping;
 
     @BeforeEach
     public void setup() {
-        handlerMapping = new AnnotationHandlerMapping("nextstep.mvc.tobe");
+        handlerMapping = new AbstractHandlerMapping("nextstep.mvc.tobe");
         handlerMapping.initialize();
     }
 

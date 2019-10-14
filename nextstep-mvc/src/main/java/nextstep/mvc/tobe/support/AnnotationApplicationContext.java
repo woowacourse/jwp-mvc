@@ -1,5 +1,6 @@
 package nextstep.mvc.tobe.support;
 
+import nextstep.utils.BeanUtils;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,13 +11,12 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class AnnotationApplicationContext<T> extends ApplicationContext {
-    private static final Logger logger = LoggerFactory.getLogger(ControllerScanner.class);
+    private static final Logger logger = LoggerFactory.getLogger(AnnotationApplicationContext.class);
     private final Reflections reflections;
     private Map<Class<?>, Object> beans = new HashMap<>();
 
-    public AnnotationApplicationContext(Object... basePackage) {
-        super(basePackage);
-        reflections = new Reflections(basePackage);
+    public AnnotationApplicationContext() {
+        reflections = new Reflections(this.getBasePackage());
     }
 
     @Override
@@ -30,10 +30,11 @@ public class AnnotationApplicationContext<T> extends ApplicationContext {
     Map<Class<?>, Object> classInstanceMapping(Set<Class<? extends T>> classes) {
         return classes.stream().collect(Collectors.toMap(
                 a -> a,
-                this::createInstance,
+                BeanUtils::createInstance,
                 (p1, p2) -> p1 + ";" + p2)
         );
     }
+
 
     public Object getInstance(Class<?> clazz) {
         return beans.get(clazz);
