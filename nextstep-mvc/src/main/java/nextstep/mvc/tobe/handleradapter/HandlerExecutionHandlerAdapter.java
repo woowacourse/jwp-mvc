@@ -3,7 +3,6 @@ package nextstep.mvc.tobe.handleradapter;
 import nextstep.mvc.tobe.HandlerExecution;
 import nextstep.mvc.tobe.ModelAndView;
 import nextstep.mvc.tobe.argumentresolver.ArgumentResolvers;
-import nextstep.mvc.tobe.view.JspView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -26,11 +25,10 @@ public class HandlerExecutionHandlerAdapter implements HandlerAdapter {
         Object[] arguments = argumentResolvers.resolve(handlerExecution.getMethodParameters(), req, resp);
         Object handleResult = handlerExecution.handle(arguments);
 
-        if (handleResult instanceof String) {
-            String viewName = (String) handleResult;
-            return new ModelAndView(new JspView(viewName));
+        if (handleResult instanceof ModelAndView) {
+            return (ModelAndView) handleResult;
         }
 
-        return (ModelAndView) handleResult;
+        return new ModelAndView(handleResult);
     }
 }
