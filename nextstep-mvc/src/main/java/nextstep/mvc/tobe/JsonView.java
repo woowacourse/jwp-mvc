@@ -15,9 +15,9 @@ public class JsonView implements View {
         PrintWriter responseWriter = response.getWriter();
 
         if (model.size() == 1) {
-            responseWriter.write(JsonUtils.toJson(getFirst(model)));
+            JsonUtils.toJson(responseWriter, getFirst(model));
         } else if (model.size() > 1) {
-            responseWriter.write(JsonUtils.toJson(model));
+            JsonUtils.toJson(responseWriter, model);
         } else {
             return;
         }
