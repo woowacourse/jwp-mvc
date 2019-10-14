@@ -8,7 +8,7 @@ public class ModelAndViewReturnTypeResolver implements ViewReturnTypeResolver {
         if (handlerResult == null) {
             return false;
         }
-        
+
         return handlerResult instanceof ModelAndView;
     }
 
