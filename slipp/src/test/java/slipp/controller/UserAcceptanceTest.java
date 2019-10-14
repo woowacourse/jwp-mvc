@@ -35,12 +35,16 @@ public class UserAcceptanceTest {
 
         // 조회
         User actual = client.getResource(location, User.class);
+        logger.debug("User: {}", actual);
+
         assertThat(actual.getUserId()).isEqualTo(expected.getUserId());
         assertThat(actual.getName()).isEqualTo(expected.getName());
         assertThat(actual.getEmail()).isEqualTo(expected.getEmail());
 
         // 수정
         UserUpdatedDto updateUser = new UserUpdatedDto("password2", "코난", "conan@nextstep.camp");
+        logger.debug("updated User: {}", actual);
+
         client.updateResource(location, updateUser, UserUpdatedDto.class);
 
         actual = client.getResource(location, User.class);
