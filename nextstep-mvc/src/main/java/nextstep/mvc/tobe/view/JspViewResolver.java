@@ -1,12 +1,10 @@
 package nextstep.mvc.tobe.view;
 
-import com.google.common.base.Strings;
-
 public class JspViewResolver implements ViewResolver {
 
     @Override
-    public boolean support(String viewName) {
-        return !Strings.isNullOrEmpty(viewName);
+    public boolean support(ViewType viewType) {
+        return ViewType.JSP_VIEW == viewType;
     }
 
     @Override
