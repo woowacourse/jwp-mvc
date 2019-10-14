@@ -5,8 +5,8 @@ import nextstep.mvc.tobe.handler.HandlerAdapter;
 import nextstep.mvc.tobe.handler.HandlerAdapterManager;
 import nextstep.mvc.tobe.handler.HandlerMappingManager;
 import nextstep.mvc.tobe.view.View;
-import nextstep.mvc.tobe.view.ViewResolver;
-import nextstep.mvc.tobe.view.ViewResolverManager;
+import nextstep.mvc.tobe.view.viewresolver.ViewResolver;
+import nextstep.mvc.tobe.view.viewresolver.ViewResolverManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

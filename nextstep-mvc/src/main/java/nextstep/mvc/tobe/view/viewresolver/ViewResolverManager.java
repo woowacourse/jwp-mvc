@@ -1,4 +1,4 @@
-package nextstep.mvc.tobe.view;
+package nextstep.mvc.tobe.view.viewresolver;
 
 import nextstep.mvc.tobe.ModelAndView;
 
