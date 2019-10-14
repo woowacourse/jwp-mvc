@@ -1,5 +1,7 @@
 package slipp.dto;
 
+import slipp.domain.User;
+
 public class UserUpdatedDto {
     private String password;
     private String name;
@@ -12,6 +14,10 @@ public class UserUpdatedDto {
         this.password = password;
         this.name = name;
         this.email = email;
+    }
+
+    public User toEntity(String userId) {
+        return new User(userId, password, name, email);
     }
 
     public String getPassword() {

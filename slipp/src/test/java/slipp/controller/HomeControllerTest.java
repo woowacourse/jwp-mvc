@@ -1,13 +1,11 @@
 package slipp.controller;
 
-import nextstep.mvc.tobe.core.RequestHandlers;
-import nextstep.mvc.tobe.view.ModelAndView;
+import nextstep.mvc.core.RequestHandlers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-import slipp.ManualLegacyHandlerMapping;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -16,7 +14,7 @@ class HomeControllerTest {
 
     @BeforeEach
     void setUp() {
-        mappings = new RequestHandlers(new ManualLegacyHandlerMapping(), "slipp.controller");
+        mappings = new RequestHandlers("slipp.controller");
         mappings.initialize();
     }
 
@@ -26,9 +24,8 @@ class HomeControllerTest {
         MockHttpServletRequest request = new MockHttpServletRequest("GET", "/");
         MockHttpServletResponse response = new MockHttpServletResponse();
 
-        ModelAndView modelAndView = mappings.handle(request, response);
+        mappings.handle(request, response);
 
-        assertThat(modelAndView.getView().getViewName()).isEqualTo("home.jsp");
         assertThat(request.getAttribute("users")).isNotNull();
     }
 }

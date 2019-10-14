@@ -1,23 +1,24 @@
 package slipp.controller;
 
-import nextstep.mvc.tobe.core.RequestHandlers;
+import nextstep.mvc.core.RequestHandlers;
+import nextstep.mvc.view.ModelAndView;
+import nextstep.mvc.view.RedirectView;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-import slipp.ManualLegacyHandlerMapping;
 import slipp.domain.User;
 import slipp.support.db.DataBase;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class CreateUserControllerTest {
+class CreateFormControllerTest {
     private RequestHandlers mappings;
 
     @BeforeEach
     void setUp() {
-        mappings = new RequestHandlers(new ManualLegacyHandlerMapping(), "slipp.controller");
+        mappings = new RequestHandlers("slipp.controller");
         mappings.initialize();
     }
 
@@ -34,8 +35,9 @@ class CreateUserControllerTest {
 
         MockHttpServletResponse response = new MockHttpServletResponse();
 
-        mappings.handle(request, response);
+        ModelAndView mv = mappings.handle(request, response);
 
         assertThat(DataBase.findUserById("sloth")).isEqualTo(expected);
+        assertThat(mv.getView() instanceof RedirectView).isTrue();
     }
 }

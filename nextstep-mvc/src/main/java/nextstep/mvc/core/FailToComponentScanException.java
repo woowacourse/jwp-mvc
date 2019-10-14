@@ -1,4 +1,4 @@
-package nextstep.mvc.tobe.core;
+package nextstep.mvc.core;
 
 public class FailToComponentScanException extends RuntimeException {
     public FailToComponentScanException() {

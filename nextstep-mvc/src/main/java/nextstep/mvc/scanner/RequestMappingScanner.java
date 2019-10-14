@@ -1,7 +1,7 @@
-package nextstep.mvc.tobe.scanner;
+package nextstep.mvc.scanner;
 
-import nextstep.mvc.tobe.core.HandlerExecution;
-import nextstep.mvc.tobe.core.HandlerKey;
+import nextstep.mvc.core.HandlerExecution;
+import nextstep.mvc.core.HandlerKey;
 import nextstep.web.annotation.RequestMapping;
 
 import java.lang.reflect.Method;
