@@ -19,6 +19,6 @@ class ViewReturnTypeResolverManagerTest {
                 .isInstanceOf(JsonViewReturnTypeResolver.class);
 
         assertThat(ViewReturnTypeResolverManager.getViewReturnTypeResolver(null))
-                .isEqualTo(null);
+                .isInstanceOf(JspViewReturnTypeResolver.class);
     }
 }

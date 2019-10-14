@@ -16,6 +16,6 @@ public class ViewReturnTypeResolverManager {
         return viewReturnTypeResolvers.stream()
                 .filter(viewReturnTypeResolver -> viewReturnTypeResolver.support(handlerResult))
                 .findAny()
-                .orElse(null);
+                .orElseGet(() -> new JspViewReturnTypeResolver());
     }
 }
