@@ -1,11 +1,11 @@
 package nextstep.mvc;
 
-import nextstep.mvc.adapter.ExecutionResultAdapter;
-import nextstep.mvc.adapter.ExecutionResultAdapters;
-import nextstep.mvc.tobe.Execution;
-import nextstep.mvc.tobe.ModelAndView;
-import nextstep.mvc.tobe.view.JspView;
-import nextstep.mvc.tobe.view.View;
+import nextstep.mvc.adapter.ControllerAdapter;
+import nextstep.mvc.adapter.ExecutionAdapter;
+import nextstep.mvc.adapter.HandlerExecutionAdapter;
+import nextstep.mvc.view.JspView;
+import nextstep.mvc.view.View;
+import nextstep.utils.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,8 +14,10 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @WebServlet(name = "dispatcher", urlPatterns = "/", loadOnStartup = 1)
 public class DispatcherServlet extends HttpServlet {
@@ -24,17 +26,19 @@ public class DispatcherServlet extends HttpServlet {
     private static final String NOT_FOUND_PAGE = "/err/404.jsp";
 
     private List<HandlerMapping> handlerMappings;
-    private ExecutionResultAdapters executionResultAdapters;
+    private List<ExecutionAdapter> executionAdapters;
 
-    public DispatcherServlet(List<HandlerMapping> handlerMappings, ExecutionResultAdapters executionResultAdapters) {
+    public DispatcherServlet(List<HandlerMapping> handlerMappings) {
         this.handlerMappings = handlerMappings;
-        this.executionResultAdapters = executionResultAdapters;
+        this.executionAdapters = new ArrayList<>();
     }
 
     @Override
     public void init() {
         handlerMappings.forEach(HandlerMapping::initialize);
-        executionResultAdapters.initialize();
+
+        executionAdapters.add(new ControllerAdapter());
+        executionAdapters.add(new HandlerExecutionAdapter());
     }
 
     @Override
@@ -53,21 +57,27 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private ModelAndView handle(HttpServletRequest req, HttpServletResponse resp) throws Exception {
-        Execution execution = findExecution(req);
-        if (execution == null) {
-            return new ModelAndView(new JspView(NOT_FOUND_PAGE));
-        }
-
-        Object result = execution.execute(req, resp);
-        ExecutionResultAdapter adapter = executionResultAdapters.findAdapter(result);
-        return adapter.handle(req, resp, result);
+        return findExecution(req)
+                .map(ExceptionUtils.wrapper(execution -> execute(execution, req, resp)))
+                .orElseGet(() -> new ModelAndView(new JspView(NOT_FOUND_PAGE)));
     }
 
-    private Execution findExecution(HttpServletRequest request) {
+    private Optional<Execution> findExecution(HttpServletRequest request) {
         return handlerMappings.stream()
                 .map(handlerMapping -> handlerMapping.getHandler(request))
                 .filter(Objects::nonNull)
+                .findFirst();
+    }
+
+    private ModelAndView execute(Execution execution, HttpServletRequest req, HttpServletResponse resp) throws Exception {
+        ExecutionAdapter adapter = findExecutionAdapter(execution);
+        return adapter.execute(req, resp, execution);
+    }
+
+    private ExecutionAdapter findExecutionAdapter(Execution execution) {
+        return executionAdapters.stream()
+                .filter(adapter -> adapter.matchClass(execution))
                 .findFirst()
-                .orElse(null);
+                .orElseThrow(() -> new IllegalArgumentException("처리할 수 없는 형태입니다."));
     }
 }
