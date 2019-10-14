@@ -6,7 +6,7 @@ import nextstep.mvc.tobe.view.ViewType;
 public class JsonViewReturnTypeResolver implements ViewReturnTypeResolver {
     @Override
     public boolean support(Object handlerResult) {
-        return !(handlerResult instanceof String || handlerResult instanceof ModelAndView) ;
+        return !(handlerResult instanceof String || handlerResult instanceof ModelAndView);
     }
 
     @Override
