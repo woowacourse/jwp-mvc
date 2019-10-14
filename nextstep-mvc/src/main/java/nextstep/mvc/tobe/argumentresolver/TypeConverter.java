@@ -6,7 +6,7 @@ import java.util.Arrays;
 import java.util.Optional;
 import java.util.function.Function;
 
-public enum PrimitiveParser {
+public enum TypeConverter {
     INT(int.class, Integer::parseInt, 0),
     LONG(long.class, Long::parseLong, 0L),
     BOOLEAN(boolean.class, Boolean::parseBoolean, false),
@@ -20,28 +20,28 @@ public enum PrimitiveParser {
     private Function<String, Object> parser;
     private Object defaultValue;
 
-    PrimitiveParser(Class<?> valueType, Function<String, Object> parser, Object defaultValue) {
+    TypeConverter(Class<?> valueType, Function<String, Object> parser, Object defaultValue) {
         this.valueType = valueType;
         this.parser = parser;
         this.defaultValue = defaultValue;
     }
 
-    public static boolean canParse(Class<?> valueType) {
+    public static boolean supports(Class<?> valueType) {
         return getPrimitiveParser(valueType).isPresent();
     }
 
-    public static Object parse(String source, Class<?> valueType) {
-        PrimitiveParser primitiveParser = getPrimitiveParser(valueType)
+    public static Object convert(String source, Class<?> valueType) {
+        TypeConverter typeConverter = getPrimitiveParser(valueType)
                 .orElseThrow(NotSupportedPrimitiveTypeException::new);
 
         if (source == null) {
-            return primitiveParser.defaultValue;
+            return typeConverter.defaultValue;
         }
 
-        return primitiveParser.parser.apply(source);
+        return typeConverter.parser.apply(source);
     }
 
-    private static Optional<PrimitiveParser> getPrimitiveParser(Class<?> valueType) {
+    private static Optional<TypeConverter> getPrimitiveParser(Class<?> valueType) {
         return Arrays.stream(values())
                 .filter(type -> type.valueType.equals(valueType))
                 .findAny();

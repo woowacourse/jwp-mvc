@@ -10,14 +10,14 @@ public class RequestParamArgumentResolver implements ArgumentResolver {
     @Override
     public boolean supports(MethodParameter methodParameter) {
         return methodParameter.isAnnotationPresent(RequestParam.class) ||
-                (methodParameter.hasNoAnnotation() && PrimitiveParser.canParse(methodParameter.getType()));
+                (methodParameter.hasNoAnnotation() && TypeConverter.supports(methodParameter.getType()));
     }
 
     @Override
     public Object resolve(HttpServletRequest request, HttpServletResponse response, MethodParameter methodParameter) {
         String parameterName = getParameterName(methodParameter);
         Class<?> paramType = methodParameter.getType();
-        return PrimitiveParser.parse(request.getParameter(parameterName), paramType);
+        return TypeConverter.convert(request.getParameter(parameterName), paramType);
     }
 
     private String getParameterName(MethodParameter methodParameter) {

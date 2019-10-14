@@ -13,7 +13,7 @@ public class ModelAttributeArgumentResolver implements ArgumentResolver {
     @Override
     public boolean supports(MethodParameter methodParameter) {
         return methodParameter.isAnnotationPresent(ModelAttribute.class) ||
-                (methodParameter.hasNoAnnotation() && !PrimitiveParser.canParse(methodParameter.getType()));
+                (methodParameter.hasNoAnnotation() && !TypeConverter.supports(methodParameter.getType()));
     }
 
     @Override
@@ -26,7 +26,7 @@ public class ModelAttributeArgumentResolver implements ArgumentResolver {
                 field.setAccessible(true);
                 String parameter = request.getParameter(field.getName());
 
-                field.set(instance, PrimitiveParser.parse(parameter, field.getType()));
+                field.set(instance, TypeConverter.convert(parameter, field.getType()));
             }
 
             return instance;
