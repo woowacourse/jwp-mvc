@@ -19,7 +19,7 @@ public class UserInfoController {
     private static final Logger log = LoggerFactory.getLogger(UserInfoController.class);
 
     @RequestMapping(value = "/users/create", method = RequestMethod.POST)
-    public ModelAndView createUser(HttpServletRequest req, HttpServletResponse resp) {
+    public String createUser(HttpServletRequest req, HttpServletResponse resp) {
         User user = new User(
                 req.getParameter("userId"),
                 req.getParameter("password"),
@@ -30,7 +30,7 @@ public class UserInfoController {
         log.debug("User : {}", user);
 
         DataBase.addUser(user);
-        return new ModelAndView(new RedirectView("/"));
+        return "redirect:/";
     }
 
     @RequestMapping(value = "/users/update", method = RequestMethod.POST)

@@ -1,7 +1,8 @@
 package nextstep.mvc;
 
+import nextstep.mvc.exception.NotSupportedViewTypeException;
 import nextstep.mvc.view.ModelAndView;
-import nextstep.mvc.view.ViewResolver;
+import nextstep.mvc.view.viewresolver.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -10,6 +11,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -19,9 +21,17 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger logger = LoggerFactory.getLogger(DispatcherServlet.class);
 
     private List<HandlerMapping> handlerMappings;
+    private List<ViewResolver> viewResolvers;
 
     public DispatcherServlet(List<HandlerMapping> handlerMappings) {
         this.handlerMappings = handlerMappings;
+        this.viewResolvers = Arrays.asList(
+                new StringViewResolver(),
+                new JsonViewResolver(),
+                new JspViewResolver(),
+                new RedirectViewResolver(),
+                new ModelAndViewResolver()
+        );
     }
 
     @Override
@@ -36,7 +46,8 @@ public class DispatcherServlet extends HttpServlet {
         try {
             Object handler = getHandler(req);
             Object view =  ((Controller) handler).handle(req, resp);
-            ModelAndView mav = ViewResolver.resolve(view);
+            ViewResolver viewResolver = getViewResolver(view);
+            ModelAndView mav = viewResolver.resolve(view);
             mav.render(req, resp);
         } catch (Exception e) {
             logger.error("Exception : {}", e);
@@ -50,5 +61,12 @@ public class DispatcherServlet extends HttpServlet {
                 .filter(Objects::nonNull)
                 .findFirst()
                 .orElse(null);
+    }
+
+    private ViewResolver getViewResolver(Object view) {
+        return viewResolvers.stream()
+                .filter(resolver -> resolver.canResolve(view))
+                .findFirst()
+                .orElseThrow(() -> new NotSupportedViewTypeException("지원하지 않음"));
     }
 }
