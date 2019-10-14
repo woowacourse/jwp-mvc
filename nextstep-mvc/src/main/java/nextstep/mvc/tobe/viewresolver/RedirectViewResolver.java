@@ -5,7 +5,7 @@ import nextstep.mvc.tobe.view.View;
 import org.apache.commons.lang3.StringUtils;
 
 public class RedirectViewResolver implements ViewResolver {
-    private static final String DEFAULT_REDIRECT_PREFIX = "redirect:";
+    public static final String DEFAULT_REDIRECT_PREFIX = "redirect:";
 
     @Override
     public boolean supports(String viewName) {
