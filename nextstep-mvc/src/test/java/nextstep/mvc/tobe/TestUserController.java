@@ -3,8 +3,11 @@ package nextstep.mvc.tobe;
 import nextstep.web.annotation.PathVariable;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
+import nextstep.web.annotation.RequestParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.servlet.http.HttpServletResponse;
 
 public class TestUserController {
     private static final Logger logger = LoggerFactory.getLogger(TestUserController.class);
@@ -42,5 +45,12 @@ public class TestUserController {
         ModelAndView mav = new ModelAndView();
         mav.addObject("id", id);
         return mav;
+    }
+
+    @RequestMapping(value = "/users", method = RequestMethod.POST)
+    public String requestParam(@RequestParam("userId") String userId, HttpServletResponse response) {
+        logger.debug("User Id : {}", userId);
+
+        return userId;
     }
 }
