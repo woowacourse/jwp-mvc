@@ -13,6 +13,7 @@ import static nextstep.utils.JsonUtils.OBJECT_MAPPER;
 
 public class JsonView implements View {
     private static final Logger log = LoggerFactory.getLogger(JsonView.class);
+    private static final int ONE_MODEL = 1;
 
     @Override
     public void render(Map<String, ?> models, HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -21,14 +22,14 @@ public class JsonView implements View {
         PrintWriter responseWriter = response.getWriter();
 
         if (!models.isEmpty()) {
-            responseWriter.write(OBJECT_MAPPER.writeValueAsString(getModelValue(models)));
+            responseWriter.write(OBJECT_MAPPER.writeValueAsString(getModelValues(models)));
         }
 
         responseWriter.flush();
     }
 
-    private Object getModelValue(Map<String,?> models) {
-        if (models.size() == 1) {
+    private Object getModelValues(Map<String,?> models) {
+        if (models.size() == ONE_MODEL) {
             return models.values().toArray()[0];
         }
         return models;
