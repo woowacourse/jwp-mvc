@@ -1,4 +1,4 @@
-package nextstep.mvc.tobe;
+package nextstep.mvc.tobe.view;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -19,11 +19,6 @@ public class JspView implements View {
     @Override
     public void render(Map<String, ?> model, HttpServletRequest request, HttpServletResponse response) throws Exception {
         move(name, request, response);
-    }
-
-    @Override
-    public String getName() {
-        return name;
     }
 
     private void move(String viewName, HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

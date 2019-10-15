@@ -1,4 +1,4 @@
-package nextstep.mvc;
+package nextstep.mvc.tobe.handler;
 
 import javax.servlet.http.HttpServletRequest;
 

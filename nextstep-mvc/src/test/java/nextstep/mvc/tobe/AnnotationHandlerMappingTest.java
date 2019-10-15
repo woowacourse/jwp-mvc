@@ -1,6 +1,8 @@
 package nextstep.mvc.tobe;
 
 import nextstep.db.DataBase;
+import nextstep.mvc.tobe.handler.AnnotationHandlerMapping;
+import nextstep.mvc.tobe.handler.HandlerExecution;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -39,6 +41,7 @@ public class AnnotationHandlerMappingTest {
 
     private void createUser(User user) throws Exception {
         MockHttpServletRequest request = new MockHttpServletRequest("POST", "/users");
+
         request.setParameter("userId", user.getUserId());
         request.setParameter("password", user.getPassword());
         request.setParameter("name", user.getName());

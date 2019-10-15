@@ -78,7 +78,7 @@ public class ReflectionTest {
             e.printStackTrace();
         }
 
-        logger.debug("{},{}",student.getName(), student.getAge());
+        logger.debug("{},{}", student.getName(), student.getAge());
 
         assertThat(student.getName()).isEqualTo("test");
         assertThat(student.getAge()).isEqualTo(1234);

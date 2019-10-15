@@ -1,7 +1,6 @@
 package slipp;
 
 import nextstep.mvc.DispatcherServlet;
-import nextstep.mvc.tobe.AnnotationHandlerMapping;
 import nextstep.web.WebApplicationInitializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,7 +14,7 @@ public class SlippWebApplicationInitializer implements WebApplicationInitializer
 
     @Override
     public void onStartup(ServletContext servletContext) throws ServletException {
-        DispatcherServlet dispatcherServlet = new DispatcherServlet(new ManualHandlerMapping(), new AnnotationHandlerMapping("slipp.controller"));
+        DispatcherServlet dispatcherServlet = new DispatcherServlet();
 
         ServletRegistration.Dynamic dispatcher = servletContext.addServlet("dispatcher", dispatcherServlet);
         dispatcher.setLoadOnStartup(1);
