@@ -1,8 +1,9 @@
 package nextstep.mvc;
 
+import nextstep.mvc.tobe.exception.NotFoundHandlerException;
 import nextstep.mvc.tobe.ModelAndView;
 import nextstep.mvc.tobe.adapter.HandlerAdapter;
-import nextstep.mvc.tobe.exception.NotFoundHandlerAdapter;
+import nextstep.mvc.tobe.exception.NotFoundHandlerAdapterException;
 import nextstep.mvc.tobe.mapping.HandlerMapping;
 import nextstep.mvc.tobe.view.View;
 import org.slf4j.Logger;
@@ -55,13 +56,13 @@ public class DispatcherServlet extends HttpServlet {
                 .map(handlerMapping -> handlerMapping.getHandler(request))
                 .filter(Objects::nonNull)
                 .findFirst()
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(NotFoundHandlerException::new);
     }
 
     private HandlerAdapter getHandlerAdapter(Object handler) {
         return handlerAdapters.stream()
                 .filter(adapter -> adapter.supports(handler))
                 .findFirst()
-                .orElseThrow(NotFoundHandlerAdapter::new);
+                .orElseThrow(NotFoundHandlerAdapterException::new);
     }
 }
