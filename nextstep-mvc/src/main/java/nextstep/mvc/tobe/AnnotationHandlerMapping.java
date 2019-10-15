@@ -26,8 +26,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     @Override
     public void initialize() {
-        Reflections reflections = new Reflections(basePackage);
-        Set<Class<?>> classes = reflections.getTypesAnnotatedWith(Controller.class);
+        Set<Class<?>> classes = ControllerScanner.scan(basePackage);
 
         try {
             for (Class<?> clazz : classes) {
