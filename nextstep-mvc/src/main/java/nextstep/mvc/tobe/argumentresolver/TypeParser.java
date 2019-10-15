@@ -7,7 +7,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 
-public enum WrapperClass {
+public enum TypeParser {
     STRING(Collections.singletonList(String.class), String::toString),
     INTEGER(Arrays.asList(Integer.class, int.class), Integer::parseInt),
     LONG(Arrays.asList(Long.class, long.class), Long::parseLong),
@@ -17,7 +17,7 @@ public enum WrapperClass {
     private final List<Class<?>> types;
     private final Function<String, Object> parser;
 
-    WrapperClass(List<Class<?>> types, Function<String, Object> parser) {
+    TypeParser(List<Class<?>> types, Function<String, Object> parser) {
         this.types = types;
         this.parser = parser;
     }

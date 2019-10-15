@@ -58,7 +58,7 @@ public class ModelAttributeResolver implements HandlerMethodArgumentResolver {
 
         for (Field field : fields) {
             field.setAccessible(true);
-            setField(field, value, WrapperClass.parse(field.getType(), request.getParameter(field.getName())));
+            setField(field, value, TypeParser.parse(field.getType(), request.getParameter(field.getName())));
         }
 
         return value;
@@ -80,7 +80,7 @@ public class ModelAttributeResolver implements HandlerMethodArgumentResolver {
         for (int j = 0; j < constructorParamNames.length; j++) {
             String constructorParamValue = request.getParameter(constructorParamNames[j]);
             if (Objects.nonNull(constructorParamValue)) {
-                constructorValues.add(WrapperClass.parse(constructorParamTypes[j], constructorParamValue));
+                constructorValues.add(TypeParser.parse(constructorParamTypes[j], constructorParamValue));
             }
         }
 

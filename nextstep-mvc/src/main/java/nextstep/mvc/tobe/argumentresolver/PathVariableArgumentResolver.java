@@ -22,6 +22,6 @@ public class PathVariableArgumentResolver implements HandlerMethodArgumentResolv
         PathPattern pathPattern = PathPatternUtils.parse(parameter.getPath());
         Map<String, String> variables = pathPattern.matchAndExtract(
                 PathPatternUtils.toPathContainer(request.getRequestURI())).getUriVariables();
-        return WrapperClass.parse(parameter.getParameterType(), variables.get(parameter.getParameterName()));
+        return TypeParser.parse(parameter.getParameterType(), variables.get(parameter.getParameterName()));
     }
 }
