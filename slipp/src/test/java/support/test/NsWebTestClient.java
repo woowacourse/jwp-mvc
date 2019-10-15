@@ -23,6 +23,14 @@ public class NsWebTestClient {
                 .baseUrl(baseUrl + ":" + port);
     }
 
+    public static NsWebTestClient of(int port) {
+        return of(BASE_URL, port);
+    }
+
+    public static NsWebTestClient of(String baseUrl, int port) {
+        return new NsWebTestClient(baseUrl, port);
+    }
+
     public NsWebTestClient basicAuth(String username, String password) {
         this.testClientBuilder = testClientBuilder.filter(basicAuthentication(username, password));
         return this;
@@ -59,11 +67,12 @@ public class NsWebTestClient {
                 .returnResult().getResponseBody();
     }
 
-    public static NsWebTestClient of(int port) {
-        return of(BASE_URL, port);
+    public void getResourceWithoutBody(String location) {
+        testClientBuilder.build()
+                .get()
+                .uri(location)
+                .exchange()
+                .expectStatus().isOk();
     }
 
-    public static NsWebTestClient of(String baseUrl, int port) {
-        return new NsWebTestClient(baseUrl, port);
-    }
 }

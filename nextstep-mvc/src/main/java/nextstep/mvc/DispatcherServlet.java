@@ -1,20 +1,15 @@
 package nextstep.mvc;
 
-import nextstep.mvc.tobe.AnnotationHandlerMapping;
-import nextstep.mvc.tobe.HandlerExecution;
+import nextstep.mvc.tobe.HandlerAdapter;
 import nextstep.mvc.tobe.HandlerMapping;
 import nextstep.mvc.tobe.ModelAndView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -25,9 +20,11 @@ public class DispatcherServlet extends HttpServlet {
     private static final String DEFAULT_REDIRECT_PREFIX = "redirect:";
 
     private List<HandlerMapping> handlerMappings;
+    private List<HandlerAdapter> handlerAdapters;
 
-    public DispatcherServlet(HandlerMapping manualHandlerMapping, AnnotationHandlerMapping annotationHandlerMapping) {
-        handlerMappings = Arrays.asList(manualHandlerMapping, annotationHandlerMapping);
+    public DispatcherServlet(List<HandlerMapping> handlerMappings, List<HandlerAdapter> handlerAdapters) {
+        this.handlerMappings = handlerMappings;
+        this.handlerAdapters = handlerAdapters;
     }
 
     @Override
@@ -42,30 +39,29 @@ public class DispatcherServlet extends HttpServlet {
         String requestUri = req.getRequestURI();
         logger.debug("Method : {}, Request URI : {}", req.getMethod(), requestUri);
 
-        HandlerMapping handler = handlerMappings.stream()
-                .filter(handlerMapping -> Objects.nonNull(handlerMapping.getHandler(req)))
-                .findFirst().orElseThrow(NotSupportedHandlerMethod::new);
-
-        HandlerExecution handlerExecution = handler.getHandler(req);
+        Object handler = findHandler(req);
+        HandlerAdapter handlerAdapter = findAdapter(handler);
 
         try {
-            ModelAndView mav = handlerExecution.handle(req, resp);
+            ModelAndView mav = handlerAdapter.handle(req, resp, handler);
             mav.getView().render(mav.getModel(), req, resp);
         } catch (Exception e) {
             logger.debug("렌더링 실패");
         }
     }
 
-    private void move(String viewName, HttpServletRequest req, HttpServletResponse resp)
-            throws ServletException, IOException {
-        if (viewName.startsWith(DEFAULT_REDIRECT_PREFIX)) {
-            resp.sendRedirect(viewName.substring(DEFAULT_REDIRECT_PREFIX.length()));
-            return;
-        }
-
-        RequestDispatcher rd = req.getRequestDispatcher(viewName);
-        rd.forward(req, resp);
+    private Object findHandler(HttpServletRequest req) {
+        return handlerMappings.stream()
+                .map(handlerMapping -> handlerMapping.getHandler(req))
+                .filter(Objects::nonNull)
+                .findFirst()
+                .orElseThrow(NotSupportedHandlerMethod::new);
     }
 
-
+    private HandlerAdapter findAdapter(Object handler) {
+        return handlerAdapters.stream()
+                .filter(ha -> ha.supports(handler))
+                .findFirst()
+                .orElseThrow(NotSupportedHandlerMethod::new);
+    }
 }

@@ -5,5 +5,5 @@ import javax.servlet.http.HttpServletResponse;
 
 @FunctionalInterface
 public interface HandlerExecution {
-    public ModelAndView handle(HttpServletRequest request, HttpServletResponse response) throws Exception;
+    ModelAndView handle(HttpServletRequest request, HttpServletResponse response) throws Exception;
 }

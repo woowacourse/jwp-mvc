@@ -19,7 +19,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
     private Map<HandlerKey, HandlerExecution> handlerExecutions = Maps.newHashMap();
     private Object[] basePackage;
-    private ControllerScan controllerScan = new ControllerScan();
+    private ControllerScanner controllerScanner = new ControllerScanner();
 
     public AnnotationHandlerMapping(Object... basePackage) {
         this.basePackage = basePackage;
@@ -27,9 +27,9 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     @Override
     public void initialize() {
-        ControllerScan controllerScan = scanController();
+        ControllerScanner controllerScanner = scanController();
 
-        for (Class<?> controller : controllerScan.getKeys()) {
+        for (Class<?> controller : controllerScanner.getKeys()) {
             putHandlerExecution(controller, scanMethod(controller));
         }
     }
@@ -43,14 +43,14 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         return handlerExecutions.get(handlerKey);
     }
 
-    private ControllerScan scanController() {
+    private ControllerScanner scanController() {
         try {
-            controllerScan.initialize(basePackage);
+            controllerScanner.initialize(basePackage);
         } catch (IllegalAccessException | InstantiationException e) {
             log.debug("Controller Scanner Error");
         }
 
-        return controllerScan;
+        return controllerScanner;
     }
 
     private Set<Method> scanMethod(Class<?> controller) {
@@ -61,7 +61,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         for (Method method : allMethods) {
             RequestMapping rm = method.getAnnotation(RequestMapping.class);
             handlerExecutions.put(createHandlerKey(rm),
-                    ((request, response) -> (ModelAndView) method.invoke(controllerScan.getController(controller), request, response)));
+                    ((request, response) -> (ModelAndView) method.invoke(controllerScanner.getController(controller), request, response)));
         }
     }
 
@@ -71,8 +71,8 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     private HandlerKey findHandlerKey(String url, RequestMethod requestMethod) {
         return handlerExecutions.keySet().stream()
-                .filter(hk -> hk.isUrl(url))
-                .filter(hk -> hk.containsMethodType(requestMethod))
-                .findFirst().orElseThrow(NotSupportedHandlerMethod::new);
+                .filter(hk -> hk.isSupported(url, requestMethod))
+                .findFirst()
+                .orElseThrow(NotSupportedHandlerMethod::new);
     }
 }
