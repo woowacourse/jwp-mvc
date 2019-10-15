@@ -17,8 +17,7 @@ public class HandlerMethodArgumentResolverManager {
     private static final ParameterNameDiscoverer NAME_DISCOVERER = new LocalVariableTableParameterNameDiscoverer();
 
     private static List<HandlerMethodArgumentResolver> resolvers = Arrays.asList(
-            new ServletRequestArgumentResolver(),
-            new ServletResponseArgumentResolver(),
+            new ServletArgumentResolver(),
             new ModelAttributeResolver(),
             new RequestParameterResolver(),
             new RequestBodyArgumentResolver(),
