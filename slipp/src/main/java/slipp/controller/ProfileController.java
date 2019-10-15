@@ -18,17 +18,16 @@ public class ProfileController {
 
     public String show(HttpServletRequest req, HttpServletResponse resp) {
         String userId = req.getParameter("userId");
-        userService.findUserById(userId);
-        if (user == null) {
+        if (userService.isUserExists(userId)) {
             throw new NullPointerException("사용자를 찾을 수 없습니다.");
         }
-        req.setAttribute("user", user);
+        req.setAttribute("user", userService.findUserById(userId));
         return "/user/profile.jsp";
     }
 
     public String updateForm(HttpServletRequest req, HttpServletResponse resp) throws Exception {
         String userId = req.getParameter("userId");
-        User user = DataBase.findUserById(userId);
+        User user = userService.findUserById(userId);
         if (!UserSessionUtils.isSameUser(req.getSession(), user)) {
             throw new IllegalStateException("다른 사용자의 정보를 수정할 수 없습니다.");
         }
@@ -37,7 +36,7 @@ public class ProfileController {
     }
 
     public String execute(HttpServletRequest req, HttpServletResponse resp) throws Exception {
-        User user = DataBase.findUserById(req.getParameter("userId"));
+        User user = userService.findUserById(req.getParameter("userId"));
         if (!UserSessionUtils.isSameUser(req.getSession(), user)) {
             throw new IllegalStateException("다른 사용자의 정보를 수정할 수 없습니다.");
         }

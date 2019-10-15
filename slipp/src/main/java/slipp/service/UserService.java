@@ -19,4 +19,8 @@ public class UserService {
     public User findUserById(String userId) {
         return DataBase.findUserById(userId);
     }
+
+    public boolean isUserExists(String userId) {
+        return DataBase.findUserById(userId) != null;
+    }
 }

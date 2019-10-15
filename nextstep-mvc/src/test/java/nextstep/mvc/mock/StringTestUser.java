@@ -1,16 +1,14 @@
 package nextstep.mvc.mock;
 
-public class TestUser {
+public class StringTestUser {
     private String userId;
     private String password;
-    private Integer age;
-    public TestUser(){
+    public StringTestUser(){
 
     }
-    public TestUser(String userId, String password, Integer age) {
+    public StringTestUser(String userId, String password) {
         this.userId = userId;
         this.password = password;
-        this.age = age;
     }
 
     public String getUserId() {
@@ -21,16 +19,12 @@ public class TestUser {
         return password;
     }
 
-    public Integer getAge() {
-        return age;
-    }
 
     @Override
     public String toString() {
         return "TestUser{" +
                 "userId='" + userId + '\'' +
                 ", password='" + password + '\'' +
-                ", age=" + age +
                 '}';
     }
 }
