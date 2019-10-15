@@ -1,9 +1,8 @@
 package slipp.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import nextstep.mvc.tobe.JspView;
+import nextstep.mvc.tobe.JsonView;
 import nextstep.mvc.tobe.ModelAndView;
-import nextstep.mvc.tobe.RedirectView;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
@@ -38,7 +37,7 @@ public class UserApiController {
         resp.setHeader("Location", "/api/users?userId=" + user.getUserId());
         resp.setStatus(HttpServletResponse.SC_CREATED);
 
-        return new ModelAndView(new RedirectView("/"));
+        return new ModelAndView(new JsonView());
     }
 
     @RequestMapping(value = "/api/users", method = RequestMethod.GET)
@@ -50,7 +49,7 @@ public class UserApiController {
         User user = DataBase.findUserById(userId)
                 .orElseThrow(NotFoundUserException::new);
 
-        ModelAndView modelAndView = new ModelAndView(new JspView("/user/list.jsp"));
+        ModelAndView modelAndView = new ModelAndView(new JsonView());
         modelAndView.addObject("user", user);
         response.setStatus(HttpServletResponse.SC_OK);
 
@@ -73,7 +72,7 @@ public class UserApiController {
 
         user.update(updateUser);
 
-        ModelAndView modelAndView = new ModelAndView(new RedirectView("/"));
+        ModelAndView modelAndView = new ModelAndView(new JsonView());
         modelAndView.addObject("user", user);
         response.setStatus(HttpServletResponse.SC_OK);
         return modelAndView;
