@@ -12,6 +12,7 @@ public class MethodParameter {
     public MethodParameter(Method method, Parameter parameter) {
         this.method = method;
         this.parameter = parameter;
+        annotations = method.getAnnotations();
     }
 
     private int validateIndex(Method method, int parameterIndex) {
@@ -19,11 +20,11 @@ public class MethodParameter {
     }
 
     public boolean isAnnotated(Class<? extends Annotation> clazz) {
-        return method.isAnnotationPresent(clazz);
+        return parameter.isAnnotationPresent(clazz);
     }
 
-    public Annotation getAnnotation(Class<? extends Annotation> clazz) {
-        return parameter.getAnnotation(clazz);
+    public Annotation getAnnotation(Class<? extends Annotation> annotation) {
+        return parameter.getAnnotation(annotation);
     }
 
     public Class<?> getType() {

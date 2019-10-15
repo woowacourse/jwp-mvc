@@ -10,9 +10,9 @@ import java.lang.reflect.InvocationTargetException;
 public class BeanUtils {
     static final Logger logger = LoggerFactory.getLogger(BeanUtils.class);
 
-    public static <T> T createInstance(Class<T> clazz) {
+    public static Object createInstance(Class<?> clazz) {
         try {
-            Constructor<T> constructor = clazz.getDeclaredConstructor();
+            Constructor<?> constructor = clazz.getDeclaredConstructor();
             constructor.setAccessible(true);
             return constructor.newInstance();
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {

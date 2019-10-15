@@ -21,7 +21,7 @@ public class AbstractHandlerMappingTest {
 
     @BeforeEach
     public void setup() {
-        AnnotationApplicationContext annotationApplicationContext = new AnnotationApplicationContext();
+        AnnotationApplicationContext annotationApplicationContext = new AnnotationApplicationContext("nextstep");
         handlerMapping = new AbstractHandlerMapping();
         handlerMapping.initialize(annotationApplicationContext);
     }
@@ -64,7 +64,7 @@ public class AbstractHandlerMappingTest {
     public void empty_method_requestMapping_annotation() throws Exception {
         MockHttpServletRequest request = new MockHttpServletRequest("GET", "/method");
         HandlerExecution execution = handlerMapping.getHandler(request);
-        Method method = MyController.class.getDeclaredMethod("emptyMethod", HttpServletRequest.class, HttpServletResponse.class);
+        Method method = MyController.class.getDeclaredMethod("getMethod", HttpServletRequest.class, HttpServletResponse.class);
         assertThat(execution.getMethod()).isEqualTo(method);
     }
 
