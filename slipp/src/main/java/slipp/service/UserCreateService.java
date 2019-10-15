@@ -6,16 +6,14 @@ import slipp.domain.User;
 import slipp.dto.UserCreatedDto;
 import slipp.support.db.DataBase;
 
-import javax.servlet.http.HttpServletRequest;
-
 public class UserCreateService {
     private static final Logger logger = LoggerFactory.getLogger(UserCreateService.class);
 
-    public UserCreatedDto addUser(HttpServletRequest request) {
-        User user = new User(request.getParameter("userId"),
-                request.getParameter("password"),
-                request.getParameter("name"),
-                request.getParameter("email"));
+    public UserCreatedDto addUser(UserCreatedDto userCreatedDto) {
+        User user = new User(userCreatedDto.getUserId(),
+                userCreatedDto.getPassword(),
+                userCreatedDto.getName(),
+                userCreatedDto.getEmail());
 
         logger.debug("User : {}", user);
 

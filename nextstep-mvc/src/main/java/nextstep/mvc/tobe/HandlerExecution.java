@@ -14,11 +14,14 @@ public class HandlerExecution {
     }
 
     public ModelAndView handle(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        ArgumentResolver argumentResolver = new ArgumentResolver(request, response);
+        Object[] parameters = argumentResolver.resolve(method);
+
         if (method.getReturnType().equals(String.class)) {
-            String viewPath = method.invoke(clazz.newInstance(), request, response).toString();
+            String viewPath = method.invoke(clazz.newInstance(), parameters).toString();
             return new ModelAndView(viewPath);
         }
 
-        return (ModelAndView) method.invoke(clazz.newInstance(), request, response);
+        return (ModelAndView) method.invoke(clazz.newInstance(), parameters);
     }
 }
