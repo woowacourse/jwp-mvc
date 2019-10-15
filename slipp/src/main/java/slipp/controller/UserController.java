@@ -3,10 +3,13 @@ package slipp.controller;
 import nextstep.mvc.tobe.ModelAndView;
 import nextstep.mvc.tobe.view.RedirectView;
 import nextstep.web.annotation.Controller;
+import nextstep.web.annotation.ModelAttribute;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import slipp.domain.User;
+import slipp.dto.UserCreatedDto;
 import slipp.service.UserService;
 import slipp.support.db.DataBase;
 
@@ -25,8 +28,8 @@ public class UserController {
     }
 
     @RequestMapping(value = "/users/create", method = RequestMethod.POST)
-    public String create(HttpServletRequest req, HttpServletResponse resp) {
-        userService.create(req.getParameter("userId"), req.getParameter("password"), req.getParameter("name"), req.getParameter("email"));
+    public String create(@ModelAttribute UserCreatedDto userCreatedDto, HttpServletRequest req, HttpServletResponse resp) {
+        userService.create(userCreatedDto);
         return "redirect:/";
     }
 

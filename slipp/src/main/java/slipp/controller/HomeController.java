@@ -13,8 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 @nextstep.web.annotation.Controller
 public class HomeController {
     @RequestMapping(value = "/", method = RequestMethod.GET)
-    public ModelAndView index(@ModelAttribute User user, HttpServletRequest req, HttpServletResponse resp) throws Exception {
-        req.setAttribute("users", DataBase.findAll());
+    public ModelAndView index(HttpServletRequest req, HttpServletResponse resp) throws Exception {
         return new ModelAndView("home.jsp");
     }
 }
