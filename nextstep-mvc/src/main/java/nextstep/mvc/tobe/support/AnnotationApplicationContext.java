@@ -15,8 +15,8 @@ public class AnnotationApplicationContext<T> extends ApplicationContext {
     private final Reflections reflections;
     private Map<Class<?>, Object> beans = new HashMap<>();
 
-    public AnnotationApplicationContext() {
-        reflections = new Reflections(this.getBasePackage());
+    public AnnotationApplicationContext(Object... basePackage) {
+        reflections = new Reflections(basePackage);
     }
 
     @Override
@@ -34,7 +34,6 @@ public class AnnotationApplicationContext<T> extends ApplicationContext {
                 (p1, p2) -> p1 + ";" + p2)
         );
     }
-
 
     public Object getInstance(Class<?> clazz) {
         return beans.get(clazz);

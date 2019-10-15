@@ -14,7 +14,6 @@ import java.util.*;
 
 public class AbstractHandlerMapping implements HandlerMapping {
     private Map<HandlerKey, HandlerExecution> handlerExecutions = Maps.newHashMap();
-    private ApplicationContext applicationContext;
     @Override
     public void initialize(AnnotationApplicationContext context) {
         context.scanBeans(Controller.class);

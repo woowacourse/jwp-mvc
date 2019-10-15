@@ -1,7 +1,6 @@
 package slipp.controller;
 
 import nextstep.mvc.tobe.ModelAndView;
-import nextstep.mvc.tobe.view.JspView;
 import nextstep.mvc.tobe.view.RedirectView;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
@@ -21,7 +20,7 @@ public class UserController {
     UserService userService = new UserService();
 
     @RequestMapping(value = "/users/form")
-    public String createForm(HttpServletRequest req, HttpServletResponse resp){
+    public String createForm(HttpServletRequest req, HttpServletResponse resp) {
         return "/user/form.jsp";
     }
 
