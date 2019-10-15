@@ -1,14 +1,15 @@
 package nextstep.mvc.tobe;
 
-import nextstep.web.annotation.PathVariable;
-import nextstep.web.annotation.RequestMapping;
-import nextstep.web.annotation.RequestMethod;
+import nextstep.web.annotation.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
 public class TestUserController {
     private static final Logger logger = LoggerFactory.getLogger(TestUserController.class);
-
     @RequestMapping(value = "/users", method = RequestMethod.POST)
     public ModelAndView create_string(String userId, String password) {
         logger.debug("userId: {}, password: {}", userId, password);
@@ -28,6 +29,24 @@ public class TestUserController {
     }
 
     @RequestMapping(value = "/users", method = RequestMethod.POST)
+    public ModelAndView create_request_param(@RequestParam(name = "userId") String userId, @RequestParam(value = "password") String password, int age) {
+        ModelAndView mav = new ModelAndView();
+        mav.addObject("userId", userId);
+        mav.addObject("password", password);
+        mav.addObject("age", age);
+        return mav;
+    }
+
+    @RequestMapping(value = "/users", method = RequestMethod.GET)
+    public ModelAndView create_request_response(HttpServletRequest request, HttpServletResponse response, HttpSession httpSession) {
+        ModelAndView mav = new ModelAndView();
+        mav.addObject("request", request);
+        mav.addObject("response", response);
+        mav.addObject("session", httpSession);
+        return mav;
+    }
+
+    @RequestMapping(value = "/users", method = RequestMethod.POST)
     public ModelAndView create_javabean(TestUser testUser) {
         logger.debug("testUser: {}", testUser);
         ModelAndView mav = new ModelAndView();
@@ -35,6 +54,13 @@ public class TestUserController {
         return mav;
     }
 
+    @RequestMapping(value = "/users", method = RequestMethod.POST)
+    public ModelAndView create_requestBody(@RequestBody TestUser testUser) {
+        logger.debug("testUser: {}", testUser);
+        ModelAndView mav = new ModelAndView();
+        mav.addObject("testUser", testUser);
+        return mav;
+    }
 
     @RequestMapping(value = "/users/{id}", method = RequestMethod.GET)
     public ModelAndView show_pathvariable(@PathVariable long id) {

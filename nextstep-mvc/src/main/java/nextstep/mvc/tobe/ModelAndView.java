@@ -7,13 +7,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ModelAndView {
-    private View view;
+    private Object view;
     private Map<String, Object> model = new HashMap<String, Object>();
 
     public ModelAndView() {
     }
 
-    public ModelAndView(View view) {
+    public ModelAndView(Object view) {
         this.view = view;
     }
 
@@ -31,6 +31,11 @@ public class ModelAndView {
     }
 
     public View getView() {
-        return view;
+        return view instanceof View ? (View) view : null;
+    }
+
+    public String getViewName() {
+        return view instanceof String ? (String) view : null;
+
     }
 }

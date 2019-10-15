@@ -2,9 +2,10 @@ package nextstep.mvc;
 
 import nextstep.mvc.exception.HandlerAdapterNotFoundException;
 import nextstep.mvc.exception.HandlerNotFoundException;
-import nextstep.mvc.tobe.handleradapter.HandlerAdapter;
 import nextstep.mvc.tobe.ModelAndView;
+import nextstep.mvc.tobe.handleradapter.HandlerAdapter;
 import nextstep.mvc.tobe.view.View;
+import nextstep.mvc.tobe.viewresolver.ViewResolvers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,10 +25,12 @@ public class DispatcherServlet extends HttpServlet {
 
     private List<HandlerMapping> requestMappings;
     private List<HandlerAdapter> handlerAdapters;
+    private final ViewResolvers viewResolvers;
 
-    public DispatcherServlet(List<HandlerMapping> requestMappings, List<HandlerAdapter> handlerAdapters) {
+    public DispatcherServlet(List<HandlerMapping> requestMappings, List<HandlerAdapter> handlerAdapters, ViewResolvers viewResolvers) {
         this.requestMappings = requestMappings;
         this.handlerAdapters = handlerAdapters;
+        this.viewResolvers = viewResolvers;
     }
 
     @Override
@@ -51,6 +54,11 @@ public class DispatcherServlet extends HttpServlet {
 
     private void render(ModelAndView modelAndView, HttpServletRequest req, HttpServletResponse resp) throws Exception {
         View view = modelAndView.getView();
+
+        if (view == null) {
+            view = viewResolvers.resolve(modelAndView.getViewName());
+        }
+
         view.render(modelAndView.getModel(), req, resp);
     }
 

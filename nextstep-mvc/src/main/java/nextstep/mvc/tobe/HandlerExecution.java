@@ -1,7 +1,7 @@
 package nextstep.mvc.tobe;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import nextstep.mvc.tobe.argumentresolver.MethodParameters;
+
 import java.lang.reflect.Method;
 
 public class HandlerExecution {
@@ -13,7 +13,11 @@ public class HandlerExecution {
         this.method = method;
     }
 
-    public ModelAndView handle(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        return (ModelAndView) method.invoke(instance, request, response);
+    public Object handle(Object... arguments) throws Exception {
+        return method.invoke(instance, arguments);
+    }
+
+    public MethodParameters getMethodParameters() {
+        return new MethodParameters(method);
     }
 }

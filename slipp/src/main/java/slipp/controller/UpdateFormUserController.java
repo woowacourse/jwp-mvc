@@ -1,15 +1,16 @@
 package slipp.controller;
 
+import nextstep.web.annotation.Controller;
+import nextstep.web.annotation.RequestMapping;
 import slipp.domain.User;
 import slipp.support.db.DataBase;
-import nextstep.mvc.asis.Controller;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public class UpdateFormUserController implements Controller {
-
-    @Override
+@Controller
+public class UpdateFormUserController {
+    @RequestMapping(value = "/users/updateForm")
     public String execute(HttpServletRequest req, HttpServletResponse resp) throws Exception {
         String userId = req.getParameter("userId");
         User user = DataBase.findUserById(userId);
