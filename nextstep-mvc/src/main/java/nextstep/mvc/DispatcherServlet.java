@@ -1,19 +1,19 @@
 package nextstep.mvc;
 
-import com.google.common.collect.Lists;
-import nextstep.mvc.asis.ControllerHandlerAdapter;
-import nextstep.mvc.tobe.HandlerExecutionHandlerAdapter;
+import nextstep.mvc.tobe.exception.NotFoundHandlerException;
+import nextstep.mvc.tobe.ModelAndView;
+import nextstep.mvc.tobe.adapter.HandlerAdapter;
+import nextstep.mvc.tobe.exception.NotFoundHandlerAdapterException;
+import nextstep.mvc.tobe.mapping.HandlerMapping;
+import nextstep.mvc.tobe.view.View;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -21,13 +21,13 @@ import java.util.Objects;
 public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger logger = LoggerFactory.getLogger(DispatcherServlet.class);
-    private static final String DEFAULT_REDIRECT_PREFIX = "redirect:";
 
     private List<HandlerMapping> handlerMappings;
+    private List<HandlerAdapter> handlerAdapters;
 
-    public DispatcherServlet(HandlerMapping... rm) {
-        handlerMappings = Lists.newArrayList();
-        handlerMappings.addAll(Arrays.asList(rm));
+    public DispatcherServlet(List<HandlerMapping> handlerMappings, List<HandlerAdapter> handlerAdapters) {
+        this.handlerMappings = handlerMappings;
+        this.handlerAdapters = handlerAdapters;
     }
 
     @Override
@@ -38,12 +38,13 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     @Override
-    protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException {
-        Object handler = findHandler(req);
+    protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException {
+        Object handler = findHandler(request);
         HandlerAdapter handlerAdapter = getHandlerAdapter(handler);
         try {
-            String viewName = (String) handlerAdapter.handle(req, resp, handler);
-            move(viewName, req, resp);
+            ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
+            View view = modelAndView.getView();
+            view.render(modelAndView.getModel(), request, response);
         } catch (Throwable e) {
             logger.error("Exception : {}", e);
             throw new ServletException(e.getMessage());
@@ -55,29 +56,13 @@ public class DispatcherServlet extends HttpServlet {
                 .map(handlerMapping -> handlerMapping.getHandler(request))
                 .filter(Objects::nonNull)
                 .findFirst()
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(NotFoundHandlerException::new);
     }
 
     private HandlerAdapter getHandlerAdapter(Object handler) {
-        if (new ControllerHandlerAdapter().supports(handler)) {
-            return new ControllerHandlerAdapter();
-        }
-
-        if (new HandlerExecutionHandlerAdapter().supports(handler)) {
-            return new HandlerExecutionHandlerAdapter();
-        }
-
-        throw new IllegalArgumentException();
-    }
-
-    private void move(String viewName, HttpServletRequest req, HttpServletResponse resp)
-            throws ServletException, IOException {
-        if (viewName.startsWith(DEFAULT_REDIRECT_PREFIX)) {
-            resp.sendRedirect(viewName.substring(DEFAULT_REDIRECT_PREFIX.length()));
-            return;
-        }
-
-        RequestDispatcher rd = req.getRequestDispatcher(viewName);
-        rd.forward(req, resp);
+        return handlerAdapters.stream()
+                .filter(adapter -> adapter.supports(handler))
+                .findFirst()
+                .orElseThrow(NotFoundHandlerAdapterException::new);
     }
 }
