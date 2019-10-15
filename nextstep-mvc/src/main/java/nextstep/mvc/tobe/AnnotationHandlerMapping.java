@@ -3,10 +3,8 @@ package nextstep.mvc.tobe;
 import com.google.common.collect.Maps;
 import nextstep.mvc.HandlerMapping;
 import nextstep.mvc.exception.NotFoundHandlerException;
-import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,7 +36,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
                 collectHandlerExecutions(clazzInstance, methods);
             }
         } catch (IllegalAccessException | InstantiationException e) {
-            e.printStackTrace();
+            log.error("{}", e.getMessage());
         }
     }
 
