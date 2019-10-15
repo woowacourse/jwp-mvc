@@ -3,7 +3,7 @@ package nextstep.utils;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
-public class ClassUtil {
+public class ClassUtils {
 
     public static Object getNewInstance(Constructor constructor, Object... objects) {
         try {

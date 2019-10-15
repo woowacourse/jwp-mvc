@@ -5,10 +5,6 @@ import nextstep.mvc.tobe.ModelAndView;
 import nextstep.mvc.tobe.TestUser;
 import nextstep.mvc.tobe.TestUserController;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.core.LocalVariableTableParameterNameDiscoverer;
-import org.springframework.core.ParameterNameDiscoverer;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
@@ -18,7 +14,6 @@ import java.util.Arrays;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class HandlerMethodArgumentResolverTest {
-    private static final Logger logger = LoggerFactory.getLogger(HandlerMethodArgumentResolverTest.class);
 
     @Test
     void requestParam_string() throws Exception {
@@ -120,6 +115,21 @@ public class HandlerMethodArgumentResolverTest {
         assertThat(testUser.getUserId()).isEqualTo(userId);
         assertThat(testUser.getPassword()).isEqualTo(password);
         assertThat(testUser.getAge()).isEqualTo(age);
+    }
+
+    @Test
+    void pathVariable() throws Exception {
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        request.setRequestURI("/users/1");
+
+        Class clazz = TestUserController.class;
+        Method method = getMethod("show_pathvariable", clazz.getDeclaredMethods());
+
+        Object[] values = HandlerMethodArgumentResolverManager.values(method, request, response);
+
+        ModelAndView modelAndView = (ModelAndView) method.invoke(clazz.newInstance(), values);
+        assertThat(modelAndView.getObject("id")).isEqualTo(1L);
     }
 
     private Method getMethod(String name, Method[] methods) {

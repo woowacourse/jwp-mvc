@@ -31,7 +31,6 @@ public class JsonViewTest {
     @Test
     void render_no_element() throws Exception {
         view.render(new HashMap<>(), request, response);
-        assertThat(response.getContentType()).isEqualTo(MediaType.APPLICATION_JSON_UTF8_VALUE);
         assertThat(response.getContentAsString()).isBlank();
     }
 

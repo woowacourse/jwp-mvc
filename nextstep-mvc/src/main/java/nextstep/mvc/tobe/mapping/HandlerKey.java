@@ -1,33 +1,21 @@
 package nextstep.mvc.tobe.mapping;
 
+import nextstep.utils.PathPatternUtils;
 import nextstep.web.annotation.RequestMethod;
-import org.springframework.http.server.PathContainer;
 import org.springframework.web.util.pattern.PathPattern;
-import org.springframework.web.util.pattern.PathPatternParser;
-
-import java.util.Objects;
 
 public class HandlerKey {
     private PathPattern pattern;
     private RequestMethod requestMethod;
 
     public HandlerKey(String url, RequestMethod requestMethod) {
-        PathPatternParser pp = new PathPatternParser();
-        pp.setMatchOptionalTrailingSeparator(true);
-        pattern = pp.parse(url);
-
+        this.pattern = PathPatternUtils.parse(url);
         this.requestMethod = requestMethod;
     }
 
     public boolean matches(String path, RequestMethod method) {
-        return this.pattern.matches(toContainer(path)) && this.requestMethod.equals(method);
-    }
-
-    private PathContainer toContainer(String path) {
-        if (Objects.isNull(path)) {
-            return null;
-        }
-        return PathContainer.parsePath(path);
+        return this.pattern.matches(PathPatternUtils.toPathContainer(path))
+                && this.requestMethod.equals(method);
     }
 
     @Override

@@ -18,10 +18,6 @@ public class RequestParameterResolver implements HandlerMethodArgumentResolver {
         String value = request.getParameter(parameter.getParameterName());
         Class<?> type = parameter.getParameterType();
 
-        if (parameter.getParameterType().isPrimitive()) {
-            return WrapperClass.parsePrimitive(type, value);
-        }
-
-        return WrapperClass.parseWrapper(type, value);
+        return WrapperClass.parse(type, value);
     }
 }

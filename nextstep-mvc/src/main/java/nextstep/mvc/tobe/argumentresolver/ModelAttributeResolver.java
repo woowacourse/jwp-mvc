@@ -1,7 +1,7 @@
 package nextstep.mvc.tobe.argumentresolver;
 
 import com.google.common.collect.Lists;
-import nextstep.utils.ClassUtil;
+import nextstep.utils.ClassUtils;
 import nextstep.web.annotation.ModelAttribute;
 import nextstep.web.support.MethodParameter;
 import org.springframework.core.LocalVariableTableParameterNameDiscoverer;
@@ -41,7 +41,7 @@ public class ModelAttributeResolver implements HandlerMethodArgumentResolver {
                     getArgumentWithParamConstructor(request, constructor.getParameterTypes(),
                             NAME_DISCOVERER.getParameterNames(constructor));
 
-            return ClassUtil.getNewInstance(constructor, arguments.toArray());
+            return ClassUtils.getNewInstance(constructor, arguments.toArray());
         }
         throw new IllegalArgumentException("fail to resolve object arguments!");
     }
@@ -53,16 +53,12 @@ public class ModelAttributeResolver implements HandlerMethodArgumentResolver {
     private Object getArgumentWithDefaultConstructor(
             HttpServletRequest request, Constructor constructor, Class<?> clazz) {
 
-        Object value = ClassUtil.getNewInstance(constructor);
+        Object value = ClassUtils.getNewInstance(constructor);
         Field[] fields = clazz.getDeclaredFields();
 
         for (Field field : fields) {
             field.setAccessible(true);
-            if (field.getType().isPrimitive()) {
-                setField(field, value, WrapperClass.parsePrimitive(field.getType(), request.getParameter(field.getName())));
-                continue;
-            }
-            setField(field, value, WrapperClass.parseWrapper(field.getType(), request.getParameter(field.getName())));
+            setField(field, value, WrapperClass.parse(field.getType(), request.getParameter(field.getName())));
         }
 
         return value;
@@ -84,11 +80,7 @@ public class ModelAttributeResolver implements HandlerMethodArgumentResolver {
         for (int j = 0; j < constructorParamNames.length; j++) {
             String constructorParamValue = request.getParameter(constructorParamNames[j]);
             if (Objects.nonNull(constructorParamValue)) {
-                if (constructorParamTypes[j].isPrimitive()) {
-                    constructorValues.add(WrapperClass.parsePrimitive(constructorParamTypes[j], constructorParamValue));
-                    continue;
-                }
-                constructorValues.add(WrapperClass.parseWrapper(constructorParamTypes[j], constructorParamValue));
+                constructorValues.add(WrapperClass.parse(constructorParamTypes[j], constructorParamValue));
             }
         }
 

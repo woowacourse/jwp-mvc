@@ -1,16 +1,19 @@
 package nextstep.mvc.tobe.mapping;
 
 import com.google.common.collect.Maps;
-import nextstep.mvc.tobe.exception.NotMatchHandlerKeyException;
 import nextstep.mvc.tobe.argumentresolver.HandlerMethodArgumentResolverManager;
 import nextstep.mvc.tobe.exception.MappingException;
+import nextstep.mvc.tobe.exception.NotMatchHandlerKeyException;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
 import org.reflections.ReflectionUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class AnnotationHandlerMapping implements HandlerMapping {
     private Object[] basePackage;
@@ -30,28 +33,30 @@ public class AnnotationHandlerMapping implements HandlerMapping {
             Set<Method> methods = ReflectionUtils.getAllMethods(controller,
                     ReflectionUtils.withAnnotation(RequestMapping.class));
 
-            for (Method method : methods) {
-                String url = method.getAnnotation(RequestMapping.class).value();
-                List<RequestMethod> requestMethods =
-                        Arrays.asList(method.getAnnotation(RequestMapping.class).method());
+            initializeMethods(newInstance, methods);
+        }
+    }
 
-                if (requestMethods.isEmpty()) {
-                    putAllRequestMethod(newInstance, method, url);
-                    continue;
-                }
+    private void initializeMethods(Object newInstance, Set<Method> methods) {
+        for (Method method : methods) {
+            String url = method.getAnnotation(RequestMapping.class).value();
+            List<RequestMethod> requestMethods =
+                    Arrays.asList(method.getAnnotation(RequestMapping.class).method());
 
-                for (RequestMethod requestMethod : requestMethods) {
-                    putHandler(newInstance, method, new HandlerKey(url, requestMethod));
-                }
+            if (requestMethods.isEmpty()) {
+                putHandlerWithAllRequestMethod(newInstance, method, url);
+                continue;
+            }
+
+            for (RequestMethod requestMethod : requestMethods) {
+                putHandler(newInstance, method, new HandlerKey(url, requestMethod));
             }
         }
     }
 
-    private void putAllRequestMethod(Object instance, Method method, String url) {
+    private void putHandlerWithAllRequestMethod(Object instance, Method method, String url) {
         for (RequestMethod value : RequestMethod.values()) {
-            HandlerKey handlerKey = new HandlerKey(url, value);
-//            checkDuplicatedHandlerKey(handlerKey);
-            putHandler(instance, method, handlerKey);
+            putHandler(instance, method, new HandlerKey(url, value));
         }
     }
 
@@ -74,10 +79,11 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     public HandlerExecution getHandler(HttpServletRequest request) {
         String path = request.getRequestURI();
         RequestMethod requestMethod = RequestMethod.of(request.getMethod());
-        return handlerExecutions.get(
-                handlerExecutions.keySet().stream()
-                        .filter(key -> key.matches(path, requestMethod))
-                        .findFirst()
-                        .orElseThrow(NotMatchHandlerKeyException::new));
+
+        return handlerExecutions.entrySet().stream()
+                .filter(entry -> entry.getKey().matches(path, requestMethod))
+                .map(Map.Entry::getValue)
+                .findAny()
+                .orElseThrow(NotMatchHandlerKeyException::new);
     }
 }

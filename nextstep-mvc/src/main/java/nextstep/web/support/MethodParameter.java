@@ -14,11 +14,6 @@ public class MethodParameter {
         this.path = path;
     }
 
-//    public MethodParameter(Parameter parameter, String name) {
-//        this.parameter = parameter;
-//        this.name = name;
-//    }
-
     public String getParameterName() {
         return this.name;
     }
