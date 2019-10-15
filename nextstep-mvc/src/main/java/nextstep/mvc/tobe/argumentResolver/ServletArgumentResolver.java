@@ -5,7 +5,7 @@ import nextstep.mvc.MethodParameter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public class ServletArgumentResolver implements HandlerMethodArgumentResolver{
+public class ServletArgumentResolver implements HandlerMethodArgumentResolver {
     @Override
     public boolean supportsParameter(MethodParameter methodParameter) {
         return HttpServletRequest.class.equals(methodParameter.getType()) ||
@@ -14,7 +14,7 @@ public class ServletArgumentResolver implements HandlerMethodArgumentResolver{
 
     @Override
     public Object resolveArgument(MethodParameter methodParameter, HttpServletRequest request, HttpServletResponse response) {
-        if(HttpServletResponse.class.equals(methodParameter.getType())){
+        if (HttpServletResponse.class.equals(methodParameter.getType())) {
             return response;
         }
         return request;

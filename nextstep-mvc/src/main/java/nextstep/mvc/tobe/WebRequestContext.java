@@ -6,16 +6,17 @@ import javax.servlet.http.HttpServletResponse;
 public class WebRequestContext {
     private final HttpServletRequest request;
     private final HttpServletResponse response;
-    public WebRequestContext(final HttpServletRequest request, final HttpServletResponse response){
+
+    public WebRequestContext(final HttpServletRequest request, final HttpServletResponse response) {
         this.request = request;
         this.response = response;
     }
 
-    public HttpServletRequest getRequest(){
+    public HttpServletRequest getRequest() {
         return request;
     }
 
-    public HttpServletResponse httpServletResponse(){
+    public HttpServletResponse httpServletResponse() {
         return response;
     }
 }

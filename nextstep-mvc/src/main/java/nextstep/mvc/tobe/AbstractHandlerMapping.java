@@ -3,17 +3,20 @@ package nextstep.mvc.tobe;
 import com.google.common.collect.Maps;
 import nextstep.mvc.HandlerMapping;
 import nextstep.mvc.tobe.support.AnnotationApplicationContext;
-import nextstep.mvc.tobe.support.ApplicationContext;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
 
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 public class AbstractHandlerMapping implements HandlerMapping {
     private Map<HandlerKey, HandlerExecution> handlerExecutions = Maps.newHashMap();
+
     @Override
     public void initialize(AnnotationApplicationContext context) {
         context.scanBeans(Controller.class);

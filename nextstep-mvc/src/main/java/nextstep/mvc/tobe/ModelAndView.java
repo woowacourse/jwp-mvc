@@ -12,7 +12,7 @@ public class ModelAndView {
     public ModelAndView() {
     }
 
-    public ModelAndView(String view){
+    public ModelAndView(String view) {
         this.view = view;
     }
 
