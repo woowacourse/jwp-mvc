@@ -11,6 +11,7 @@ import java.lang.reflect.Type;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ReflectionTest {
     private static final Logger logger = LoggerFactory.getLogger(ReflectionTest.class);
@@ -56,11 +57,15 @@ public class ReflectionTest {
 
         Constructor firstConstructor = clazz.getDeclaredConstructor(String.class, String.class, String.class);
         Object[] firstConstructorArgs = {"writer", "title", "content"};
-        logger.debug("first constructor : {}", firstConstructor.newInstance(firstConstructorArgs));
+        Question firstConstructorQuestion = (Question) firstConstructor.newInstance(firstConstructorArgs);
+        logger.debug("first constructor : {}", firstConstructorQuestion);
+        assertEquals(firstConstructorQuestion, new Question("writer", "title", "content"));
 
         Constructor secondConstructor = clazz.getDeclaredConstructor(long.class, String.class, String.class, String.class, Date.class, int.class);
         Object[] secondConstructorArgs = {1L, "writer", "title", "content", new Date(), 1000};
-        logger.debug("second constructor : {}", secondConstructor.newInstance(secondConstructorArgs));
+        Object secondConstructorQuestion = secondConstructor.newInstance(secondConstructorArgs);
+        logger.debug("second constructor : {}", secondConstructorQuestion);
+        assertEquals(secondConstructorQuestion, new Question(1L, "writer", "title", "content", new Date(), 1000));
     }
 
     @Test
