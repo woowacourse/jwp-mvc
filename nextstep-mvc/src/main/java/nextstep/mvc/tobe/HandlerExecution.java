@@ -14,14 +14,13 @@ public class HandlerExecution {
     }
 
     public ModelAndView handle(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        //todo 변수명 변경
-        Object object = method.invoke(target, request, response);
+        Object handler = method.invoke(target, request, response);
 
-        if (object instanceof String) {
-            String url = (String) object;
+        if (handler instanceof String) {
+            String url = (String) handler;
             return new ModelAndView(new JspView(url));
         }
 
-        return (ModelAndView) object;
+        return (ModelAndView) handler;
     }
 }
