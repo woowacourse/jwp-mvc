@@ -23,6 +23,7 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger logger = LoggerFactory.getLogger(DispatcherServlet.class);
     private final List<HandlerMapping> handlerMappings;
     private final List<HandlerAdapter> handlerAdapters;
+    private static final ViewResolver VIEW_RESOLVER = new ViewResolver();
 
     public DispatcherServlet(List<HandlerMapping> handlerMappings, List<HandlerAdapter> handlerAdapters) {
         this.handlerMappings = handlerMappings;
@@ -46,8 +47,7 @@ public class DispatcherServlet extends HttpServlet {
                     .findFirst()
                     .orElseThrow(AdapterNotExistException::new);
             ModelAndView mav = foundAdapter.handle(req, resp, handler);
-            ViewResolver vr = new ViewResolver();
-            View view = vr.resolve(mav);
+            View view = VIEW_RESOLVER.resolve(mav);
             view.render(mav.getModel(), req, resp);
         } catch (Exception e) {
             logger.error("Exception : {}", e);
