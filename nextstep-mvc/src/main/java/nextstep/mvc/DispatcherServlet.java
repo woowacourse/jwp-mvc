@@ -1,6 +1,6 @@
 package nextstep.mvc;
 
-import nextstep.mvc.tobe.ModelAndView;
+import nextstep.mvc.asis.Controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,9 +11,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.Set;
 
 @WebServlet(name = "dispatcher", urlPatterns = "/", loadOnStartup = 1)
 public class DispatcherServlet extends HttpServlet {
@@ -21,36 +19,28 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger logger = LoggerFactory.getLogger(DispatcherServlet.class);
     private static final String DEFAULT_REDIRECT_PREFIX = "redirect:";
 
-    private final List<HandlerMapping> handlerMappings;
+    private Set<HandlerMapping> handlerMappings;
 
-    public DispatcherServlet(HandlerMapping... handlerMappings) {
-        this.handlerMappings = Arrays.asList(handlerMappings);
+    public DispatcherServlet(final Set<HandlerMapping> handlerMappings) {
+        this.handlerMappings = handlerMappings;
     }
 
     @Override
-    public void init() throws ServletException {
+    public void init() {
         this.handlerMappings.forEach(HandlerMapping::initialize);
     }
 
     @Override
-    protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        logger.debug("Method : {}, Request URI : {}", req.getMethod(), req.getRequestURI());
+    protected void service(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+        String requestUri = req.getRequestURI();
+        logger.debug("Method : {}, Request URI : {}", req.getMethod(), requestUri);
 
+        Controller controller = rm.getHandler(requestUri);
         try {
-            final Object view = this.handlerMappings.stream()
-                                                    .map(x -> x.getHandler(req))
-                                                    .filter(Objects::nonNull)
-                                                    .findAny()
-                                                    .get()
-                                                    .handle(req, resp);
-            if (view instanceof String) {
-                move((String) view, req, resp);
-            } else if (view instanceof ModelAndView) {
-                final ModelAndView modelAndView = (ModelAndView) view;
-                modelAndView.getView().render(modelAndView.getModel(), req, resp);
-            }
+            String viewName = controller.execute(req, res);
+            move(viewName, req, res);
         } catch (Throwable e) {
-            logger.error("Exception : {}", e.getMessage());
+            logger.error("Exception : {}", e);
             throw new ServletException(e.getMessage());
         }
     }
@@ -61,7 +51,8 @@ public class DispatcherServlet extends HttpServlet {
             resp.sendRedirect(viewName.substring(DEFAULT_REDIRECT_PREFIX.length()));
             return;
         }
-        final RequestDispatcher rd = req.getRequestDispatcher(viewName);
+
+        RequestDispatcher rd = req.getRequestDispatcher(viewName);
         rd.forward(req, resp);
     }
 }

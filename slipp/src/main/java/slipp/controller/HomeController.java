@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 
 public class HomeController implements Controller {
     @Override
-    public String handle(HttpServletRequest req, HttpServletResponse resp) throws Exception {
+    public String execute(HttpServletRequest req, HttpServletResponse res) {
         req.setAttribute("users", DataBase.findAll());
         return "home.jsp";
     }
