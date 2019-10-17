@@ -26,4 +26,21 @@ ManualHandlerMapping 은 Controller 가 아니라 ControllerAdaptor 를 리턴�
 - [x] 컨트롤러의 메서드가 반드시 ModelAndView 를 리턴하진 않아도 된다. String 을 리턴할수도 있고 Object 를 리턴할 수도 있는데 어떻게 대응할 것인지?
     - AnnotationHandlerMapping 이 value 로 HandlerExecution 을 받는데, 이것의 리턴 타입이 ModelAndView 라서 확장이 불가능. Object 로 바꿔야할듯.
 
-- [ ] DispatcherServlet 테스트 코드 작성 (MockHttpServletRequest, MockHttpServletResponse)
+- [x] ViewResolver 클래스를 만들어 관심사 분리
+    - [x] HandlerExecutionAdapter 클래스는 HandlerExecution 인터페이스를 HandlerAdapter 인터페이스로
+변경하는 어댑터의 역할을 함과 동시에, 컨트롤러 메서드가 리턴한 객체의 타입에 따라 적절한 View 를 생성하는 역할까지 도맡고 있다.
+후자의 역할을 ViewResolver 클래스에 위임하자.
+    - [x] ModelAndView 의 인스턴스 변수 "view"가 View 뿐만 아니라 컨트롤러 메서드가 리턴한 어떤 타입이든 받을 수 있도록
+    Object 로 타입을 변경해준다.
+    - [x] DispatcherServlet 에서 ViewResolver 를 사용하도록 로직을 변경한다.
+
+- [x] JsonView 클래스 구현, JsonViewTest 테스트 코드로 검증
+
+- [x] UserAcceptanceTest 통과하도록 UserRestController 추가
+
+- [x] slipp 의 asis 컨트롤러들 tobe 로 변경 (애너테이션 기반)
+    - [x] NsWebTestClient 에 로그인 세션 ID 유지하도록 메서드에 set-cookie 추가
+
+- [ ] ArgumentResolver 구현
+
+[ ] DispatcherServlet 테스트 코드 작성 (MockHttpServletRequest, MockHttpServletResponse)

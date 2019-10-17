@@ -20,7 +20,7 @@ public class UpdateUserController implements Controller {
         }
 
         User updateUser = new User(req.getParameter("userId"), req.getParameter("password"), req.getParameter("name"),
-            req.getParameter("email"));
+                req.getParameter("email"));
         log.debug("Update User : {}", updateUser);
         user.update(updateUser);
         return "redirect:/";

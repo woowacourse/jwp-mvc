@@ -7,33 +7,87 @@ import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import slipp.asis.controller.UserSessionUtils;
 import slipp.domain.User;
 import slipp.support.db.DataBase;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 @Controller
 public class UserController {
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
     @RequestMapping(value = "/users", method = RequestMethod.GET)
-    public String get(HttpServletRequest req, HttpServletResponse res) {
-        String userId = req.getParameter("userId");
-        User user = DataBase.findUserById(userId);
-        if (user == null) {
-            throw new UserNotFoundException();
+    public String readUserList(HttpServletRequest req, HttpServletResponse res) {
+        if (!UserSessionUtils.isLogined(req.getSession())) {
+            return "redirect:/users/login";
         }
-        req.setAttribute("user", user);
-        return "/user/profile.jsp";
+
+        req.setAttribute("users", DataBase.findAll());
+        return "/user/list.jsp";
     }
 
     @RequestMapping(value = "/users", method = RequestMethod.POST)
-    public ModelAndView post(HttpServletRequest req, HttpServletResponse res) {
+    public ModelAndView signup(HttpServletRequest req, HttpServletResponse res) {
         User user = new User(req.getParameter("userId"), req.getParameter("password"), req.getParameter("name"),
-            req.getParameter("email"));
+                req.getParameter("email"));
         logger.debug("User : {}", user);
         DataBase.addUser(user);
         return new ModelAndView(new JSPView("redirect:/"));
+    }
+
+    @RequestMapping(value = "/users/update", method = RequestMethod.GET)
+    public String getUpdateForm(HttpServletRequest req, HttpServletResponse res) {
+        String userId = req.getParameter("userId");
+        User user = DataBase.findUserById(userId);
+        if (!UserSessionUtils.isSameUser(req.getSession(), user)) {
+            throw new IllegalStateException("다른 사용자의 정보를 수정할 수 없습니다.");
+        }
+        req.setAttribute("user", user);
+        return "/user/updateForm.jsp";
+    }
+
+    @RequestMapping(value = "/users/login", method = RequestMethod.GET)
+    public String getLoginForm(HttpServletRequest req, HttpServletResponse res) {
+        return "/user/login.jsp";
+    }
+
+    @RequestMapping(value = "/users/login", method = RequestMethod.POST)
+    public String login(HttpServletRequest req, HttpServletResponse res) {
+        String userId = req.getParameter("userId");
+        String password = req.getParameter("password");
+        User user = DataBase.findUserById(userId);
+        if (user == null) {
+            req.setAttribute("loginFailed", true);
+            return "/user/login.jsp";
+        }
+        if (user.matchPassword(password)) {
+            HttpSession session = req.getSession();
+            session.setAttribute(UserSessionUtils.USER_SESSION_KEY, user);
+            return "redirect:/";
+        } else {
+            req.setAttribute("loginFailed", true);
+            return "/user/login.jsp";
+        }
+    }
+
+    @RequestMapping(value = "/users/logout", method = RequestMethod.GET)
+    public String logout(HttpServletRequest req, HttpServletResponse res) {
+        HttpSession session = req.getSession();
+        session.removeAttribute(UserSessionUtils.USER_SESSION_KEY);
+        return "redirect:/";
+    }
+
+    @RequestMapping(value = "/users/profile", method = RequestMethod.GET)
+    public String profile(HttpServletRequest req, HttpServletResponse resp) {
+        String userId = req.getParameter("userId");
+        User user = DataBase.findUserById(userId);
+        if (user == null) {
+            throw new NullPointerException("사용자를 찾을 수 없습니다.");
+        }
+        req.setAttribute("user", user);
+        return "/user/profile.jsp";
     }
 }
