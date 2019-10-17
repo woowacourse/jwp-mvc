@@ -1,6 +1,5 @@
 package nextstep.mvc;
 
-import nextstep.mvc.asis.Controller;
 import nextstep.mvc.tobe.AnnotationHandlerMapping;
 import nextstep.mvc.tobe.HandlerExecution;
 import nextstep.mvc.tobe.ModelAndView;
@@ -21,17 +20,14 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger logger = LoggerFactory.getLogger(DispatcherServlet.class);
     private static final String DEFAULT_REDIRECT_PREFIX = "redirect:";
 
-    private HandlerMapping rm;
     private AnnotationHandlerMapping annotationHandlerMapping;
 
-    public DispatcherServlet(HandlerMapping rm, AnnotationHandlerMapping annotationHandlerMapping) {
-        this.rm = rm;
+    public DispatcherServlet(AnnotationHandlerMapping annotationHandlerMapping) {
         this.annotationHandlerMapping = annotationHandlerMapping;
     }
 
     @Override
     public void init() throws ServletException {
-        rm.initialize();
         annotationHandlerMapping.initialize();
     }
 
@@ -40,15 +36,11 @@ public class DispatcherServlet extends HttpServlet {
         String requestUri = req.getRequestURI();
         logger.debug("Method : {}, Request URI : {}", req.getMethod(), requestUri);
 
-        Object object = rm.getHandler(req) == null ? annotationHandlerMapping.getHandler(req) : rm.getHandler(req);
+        HandlerExecution HandlerExecution = annotationHandlerMapping.getHandler(req);
+
         try {
-            if (object instanceof HandlerExecution) {
-                ModelAndView modelAndView = ((HandlerExecution) object).handle(req, resp);
-                modelAndView.render(req, resp);
-            } else {
-                String viewName = ((Controller) object).execute(req, resp);
-                move(viewName, req, resp);
-            }
+            ModelAndView modelAndView = HandlerExecution.handle(req, resp);
+            modelAndView.render(req, resp);
         } catch (Throwable e) {
             logger.error("Exception : {}", e);
             throw new ServletException(e.getMessage());

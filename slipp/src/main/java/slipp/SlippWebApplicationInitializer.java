@@ -12,10 +12,11 @@ import javax.servlet.ServletRegistration;
 
 public class SlippWebApplicationInitializer implements WebApplicationInitializer {
     private static final Logger log = LoggerFactory.getLogger(SlippWebApplicationInitializer.class);
+    private static final String[] BASE_PACKAGE = {"slipp"};
 
     @Override
     public void onStartup(ServletContext servletContext) throws ServletException {
-        DispatcherServlet dispatcherServlet = new DispatcherServlet(new ManualHandlerMapping(), new AnnotationHandlerMapping());
+        DispatcherServlet dispatcherServlet = new DispatcherServlet(new AnnotationHandlerMapping(BASE_PACKAGE));
 
         ServletRegistration.Dynamic dispatcher = servletContext.addServlet("dispatcher", dispatcherServlet);
         dispatcher.setLoadOnStartup(1);

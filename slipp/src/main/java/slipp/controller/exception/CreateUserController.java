@@ -1,5 +1,7 @@
-package slipp.controller;
+package slipp.controller.exception;
 
+import nextstep.mvc.tobe.ModelAndView;
+import nextstep.mvc.tobe.RedirectView;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
@@ -12,16 +14,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @Controller
-public class UserController {
-    private static final Logger log = LoggerFactory.getLogger(UserController.class);
+public class CreateUserController {
+    private static final Logger log = LoggerFactory.getLogger(CreateUserController.class);
 
     @RequestMapping(value = "/users/create", method = RequestMethod.POST)
-    public String create(HttpServletRequest req, HttpServletResponse resp) {
+    public ModelAndView execute(HttpServletRequest req, HttpServletResponse resp) throws Exception {
         User user = new User(req.getParameter("userId"), req.getParameter("password"), req.getParameter("name"),
                 req.getParameter("email"));
         log.debug("User : {}", user);
 
         DataBase.addUser(user);
-        return "redirect:/";
+        return new ModelAndView(new RedirectView("/"));
     }
 }

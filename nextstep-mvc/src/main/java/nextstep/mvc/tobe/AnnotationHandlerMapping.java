@@ -2,10 +2,9 @@ package nextstep.mvc.tobe;
 
 import com.google.common.collect.Maps;
 import nextstep.mvc.HandlerMapping;
-import nextstep.web.annotation.Controller;
+import nextstep.mvc.exception.NotFoundHandlerException;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,37 +18,35 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
     private Object[] basePackage;
-
     private Map<HandlerKey, HandlerExecution> handlerExecutions = Maps.newHashMap();
 
-    public AnnotationHandlerMapping(Object... basePackage) {
+    public AnnotationHandlerMapping(Object[] basePackage) {
         this.basePackage = basePackage;
     }
 
     @Override
     public void initialize() {
-        Reflections reflections = new Reflections(basePackage);
-        Set<Class<?>> clazz = reflections.getTypesAnnotatedWith(Controller.class);
+        Set<Class<?>> classes = ControllerScanner.scan(basePackage);
 
         try {
-            for (Class<?> claz : clazz) {
-                Object object = claz.newInstance();
-                Method[] methods = claz.getMethods();
-                collectHandlerExecutions(object, methods);
+            for (Class<?> clazz : classes) {
+                Object clazzInstance = clazz.newInstance();
+                Method[] methods = clazz.getMethods();
+                collectHandlerExecutions(clazzInstance, methods);
             }
         } catch (IllegalAccessException | InstantiationException e) {
-            e.printStackTrace();
+            log.error("{}", e.getMessage());
         }
     }
 
-    private void collectHandlerExecutions(Object object, Method[] methods) {
+    private void collectHandlerExecutions(Object clazzInstance, Method[] methods) {
         Arrays.stream(methods)
                 .filter(method -> method.isAnnotationPresent(RequestMapping.class))
                 .forEach(method -> {
                     RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
 
                     HandlerKey handlerKey = new HandlerKey(requestMapping.value(), requestMapping.method());
-                    HandlerExecution handlerExecution = new HandlerExecution(object, method);
+                    HandlerExecution handlerExecution = new HandlerExecution(clazzInstance, method);
 
                     handlerExecutions.put(handlerKey, handlerExecution);
                 });
@@ -57,6 +54,11 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     @Override
     public HandlerExecution getHandler(HttpServletRequest request) {
-        return handlerExecutions.get(new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod())));
+        HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod()));
+        if (handlerExecutions.containsKey(handlerKey)) {
+            return handlerExecutions.get(handlerKey);
+        }
+
+        throw new NotFoundHandlerException();
     }
 }

@@ -1,19 +1,25 @@
 package slipp.controller;
 
+import nextstep.web.annotation.Controller;
+import nextstep.web.annotation.RequestMapping;
+import nextstep.web.annotation.RequestMethod;
+import slipp.controller.exception.NotFoundUserException;
 import slipp.domain.User;
 import slipp.support.db.DataBase;
-import nextstep.mvc.asis.Controller;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-public class LoginController implements Controller {
-    @Override
-    public String execute(HttpServletRequest req, HttpServletResponse resp) throws Exception {
+@Controller
+public class LoginController {
+
+    @RequestMapping(value = "/users/login", method = RequestMethod.POST)
+    public String login(HttpServletRequest req, HttpServletResponse resp) throws Exception {
         String userId = req.getParameter("userId");
         String password = req.getParameter("password");
-        User user = DataBase.findUserById(userId);
+        User user = DataBase.findUserById(userId)
+                .orElseThrow(NotFoundUserException::new);
         if (user == null) {
             req.setAttribute("loginFailed", true);
             return "/user/login.jsp";

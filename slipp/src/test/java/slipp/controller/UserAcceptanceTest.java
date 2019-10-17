@@ -5,9 +5,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import slipp.domain.User;
 import slipp.dto.UserCreatedDto;
 import slipp.dto.UserUpdatedDto;
-import slipp.domain.User;
 import support.test.NsWebTestClient;
 
 import java.net.URI;
@@ -40,6 +40,7 @@ public class UserAcceptanceTest {
         assertThat(actual.getEmail()).isEqualTo(expected.getEmail());
 
         // 수정
+
         UserUpdatedDto updateUser = new UserUpdatedDto("password2", "코난", "conan@nextstep.camp");
         client.updateResource(location, updateUser, UserUpdatedDto.class);
 
