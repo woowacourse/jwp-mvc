@@ -1,9 +1,9 @@
-package nextstep.mvc.tobe;
+package nextstep.mvc.view;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 
 public interface View {
-    void render(Map<String, ?> model, HttpServletRequest request, HttpServletResponse response) throws Exception;
+    void render(Map<String, ?> model, HttpServletRequest req, HttpServletResponse res) throws Exception;
 }
