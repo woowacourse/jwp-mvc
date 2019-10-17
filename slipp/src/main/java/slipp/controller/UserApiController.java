@@ -7,7 +7,6 @@ import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
 import slipp.domain.User;
-import slipp.dto.UserCreatedDto;
 import slipp.support.db.DataBase;
 
 import javax.servlet.http.HttpServletRequest;
