@@ -40,8 +40,6 @@ public class UserAcceptanceTest {
         assertThat(actual.getEmail()).isEqualTo(expected.getEmail());
 
         // 수정
-        //todo 로그인 상태에서만 자신의 정보만 수정이 가능해야함.
-        client.loginUser(actual.getUserId(), actual.getPassword());
 
         UserUpdatedDto updateUser = new UserUpdatedDto("password2", "코난", "conan@nextstep.camp");
         client.updateResource(location, updateUser, UserUpdatedDto.class);
