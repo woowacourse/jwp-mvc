@@ -5,7 +5,6 @@ import nextstep.web.support.MediaType;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.PrintWriter;
 import java.util.Map;
 
 public class JsonView implements View {
@@ -17,11 +16,11 @@ public class JsonView implements View {
 
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
 
-        if(model.isEmpty()) {
+        if (model.isEmpty()) {
             return;
         }
 
-        if(model.size() == SINGLE_MODEL_SIZE) {
+        if (model.size() == SINGLE_MODEL_SIZE) {
             objectMapper.writeValue(response.getWriter(), model.values().toArray()[0]);
         }
 
