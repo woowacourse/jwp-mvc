@@ -2,6 +2,7 @@ package slipp.tobe.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import nextstep.mvc.tobe.JsonView;
 import nextstep.mvc.tobe.ModelAndView;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
@@ -9,6 +10,7 @@ import nextstep.web.annotation.RequestMethod;
 import nextstep.web.support.MediaType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import slipp.domain.User;
 import slipp.support.db.DataBase;
 
@@ -28,17 +30,17 @@ public class RestUserController {
 
         logger.debug("User: {}", user.getUserId());
         DataBase.addUser(user);
-        response.setStatus(201);
+        response.setStatus(HttpStatus.CREATED.value());
         response.addHeader("Location", "/api/users?userId="+user.getUserId());
 
-        return new ModelAndView();
+        return new ModelAndView(new JsonView());
     }
 
     @RequestMapping(value = "/api/users", method = RequestMethod.GET)
     public ModelAndView retrieve(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String userId = request.getParameter("userId");
         User user = DataBase.findUserById(userId);
-        return new ModelAndView().addObject("user", user);
+        return new ModelAndView(new JsonView()).addObject("user", user);
     }
 
     @RequestMapping(value = "/api/users", method = RequestMethod.PUT)
@@ -51,6 +53,6 @@ public class RestUserController {
         User user = DataBase.findUserById(userId);
         user.update(updateUser);
 
-        return new ModelAndView().addObject("user", updateUser);
+        return new ModelAndView(new JsonView()).addObject("user", updateUser);
     }
 }

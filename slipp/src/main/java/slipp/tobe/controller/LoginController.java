@@ -15,7 +15,6 @@ import javax.servlet.http.HttpSession;
 
 @Controller
 public class LoginController {
-
     @RequestMapping(value = "/users/loginForm", method = RequestMethod.GET)
     public ModelAndView loginForm(HttpServletRequest req, HttpServletResponse rep) {
         return new ModelAndView(new JSPView("/user/login.jsp"));

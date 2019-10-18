@@ -4,6 +4,7 @@ import nextstep.db.DataBase;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
+import nextstep.web.annotation.RequestParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,8 +16,7 @@ public class MyController {
     private static final Logger logger = LoggerFactory.getLogger(MyController.class);
 
     @RequestMapping(value = "/users", method = RequestMethod.GET)
-    public ModelAndView findUserId(HttpServletRequest request, HttpServletResponse response) {
-        String userId = request.getParameter("userId");
+    public ModelAndView findUserId(@RequestParam("userId") String userId, HttpServletRequest request, HttpServletResponse response) {
         logger.debug("Find UserId : {}", userId);
         User user = DataBase.findUserById(userId);
         request.setAttribute("user", user);

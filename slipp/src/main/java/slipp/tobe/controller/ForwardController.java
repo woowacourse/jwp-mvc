@@ -15,15 +15,13 @@ import javax.servlet.http.HttpServletResponse;
 public class ForwardController {
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
-    public String index(HttpServletRequest req, HttpServletResponse res) {
+    public ModelAndView index(HttpServletRequest req, HttpServletResponse res) {
         req.setAttribute("users", DataBase.findAll());
-
-        return "home.jsp";
+        return new ModelAndView("home.jsp");
     }
 
     @RequestMapping(value = "/users/form", method = RequestMethod.GET)
-    public String userForm(HttpServletRequest req, HttpServletResponse res) {
-
-        return "/user/form.jsp";
+    public ModelAndView userForm(HttpServletRequest req, HttpServletResponse res) {
+        return new ModelAndView("/user/form.jsp");
     }
 }

@@ -6,7 +6,7 @@ public class ViewResolver {
     public View resolve(Object view) {
 
         if (view instanceof String) {
-            new JSPView((String) view);
+            return new JSPView((String) view);
         }
 
         if (view instanceof JSPView) {
