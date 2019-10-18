@@ -3,6 +3,7 @@ package nextstep.mvc.tobe.controllermapper.adepter;
 import org.springframework.core.LocalVariableTableParameterNameDiscoverer;
 import org.springframework.core.ParameterNameDiscoverer;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 
 public class MethodParameter {
@@ -25,5 +26,9 @@ public class MethodParameter {
 
     public boolean checkType(Class<?> clazz) {
         return getParameterType().equals(clazz);
+    }
+
+    public boolean checkAnnotation(Class<? extends Annotation> clazz) {
+        return method.getParameters()[parameterIndex].getAnnotation(clazz) != null;
     }
 }

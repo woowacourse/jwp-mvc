@@ -2,10 +2,7 @@ package slipp.controller;
 
 import nextstep.mvc.tobe.view.ModelAndView;
 import nextstep.mvc.tobe.view.RedirectView;
-import nextstep.web.annotation.Controller;
-import nextstep.web.annotation.PathVariable;
-import nextstep.web.annotation.RequestMapping;
-import nextstep.web.annotation.RequestMethod;
+import nextstep.web.annotation.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import slipp.domain.User;
@@ -27,7 +24,7 @@ public class TestUserController {
     }
 
     @RequestMapping(value = "/test/users/3", method = RequestMethod.POST)
-    public ModelAndView create_javabean(User user) {
+    public ModelAndView create_javabean(@ModelAttribute User user) {
         log.debug("testUser: {}", user);
         return new ModelAndView(new RedirectView("/"));
     }
