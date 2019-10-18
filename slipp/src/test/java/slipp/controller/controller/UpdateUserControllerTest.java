@@ -1,6 +1,8 @@
 package slipp.controller;
 
+import nextstep.mvc.tobe.adapter.HandlerAdapter;
 import nextstep.mvc.tobe.view.ModelAndView;
+import nextstep.mvc.tobe.view.RedirectView;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -37,10 +39,11 @@ class UpdateUserControllerTest extends BaseControllerTest {
 
         MockHttpServletResponse response = new MockHttpServletResponse();
 
-        HandlerExecution2 handler = mappingHandler(request, response);
-        ModelAndView mav = handler.handle(request, response);
+        Object handler = mappingHandler(request, response);
+        HandlerAdapter adapter = mappingAdapter(handler);
+        ModelAndView mav = adapter.handle(request, response, handler);
 
-        assertThat(mav.getViewName()).isEqualTo("redirect:/");
+        assertThat(mav.getView()).isEqualTo(new RedirectView("/"));
         assertThat(DataBase.findUserById("sloth").getName()).isEqualTo("나무늘보");
     }
 
