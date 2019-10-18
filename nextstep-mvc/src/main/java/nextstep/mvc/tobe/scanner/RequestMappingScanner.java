@@ -1,9 +1,8 @@
 package nextstep.mvc.tobe.scanner;
 
+import nextstep.mvc.tobe.handler.CreateClassInstanceException;
 import nextstep.mvc.tobe.handler.HandlerExecution;
 import nextstep.mvc.tobe.handler.HandlerKey;
-import nextstep.mvc.tobe.handler.RequestMappingHandlerExecution;
-import nextstep.mvc.tobe.handlerresolver.CreateClassInstanceException;
 import nextstep.web.annotation.RequestMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,13 +35,11 @@ public class RequestMappingScanner {
     }
 
     private static HandlerExecution makeRequestMappingHandlerExecution(Method method) {
-        HandlerExecution execution;
         try {
-            execution = new RequestMappingHandlerExecution(method, method.getDeclaringClass().getConstructor().newInstance());
+            return new HandlerExecution(method, method.getDeclaringClass().getConstructor().newInstance());
         } catch (Exception e) {
             log.debug(e.getMessage(), e.getCause());
             throw new CreateClassInstanceException();
         }
-        return execution;
     }
 }

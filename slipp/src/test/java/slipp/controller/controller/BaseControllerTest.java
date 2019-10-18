@@ -1,8 +1,6 @@
 package slipp.controller.controller;
 
-import nextstep.mvc.tobe.handler.HandlerExecution;
-import nextstep.mvc.tobe.handlerresolver.AnnotationHandlerMapping;
-import nextstep.mvc.tobe.handlerresolver.HandlerMappingAdapter;
+import nextstep.mvc.tobe.handler.AnnotationHandlerMapping;
 import nextstep.mvc.tobe.handlerresolver.HandlerResolver;
 import nextstep.mvc.tobe.view.viewresolver.JsonViewResolver;
 import nextstep.mvc.tobe.view.viewresolver.JspViewResolver;
@@ -28,7 +26,7 @@ public class BaseControllerTest {
         viewResolvers.add(new RedirectViewResolver());
     }
 
-    public HandlerExecution mappingHandler(HttpServletRequest req, HttpServletResponse resp) {
+    public HandlerExecution2 mappingHandler(HttpServletRequest req, HttpServletResponse resp) {
         return handlerResolvers.stream().filter(resolver -> resolver.support(req, resp))
                 .findFirst()
                 .orElseThrow(IllegalAccessError::new)

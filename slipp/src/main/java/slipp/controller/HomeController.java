@@ -1,5 +1,6 @@
 package slipp.controller;
 
+import nextstep.mvc.tobe.view.JspView;
 import nextstep.mvc.tobe.view.ModelAndView;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
@@ -15,6 +16,6 @@ public class HomeController {
     @RequestMapping(method = RequestMethod.GET, value = "/")
     public ModelAndView execute(HttpServletRequest req, HttpServletResponse resp) throws Exception {
         req.setAttribute("users", DataBase.findAll());
-        return new ModelAndView("home.jsp");
+        return new ModelAndView(new JspView("home"));
     }
 }

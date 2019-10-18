@@ -1,4 +1,4 @@
-package nextstep.mvc.tobe.handlerresolver;
+package nextstep.mvc.tobe.handler;
 
 public class CreateClassInstanceException extends RuntimeException {
     public CreateClassInstanceException() {

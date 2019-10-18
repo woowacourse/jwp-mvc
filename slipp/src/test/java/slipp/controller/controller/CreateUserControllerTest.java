@@ -1,6 +1,5 @@
 package slipp.controller.controller;
 
-import nextstep.mvc.tobe.handler.HandlerExecution;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -31,7 +30,7 @@ class CreateUserControllerTest extends BaseControllerTest {
 
         MockHttpServletResponse response = new MockHttpServletResponse();
 
-        HandlerExecution handler = mappingHandler(request, response);
+        HandlerExecution2 handler = mappingHandler(request, response);
         handler.handle(request, response);
 
         Assertions.assertThat(DataBase.findUserById("sloth")).isEqualTo(expected);

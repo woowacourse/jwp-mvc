@@ -1,6 +1,5 @@
 package slipp.controller;
 
-import nextstep.mvc.tobe.handler.HandlerExecution;
 import nextstep.mvc.tobe.view.ModelAndView;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -38,7 +37,7 @@ class UpdateUserControllerTest extends BaseControllerTest {
 
         MockHttpServletResponse response = new MockHttpServletResponse();
 
-        HandlerExecution handler = mappingHandler(request, response);
+        HandlerExecution2 handler = mappingHandler(request, response);
         ModelAndView mav = handler.handle(request, response);
 
         assertThat(mav.getViewName()).isEqualTo("redirect:/");

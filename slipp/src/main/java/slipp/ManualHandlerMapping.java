@@ -3,7 +3,7 @@ package slipp;
 import nextstep.mvc.DispatcherServlet;
 import nextstep.mvc.asis.Controller;
 import nextstep.mvc.asis.ForwardController;
-import nextstep.mvc.tobe.handlerresolver.HandlerMapping;
+import nextstep.mvc.tobe.handler.HandlerMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import slipp.controller.LoginController;
@@ -11,6 +11,8 @@ import slipp.controller.LogoutController;
 import slipp.controller.ProfileController;
 import slipp.controller.UpdateFormUserController;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,11 +36,13 @@ public class ManualHandlerMapping implements HandlerMapping {
     }
 
     @Override
-    public Controller getHandler(String requestUri) {
-        return mappings.get(requestUri);
+    public boolean support(HttpServletRequest req, HttpServletResponse resp) {
+        return mappings.get(req.getRequestURI()) != null;
     }
 
-    void put(String url, Controller controller) {
-        mappings.put(url, controller);
+    @Override
+    public Object getHandler(HttpServletRequest req) {
+        return mappings.get(req.getRequestURI());
     }
+
 }
