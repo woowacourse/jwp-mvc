@@ -1,10 +1,9 @@
 package nextstep.mvc.tobe.controllermapper;
 
+import nextstep.mvc.tobe.controllermapper.adepter.MethodParameter;
 import nextstep.mvc.tobe.controllermapper.adepter.ParameterAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.LocalVariableTableParameterNameDiscoverer;
-import org.springframework.core.ParameterNameDiscoverer;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -23,23 +22,16 @@ public class ControllerParameterMapper {
     }
 
     public Object[] getObjects(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        ParameterNameDiscoverer nameDiscoverer = new LocalVariableTableParameterNameDiscoverer();
+        int parameterCount = method.getParameterCount();
+        Object[] objects = new Object[parameterCount];
 
-        String[] parameterNames = nameDiscoverer.getParameterNames(method);
-        Class[] classes = method.getParameterTypes();
-
-        log.debug("Method : {} parameterNames : {}, classes : {}", method, parameterNames, classes);
-
-        Object[] objects = new Object[classes.length];
-
-        for (int i = 0; i < classes.length; i++) {
-            Class<?> clazz = classes[i];
-
+        for (int i = 0; i < parameterCount; i++) {
+            MethodParameter methodParameter = new MethodParameter(method, i);
             objects[i] = adepters.stream()
-                    .filter(adepter -> adepter.supports(clazz))
+                    .filter(adepter -> adepter.supports(methodParameter))
                     .findFirst()
                     .orElseThrow(() -> new IllegalArgumentException("지원하지 못하는 파라미터 입니다."))
-                    .cast(request, response, parameterNames[i]);
+                    .cast(request, response, methodParameter);
         }
         return objects;
     }

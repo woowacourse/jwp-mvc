@@ -32,7 +32,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     public void initialize() {
         Map<Class<?>, Object> controllers = new ControllerScanner(basePackage).getControllers();
         Map<Class<?>, Set<Method>> requestMappingMethods = getRequestMappingMethods(controllers.keySet());
-        this.parameterAdapters = new ParameterAdapters(basePackage);
+        this.parameterAdapters = new ParameterAdapters();
 
         requestMappingMethods.keySet()
                 .forEach(clazz -> turnRequestMappingMethods(controllers.get(clazz), requestMappingMethods.get(clazz)));

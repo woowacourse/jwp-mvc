@@ -5,12 +5,12 @@ import javax.servlet.http.HttpServletResponse;
 
 public class RequestParameterAdapter implements ParameterAdapter {
     @Override
-    public boolean supports(Class<?> clazz) {
-        return clazz.equals(HttpServletRequest.class);
+    public boolean supports(MethodParameter methodParameter) {
+        return methodParameter.checkType(HttpServletRequest.class);
     }
 
     @Override
-    public Object cast(HttpServletRequest request, HttpServletResponse response, String parameterName) throws Exception {
+    public Object cast(HttpServletRequest request, HttpServletResponse response, MethodParameter methodParameter) throws Exception {
         return request;
     }
 }

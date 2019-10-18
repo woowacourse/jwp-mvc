@@ -12,20 +12,9 @@ public class ParameterAdapters {
             new LongParameterAdapter(),
             new StringParameterAdapter(),
             new ResponseParameterAdapter(),
-            new RequestParameterAdapter()
+            new RequestParameterAdapter(),
+            new JavaBeenParameterAdapter()
     );
-
-    private Object[] basePackage;
-
-    public ParameterAdapters(Object... basePackage) {
-        this.basePackage = basePackage;
-        initialize();
-    }
-
-    private void initialize() {
-        ParameterResolverScanner parameterResolverScanner = new ParameterResolverScanner(basePackage);
-        adepters.addAll(parameterResolverScanner.getParameterAdapter());
-    }
 
     public List<ParameterAdapter> getAdapters() {
         return new ArrayList<>(adepters);
