@@ -1,22 +1,22 @@
 package nextstep.mvc.tobe;
 
-import nextstep.web.annotation.RequestParam;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public class ArgumentResolver {
-    private HttpServletRequest request;
-    private HttpServletResponse response;
+    private final List<ArgumentResolverAdapter> adapters;
 
     public ArgumentResolver(HttpServletRequest request, HttpServletResponse response) {
-        this.request = request;
-        this.response = response;
+        List<ArgumentResolverAdapter> adapters = new ArrayList<>();
+
+        adapters.add(new RequestResolverAdapter(request));
+        adapters.add(new RequestParamResolverAdapter(request));
+        adapters.add(new ResponseResolverAdapter(response));
+
+        this.adapters = Collections.unmodifiableList(adapters);
     }
 
     public Object[] resolve(Method method) {
@@ -24,42 +24,16 @@ public class ArgumentResolver {
         Parameter[] parameters = method.getParameters();
 
         for (Parameter parameter : parameters) {
-            Optional.ofNullable(matchParameter(parameter)).ifPresent(result::add);
+            findAdapter(parameter).ifPresent(result::add);
         }
 
         return result.toArray();
     }
 
-    private Object matchParameter(Parameter parameter) {
-        if (parameter.isAnnotationPresent(RequestParam.class)) {
-            return requestParamValue(parameter);
-        }
-
-        if (isHttpServletRequest(parameter)) {
-            return request;
-        }
-
-        if (isHttpServletResponse(parameter)) {
-            return response;
-        }
-        return null;
-    }
-
-    private String requestParamValue(Parameter parameter) {
-        RequestParam annotation = parameter.getAnnotation(RequestParam.class);
-        String parameterName = annotation.value();
-        return request.getParameter(parameterName);
-    }
-
-    private boolean isHttpServletRequest(Parameter parameter) {
-        Class<?> parameterType = parameter.getType();
-
-        return parameterType.equals(HttpServletRequest.class);
-    }
-
-    private boolean isHttpServletResponse(Parameter parameter) {
-        Class<?> parameterType = parameter.getType();
-
-        return parameterType.equals(HttpServletResponse.class);
+    private Optional<Object> findAdapter(Parameter parameter) {
+        return adapters.stream()
+                .filter(adapter -> adapter.match(parameter))
+                .map(adapter -> adapter.get(parameter))
+                .findFirst();
     }
 }
