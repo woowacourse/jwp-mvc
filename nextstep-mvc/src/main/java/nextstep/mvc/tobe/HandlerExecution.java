@@ -14,8 +14,7 @@ public class HandlerExecution {
     }
 
     public ModelAndView handle(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        ArgumentResolver argumentResolver = new ArgumentResolver(request, response);
-        Object[] parameters = argumentResolver.resolve(method);
+        Object[] parameters = getParameters(request, response);
 
         if (method.getReturnType().equals(String.class)) {
             String viewPath = method.invoke(clazz.newInstance(), parameters).toString();
@@ -23,5 +22,15 @@ public class HandlerExecution {
         }
 
         return (ModelAndView) method.invoke(clazz.newInstance(), parameters);
+    }
+
+    private Object[] getParameters(HttpServletRequest request, HttpServletResponse response) {
+        try {
+            ArgumentResolver argumentResolver = new ArgumentResolver(request, response);
+            return argumentResolver.resolve(method);
+        } catch (NotMatchParameterException e) {
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            throw new NotMatchParameterException();
+        }
     }
 }

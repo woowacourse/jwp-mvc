@@ -24,7 +24,8 @@ public class ArgumentResolver {
         Parameter[] parameters = method.getParameters();
 
         for (Parameter parameter : parameters) {
-            findAdapter(parameter).ifPresent(result::add);
+            Object matchParameter = findAdapter(parameter).orElseThrow(NotMatchParameterException::new);
+            result.add(matchParameter);
         }
 
         return result.toArray();
