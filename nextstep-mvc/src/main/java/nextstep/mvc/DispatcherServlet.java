@@ -1,6 +1,9 @@
 package nextstep.mvc;
 
-import nextstep.mvc.handleradapter.HandlerAdapter;
+import nextstep.mvc.handleradapter.Handler;
+import nextstep.mvc.handleradapter.HandlerAdapterFactory;
+import nextstep.mvc.handleradapter.HandlerAdapterWrappers;
+import nextstep.mvc.handleradapter.SupportedHandlerAdapterFactory;
 import nextstep.mvc.handlermapping.HandlerMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,7 +14,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.List;
 
 @WebServlet(name = "dispatcher", urlPatterns = "/", loadOnStartup = 1)
 public class DispatcherServlet extends HttpServlet {
@@ -19,40 +21,30 @@ public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
 
-    private final HandlerMapping rm;
-    private final List<HandlerAdapter> supportedAdapters;
+    private final HandlerAdapterFactory handlerAdapterFactory;
 
+    private DispatcherServlet(HandlerAdapterFactory handlerAdapterFactory) {
+        this.handlerAdapterFactory = handlerAdapterFactory;
+    }
 
-    public DispatcherServlet(HandlerMapping rm, List<HandlerAdapter> supportedAdapters) {
-        this.rm = rm;
-        this.supportedAdapters = supportedAdapters;
+    public static DispatcherServlet from(HandlerMapping mapping, HandlerAdapterWrappers wrappers) {
+        return new DispatcherServlet(SupportedHandlerAdapterFactory.from(mapping, wrappers));
     }
 
     @Override
     public void init() throws ServletException {
-        rm.initialize();
+        log.debug("init called!");
     }
 
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String requestUri = request.getRequestURI();
-        log.debug("Method : {}, Request URI : {}", request.getMethod(), requestUri);
+        try {
+            Handler handler = handlerAdapterFactory.create(request);
 
-        final Object handler = getHandler(request);
-        log.debug("handler: {}", handler);
-
-        getAdapter(handler).render(request, response, handler);
-    }
-
-    private Object getHandler(HttpServletRequest request) {
-        return rm.getHandler(request)
-                .orElseThrow(() -> BadHttpRequestException.from(request));
-    }
-
-    private HandlerAdapter getAdapter(Object handler) {
-        return supportedAdapters.stream()
-                .filter(adapter -> adapter.supports(handler))
-                .findFirst()
-                .orElseThrow(() -> NotSupportedHandler.ofHandler(handler));
+            handler.render(request, response);
+        } catch (Exception e) {
+            log.error("error: ", e);
+        }
     }
 }
+

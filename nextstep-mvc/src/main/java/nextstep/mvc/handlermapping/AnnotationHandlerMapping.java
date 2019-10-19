@@ -56,6 +56,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         }
     }
 
+    // 키와 값을 만들어서 채우는 역할?
     private void registerHandlerFromMethods(Class<?> controllerClass, Object controller, Builder mappingBuilder) {
         List<Method> methods = Arrays.asList(controllerClass.getDeclaredMethods());
 
@@ -70,6 +71,8 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     }
 
+    // Handler key generator??
+    // 컴파일 애러를 내지않고 만들도록 연습해보기
     private HandlerKey makeHandlerKey(Method method) {
         RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
 
@@ -77,6 +80,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         return HandlerKey.fromUrlAndRequestMethod(requestMapping.value(), (methods == null) ? RequestMethod.ALL : methods[0]);
     }
 
+    // 어떻게 보면... HandlerExecution 을 만들어내는 역할
     private HandlerExecution makeHandlerExecution(Method method, Object controller) {
         return (request, response) -> {
             try {

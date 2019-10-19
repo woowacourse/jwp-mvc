@@ -1,5 +1,6 @@
 package nextstep.mvc.handleradapter;
 
+
 import nextstep.mvc.tobe.ModelAndView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -7,19 +8,14 @@ import org.slf4j.LoggerFactory;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public interface HandlerAdapter {
-    Logger log = LoggerFactory.getLogger(HandlerAdapter.class);
+public interface Handler {
+    Logger log = LoggerFactory.getLogger(Handler.class);
 
-    boolean supports(Object handler);
+    ModelAndView handle(HttpServletRequest request, HttpServletResponse response) throws Exception;
 
-    ModelAndView handle(
-            HttpServletRequest request,
-            HttpServletResponse response,
-            Object handler) throws Exception;
-
-    default void render(HttpServletRequest request, HttpServletResponse response, Object handler) {
+    default void render(HttpServletRequest request, HttpServletResponse response) {
         try {
-            ModelAndView modelAndView = this.handle(request, response, handler);
+            ModelAndView modelAndView = this.handle(request, response);
             modelAndView.getView().render(modelAndView.getModel(), request, response);
         } catch (Exception e) {
             log.error("Exception : {}", e);
