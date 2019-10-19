@@ -1,6 +1,5 @@
 package nextstep.mvc.view;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import nextstep.web.support.MediaType;
 
@@ -15,11 +14,10 @@ public class JsonView implements View {
     public void render(Map<String, ?> model, HttpServletRequest req, HttpServletResponse res) throws Exception {
         res.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
         switch (model.size()) {
-            case 0:
-                return;
             case 1:
                 objectMapper.writeValue(res.getWriter(), model.values().toArray()[0]);
-                break;
+            case 0:
+                return;
             default:
                 objectMapper.writeValue(res.getWriter(), model);
         }
