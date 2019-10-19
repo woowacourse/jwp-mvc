@@ -1,5 +1,6 @@
 package nextstep.mvc.handlermapping;
 
+import nextstep.mvc.handlermapping.HandlerExecutionHandlerMapping.Builder;
 import nextstep.mvc.tobe.ModelAndView;
 import nextstep.utils.ComponentScanner;
 import nextstep.web.annotation.Controller;
@@ -30,7 +31,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     @Override
     public void initialize() {
         log.info("Initialized !");
-        HandlerExecutionHandlerMapping.Builder mappingBuilder = HandlerExecutionHandlerMapping.builder();
+        Builder mappingBuilder = HandlerExecutionHandlerMapping.builder();
         for (Object basePackage : basePackages) {
             if (!(basePackage instanceof String)) {
                 log.error("not supported basePackage: {}", basePackage.getClass());
@@ -43,7 +44,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         mapping.initialize();
     }
 
-    private void registerHandler(String basePackagePrefix, HandlerExecutionHandlerMapping.Builder mappingBuilder) {
+    private void registerHandler(String basePackagePrefix, Builder mappingBuilder) {
         ComponentScanner componentScanner = ComponentScanner.fromBasePackagePrefix(basePackagePrefix);
 
         Map<Class<?>, Object> controllers = componentScanner.scan(Controller.class);
@@ -55,7 +56,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         }
     }
 
-    private void registerHandlerFromMethods(Class<?> controllerClass, Object controller, HandlerExecutionHandlerMapping.Builder mappingBuilder) {
+    private void registerHandlerFromMethods(Class<?> controllerClass, Object controller, Builder mappingBuilder) {
         List<Method> methods = Arrays.asList(controllerClass.getDeclaredMethods());
 
         methods.stream()
