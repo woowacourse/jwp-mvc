@@ -15,8 +15,6 @@ import java.util.Map;
 public class JsonView implements View {
     @Override
     public void render(Map<String, ?> model, HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         resp.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
         String parsedModel = JsonUtils.toJson(model);
         resp.getWriter().write(parsedModel);
