@@ -6,6 +6,8 @@ public class User {
     private String name;
     private String email;
 
+    public User() {}
+
     public User(String userId, String password, String name, String email) {
         this.userId = userId;
         this.password = password;
@@ -35,16 +37,12 @@ public class User {
         this.email = updateUser.email;
     }
 
-    public boolean matchPassword(String password) {
-        if (password == null) {
-            return false;
-        }
-
+    public boolean authenticate(String password) {
         return this.password.equals(password);
     }
 
     public boolean isSameUser(User user) {
-        return userId.equals(user.userId);
+        return this.userId.equals(user.userId);
     }
 
     @Override

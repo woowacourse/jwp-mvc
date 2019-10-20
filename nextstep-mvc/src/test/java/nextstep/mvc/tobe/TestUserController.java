@@ -1,10 +1,15 @@
 package nextstep.mvc.tobe;
 
+import nextstep.db.DataBase;
+import nextstep.mvc.view.RedirectView;
 import nextstep.web.annotation.PathVariable;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 public class TestUserController {
     private static final Logger logger = LoggerFactory.getLogger(TestUserController.class);
@@ -18,13 +23,17 @@ public class TestUserController {
         return mav;
     }
 
-    @RequestMapping(value = "/users", method = RequestMethod.POST)
-    public ModelAndView create_int_long(long id, int age) {
-        logger.debug("id: {}, age: {}", id, age);
-        ModelAndView mav = new ModelAndView();
-        mav.addObject("id", id);
-        mav.addObject("age", age);
-        return mav;
+    @RequestMapping(value = "/users/create", method = RequestMethod.POST)
+    public ModelAndView signup(HttpServletRequest req, HttpServletResponse res) {
+        DataBase.addUser(
+                new User(
+                        req.getParameter("userId"),
+                        req.getParameter("password"),
+                        req.getParameter("name"),
+                        req.getParameter("email")
+                )
+        );
+        return new ModelAndView(new RedirectView("redirect:/"));
     }
 
     @RequestMapping(value = "/users", method = RequestMethod.POST)

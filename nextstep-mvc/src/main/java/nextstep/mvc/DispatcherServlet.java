@@ -1,67 +1,48 @@
 package nextstep.mvc;
 
-import nextstep.mvc.tobe.ModelAndView;
+import nextstep.mvc.tobe.HandlerAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
 @WebServlet(name = "dispatcher", urlPatterns = "/", loadOnStartup = 1)
 public class DispatcherServlet extends HttpServlet {
-    private static final long serialVersionUID = 1L;
     private static final Logger logger = LoggerFactory.getLogger(DispatcherServlet.class);
-    private static final String DEFAULT_REDIRECT_PREFIX = "redirect:";
+    private static final long serialVersionUID = 1L;
 
     private final List<HandlerMapping> handlerMappings;
+    private final List<HandlerAdapter> handlerAdapters;
 
-    public DispatcherServlet(HandlerMapping... handlerMappings) {
-        this.handlerMappings = Arrays.asList(handlerMappings);
+    public DispatcherServlet(List<HandlerMapping> handlerMappings, List<HandlerAdapter> handlerAdapters) {
+        this.handlerMappings = handlerMappings;
+        this.handlerAdapters = handlerAdapters;
     }
 
     @Override
-    public void init() throws ServletException {
+    public void init() {
         this.handlerMappings.forEach(HandlerMapping::initialize);
     }
 
     @Override
-    protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void service(HttpServletRequest req, HttpServletResponse res) throws ServletException {
         logger.debug("Method : {}, Request URI : {}", req.getMethod(), req.getRequestURI());
-
+        final Object handler = this.handlerMappings.stream().map(x -> x.getHandler(req))
+                                                            .findAny()
+                                                            .orElse(null);
+        final HandlerAdapter handlerAdapter = this.handlerAdapters.stream().filter(x -> x.supports(handler))
+                                                                            .findAny()
+                                                                            .orElse(null);
         try {
-            final Object view = this.handlerMappings.stream()
-                                                    .map(x -> x.getHandler(req))
-                                                    .filter(Objects::nonNull)
-                                                    .findAny()
-                                                    .get()
-                                                    .handle(req, resp);
-            if (view instanceof String) {
-                move((String) view, req, resp);
-            } else if (view instanceof ModelAndView) {
-                final ModelAndView modelAndView = (ModelAndView) view;
-                modelAndView.getView().render(modelAndView.getModel(), req, resp);
-            }
+            handlerAdapter.run(handler, req, res).render(req, res);
         } catch (Throwable e) {
-            logger.error("Exception : {}", e.getMessage());
+            logger.error("Exception : {}", e);
             throw new ServletException(e.getMessage());
         }
-    }
-
-    private void move(String viewName, HttpServletRequest req, HttpServletResponse resp)
-            throws ServletException, IOException {
-        if (viewName.startsWith(DEFAULT_REDIRECT_PREFIX)) {
-            resp.sendRedirect(viewName.substring(DEFAULT_REDIRECT_PREFIX.length()));
-            return;
-        }
-        final RequestDispatcher rd = req.getRequestDispatcher(viewName);
-        rd.forward(req, resp);
     }
 }
