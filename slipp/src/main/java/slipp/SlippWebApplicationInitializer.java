@@ -1,7 +1,6 @@
 package slipp;
 
 import nextstep.mvc.DispatcherServlet;
-import nextstep.mvc.tobe.adapter.ControllerAdapter;
 import nextstep.mvc.tobe.adapter.HandlerAdapter;
 import nextstep.mvc.tobe.adapter.HandlerExecutionAdapter;
 import nextstep.mvc.tobe.handler.AnnotationHandlerMapping;
@@ -37,12 +36,10 @@ public class SlippWebApplicationInitializer implements WebApplicationInitializer
 
     private void initHandlerMappingStrategy() {
         handlerMappings.add(new AnnotationHandlerMapping("slipp.controller"));
-        handlerMappings.add(new ManualHandlerMapping());
     }
 
     private void initHandlerAdapterStrategy() {
         handlerAdapters.add(new HandlerExecutionAdapter());
-        handlerAdapters.add(new ControllerAdapter());
     }
 
 }

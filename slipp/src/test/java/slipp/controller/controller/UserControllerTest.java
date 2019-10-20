@@ -16,8 +16,8 @@ import slipp.support.db.DataBase;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class ListUserControllerTest extends BaseControllerTest {
-    private static final Logger log = LoggerFactory.getLogger(ListUserControllerTest.class);
+class UserControllerTest extends BaseControllerTest {
+    private static final Logger log = LoggerFactory.getLogger(UserControllerTest.class);
 
     @BeforeEach
     void setUp() {
