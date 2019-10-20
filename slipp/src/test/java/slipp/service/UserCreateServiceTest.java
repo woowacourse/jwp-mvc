@@ -9,28 +9,32 @@ import slipp.dto.UserCreatedDto;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class UserCreateServiceTest {
-    private UserCreateService userCreateService = new UserCreateService();
+    private static final String DEFAULT_USER_ID = "hyo";
+    private static final String DEFAULT_USER_PASSWORD = "123";
+    private static final String DEFAULT_USER_NAME = "hyojae";
+    private static final String DEFAULT_USER_EMAIL = "hyo@test.com";
 
+    private UserCreateService userCreateService = new UserCreateService();
     private MockHttpServletRequest request;
 
     @BeforeEach
     void setUp() {
         request = new MockHttpServletRequest();
+
+        request.addParameter("userId", DEFAULT_USER_ID);
+        request.addParameter("password", DEFAULT_USER_PASSWORD);
+        request.addParameter("name", DEFAULT_USER_NAME);
+        request.addParameter("email", DEFAULT_USER_EMAIL);
     }
 
     @Test
     @DisplayName("유저를 정상적으로 생성하고, DB에 저장한다.")
     void addUser() {
-        request.addParameter("userId", "hyo");
-        request.addParameter("password", "123");
-        request.addParameter("name", "hyojae");
-        request.addParameter("email", "hyo@test.com");
+        UserCreatedDto userCreatedDto = new UserCreatedDto(DEFAULT_USER_ID,
+                                                            DEFAULT_USER_PASSWORD,
+                                                            DEFAULT_USER_NAME,
+                                                            DEFAULT_USER_EMAIL);
 
-        UserCreatedDto userCreatedDto = userCreateService.addUser(request);
-
-        assertThat(userCreatedDto.getUserId()).isEqualTo("hyo");
-        assertThat(userCreatedDto.getPassword()).isEqualTo("123");
-        assertThat(userCreatedDto.getName()).isEqualTo("hyojae");
-        assertThat(userCreatedDto.getEmail()).isEqualTo("hyo@test.com");
+        assertThat(userCreateService.addUser(userCreatedDto)).isEqualTo(DEFAULT_USER_ID);
     }
 }

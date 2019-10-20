@@ -9,15 +9,15 @@ import slipp.support.db.DataBase;
 public class UserCreateService {
     private static final Logger logger = LoggerFactory.getLogger(UserCreateService.class);
 
-    public UserCreatedDto addUser(UserCreatedDto userCreatedDto) {
+    public String addUser(UserCreatedDto userCreatedDto) {
         User user = new User(userCreatedDto.getUserId(),
-                userCreatedDto.getPassword(),
-                userCreatedDto.getName(),
-                userCreatedDto.getEmail());
-
-        logger.debug("User : {}", user);
+                            userCreatedDto.getPassword(),
+                            userCreatedDto.getName(),
+                            userCreatedDto.getEmail());
+        logger.debug("Create user : {}", user);
 
         DataBase.addUser(user);
-        return new UserCreatedDto(user.getUserId(), user.getPassword(), user.getName(), user.getEmail());
+
+        return user.getUserId();
     }
 }
