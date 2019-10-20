@@ -1,16 +1,13 @@
 package nextstep.mvc.handlermapping;
 
 import nextstep.mvc.handlermapping.HandlerExecutionHandlerMapping.Builder;
-import nextstep.mvc.tobe.ModelAndView;
 import nextstep.utils.ComponentScanner;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
-import nextstep.web.annotation.RequestMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
@@ -19,6 +16,9 @@ import java.util.Optional;
 
 public class AnnotationHandlerMapping implements HandlerMapping {
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
+
+    private final HandlerExecutionFactory handlerExecutionFactory = HandlerExecutionFactory.getInstance();
+    private final HandlerKeyFactory handlerKeyFactory = HandlerKeyFactory.getInstance();
 
     private Object[] basePackages;
     // [TODO] 좀 더 확장성 있게 할 수 있지 않을까?
@@ -50,46 +50,35 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         Map<Class<?>, Object> controllers = componentScanner.scan(Controller.class);
         for (final Class<?> controllerClass : controllers.keySet()) {
             log.info("controllerClass :{}", controllerClass);
-            Object controller = controllers.get(controllerClass);
 
-            registerHandlerFromMethods(controllerClass, controller, mappingBuilder);
+            registerHandlerFromClass(controllerClass, mappingBuilder);
         }
     }
 
-    // 키와 값을 만들어서 채우는 역할?
-    private void registerHandlerFromMethods(Class<?> controllerClass, Object controller, Builder mappingBuilder) {
+    private void registerHandlerFromClass(Class<?> controllerClass, Builder mappingBuilder) {
         List<Method> methods = Arrays.asList(controllerClass.getDeclaredMethods());
 
         methods.stream()
                 .filter(method -> method.isAnnotationPresent(RequestMapping.class))
-                .forEach(method -> {
-                    HandlerKey handlerKey = makeHandlerKey(method);
-                    HandlerExecution handlerExecution = makeHandlerExecution(method, controller);
+                .forEach(method -> registerFromMethod(method, mappingBuilder));
+    }
 
-                    mappingBuilder.addKeyAndExecution(handlerKey, handlerExecution);
+    private void registerFromMethod(Method method, Builder mappingBuilder) {
+        try {
+            tryRegisterFromMethod(method, mappingBuilder);
+        } catch (RuntimeException e) {
+            log.info("error: {}", e);
+        }
+    }
+
+    private void tryRegisterFromMethod(Method method, Builder mappingBuilder) {
+        HandlerExecution execution = handlerExecutionFactory.fromMethod(method)
+                .orElseThrow(() -> new RuntimeException("HandlerExecution 을 만족하지 않는 메소드 시그니처입니다."));
+
+        handlerKeyFactory.fromMethod(method).stream()
+                .forEach(key -> {
+                    mappingBuilder.addKeyAndExecution(key, execution);
                 });
-
-    }
-
-    // Handler key generator??
-    // 컴파일 애러를 내지않고 만들도록 연습해보기
-    private HandlerKey makeHandlerKey(Method method) {
-        RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-
-        RequestMethod[] methods = requestMapping.method();
-        return HandlerKey.fromUrlAndRequestMethod(requestMapping.value(), (methods == null) ? RequestMethod.ALL : methods[0]);
-    }
-
-    // 어떻게 보면... HandlerExecution 을 만들어내는 역할
-    private HandlerExecution makeHandlerExecution(Method method, Object controller) {
-        return (request, response) -> {
-            try {
-                return (ModelAndView) method.invoke(controller, request, response);
-            } catch (IllegalAccessException | InvocationTargetException e) {
-                log.error("e: ", e);
-                return null;
-            }
-        };
     }
 
     @Override

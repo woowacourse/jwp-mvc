@@ -56,15 +56,7 @@ public class HandlerExecutionHandlerMapping implements HandlerMapping {
         log.debug("URI: {}, method: {}", url, requestMethod);
 
         HandlerKey handlerKey = HandlerKey.fromUrlAndRequestMethod(url, requestMethod);
-        if (mappings.containsKey(handlerKey)) {
-            return Optional.of(mappings.get(handlerKey));
-        }
 
-        HandlerKey keyOfAll = HandlerKey.fromUrlAndRequestMethod(url, RequestMethod.ALL);
-        if (mappings.containsKey(keyOfAll)) {
-            return Optional.of(mappings.get(keyOfAll));
-        }
-
-        return Optional.empty();
+        return Optional.ofNullable(mappings.get(handlerKey));
     }
 }
