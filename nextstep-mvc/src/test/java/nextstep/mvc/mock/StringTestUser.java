@@ -3,9 +3,11 @@ package nextstep.mvc.mock;
 public class StringTestUser {
     private String userId;
     private String password;
-    public StringTestUser(){
+
+    public StringTestUser() {
 
     }
+
     public StringTestUser(String userId, String password) {
         this.userId = userId;
         this.password = password;

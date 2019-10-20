@@ -1,6 +1,5 @@
 package nextstep.study;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import nextstep.mvc.mock.Car;
@@ -9,8 +8,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -18,7 +15,7 @@ public class JsonTest {
     @DisplayName("requset의 바디를 가져옴")
     @Test
     void get_body_test() throws IOException {
-        MockHttpServletRequest request = new MockHttpServletRequest("POST","/json");
+        MockHttpServletRequest request = new MockHttpServletRequest("POST", "/json");
         String testWord = "test";
         String resultWord = "";
         request.setContent(testWord.getBytes());
@@ -32,10 +29,11 @@ public class JsonTest {
     @Test
     void jackson_test() throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
-        Car car = new Car("yellow","truck");
+        Car car = new Car("yellow", "truck");
         String parsedToJson = objectMapper.writeValueAsString(car);
-        Car reParsedCar = objectMapper.readValue(parsedToJson, new TypeReference<Car>(){});
+        Car reParsedCar = objectMapper.readValue(parsedToJson, new TypeReference<Car>() {
+        });
         assertThat(reParsedCar).isEqualTo(car);
     }
-    
+
 }

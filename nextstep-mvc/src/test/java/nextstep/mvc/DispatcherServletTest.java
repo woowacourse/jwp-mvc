@@ -1,8 +1,5 @@
 package nextstep.mvc;
 
-import nextstep.mvc.tobe.AbstractHandlerMapping;
-import nextstep.mvc.tobe.handlerAdapter.RequestHandlerAdapter;
-import nextstep.mvc.tobe.handlerAdapter.HandlerAdapter;
 import nextstep.mvc.tobe.support.ApplicationContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -10,8 +7,6 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 import javax.servlet.ServletException;
-import java.util.Arrays;
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -20,7 +15,7 @@ class DispatcherServletTest {
 
     @BeforeEach
     void setup() {
-        ApplicationContext applicationContext = new ApplicationContext("nextstep.mvc.tobe","slipp");
+        ApplicationContext applicationContext = new ApplicationContext("nextstep.mvc.tobe", "slipp");
         dispatcherServlet = new DispatcherServlet(applicationContext);
         dispatcherServlet.init();
     }

@@ -4,9 +4,11 @@ public class TestUser {
     private String userId;
     private String password;
     private Integer age;
-    public TestUser(){
+
+    public TestUser() {
 
     }
+
     public TestUser(String userId, String password, Integer age) {
         this.userId = userId;
         this.password = password;

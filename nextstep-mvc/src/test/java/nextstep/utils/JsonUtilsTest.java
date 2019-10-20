@@ -2,7 +2,6 @@ package nextstep.utils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.netty.util.internal.StringUtil;
 import nextstep.mvc.mock.Car;
 import nextstep.mvc.mock.User;
 import org.apache.commons.lang3.StringUtils;
@@ -26,11 +25,11 @@ public class JsonUtilsTest {
     @DisplayName("크기가 1인 model을 Json으로 변환")
     @Test
     void toJson_1sizeModel_equalToUserJson() throws JsonProcessingException {
-        Map<String,Object> model;
+        Map<String, Object> model;
         ObjectMapper objectMapper = new ObjectMapper();
-        model = new HashMap<String,Object>();
-        User user = new User("id","password","name","email");
-        model.put("user",user);
+        model = new HashMap<String, Object>();
+        User user = new User("id", "password", "name", "email");
+        model.put("user", user);
         String json = JsonUtils.toJson(model);
         assertThat(json).isEqualTo(objectMapper.writeValueAsString(user));
     }
@@ -38,9 +37,9 @@ public class JsonUtilsTest {
     @DisplayName("크기가 0인 model을 Json으로 변환")
     @Test
     void toJson_0sizeModel_empty() throws JsonProcessingException {
-        Map<String,Object> model;
+        Map<String, Object> model;
         ObjectMapper objectMapper = new ObjectMapper();
-        model = new HashMap<String,Object>();
+        model = new HashMap<String, Object>();
         String json = JsonUtils.toJson(model);
         assertThat(json).isEqualTo(StringUtils.EMPTY);
     }
@@ -48,13 +47,13 @@ public class JsonUtilsTest {
     @DisplayName("크기가 1 초과인 model을 Json으로 변환")
     @Test
     void toJson_over1sizeModel_equalToUsersJson() throws JsonProcessingException {
-        Map<String,Object> model;
+        Map<String, Object> model;
         ObjectMapper objectMapper = new ObjectMapper();
-        model = new HashMap<String,Object>();
-        User user = new User("id","password","name","email");
-        model.put("user1",user);
-        model.put("user2",user);
-        model.put("user3",user);
+        model = new HashMap<String, Object>();
+        User user = new User("id", "password", "name", "email");
+        model.put("user1", user);
+        model.put("user2", user);
+        model.put("user3", user);
         String json = JsonUtils.toJson(model);
         assertThat(json).isEqualTo(objectMapper.writeValueAsString(model));
     }

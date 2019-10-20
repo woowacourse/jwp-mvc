@@ -3,7 +3,6 @@ package nextstep.mvc.tobe.argumentResolver;
 import nextstep.mvc.MethodParameter;
 import nextstep.mvc.mock.ArgumentResolverTestHelper;
 import nextstep.mvc.mock.StringTestUser;
-import nextstep.mvc.mock.TestUser;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

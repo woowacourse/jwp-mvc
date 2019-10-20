@@ -2,7 +2,6 @@ package slipp.controller;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import slipp.dto.UserCreatedDto;
 import support.test.WebTestClient;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -16,7 +15,7 @@ class HomeControllerTest {
     }
 
     @Test
-    void getHomeStatusIsOk(){
+    void getHomeStatusIsOk() {
         assertDoesNotThrow(() -> client.getRequest("/").isOk());
     }
 }

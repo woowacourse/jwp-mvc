@@ -47,6 +47,4 @@ public class ProfileController {
         user.update(updateUser);
         return "redirect:/";
     }
-
-
 }
