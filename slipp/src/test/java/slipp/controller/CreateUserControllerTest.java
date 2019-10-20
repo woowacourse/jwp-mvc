@@ -4,8 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.web.reactive.server.WebTestClient;
-import reactor.core.publisher.Mono;
-import slipp.dto.UserCreatedDto;
+import org.springframework.web.reactive.function.BodyInserters;
 
 class CreateUserControllerTest {
     private static final String DEFAULT_URL = "http://localhost";
@@ -30,12 +29,13 @@ class CreateUserControllerTest {
     @Test
     @DisplayName("유저를 생성한다.")
     void createUser() {
-        UserCreatedDto userCreatedDto = new UserCreatedDto("hyo", "123", "hyojae", "hyo@test.com");
-
         testClientBuilder.build()
                 .post()
                 .uri("/users/create")
-                .body(Mono.just(userCreatedDto), UserCreatedDto.class)
+                .body(BodyInserters.fromFormData("userId", "hyo")
+                        .with("password", "123")
+                        .with("name", "hyojae")
+                        .with("email", "hyo@test.com"))
                 .exchange()
                 .expectStatus().is3xxRedirection();
     }
