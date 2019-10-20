@@ -47,4 +47,8 @@ public class ModelAndView {
     public void render(HttpServletRequest req, HttpServletResponse resp) throws Exception {
         this.view.render(model, req, resp);
     }
+
+    public void addView(View view) {
+        this.view = view;
+    }
 }

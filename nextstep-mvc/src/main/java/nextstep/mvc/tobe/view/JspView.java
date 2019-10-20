@@ -7,9 +7,14 @@ import java.util.Map;
 
 public class JspView implements View {
     private static final String JSP_SUFFIX = ".jsp";
+
     private String viewName;
 
     public JspView(String viewName) {
+        setJspSuffix(viewName);
+    }
+
+    private void setJspSuffix(String viewName) {
         this.viewName = viewName + JSP_SUFFIX;
     }
 
@@ -18,5 +23,4 @@ public class JspView implements View {
         RequestDispatcher rd = req.getRequestDispatcher(viewName);
         rd.forward(req, resp);
     }
-
 }

@@ -48,7 +48,6 @@ public class JsonViewTest {
         Car actual = JsonUtils.toObject(response.getContentAsString(), Car.class);
         assertThat(response.getContentType()).isEqualTo(MediaType.APPLICATION_JSON_UTF8_VALUE);
         assertThat(actual).isEqualTo(expected);
-        logger.debug(response.getContentAsString());
     }
 
     @Test
@@ -61,22 +60,6 @@ public class JsonViewTest {
         view.render(model, request, response);
 
         assertThat(response.getContentType()).isEqualTo(MediaType.APPLICATION_JSON_UTF8_VALUE);
-        assertThat(response.getContentAsString()).isEqualTo("{\"car\":{\"color\":\"Black\",\"type\":\"Sonata\"},\"name\":\"포비\"}");
-        logger.debug("response body : {}", response.getContentAsString());
-    }
-
-    @Test
-    void render_over_three_element() throws Exception {
-        Map<String, Object> model = new HashMap<>();
-        Car expected = new Car("Black", "Sonata");
-        model.put("car", expected);
-        model.put("name", "포비");
-        model.put("class", "우테코");
-
-        view.render(model, request, response);
-
-        assertThat(response.getContentType()).isEqualTo(MediaType.APPLICATION_JSON_UTF8_VALUE);
-        assertThat(response.getContentAsString()).isEqualTo("{\"car\":{\"color\":\"Black\",\"type\":\"Sonata\"},\"name\":\"포비\",\"class\":\"우테코\"}");
         logger.debug("response body : {}", response.getContentAsString());
     }
 }
