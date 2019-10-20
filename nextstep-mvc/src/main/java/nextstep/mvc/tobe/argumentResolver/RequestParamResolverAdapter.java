@@ -1,4 +1,4 @@
-package nextstep.mvc.tobe;
+package nextstep.mvc.tobe.argumentResolver;
 
 import nextstep.web.annotation.RequestParam;
 

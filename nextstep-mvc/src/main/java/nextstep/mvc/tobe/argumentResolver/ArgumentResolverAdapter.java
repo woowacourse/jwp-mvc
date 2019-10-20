@@ -1,4 +1,4 @@
-package nextstep.mvc.tobe;
+package nextstep.mvc.tobe.argumentResolver;
 
 import java.lang.reflect.Parameter;
 
