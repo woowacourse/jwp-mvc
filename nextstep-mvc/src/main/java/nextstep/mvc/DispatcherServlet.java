@@ -2,8 +2,10 @@ package nextstep.mvc;
 
 import nextstep.mvc.exception.HandlerAdapterNotFoundException;
 import nextstep.mvc.exception.HandlerNotExistException;
-import nextstep.mvc.tobe.HandlerAdaptor;
+import nextstep.mvc.tobe.HandlerAdapter;
 import nextstep.mvc.tobe.ModelAndView;
+import nextstep.mvc.tobe.View;
+import nextstep.mvc.tobe.ViewResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,11 +22,11 @@ import java.util.Objects;
 public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger logger = LoggerFactory.getLogger(DispatcherServlet.class);
-    private final List<HandlerAdaptor> handlerAdaptors;
+    private final List<HandlerAdapter> handlerAdapters;
     private final List<HandlerMapping> handlerMappings;
 
-    public DispatcherServlet(List<HandlerAdaptor> handlerAdaptors, List<HandlerMapping> handlerMappings) {
-        this.handlerAdaptors = handlerAdaptors;
+    public DispatcherServlet(List<HandlerAdapter> handlerAdapters, List<HandlerMapping> handlerMappings) {
+        this.handlerAdapters = handlerAdapters;
         this.handlerMappings = handlerMappings;
     }
 
@@ -39,20 +41,27 @@ public class DispatcherServlet extends HttpServlet {
         logger.debug("Method : {}, Request URI : {}", req.getMethod(), requestUri);
 
         Object handler = getHandler(req);
-        HandlerAdaptor handlerAdaptor = findHandlerAdapter(handler);
+        HandlerAdapter handlerAdapter = findHandlerAdapter(handler);
         try {
-            ModelAndView view = handlerAdaptor.handle(req, resp, handler);
-            view.render(req, resp);
+            ModelAndView modelAndView = handlerAdapter.handle(req, resp, handler);
+            view(req, resp, modelAndView);
         } catch (Exception e) {
-            logger.error("Exception : {}", e);
+            logger.info("URI: {}", req.getRequestURI());
+            logger.error("Exception : ", e);
             throw new ServletException(e.getMessage());
         }
     }
 
-    private HandlerAdaptor findHandlerAdapter(Object handler) {
-        return handlerAdaptors.stream()
-            .filter(handlerAdaptor -> handlerAdaptor.supports(handler))
-            .findFirst()
+    private void view(HttpServletRequest req, HttpServletResponse resp, ModelAndView modelAndView) throws Exception {
+        ViewResolver viewResolver = new ViewResolver();
+        View view = viewResolver.resolve(modelAndView.getView());
+        view.render(modelAndView.getModel(), req, resp);
+    }
+
+    private HandlerAdapter findHandlerAdapter(Object handler) {
+        return handlerAdapters.stream()
+            .filter(handlerAdapter -> handlerAdapter.supports(handler))
+            .findAny()
             .orElseThrow(HandlerAdapterNotFoundException::new);
     }
 
@@ -60,7 +69,7 @@ public class DispatcherServlet extends HttpServlet {
         return handlerMappings.stream()
             .map(handlerMapping -> handlerMapping.getHandler(req))
             .filter(Objects::nonNull)
-            .findFirst()
+            .findAny()
             .orElseThrow(HandlerNotExistException::new);
     }
 }

@@ -8,8 +8,7 @@ import org.springframework.test.web.reactive.server.EntityExchangeResult;
 import support.test.NsWebTestClient;
 import support.test.NsWebTestServer;
 
-public class IndexControllerTest {
-    private static final Logger logger = LoggerFactory.getLogger(UserControllerTest.class);
+public class ForwardControllerTest {
     private NsWebTestClient nsWebTestClient;
 
     @BeforeEach

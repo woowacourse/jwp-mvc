@@ -3,12 +3,9 @@ package nextstep.mvc.tobe;
 import com.google.common.collect.Maps;
 import nextstep.mvc.HandlerMapping;
 import nextstep.mvc.exception.AnnotationScanFailException;
-import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
 import org.reflections.Reflections;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.InvocationTargetException;
@@ -18,7 +15,6 @@ import java.util.Map;
 import java.util.Set;
 
 public class AnnotationHandlerMapping implements HandlerMapping {
-    private static final Logger logger = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
     private Object[] basePackage;
 
     private Map<HandlerKey, HandlerExecution> handlerExecutions = Maps.newHashMap();
@@ -29,32 +25,32 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     @Override
     public void initialize() {
-        Reflections reflections = new Reflections(basePackage);
-        scanControllers(reflections);
-        // TODO scan services
-    }
-
-    private void scanControllers(Reflections reflections) {
-        Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
+        ControllerScanner controllerScanner = new ControllerScanner(new Reflections(basePackage));
+        Set<Class<?>> controllers = controllerScanner.scan();
         try {
-            for (Class<?> controller : controllers) {
-                findHandlersInController(controller);
-            }
+            initializeHandlerExecutions(controllers);
         } catch (Exception e) {
             throw new AnnotationScanFailException(e.getCause());
         }
+        // TODO scan services
     }
 
-    private void findHandlersInController(Class<?> controller) throws InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        Object controllerInstance = controller.getDeclaredConstructor().newInstance();
-        logger.debug("c : {}", controller);
-        Method[] methods = controller.getDeclaredMethods();
+    private void initializeHandlerExecutions(Set<Class<?>> controllers) throws InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+        for (Class<?> controller : controllers) {
+            Object controllerInstance = controller.getDeclaredConstructor().newInstance();
+            RequestMappingScanner requestMappingScanner = new RequestMappingScanner(controller);
+            Method[] methods = requestMappingScanner.scanMethods();
+            initializeHandlerExecution(controllerInstance, methods);
+        }
+    }
+
+    private void initializeHandlerExecution(Object controllerInstance, Method[] methods) {
         Arrays.stream(methods)
             .filter(method -> method.isAnnotationPresent(RequestMapping.class))
-            .forEach(method -> addHandlerExcution(controllerInstance, method));
+            .forEach(method -> addHandlerExecution(controllerInstance, method));
     }
 
-    private void addHandlerExcution(Object controllerInstance, Method method) {
+    private void addHandlerExecution(Object controllerInstance, Method method) {
         RequestMapping annotation = method.getAnnotation(RequestMapping.class);
         String url = annotation.value();
         RequestMethod[] requestMethods = annotation.method();
