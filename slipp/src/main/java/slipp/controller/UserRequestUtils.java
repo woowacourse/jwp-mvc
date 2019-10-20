@@ -21,4 +21,10 @@ public class UserRequestUtils {
         log.debug("userId: {}", userId);
         return userId;
     }
+
+    public static String getPassword(HttpServletRequest req) {
+        String password = req.getParameter("password");
+        log.debug("password: {}", password);
+        return password;
+    }
 }
