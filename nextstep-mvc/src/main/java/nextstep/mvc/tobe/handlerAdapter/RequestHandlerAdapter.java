@@ -39,7 +39,6 @@ public class RequestHandlerAdapter implements HandlerAdapter {
 
         Object result = handlerExecution.handle(resolvedArguments);
 
-
         if (result instanceof String) {
             return new ModelAndView((String) result);
         }

@@ -1,7 +1,5 @@
 package nextstep.mvc.tobe.view;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import nextstep.mvc.tobe.View;
 import nextstep.utils.JsonUtils;
 import org.springframework.http.MediaType;

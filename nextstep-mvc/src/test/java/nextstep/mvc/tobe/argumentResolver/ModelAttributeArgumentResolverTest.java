@@ -55,6 +55,5 @@ class ModelAttributeArgumentResolverTest {
         StringTestUser testUser = (StringTestUser) argumentResolver.resolveArgument(methodParameters.get(0), request, response);
         assertThat(testUser.getUserId()).isEqualTo(requestUser.getUserId());
         assertThat(testUser.getPassword()).isEqualTo(requestUser.getPassword());
-
     }
 }
