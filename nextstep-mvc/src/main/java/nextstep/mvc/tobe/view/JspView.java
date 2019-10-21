@@ -6,10 +6,16 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 
 public class JspView implements View {
+    private static final String JSP_SUFFIX = ".jsp";
+
     private String viewName;
 
     public JspView(String viewName) {
-        this.viewName = viewName;
+        setJspSuffix(viewName);
+    }
+
+    private void setJspSuffix(String viewName) {
+        this.viewName = viewName + JSP_SUFFIX;
     }
 
     @Override
@@ -17,5 +23,4 @@ public class JspView implements View {
         RequestDispatcher rd = req.getRequestDispatcher(viewName);
         rd.forward(req, resp);
     }
-
 }

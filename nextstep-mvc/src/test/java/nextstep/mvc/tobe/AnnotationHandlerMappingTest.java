@@ -1,8 +1,8 @@
 package nextstep.mvc.tobe;
 
 import nextstep.db.DataBase;
+import nextstep.mvc.tobe.handler.AnnotationHandlerMapping;
 import nextstep.mvc.tobe.handler.HandlerExecution;
-import nextstep.mvc.tobe.handlerresolver.AnnotationHandlerMapping;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -30,7 +30,7 @@ public class AnnotationHandlerMappingTest {
         request.setParameter("userId", user.getUserId());
         MockHttpServletResponse response = new MockHttpServletResponse();
 
-        HandlerExecution handlerExecution = handlerMapping.getHandler(request);
+        HandlerExecution handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
         handlerExecution.handle(request, response);
 
         assertThat(request.getAttribute("user")).isEqualTo(user);
@@ -43,7 +43,7 @@ public class AnnotationHandlerMappingTest {
         request.setParameter("name", user.getName());
         request.setParameter("email", user.getEmail());
         MockHttpServletResponse response = new MockHttpServletResponse();
-        HandlerExecution handlerExecution = handlerMapping.getHandler(request);
+        HandlerExecution handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
         handlerExecution.handle(request, response);
     }
 }

@@ -1,7 +1,8 @@
 package slipp.controller;
 
-import nextstep.mvc.tobe.handler.HandlerExecution;
+import nextstep.mvc.tobe.adapter.HandlerAdapter;
 import nextstep.mvc.tobe.view.ModelAndView;
+import nextstep.mvc.tobe.view.RedirectView;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -15,8 +16,8 @@ import slipp.support.db.DataBase;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class ListUserControllerTest extends BaseControllerTest {
-    private static final Logger log = LoggerFactory.getLogger(ListUserControllerTest.class);
+class UserControllerTest extends BaseControllerTest {
+    private static final Logger log = LoggerFactory.getLogger(UserControllerTest.class);
 
     @BeforeEach
     void setUp() {
@@ -28,10 +29,11 @@ class ListUserControllerTest extends BaseControllerTest {
         MockHttpServletRequest request = new MockHttpServletRequest("GET", "/users");
         MockHttpServletResponse response = new MockHttpServletResponse();
 
-        HandlerExecution handler = mappingHandler(request, response);
-        ModelAndView modelAndView = handler.handle(request, response);
+        Object handler = mappingHandler(request, response);
+        HandlerAdapter adapter = mappingAdapter(handler);
+        ModelAndView mav = adapter.handle(request, response, handler);
 
-        assertThat(modelAndView.getViewName()).isEqualTo("redirect:/users/loginForm");
+        assertThat(mav.getView()).isEqualTo(new RedirectView("/users/loginForm"));
     }
 
     @Test
@@ -47,8 +49,9 @@ class ListUserControllerTest extends BaseControllerTest {
         DataBase.addUser(new User("user2", "password", "user2", "user2@user.com"));
         DataBase.addUser(new User("user3", "password", "user3", "user3@user.com"));
 
-        HandlerExecution handler = mappingHandler(request, response);
-        handler.handle(request, response);
+        Object handler = mappingHandler(request, response);
+        HandlerAdapter adapter = mappingAdapter(handler);
+        ModelAndView mav = adapter.handle(request, response, handler);
 
         assertThat(request.getAttribute(("users"))).isNotNull();
     }

@@ -1,8 +1,6 @@
-package nextstep.mvc.tobe.handlerresolver;
+package nextstep.mvc.tobe.handler;
 
 import com.google.common.collect.Maps;
-import nextstep.mvc.tobe.handler.HandlerExecution;
-import nextstep.mvc.tobe.handler.HandlerKey;
 import nextstep.mvc.tobe.scanner.ControllerScanner;
 import nextstep.mvc.tobe.scanner.RequestMappingScanner;
 import org.slf4j.Logger;
@@ -13,7 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 import java.util.Set;
 
-public class AnnotationHandlerMapping implements HandlerResolver {
+public class AnnotationHandlerMapping implements HandlerMapping {
     private static final Logger logger = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
     private Object[] basePackage;
@@ -36,11 +34,10 @@ public class AnnotationHandlerMapping implements HandlerResolver {
     }
 
     @Override
-    public HandlerExecution getHandler(HttpServletRequest req) {
+    public Object getHandler(HttpServletRequest req) {
         return handlerExecutions.get(new HandlerKey(req));
     }
 
-    @Override
     public boolean support(HttpServletRequest req, HttpServletResponse resp) {
         return handlerExecutions.get(new HandlerKey(req)) != null;
     }

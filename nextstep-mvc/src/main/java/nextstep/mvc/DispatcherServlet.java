@@ -1,16 +1,14 @@
 package nextstep.mvc;
 
-import nextstep.mvc.tobe.handler.HandlerExecution;
-import nextstep.mvc.tobe.handlerresolver.HandlerResolver;
+import nextstep.mvc.tobe.adapter.HandlerAdapter;
+import nextstep.mvc.tobe.adapter.NoSuchAdapterException;
+import nextstep.mvc.tobe.handler.HandlerMapping;
+import nextstep.mvc.tobe.handler.NoSuchHandlerException;
 import nextstep.mvc.tobe.view.ModelAndView;
-import nextstep.mvc.tobe.view.View;
-import nextstep.mvc.tobe.view.exception.NotSupportedViewException;
 import nextstep.mvc.tobe.view.exception.ViewRenderException;
-import nextstep.mvc.tobe.view.viewresolver.ViewResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -22,56 +20,52 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger logger = LoggerFactory.getLogger(DispatcherServlet.class);
     private static final long serialVersionUID = 1L;
 
-    private List<HandlerResolver> handlerResolvers;
-    private List<ViewResolver> viewResolvers;
+    private List<HandlerMapping> handlerMappings;
+    private List<HandlerAdapter> handlerAdapters;
 
-    public DispatcherServlet(List<HandlerResolver> handlerAdapters, List<ViewResolver> viewResolvers) {
-        this.handlerResolvers = handlerAdapters;
-        this.viewResolvers = viewResolvers;
+    public DispatcherServlet(List<HandlerMapping> handlerMappings, List<HandlerAdapter> handlerAdapters) {
+        this.handlerMappings = handlerMappings;
+        this.handlerAdapters = handlerAdapters;
     }
 
     @Override
-    public void init() throws ServletException {
-        handlerResolvers.forEach(HandlerResolver::initialize);
+    public void init() {
+        handlerMappings.forEach(HandlerMapping::initialize);
     }
 
     @Override
-    protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException {
-        HandlerExecution handler = mappingHandler(req, resp);
-        ModelAndView mav = handle(req, resp, handler);
-        View view = resolveView(mav);
+    protected void service(HttpServletRequest req, HttpServletResponse resp) {
+        Object handler = mappingHandler(req, resp);
+        HandlerAdapter adapter = mappingAdapter(handler);
+        ModelAndView mav = handleAdapter(req, resp, handler, adapter);
         try {
-            view.render(mav.getModel(), req, resp);
+            mav.render(req, resp);
         } catch (Exception e) {
             logger.debug(e.getMessage(), e.getCause());
             throw new ViewRenderException();
         }
     }
 
-    private HandlerExecution mappingHandler(HttpServletRequest req, HttpServletResponse resp) {
-        return handlerResolvers.stream().filter(resolver -> resolver.support(req, resp))
-                .findAny()
-                .orElseThrow(IllegalAccessError::new)
-                .getHandler(req)
-                ;
-    }
-
-    private ModelAndView handle(HttpServletRequest req, HttpServletResponse resp, HandlerExecution handlerExecution) {
-        ModelAndView mav = null;
+    private ModelAndView handleAdapter(HttpServletRequest req, HttpServletResponse resp, Object handler, HandlerAdapter adapter) {
         try {
-            mav = handlerExecution.handle(req, resp);
+            return adapter.handle(req, resp, handler);
         } catch (Exception e) {
-            logger.debug("message : {}, cause : {}", e.getMessage(), e.getCause());
-            throw new RuntimeException(e);
+            logger.debug(e.getMessage(), e.getCause());
+            throw new NoSuchAdapterException();
         }
-        return mav;
     }
 
-    private View resolveView(ModelAndView mav) {
-        return viewResolvers.stream().filter(viewResolver -> viewResolver.support(mav))
+    private HandlerAdapter mappingAdapter(Object handler) {
+        return handlerAdapters.stream().filter(adapter -> adapter.support(handler))
                 .findFirst()
-                .orElseThrow(NotSupportedViewException::new)
-                .resolve(mav)
-                ;
+                .orElseThrow(NoSuchAdapterException::new);
     }
+
+    private Object mappingHandler(HttpServletRequest req, HttpServletResponse resp) {
+        return handlerMappings.stream().filter(handler -> handler.support(req, resp))
+                .findFirst()
+                .orElseThrow(NoSuchHandlerException::new)
+                .getHandler(req);
+    }
+
 }
