@@ -1,6 +1,8 @@
 package slipp.controller;
 
 import nextstep.web.annotation.Controller;
+import nextstep.web.annotation.RequestMapping;
+import nextstep.web.annotation.RequestMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import slipp.domain.User;
@@ -16,6 +18,7 @@ public class ProfileController {
 
     private UserService userService = new UserService();
 
+    @RequestMapping(value = "/user/profile", method = RequestMethod.GET)
     public String show(HttpServletRequest req, HttpServletResponse resp) {
         String userId = req.getParameter("userId");
         if (userService.isUserExists(userId)) {
@@ -25,6 +28,7 @@ public class ProfileController {
         return "/user/profile.jsp";
     }
 
+    @RequestMapping(value = "/users/updateForm", method = RequestMethod.GET)
     public String updateForm(HttpServletRequest req, HttpServletResponse resp) throws Exception {
         String userId = req.getParameter("userId");
         User user = userService.findUserById(userId);
@@ -35,6 +39,7 @@ public class ProfileController {
         return "/user/updateForm.jsp";
     }
 
+    @RequestMapping(value = "/users/updateForm", method = RequestMethod.POST)
     public String execute(HttpServletRequest req, HttpServletResponse resp) throws Exception {
         User user = userService.findUserById(req.getParameter("userId"));
         if (!UserSessionUtils.isSameUser(req.getSession(), user)) {

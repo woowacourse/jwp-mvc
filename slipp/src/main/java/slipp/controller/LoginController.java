@@ -40,7 +40,7 @@ public class LoginController {
         return user == null || !user.matchPassword(password);
     }
 
-    @RequestMapping(value = "/users/logout", method = RequestMethod.POST)
+    @RequestMapping(value = "/users/logout")
     public String logout(HttpServletRequest req, HttpServletResponse resp) throws Exception {
         HttpSession session = req.getSession();
         session.removeAttribute(UserSessionUtils.USER_SESSION_KEY);
