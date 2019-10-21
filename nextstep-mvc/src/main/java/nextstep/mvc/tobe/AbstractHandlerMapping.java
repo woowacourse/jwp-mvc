@@ -2,6 +2,8 @@ package nextstep.mvc.tobe;
 
 import com.google.common.collect.Maps;
 import nextstep.mvc.HandlerMapping;
+import nextstep.mvc.tobe.support.AnnotationApplicationContext;
+import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
 
@@ -12,22 +14,17 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-public class AnnotationHandlerMapping implements HandlerMapping {
-    private Object[] basePackage;
-
+public class AbstractHandlerMapping implements HandlerMapping {
     private Map<HandlerKey, HandlerExecution> handlerExecutions = Maps.newHashMap();
 
-    public AnnotationHandlerMapping(Object... basePackage) {
-        this.basePackage = basePackage;
-    }
-
     @Override
-    public void initialize() {
-        ControllerScanner controllerScanner = new ControllerScanner(basePackage);
-        for (Class controller : controllerScanner.getControllers().keySet()) {
+    public void initialize(AnnotationApplicationContext context) {
+        context.scanBeans(Controller.class);
+        Map<Class<?>, Object> controllers = context.getBeans();
+        for (Class controller : controllers.keySet()) {
             Arrays.stream(controller.getDeclaredMethods())
                     .filter(method -> method.isAnnotationPresent(RequestMapping.class))
-                    .forEach(method -> mappingHandlers(method, controllerScanner.getInstance(controller)));
+                    .forEach(method -> mappingHandlers(method, context.getInstance(controller)));
         }
     }
 
@@ -39,10 +36,9 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         if (isRequestMethodEmpty(annotationRequestMethod)) {
             Arrays.stream(RequestMethod.values())
                     .filter(requestMethod -> isNotRegistered(annotation, requestMethod))
-                    .forEach(requestMethod -> annotationRequestMethod.add(requestMethod));
+                    .forEach(annotationRequestMethod::add);
         }
-
-        annotationRequestMethod.stream()
+        annotationRequestMethod
                 .forEach(x -> {
                     HandlerKey handlerKey = new HandlerKey(annotation.value(), x);
                     handlerExecutions.put(handlerKey, handlerExecution);
@@ -61,7 +57,6 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     public HandlerExecution getHandler(HttpServletRequest request) {
         String uri = request.getRequestURI();
         RequestMethod method = RequestMethod.valueOf(request.getMethod());
-        HandlerExecution handlerExecution = handlerExecutions.get(new HandlerKey(uri, method));
-        return handlerExecution;
+        return handlerExecutions.get(new HandlerKey(uri, method));
     }
 }

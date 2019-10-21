@@ -1,8 +1,8 @@
 package reflection;
 
-import annotation.Controller;
-import annotation.Repository;
-import annotation.Service;
+import examples.annotation.Controller;
+import examples.annotation.Repository;
+import examples.annotation.Service;
 import org.junit.jupiter.api.Test;
 import org.reflections.Reflections;
 import org.slf4j.Logger;

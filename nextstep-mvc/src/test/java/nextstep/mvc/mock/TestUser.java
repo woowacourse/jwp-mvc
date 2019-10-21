@@ -3,9 +3,13 @@ package nextstep.mvc.mock;
 public class TestUser {
     private String userId;
     private String password;
-    private int age;
+    private Integer age;
 
-    public TestUser(String userId, String password, int age) {
+    public TestUser() {
+
+    }
+
+    public TestUser(String userId, String password, Integer age) {
         this.userId = userId;
         this.password = password;
         this.age = age;
@@ -19,7 +23,7 @@ public class TestUser {
         return password;
     }
 
-    public int getAge() {
+    public Integer getAge() {
         return age;
     }
 

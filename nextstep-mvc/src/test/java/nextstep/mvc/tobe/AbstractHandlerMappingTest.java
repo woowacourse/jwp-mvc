@@ -3,6 +3,7 @@ package nextstep.mvc.tobe;
 import nextstep.db.DataBase;
 import nextstep.mvc.mock.MyController;
 import nextstep.mvc.mock.User;
+import nextstep.mvc.tobe.support.AnnotationApplicationContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -14,13 +15,14 @@ import java.lang.reflect.Method;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class AnnotationHandlerMappingTest {
-    private AnnotationHandlerMapping handlerMapping;
+public class AbstractHandlerMappingTest {
+    private AbstractHandlerMapping handlerMapping;
 
     @BeforeEach
     public void setup() {
-        handlerMapping = new AnnotationHandlerMapping("nextstep.mvc.tobe");
-        handlerMapping.initialize();
+        AnnotationApplicationContext annotationApplicationContext = new AnnotationApplicationContext("nextstep");
+        handlerMapping = new AbstractHandlerMapping();
+        handlerMapping.initialize(annotationApplicationContext);
     }
 
     @Test
@@ -61,7 +63,7 @@ public class AnnotationHandlerMappingTest {
     public void empty_method_requestMapping_annotation() throws Exception {
         MockHttpServletRequest request = new MockHttpServletRequest("GET", "/method");
         HandlerExecution execution = handlerMapping.getHandler(request);
-        Method method = MyController.class.getDeclaredMethod("emptyMethod", HttpServletRequest.class, HttpServletResponse.class);
+        Method method = MyController.class.getDeclaredMethod("getMethod", HttpServletRequest.class, HttpServletResponse.class);
         assertThat(execution.getMethod()).isEqualTo(method);
     }
 

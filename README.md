@@ -1,4 +1,5 @@
-### 1단계 reflection 실습
+## 1단계
+### reflection 실습
 #### 1 - 클래스 정보 출력
 - [x] ReflectionTest의 showClass() 구현 -> Question 클래스의 모든 필드, 생성자, 메소드 정보 출력
 
@@ -17,7 +18,12 @@
 #### 6 - component scan
 - [x] examples 패키지의 @Controller, @Service, @Repository 애노테이션 붙은 클래스 찾아서 출력
 
-### 2단계 MVC 구현
+### MVC 구현
 - [x] 어노테이션 핸들러 구현
 - [x] 핸들러 익스큐션 구현
-- [ ] 레거시 코드 리팩토링
+- [x] 레거시 코드 리팩토링
+
+## 2단계
+### JSON VIEW 구현
+- [ ] body data읽기 테스트
+- [ ] jackson 라이브러리 학습 테스트

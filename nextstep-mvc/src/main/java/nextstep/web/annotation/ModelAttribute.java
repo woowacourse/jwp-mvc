@@ -1,12 +1,12 @@
-package annotation;
+package nextstep.web.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Target({ElementType.TYPE})
+@Target(ElementType.PARAMETER)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Service {
-    String value() default "";
+public @interface ModelAttribute {
+    String name() default "";
 }

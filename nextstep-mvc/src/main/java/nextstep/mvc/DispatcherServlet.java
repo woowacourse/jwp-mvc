@@ -3,7 +3,11 @@ package nextstep.mvc;
 import nextstep.mvc.tobe.ModelAndView;
 import nextstep.mvc.tobe.NotFoundHandlerException;
 import nextstep.mvc.tobe.View;
+import nextstep.mvc.tobe.argumentResolver.HandlerMethodArgumentResolver;
 import nextstep.mvc.tobe.handlerAdapter.HandlerAdapter;
+import nextstep.mvc.tobe.support.AnnotationApplicationContext;
+import nextstep.mvc.tobe.support.ApplicationContext;
+import nextstep.mvc.tobe.view.resolver.ViewResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,42 +17,49 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.List;
+import java.util.Collections;
 import java.util.Objects;
+import java.util.Set;
 
 @WebServlet(name = "dispatcher", urlPatterns = "/", loadOnStartup = 1)
 public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger logger = LoggerFactory.getLogger(DispatcherServlet.class);
-    private List<HandlerMapping> handlerMappings;
-    private List<HandlerAdapter> handlerAdapters;
+    private Set<HandlerMapping> handlerMappings;
+    private Set<HandlerAdapter> handlerAdapters;
+    private Set<ViewResolver> viewResolvers;
+    private ApplicationContext context;
 
-    public DispatcherServlet(List<HandlerMapping> handlerMappings, List<HandlerAdapter> handlerAdapters) {
-        this.handlerMappings = handlerMappings;
-        this.handlerAdapters = handlerAdapters;
+    public DispatcherServlet(ApplicationContext context) {
+        this.context = context;
+        context.scanBeans(HandlerAdapter.class, HandlerMapping.class, ViewResolver.class, HandlerMethodArgumentResolver.class);
+        handlerMappings = Collections.unmodifiableSet((Set<HandlerMapping>) context.getBean(HandlerMapping.class));
+        handlerAdapters = Collections.unmodifiableSet((Set<HandlerAdapter>) context.getBean(HandlerAdapter.class));
+        viewResolvers = Collections.unmodifiableSet((Set<ViewResolver>) context.getBean(ViewResolver.class));
     }
 
     @Override
     public void init() {
-        handlerMappings.stream()
-                .forEach(HandlerMapping::initialize);
+        handlerMappings.forEach(handlerMapping -> handlerMapping.initialize(new AnnotationApplicationContext()));
+        handlerAdapters.stream().forEach(x -> x.setResolver((Set<HandlerMethodArgumentResolver>) context.getBean(HandlerMethodArgumentResolver.class)));
     }
 
     @Override
-    protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException {
-        String requestUri = req.getRequestURI();
-        logger.debug("Method : {}, Request URI : {}", req.getMethod(), requestUri);
-
+    protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException {
+        logger.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
         try {
-            Object handler = getHandler(req);
-
-            HandlerAdapter handlerAdapter = getHandlerAdapter(handler);
-            ModelAndView mv = handlerAdapter.adapt(handler, req, resp);
-            move(mv, req, resp);
+            doDispatch(request, response);
         } catch (Throwable e) {
             logger.error("Exception : {}", e);
             throw new ServletException(e.getMessage());
         }
+    }
+
+    private void doDispatch(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        Object handler = getHandler(request);
+        HandlerAdapter handlerAdapter = getHandlerAdapter(handler);
+        ModelAndView mv = handlerAdapter.handleInternal(handler, request, response);
+        processDispatchResult(mv, request, response);
     }
 
     private HandlerAdapter getHandlerAdapter(Object handler) {
@@ -58,16 +69,32 @@ public class DispatcherServlet extends HttpServlet {
                 .orElseThrow(NotFoundAdapterException::new);
     }
 
-    private Object getHandler(HttpServletRequest req) {
+    private Object getHandler(HttpServletRequest request) {
         return handlerMappings.stream()
-                .map(handlerMapping -> handlerMapping.getHandler(req))
+                .map(handlerMapping -> handlerMapping.getHandler(request))
                 .filter(Objects::nonNull)
                 .findFirst()
                 .orElseThrow(NotFoundHandlerException::new);
     }
 
-    private void move(ModelAndView mv, HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        View view = mv.getView();
-        view.render(mv.getModel(), req, resp);
+    private void processDispatchResult(ModelAndView mv, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        View view = resolveView(mv);
+        view.render(mv.getModel(), request, response);
+    }
+
+    private View resolveView(ModelAndView mv) {
+        String viewName = mv.getViewName();
+        if (viewName != null) {
+            return resolve(viewName);
+        }
+        return mv.getView();
+    }
+
+    private View resolve(String viewName) {
+        return viewResolvers.stream()
+                .filter(x -> x.canHandle(viewName))
+                .findFirst()
+                .orElseThrow()
+                .resolveViewName(viewName);
     }
 }
