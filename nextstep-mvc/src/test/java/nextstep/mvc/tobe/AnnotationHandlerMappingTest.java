@@ -31,7 +31,7 @@ public class AnnotationHandlerMappingTest {
         MockHttpServletRequest request = new MockHttpServletRequest("GET", "/users");
         request.setParameter("userId", user.getUserId());
         MockHttpServletResponse response = new MockHttpServletResponse();
-        HandlerAdapter execution = handlerMapping.getHandler(request);
+        Handler execution = handlerMapping.getHandler(request);
         execution.execute(request, response);
 
         assertThat(request.getAttribute("user")).isEqualTo(user);
@@ -42,7 +42,7 @@ public class AnnotationHandlerMappingTest {
     public void post_method_in_requestMapping_annotation() {
         MockHttpServletRequest request = new MockHttpServletRequest("POST", "/one-method");
 
-        HandlerAdapter matchedExecution = handlerMapping.getHandler(request);
+        Handler matchedExecution = handlerMapping.getHandler(request);
 
         assertThat(matchedExecution).isNotNull();
     }
@@ -55,11 +55,11 @@ public class AnnotationHandlerMappingTest {
         List<MockHttpServletRequest> requests = getRequestsOfAllRequestMethod(requestUrl);
 
         MockHttpServletRequest getRequest = new MockHttpServletRequest("GET", requestUrl);
-        HandlerAdapter getRequestHandler = handlerMapping.getHandler(getRequest);
+        Handler getRequestHandler = handlerMapping.getHandler(getRequest);
 
         // When
         for (MockHttpServletRequest request : requests) {
-            HandlerAdapter handler = handlerMapping.getHandler(request);
+            Handler handler = handlerMapping.getHandler(request);
 
             assertThat(handler).isNotNull();
             assertThat(handler == getRequestHandler).isTrue();
@@ -73,7 +73,7 @@ public class AnnotationHandlerMappingTest {
         request.setParameter("name", user.getName());
         request.setParameter("email", user.getEmail());
         MockHttpServletResponse response = new MockHttpServletResponse();
-        HandlerAdapter execution = handlerMapping.getHandler(request);
+        Handler execution = handlerMapping.getHandler(request);
         execution.execute(request, response);
     }
 

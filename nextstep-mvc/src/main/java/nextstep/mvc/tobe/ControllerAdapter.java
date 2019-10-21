@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.InvocationTargetException;
 
-public class ControllerAdapter implements HandlerAdapter {
+public class ControllerAdapter implements Handler {
     private static final String DEFAULT_REDIRECT_PREFIX = "redirect:";
 
     private Controller controller;
