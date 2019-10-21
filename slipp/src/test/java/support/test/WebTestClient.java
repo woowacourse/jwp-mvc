@@ -1,5 +1,6 @@
 package support.test;
 
+import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.EntityExchangeResult;
 import org.springframework.test.web.reactive.server.StatusAssertions;
 import org.springframework.util.LinkedMultiValueMap;
@@ -77,10 +78,21 @@ public class WebTestClient {
                 .expectStatus();
     }
 
+    public StatusAssertions getRequestWithCookie(String uri, String cookie) {
+        return testClientBuilder.build()
+                .get()
+                .uri(uri)
+                .header("Cookie",cookie)
+                .exchange()
+                .expectStatus();
+    }
+
     public <T> StatusAssertions postRequestWithBody(String url, T body, Class<T> clazz) {
         return testClientBuilder.build()
                 .post()
                 .uri(url)
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .accept(MediaType.APPLICATION_JSON_UTF8)
                 .body(Mono.just(body), clazz)
                 .exchange()
                 .expectStatus();
@@ -90,6 +102,8 @@ public class WebTestClient {
         return testClientBuilder.build()
                 .post()
                 .uri(url)
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .accept(MediaType.APPLICATION_JSON_UTF8)
                 .body(BodyInserters.fromFormData(map))
                 .exchange()
                 .expectStatus();

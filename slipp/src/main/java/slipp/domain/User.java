@@ -1,5 +1,7 @@
 package slipp.domain;
 
+import slipp.dto.UserCreatedDto;
+
 public class User {
     private String userId;
     private String password;
@@ -14,6 +16,10 @@ public class User {
         this.password = password;
         this.name = name;
         this.email = email;
+    }
+
+    public static User of(UserCreatedDto userCreatedDto) {
+        return new User(userCreatedDto.getUserId(), userCreatedDto.getPassword(), userCreatedDto.getName(), userCreatedDto.getEmail());
     }
 
     public String getUserId() {

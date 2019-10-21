@@ -2,6 +2,9 @@ package slipp.controller;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
 import support.test.WebTestClient;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -15,7 +18,11 @@ class HomeControllerTest {
     }
 
     @Test
-    void getHomeStatusIsOk() {
-        assertDoesNotThrow(() -> client.getRequest("/").isOk());
+    void getHomeStatusIsOk() throws Exception {
+         client.getRequest("/").isOk();
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        MockHttpServletResponse response = new MockHttpServletResponse();
+         HomeController homeController = new HomeController();
+         homeController.index(request, response);
     }
 }
