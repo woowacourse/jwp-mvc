@@ -1,8 +1,9 @@
 package nextstep.mvc;
 
-import nextstep.mvc.tobe.HandlerExecution;
 import nextstep.mvc.tobe.ModelAndView;
 import nextstep.mvc.tobe.View;
+import nextstep.mvc.tobe.handlerAdapter.HandlerAdapter;
+import nextstep.mvc.tobe.handlerAdapter.exception.NotFoundHandlerAdapterException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,13 +22,19 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
     private List<HandlerMapping> handlerMappings;
+    private List<HandlerAdapter> handlerAdapters;
 
     public DispatcherServlet() {
         handlerMappings = new ArrayList<>();
+        handlerAdapters = new ArrayList<>();
     }
 
     public void addHandlerMapping(HandlerMapping handlerMapping) {
         handlerMappings.add(handlerMapping);
+    }
+
+    public void addHandlerAdapter(HandlerAdapter handlerAdapter) {
+        handlerAdapters.add(handlerAdapter);
     }
 
     @Override
@@ -39,29 +46,40 @@ public class DispatcherServlet extends HttpServlet {
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException {
         logger.debug("Method : {}, Request URI : {}", req.getMethod(), req.getRequestURI());
 
-        Optional<HandlerExecution> handlerExecution = findHandlerExecution(req);
+        Optional<Object> handler = findHandler(req);
 
-        if (handlerExecution.isPresent()) {
-            renderByHandler(req, resp, handlerExecution.get());
+        if (handler.isPresent()) {
+            renderByHandler(req, resp, handler.get());
             return;
         }
     }
 
-    private Optional<HandlerExecution> findHandlerExecution(HttpServletRequest req) {
+    private Optional<Object> findHandler(HttpServletRequest req) {
         return handlerMappings.stream()
                 .filter(handler -> handler.containsKey(req))
                 .map(handler -> handler.getHandler(req))
                 .findFirst();
     }
 
-    private void renderByHandler(HttpServletRequest req, HttpServletResponse resp, HandlerExecution handler) throws ServletException {
+    private void renderByHandler(HttpServletRequest req, HttpServletResponse resp, Object handler) throws ServletException {
         try {
-            ModelAndView mav = handler.handle(req, resp);
+            HandlerAdapter handlerAdapter = findHandlerAdapter(handler);
+            ModelAndView mav = handlerAdapter.handle(req, resp, handler);
             View view = mav.getView();
-            view.render(mav.getModel(), req, resp);
+
+            if (view != null) {
+                view.render(mav.getModel(), req, resp);
+            }
         } catch (Exception e) {
             logger.debug(e.getMessage());
             throw new ServletException();
         }
+    }
+
+    private HandlerAdapter findHandlerAdapter(Object handler) {
+        return handlerAdapters.stream()
+                .filter(handlerAdapter -> handlerAdapter.supports(handler))
+                .findFirst()
+                .orElseThrow(NotFoundHandlerAdapterException::new);
     }
 }
