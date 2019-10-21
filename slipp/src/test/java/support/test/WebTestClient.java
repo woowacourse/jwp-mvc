@@ -82,7 +82,7 @@ public class WebTestClient {
         return testClientBuilder.build()
                 .get()
                 .uri(uri)
-                .header("Cookie",cookie)
+                .header("Cookie", cookie)
                 .exchange()
                 .expectStatus();
     }
