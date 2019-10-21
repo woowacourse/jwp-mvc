@@ -25,7 +25,7 @@ public class JsonViewTest {
     void setUp() {
         request = new MockHttpServletRequest();
         response = new MockHttpServletResponse();
-        view = new JsonView();
+        view = JsonView.getInstance();
     }
 
     @Test
@@ -43,7 +43,8 @@ public class JsonViewTest {
 
         view.render(model, request, response);
 
-        Car actual = JsonUtils.toObject(response.getContentAsString(), Car.class);
+        String json = response.getContentAsString();
+        Car actual = JsonUtils.toObject(json, Car.class);
         assertThat(response.getContentType()).isEqualTo(MediaType.APPLICATION_JSON_UTF8_VALUE);
         assertThat(actual).isEqualTo(expected);
     }

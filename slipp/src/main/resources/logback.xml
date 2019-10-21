@@ -2,9 +2,9 @@
 <!DOCTYPE configuration>
 <configuration>
 	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-		<layout class="ch.qos.logback.classic.PatternLayout">
+		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
 			<Pattern>%d{HH:mm:ss.SSS} [%-5level] [%thread] [%logger{36}] [%M] - %m%n</Pattern>
-		</layout>
+		</encoder>
 	</appender>
 
 	<logger name="nextstep" level="DEBUG" />
