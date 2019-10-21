@@ -20,11 +20,11 @@ public class JsonView implements View {
 
         if (hasSingleValue(model)) {
             writer.write(mapper.writeValueAsString(model.values().iterator().next()));
+            return;
         }
         if (hasMultiValues(model)) {
             writeMultiValues(model, mapper, writer);
         }
-        writer.flush();
     }
 
     private void writeMultiValues(Map<String, ?> model, ObjectMapper mapper, PrintWriter writer) throws JsonProcessingException {
