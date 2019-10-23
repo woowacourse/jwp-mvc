@@ -14,6 +14,7 @@ import slipp.support.db.DataBase;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Objects;
 
 @Controller
 public class UserApiController {
@@ -41,11 +42,16 @@ public class UserApiController {
         final UserUpdatedDto dto = MAPPER.readValue(request.getReader(), UserUpdatedDto.class);
         final User user = findUserById(request);
         final User updatedUser = new User(user.getUserId(), dto.getPassword(), dto.getName(), dto.getEmail());
-        DataBase.addUser(updatedUser);
+        user.update(updatedUser);
+        DataBase.addUser(user);
         return new ModelAndView(new JsonView());
     }
 
     private User findUserById(final HttpServletRequest request) {
-        return DataBase.findUserById(request.getParameter("userId"));
+        final User user = DataBase.findUserById(request.getParameter("userId"));
+        if (Objects.nonNull(user)) {
+            return user;
+        }
+        throw new IllegalArgumentException("사용자 정보를 찾을 수 없습니다.");
     }
 }

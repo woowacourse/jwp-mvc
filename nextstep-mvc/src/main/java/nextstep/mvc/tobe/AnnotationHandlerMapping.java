@@ -47,11 +47,15 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     private List<HandlerKey> makeRequestMappingKeys(final Method method) {
         final List<HandlerKey> result = new ArrayList<>();
         final RequestMapping mapping = method.getAnnotation(RequestMapping.class);
-        final RequestMethod[] methods = mapping.method().length == 0 ? RequestMethod.values() : mapping.method();
+        final RequestMethod[] methods = getMethods(mapping);
         for (final RequestMethod requestMethod : methods) {
             result.add(new HandlerKey(mapping.value(), requestMethod));
         }
         return result;
+    }
+
+    private RequestMethod[] getMethods(final RequestMapping mapping) {
+        return mapping.method().length == 0 ? RequestMethod.values() : mapping.method();
     }
 
     public ModelAndView execute(final HttpServletRequest request, final HttpServletResponse response) throws Exception {

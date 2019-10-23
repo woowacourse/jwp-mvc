@@ -6,10 +6,12 @@ import nextstep.mvc.tobe.RedirectView;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import slipp.domain.User;
+import slipp.exception.UnauthorizedException;
 import slipp.support.db.DataBase;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Objects;
 
 @Controller
 public class UserController {
@@ -67,12 +69,16 @@ public class UserController {
     }
 
     private User findUserById(final HttpServletRequest request) {
-        return DataBase.findUserById(request.getParameter("userId"));
+        final User user = DataBase.findUserById(request.getParameter("userId"));
+        if (Objects.nonNull(user)) {
+            return user;
+        }
+        throw new IllegalArgumentException("잘못된 사용자 ID입니다.");
     }
 
     private void checkIdForUpdate(final HttpServletRequest request, final User user) {
         if (!UserSessionUtils.isSameUser(request.getSession(), user)) {
-            throw new IllegalStateException("다른 사용자의 정보를 수정할 수 없습니다.");
+            throw new UnauthorizedException("다른 사용자의 정보를 수정할 수 없습니다.");
         }
     }
 
