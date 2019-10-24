@@ -17,7 +17,12 @@
 #### 6 - component scan
 - [x] examples 패키지의 @Controller, @Service, @Repository 애노테이션 붙은 클래스 찾아서 출력
 
-### 2단계 MVC 구현
+### 1단계 MVC 구현
 - [x] 어노테이션 핸들러 구현
 - [x] 핸들러 익스큐션 구현
-- [ ] 레거시 코드 리팩토링
+- [x] 레거시 코드 리팩토링
+
+### 2단계 View 구현
+- [x] JsonView 구현
+- [ ] 모든 Controller를 애노테이션 기반 MVC로 변경
+- [ ] UserAcceptanceTest 통과하도록 Controller 추가

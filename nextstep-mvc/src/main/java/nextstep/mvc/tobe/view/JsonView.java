@@ -2,6 +2,7 @@ package nextstep.mvc.tobe.view;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import nextstep.mvc.tobe.view.exception.JsonRenderingFailException;
 import nextstep.web.support.MediaType;
 
 import javax.servlet.http.HttpServletRequest;
@@ -11,8 +12,7 @@ import java.io.PrintWriter;
 import java.util.Map;
 
 public class JsonView implements View {
-
-    public static final int UNIQUE = 1;
+    private static final int UNIQUE = 1;
 
     @Override
     public void render(Map<String, ?> model, HttpServletRequest request, HttpServletResponse response) {
@@ -23,7 +23,8 @@ public class JsonView implements View {
 
             writer.write(json);
         } catch (IOException e) {
-            e.printStackTrace();
+            // TODO: 2019-10-24 로거를 통한 로깅 해야할까?
+            throw new JsonRenderingFailException();
         }
     }
 
