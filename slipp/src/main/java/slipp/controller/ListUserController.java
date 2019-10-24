@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 @nextstep.web.annotation.Controller
 public class ListUserController {
     @RequestMapping(value = "/users/list", method = RequestMethod.GET)
-    public ModelAndView userList(HttpServletRequest req, HttpServletResponse resp) throws Exception {
+    public ModelAndView userList(HttpServletRequest req, HttpServletResponse resp) {
         if (!UserSessionUtils.isLogined(req.getSession())) {
             return new ModelAndView(new RedirectView("/users/loginForm"));
         }
