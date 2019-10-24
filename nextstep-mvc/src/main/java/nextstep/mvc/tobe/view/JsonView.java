@@ -12,15 +12,19 @@ import java.io.PrintWriter;
 import java.util.Map;
 
 public class JsonView implements View {
-    private static final int UNIQUE = 1;
+    private static final int MONO = 1;
 
     @Override
     public void render(Map<String, ?> model, HttpServletRequest request, HttpServletResponse response) {
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
+
+        if (model.isEmpty()) {
+            return;
+        }
+
         try {
             PrintWriter writer = response.getWriter();
             String json = getJsonString(model);
-
             writer.write(json);
         } catch (IOException e) {
             // TODO: 2019-10-24 로거를 통한 로깅 해야할까?
@@ -31,8 +35,12 @@ public class JsonView implements View {
     private String getJsonString(Map<String, ?> model) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
 
-        return model.size() == UNIQUE
-                ? objectMapper.writeValueAsString(model.values().iterator().next())
+        return model.size() == MONO
+                ? objectMapper.writeValueAsString(getSingleObjectIn(model))
                 : objectMapper.writeValueAsString(model);
+    }
+
+    private Object getSingleObjectIn(Map<String,?> model) {
+        return model.values().iterator().next();
     }
 }
