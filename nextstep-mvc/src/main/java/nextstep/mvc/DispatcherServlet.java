@@ -49,9 +49,12 @@ public class DispatcherServlet extends HttpServlet {
 
             modelAndView.getView().render(modelAndView.getModel(), req, resp);
 
-        } catch (Exception e) {
-            resp.sendError(400);
-            e.printStackTrace();
+        } catch (NotFoundHandlerException e) {
+            resp.sendError(404);
+            logger.error("{}", e.getMessage());
+        } catch (Exception e){
+            resp.sendError(500);
+            logger.error("{}", e.getMessage());
         }
     }
 
