@@ -59,7 +59,7 @@ public class DispatcherServlet extends HttpServlet {
         return handlerMappings.stream()
                 .filter(handlerMapping -> handlerMapping.getHandler(req) != null)
                 .findAny()
-                .orElseThrow(ObjectMapperException::new)
+                .orElseThrow(NotFoundHandlerException::new)
                 .getHandler(req);
     }
 }
