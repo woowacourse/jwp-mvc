@@ -14,7 +14,7 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class JsonViewTest {
+class JsonViewTest {
     private static final Logger logger = LoggerFactory.getLogger( JsonViewTest.class );
     private MockHttpServletRequest request;
     private MockHttpServletResponse response;
@@ -45,6 +45,7 @@ public class JsonViewTest {
         Car actual = JsonUtils.toObject(response.getContentAsString(), Car.class);
         assertThat(response.getContentType()).isEqualTo(MediaType.APPLICATION_JSON_UTF8_VALUE);
         assertThat(actual).isEqualTo(expected);
+        logger.debug("response body : {}", response.getContentAsString());
     }
 
     @Test
@@ -57,6 +58,7 @@ public class JsonViewTest {
         view.render(model, request, response);
 
         assertThat(response.getContentType()).isEqualTo(MediaType.APPLICATION_JSON_UTF8_VALUE);
+        assertThat(response.getContentAsString()).isEqualTo("{\"car\":{\"color\":\"Black\",\"type\":\"Sonata\"},\"name\":\"포비\"}");
         logger.debug("response body : {}", response.getContentAsString());
     }
 }

@@ -4,7 +4,7 @@ import nextstep.web.annotation.RequestMethod;
 
 import java.util.Objects;
 
-public class HandlerKey {
+class HandlerKey {
     private String url;
     private RequestMethod requestMethod;
 
