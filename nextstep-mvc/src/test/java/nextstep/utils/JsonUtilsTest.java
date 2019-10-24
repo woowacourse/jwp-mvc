@@ -3,6 +3,8 @@ package nextstep.utils;
 import nextstep.mvc.tobe.Car;
 import nextstep.mvc.tobe.User;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -10,6 +12,7 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class JsonUtilsTest {
+    private final Logger logger = LoggerFactory.getLogger(JsonUtilsTest.class);
     @Test
     void toObject() throws Exception {
         String json = "{ \"color\" : \"Black\", \"type\" : \"BMW\" }";
@@ -28,6 +31,8 @@ public class JsonUtilsTest {
         model.put("user2", user2);
 
         String content = JsonUtils.toJsonString(model);
+
+        logger.info("content: {}", content);
 
         assertThat(content.contains("pobi")).isTrue();
         assertThat(content.contains("coogie")).isTrue();
