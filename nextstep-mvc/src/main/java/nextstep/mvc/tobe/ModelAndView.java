@@ -15,10 +15,6 @@ public class ModelAndView {
         this.view = view;
     }
 
-    public static ModelAndView of(String uri) {
-        return new ModelAndView(new JspView(uri));
-    }
-
     public ModelAndView addObject(String attributeName, Object attributeValue) {
         model.put(attributeName, attributeValue);
         return this;

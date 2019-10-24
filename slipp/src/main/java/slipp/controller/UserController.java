@@ -1,5 +1,6 @@
 package slipp.controller;
 
+import nextstep.mvc.tobe.JspView;
 import nextstep.mvc.tobe.ModelAndView;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
@@ -18,7 +19,7 @@ public class UserController {
 
     @RequestMapping(value = "/users/form", method = RequestMethod.GET)
     public ModelAndView createForm(HttpServletRequest req, HttpServletResponse resp) throws Exception {
-        return ModelAndView.of("/user/form.jsp");
+        return new ModelAndView(new JspView("/user/form.jsp"));
     }
 
     @RequestMapping(value = "/users/create", method = RequestMethod.POST)
@@ -29,17 +30,17 @@ public class UserController {
 
         DataBase.addUser(user);
 
-        return ModelAndView.of("redirect:/");
+        return new ModelAndView(new JspView("redirect:/"));
     }
 
     @RequestMapping(value = "/users", method = RequestMethod.GET)
     public ModelAndView showList(HttpServletRequest req, HttpServletResponse resp) throws Exception {
         if (!UserSessionUtils.isLogined(req.getSession())) {
-            return ModelAndView.of("redirect:/users/loginForm");
+            return new ModelAndView(new JspView("redirect:/users/loginForm"));
         }
 
         req.setAttribute("users", DataBase.findAll());
-        return ModelAndView.of("/user/list.jsp");
+        return new ModelAndView(new JspView("/user/list.jsp"));
     }
 
     @RequestMapping(value = "/users/profile", method = RequestMethod.GET)
@@ -51,7 +52,7 @@ public class UserController {
             throw new NullPointerException("사용자를 찾을 수 없습니다.");
         }
         req.setAttribute("user", user);
-        return ModelAndView.of("/user/profile.jsp");
+        return new ModelAndView(new JspView("/user/profile.jsp"));
     }
 
     @RequestMapping(value = "/users/updateForm", method = RequestMethod.GET)
@@ -62,7 +63,7 @@ public class UserController {
             throw new IllegalStateException("다른 사용자의 정보를 수정할 수 없습니다.");
         }
         req.setAttribute("user", user);
-        return ModelAndView.of("/user/updateForm.jsp");
+        return new ModelAndView(new JspView("/user/updateForm.jsp"));
     }
 
     @RequestMapping(value = "/users/update", method = RequestMethod.POST)
@@ -76,6 +77,6 @@ public class UserController {
                 req.getParameter("email"));
         log.debug("Update User : {}", updateUser);
         user.update(updateUser);
-        return ModelAndView.of("redirect:/");
+        return new ModelAndView(new JspView("redirect:/"));
     }
 }
