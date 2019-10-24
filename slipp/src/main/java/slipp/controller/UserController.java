@@ -49,7 +49,7 @@ public class UserController {
         log.info("uesrId : {}", userId);
         User user = DataBase.findUserById(userId);
         if (user == null) {
-            throw new NullPointerException("사용자를 찾을 수 없습니다.");
+            throw new NotFoundUserException("사용자를 찾을 수 없습니다.");
         }
         req.setAttribute("user", user);
         return new ModelAndView(new JspView("/user/profile.jsp"));
