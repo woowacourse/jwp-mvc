@@ -41,7 +41,7 @@ public class UserController {
         return new ModelAndView(new JspView("/user/profile.jsp"));
     }
 
-    @RequestMapping(value = "/users/update", method = RequestMethod.PUT)
+    @RequestMapping(value = "/users/update", method = RequestMethod.POST)
     public ModelAndView update(HttpServletRequest req, HttpServletResponse resp) {
         User user = DataBase.findUserById(req.getParameter("userId"));
         if (!UserSessionUtils.isSameUser(req.getSession(), user)) {
