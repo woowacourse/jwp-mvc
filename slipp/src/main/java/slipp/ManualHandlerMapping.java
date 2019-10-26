@@ -8,7 +8,6 @@ import nextstep.mvc.tobe.Handler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import slipp.controller.LogoutController;
-import slipp.controller.UpdateFormUserController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
@@ -21,7 +20,6 @@ public class ManualHandlerMapping implements HandlerMapping {
     @Override
     public void initialize() {
         mappings.put("/users/logout", new LogoutController());
-        mappings.put("/users/updateForm", new UpdateFormUserController());
 
         logger.info("Initialized Request Mapping!");
         mappings.keySet().forEach(path -> {
