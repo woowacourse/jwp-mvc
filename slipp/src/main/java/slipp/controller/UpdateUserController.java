@@ -1,6 +1,11 @@
 package slipp.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import nextstep.mvc.asis.Controller;
+import nextstep.mvc.tobe.ModelAndView;
+import nextstep.mvc.tobe.view.JsonView;
+import nextstep.web.annotation.RequestMapping;
+import nextstep.web.annotation.RequestMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import slipp.domain.User;
@@ -8,7 +13,9 @@ import slipp.support.db.DataBase;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
+@nextstep.web.annotation.Controller
 public class UpdateUserController implements Controller {
     private static final Logger log = LoggerFactory.getLogger(UpdateUserController.class);
 
@@ -24,5 +31,28 @@ public class UpdateUserController implements Controller {
         log.debug("Update User : {}", updateUser);
         user.update(updateUser);
         return "redirect:/";
+    }
+
+    @RequestMapping(value = "/api/users", method = RequestMethod.PUT)
+    public ModelAndView execute2(HttpServletRequest req, HttpServletResponse resp) throws Exception {
+        User user = DataBase.findUserById(req.getParameter("userId"));
+        ObjectMapper objectMapper = new ObjectMapper();
+        User updateUser = null;
+        try {
+            updateUser = objectMapper.readValue(req.getReader().readLine(), User.class);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        log.debug("User : {}", user);
+        req.getSession().setAttribute("user", user);
+        if (!UserSessionUtils.isSameUser(req.getSession(), user)) {
+            throw new IllegalStateException("다른 사용자의 정보를 수정할 수 없습니다.");
+        }
+        log.debug("Update User : {}", updateUser);
+        user.update(updateUser);
+
+        ModelAndView modelAndView = new ModelAndView(new JsonView());
+        modelAndView.addObject("user", user);
+        return modelAndView;
     }
 }
