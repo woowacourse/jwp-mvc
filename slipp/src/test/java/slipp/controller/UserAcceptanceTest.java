@@ -1,6 +1,6 @@
 package slipp.controller;
 
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import slipp.domain.User;
@@ -14,12 +14,12 @@ import java.net.URISyntaxException;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class UserAcceptanceTest {
-    private static NsWebTestClient client;
-    private static URI userLocation;
-    private static UserCreatedDto expected;
+    private NsWebTestClient client;
+    private URI userLocation;
+    private UserCreatedDto expected;
 
-    @BeforeAll
-    static void setUp() {
+    @BeforeEach
+    void setUp() {
         client = NsWebTestClient.of(8080);
 
         expected = new UserCreatedDto(
