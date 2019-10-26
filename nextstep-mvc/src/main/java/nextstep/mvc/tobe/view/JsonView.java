@@ -24,15 +24,15 @@ public class JsonView implements View {
 
         try {
             PrintWriter writer = response.getWriter();
-            String json = getJsonString(model);
+            String json = getJson(model);
+
             writer.write(json);
         } catch (IOException e) {
-            // TODO: 2019-10-24 로거를 통한 로깅 해야할까?
             throw new JsonRenderingFailException();
         }
     }
 
-    private String getJsonString(Map<String, ?> model) throws JsonProcessingException {
+    private String getJson(Map<String, ?> model) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
 
         return model.size() == MONO
