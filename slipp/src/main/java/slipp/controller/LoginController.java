@@ -3,6 +3,7 @@ package slipp.controller;
 import nextstep.mvc.tobe.ModelAndView;
 import nextstep.mvc.tobe.view.JspView;
 import nextstep.mvc.tobe.view.RedirectView;
+import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
 import slipp.domain.User;
@@ -12,7 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-@nextstep.web.annotation.Controller
+@Controller
 public class LoginController {
     @RequestMapping(value = "/users/login", method = RequestMethod.GET)
     public ModelAndView loginForm(HttpServletRequest req, HttpServletResponse resp) {
