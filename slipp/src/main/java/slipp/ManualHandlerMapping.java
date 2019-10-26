@@ -3,14 +3,12 @@ package slipp;
 import nextstep.mvc.DispatcherServlet;
 import nextstep.mvc.HandlerMapping;
 import nextstep.mvc.asis.Controller;
-import nextstep.mvc.asis.ForwardController;
 import nextstep.mvc.tobe.ControllerAdapter;
 import nextstep.mvc.tobe.Handler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import slipp.controller.LogoutController;
 import slipp.controller.UpdateFormUserController;
-import slipp.controller.UpdateUserController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
@@ -22,11 +20,8 @@ public class ManualHandlerMapping implements HandlerMapping {
 
     @Override
     public void initialize() {
-        mappings.put("/users/form", new ForwardController("/user/form.jsp"));
-        mappings.put("/users/loginForm", new ForwardController("/user/login.jsp"));
         mappings.put("/users/logout", new LogoutController());
         mappings.put("/users/updateForm", new UpdateFormUserController());
-        mappings.put("/users/update", new UpdateUserController());
 
         logger.info("Initialized Request Mapping!");
         mappings.keySet().forEach(path -> {
