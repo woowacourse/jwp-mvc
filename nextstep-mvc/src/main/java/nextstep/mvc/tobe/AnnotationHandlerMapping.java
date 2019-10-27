@@ -2,6 +2,7 @@ package nextstep.mvc.tobe;
 
 import com.google.common.collect.Maps;
 import nextstep.mvc.HandlerMapping;
+import nextstep.mvc.tobe.exception.DuplicatedHandlerMappingException;
 import nextstep.mvc.tobe.scanner.ControllerScanner;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
@@ -12,7 +13,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class AnnotationHandlerMapping implements HandlerMapping {
     private Object[] basePackage;
@@ -39,6 +39,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         HandlerExecution execution = new HandlerExecution(controller, method);
 
         for (HandlerKey handlerKey : handlerKeys) {
+            checkDuplicate(handlerKey);
             handlerExecutions.put(handlerKey, execution);
         }
     }
@@ -46,25 +47,24 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     private List<HandlerKey> getHandlerKeysOf(Method method) {
         RequestMapping annotation = method.getAnnotation(RequestMapping.class);
         String uri = annotation.value();
-        RequestMethod[] requestMethods = annotation.method();
+        RequestMethod[] requestMethods = getRequestMethods(annotation);
 
-        Stream<RequestMethod> requestMethodsStream = requestMethods.length == 0
-                ? filterConnectableKeys(uri, RequestMethod.values())
-                : Arrays.stream(requestMethods);
-
-        // TODO: 2019-10-10  다른 컨트롤러에서 똑같은 메서드를 등록한 경우 예외 처리
-        return requestMethodsStream
+        return Arrays.stream(requestMethods)
                 .map(requestMethod -> new HandlerKey(uri, requestMethod))
                 .collect(Collectors.toList());
     }
 
-    private Stream<RequestMethod> filterConnectableKeys(String uri, RequestMethod[] requestMethods) {
-        return Arrays.stream(requestMethods)
-                .filter(requestMethod -> isConnectable(new HandlerKey(uri, requestMethod)));
+    private RequestMethod[] getRequestMethods(RequestMapping annotation) {
+        RequestMethod[] requestMethods = annotation.method();
+
+        return (requestMethods.length == 0) ? RequestMethod.values()
+                : requestMethods;
     }
 
-    private boolean isConnectable(HandlerKey handlerKey) {
-        return !handlerExecutions.containsKey(handlerKey);
+    private void checkDuplicate(HandlerKey handlerKey) {
+        if (handlerExecutions.containsKey(handlerKey)) {
+            throw new DuplicatedHandlerMappingException();
+        }
     }
 
     @Override
