@@ -15,6 +15,23 @@ import javax.servlet.http.HttpServletResponse;
 
 @Controller
 public class UserController {
+    @RequestMapping(value = "/users/form", method = RequestMethod.GET)
+    public ModelAndView creationForm(HttpServletRequest req, HttpServletResponse resp) {
+        return new ModelAndView(new JspView("/user/form.jsp"));
+    }
+
+    @RequestMapping(value = "/users/loginForm", method = RequestMethod.GET)
+    public ModelAndView loginForm(HttpServletRequest req, HttpServletResponse resp) {
+        return new ModelAndView(new JspView("/user/login.jsp"));
+    }
+
+    @RequestMapping(value = "/users/updateForm", method = RequestMethod.GET)
+    public ModelAndView updateForm(HttpServletRequest req, HttpServletResponse resp) {
+        User user = getAuthenticatedUser(req);
+        req.setAttribute("user", user);
+        return new ModelAndView(new JspView("/user/updateForm.jsp"));
+    }
+
     @RequestMapping(value = "/users/create", method = RequestMethod.POST)
     public ModelAndView create(HttpServletRequest req, HttpServletResponse resp) {
         User user = createUserByRequestBody(req);
@@ -52,20 +69,21 @@ public class UserController {
         return new ModelAndView(new RedirectView("redirect:/"));
     }
 
-    private User createUserByRequestBody(HttpServletRequest req) {
-        return new User(
-                req.getParameter("userId"), req.getParameter("password"),
-                req.getParameter("name"), req.getParameter("email")
-        );
-    }
-
     private User getAuthenticatedUser(HttpServletRequest req) {
-        User user = DataBase.findUserById(req.getParameter("userId"));
+        String userId = req.getParameter("userId");
+        User user = DataBase.findUserById(userId);
 
         if (!UserSessionUtils.isSameUser(req.getSession(), user)) {
             throw new IllegalStateException("다른 사용자의 정보를 수정할 수 없습니다.");
         }
         return user;
+    }
+
+    private User createUserByRequestBody(HttpServletRequest req) {
+        return new User(
+                req.getParameter("userId"), req.getParameter("password"),
+                req.getParameter("name"), req.getParameter("email")
+        );
     }
 
     private void checkExisting(User user) {
