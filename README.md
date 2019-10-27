@@ -24,5 +24,5 @@
 
 ### 2단계 View 구현
 - [x] JsonView 구현
-- [ ] 모든 Controller를 애노테이션 기반 MVC로 변경
-- [ ] UserAcceptanceTest 통과하도록 Controller 추가
+- [x] 모든 Controller를 애노테이션 기반 MVC로 변경
+- [x] UserAcceptanceTest 통과하도록 Controller 추가
