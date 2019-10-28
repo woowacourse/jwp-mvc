@@ -14,6 +14,8 @@ import java.util.stream.Collectors;
 public class HandlerKeyFactory {
     private static final Logger log = LoggerFactory.getLogger(HandlerKeyFactory.class);
 
+    private static final String EMPTY = "";
+
     private HandlerKeyFactory() {
     }
 
@@ -27,11 +29,8 @@ public class HandlerKeyFactory {
 
     public List<HandlerKey> fromMethod(Method method) {
         RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-        if (requestMapping == null) {
-            return Collections.emptyList();
-        }
 
-        String url = requestMapping.value();
+        String url = getUrl(requestMapping);
         if (url.isEmpty()) {
             return Collections.emptyList();
         }
@@ -39,6 +38,13 @@ public class HandlerKeyFactory {
         return getMethods(requestMapping).stream()
                 .map(requestMethod -> HandlerKey.fromUrlAndRequestMethod(url, requestMethod))
                 .collect(Collectors.toList());
+    }
+
+    private String getUrl(RequestMapping requestMapping) {
+        if (requestMapping == null) {
+            return EMPTY;
+        }
+        return requestMapping.value();
     }
 
     private List<RequestMethod> getMethods(RequestMapping requestMapping) {

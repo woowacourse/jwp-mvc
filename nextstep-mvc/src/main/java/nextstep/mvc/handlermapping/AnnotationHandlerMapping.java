@@ -1,5 +1,6 @@
 package nextstep.mvc.handlermapping;
 
+import nextstep.mvc.exception.NextstepMvcException;
 import nextstep.mvc.handlermapping.HandlerExecutionHandlerMapping.Builder;
 import nextstep.utils.ComponentScanner;
 import nextstep.web.annotation.Controller;
@@ -67,13 +68,13 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         try {
             tryRegisterFromMethod(method, mappingBuilder);
         } catch (RuntimeException e) {
-            log.info("error: {}", e);
+            log.error("error: {}", e);
+            throw NextstepMvcException.ofException(e);
         }
     }
 
     private void tryRegisterFromMethod(Method method, Builder mappingBuilder) {
-        HandlerExecution execution = handlerExecutionFactory.fromMethod(method)
-                .orElseThrow(() -> new RuntimeException("HandlerExecution 을 만족하지 않는 메소드 시그니처입니다."));
+        HandlerExecution execution = handlerExecutionFactory.fromMethod(method);
 
         handlerKeyFactory.fromMethod(method).stream()
                 .forEach(key -> {

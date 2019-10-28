@@ -1,5 +1,6 @@
 package nextstep.mvc.handlermapping;
 
+import nextstep.mvc.exception.NextstepMvcException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -8,6 +9,7 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class HandlerExecutionFactoryTest {
     private static final HandlerExecutionFactory factory = HandlerExecutionFactory.getInstance();
@@ -17,7 +19,7 @@ class HandlerExecutionFactoryTest {
     void fromMethod_methodOfWrongReturnType() throws NoSuchMethodException {
         Method methodOfWrongReturnType = findMethod("methodOfWrongReturnType");
 
-        assertThat(factory.fromMethod(methodOfWrongReturnType)).isEmpty();
+        assertThrows(NextstepMvcException.class, () -> factory.fromMethod(methodOfWrongReturnType));
     }
 
     @Test
@@ -25,7 +27,7 @@ class HandlerExecutionFactoryTest {
     void fromMethod_methodOfWrongParams() {
         Method methodOfWrongParams = findMethod("methodOfWrongParams");
 
-        assertThat(factory.fromMethod(methodOfWrongParams)).isEmpty();
+        assertThrows(NextstepMvcException.class, () -> factory.fromMethod(methodOfWrongParams));
     }
 
     @Test
@@ -33,7 +35,7 @@ class HandlerExecutionFactoryTest {
     void fromMethod_correctMethod() throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
         Method correctMethod = findMethod("correctMethod");
 
-        assertThat(factory.fromMethod(correctMethod).get() instanceof HandlerExecution).isTrue();
+        assertThat(factory.fromMethod(correctMethod) instanceof HandlerExecution).isTrue();
     }
 
     private Method findMethod(String methodName) {

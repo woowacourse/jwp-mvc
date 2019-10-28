@@ -36,7 +36,7 @@ public class UserApiController {
 
         ModelAndView modelAndView = new ModelAndView(JsonView.getInstance());
         modelAndView.addObject("message", "created");
-        return new ModelAndView(JsonView.getInstance());
+        return modelAndView;
     }
 
     private UserDto readUserDtoFromBody(HttpServletRequest request) {
@@ -74,7 +74,7 @@ public class UserApiController {
 
         ModelAndView modelAndView = new ModelAndView(JsonView.getInstance());
         modelAndView.addObject("message", "updated");
-        return new ModelAndView(JsonView.getInstance());
+        return modelAndView;
     }
 
     private UserUpdatedDto readUserUpdateDtoFromBody(HttpServletRequest request) {
