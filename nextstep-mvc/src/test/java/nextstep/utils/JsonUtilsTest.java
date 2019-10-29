@@ -1,7 +1,6 @@
 package nextstep.utils;
 
 import nextstep.mvc.tobe.testdata.Car;
-import nextstep.mvc.tobe.testdata.User;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;

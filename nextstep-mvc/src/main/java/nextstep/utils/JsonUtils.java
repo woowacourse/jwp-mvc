@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 public class JsonUtils {
+    private static final ObjectMapper objectMapper = new ObjectMapper();
+
     public static <T> T toObject(String json, Class<T> clazz) throws ObjectMapperException {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
@@ -29,13 +31,15 @@ public class JsonUtils {
 
     // toJson
     public static String toJson(Object instance) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+        writeJsonTo(out, instance);
+        return out.toString();
+    }
+
+    private static void writeJsonTo(OutputStream out, Object instanceTobeJson) {
         try {
-            return objectMapper.writeValueAsString(instance);
-//            objectMapper.writeValue(outputStream, instance);
-//
-//            return outputStream.toString();
+            objectMapper.writeValue(out, instanceTobeJson);
         } catch (IOException e) {
             throw new ObjectMapperException(e);
         }
