@@ -22,28 +22,43 @@ public class UserAcceptanceTest {
     void setUp() {
         client = NsWebTestClient.of(8080);
 
-        expected = new UserCreatedDto(
-                "pobi",
-                "password",
-                "포비",
-                "pobi@nextstep.camp"
-        );
-        userLocation = client.createResource("/api/users", expected, UserCreatedDto.class);
     }
 
     @Test
     @DisplayName("사용자 회원 가입")
     void createUser() throws URISyntaxException {
+        // Given
+        UserCreatedDto createdDto = new UserCreatedDto(
+                "pobi",
+                "password",
+                "포비",
+                "pobi@nextstep.camp"
+        );
         URI expected = new URI("/api/users?userId=pobi");
 
-        assertThat(userLocation).isEqualTo(expected);
+        // When
+        URI location = client.createResource("/api/users", createdDto, UserCreatedDto.class);
+
+        // Then
+        assertThat(location).isEqualTo(expected);
     }
 
     @Test
     @DisplayName("사용자 조회")
     void findUer() {
-        User actual = client.getResource(userLocation, User.class);
+        // Given
+        UserCreatedDto expected = new UserCreatedDto(
+                "pobi",
+                "password",
+                "포비",
+                "pobi@nextstep.camp"
+        );
+        URI location = client.createResource("/api/users", expected, UserCreatedDto.class);
 
+        // When
+        User actual = client.getResource(location, User.class);
+
+        // Then
         assertThat(actual.getUserId()).isEqualTo(expected.getUserId());
         assertThat(actual.getName()).isEqualTo(expected.getName());
         assertThat(actual.getEmail()).isEqualTo(expected.getEmail());
@@ -52,10 +67,20 @@ public class UserAcceptanceTest {
     @Test
     @DisplayName("사용자 정보 수정")
     void updateUser() {
+        // Given
+        UserCreatedDto expected = new UserCreatedDto(
+                "pobi",
+                "password",
+                "포비",
+                "pobi@nextstep.camp"
+        );
+        URI location = client.createResource("/api/users", expected, UserCreatedDto.class);
         UserUpdatedDto updatedUser = new UserUpdatedDto("password2", "코난", "conan@nextstep.camp");
 
-        client.updateResource(userLocation, updatedUser, UserUpdatedDto.class);
+        // When
+        client.updateResource(location, updatedUser, UserUpdatedDto.class);
 
+        // Then
         User actual = client.getResource(userLocation, User.class);
         assertThat(actual.getPassword()).isEqualTo(updatedUser.getPassword());
         assertThat(actual.getName()).isEqualTo(updatedUser.getName());
