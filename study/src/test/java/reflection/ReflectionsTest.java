@@ -3,6 +3,7 @@ package reflection;
 import annotation.Controller;
 import annotation.Repository;
 import annotation.Service;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
@@ -10,6 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Set;
 
+@Disabled
 public class ReflectionsTest {
     private static final Logger logger = LoggerFactory.getLogger(ReflectionsTest.class);
 
