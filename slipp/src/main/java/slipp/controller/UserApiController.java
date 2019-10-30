@@ -3,7 +3,6 @@ package slipp.controller;
 import nextstep.mvc.tobe.ModelAndView;
 import nextstep.mvc.tobe.view.JsonView;
 import nextstep.utils.JsonUtils;
-import nextstep.utils.UriBuilder;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestMethod;
@@ -21,9 +20,7 @@ public class UserApiController {
     @RequestMapping(value = "/api/users", method = RequestMethod.POST)
     public ModelAndView create(HttpServletRequest req, HttpServletResponse resp) {
         User user = JsonUtils.requestBodyToObject(req, User.class);
-        String location = UriBuilder.builder(req.getRequestURI())
-                .appendQueryParams("userId", user.getUserId())
-                .build();
+        String location = req.getRequestURI() + "?userId=" + user.getUserId();
 
         DataBase.addUser(user);
 
