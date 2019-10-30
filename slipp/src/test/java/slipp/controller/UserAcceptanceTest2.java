@@ -36,12 +36,12 @@ public class UserAcceptanceTest2 {
     void createUser() throws URISyntaxException {
         // Given
         UserCreatedDto createdDto = new UserCreatedDto(
-                "pobi",
+                "pobi2", // setup메서드에서 만들어둔 testUser의 id와 중복되지 않는 id로 설정
                 "password",
                 "포비",
                 "pobi@nextstep.camp"
         );
-        URI expected = new URI("/api/users?userId=pobi");
+        URI expected = new URI("/api/users?userId=pobi2");
 
         // When
         URI location = client.createResource("/api/users", createdDto, UserCreatedDto.class);
