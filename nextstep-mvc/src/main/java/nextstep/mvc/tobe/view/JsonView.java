@@ -13,6 +13,7 @@ import java.util.Map;
 
 public class JsonView implements View {
     private static final int MONO = 1;
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     @Override
     public void render(Map<String, ?> model, HttpServletRequest request, HttpServletResponse response) {
@@ -33,14 +34,16 @@ public class JsonView implements View {
     }
 
     private String getJson(Map<String, ?> model) throws JsonProcessingException {
-        ObjectMapper objectMapper = new ObjectMapper();
-
         return model.size() == MONO
-                ? objectMapper.writeValueAsString(getSingleObjectIn(model))
-                : objectMapper.writeValueAsString(model);
+                ? mapToJson(getSingleObjectIn(model))
+                : mapToJson(model);
     }
 
-    private Object getSingleObjectIn(Map<String,?> model) {
+    private String mapToJson(Object object) throws JsonProcessingException {
+        return OBJECT_MAPPER.writeValueAsString(object);
+    }
+
+    private Object getSingleObjectIn(Map<String, ?> model) {
         return model.values().iterator().next();
     }
 }
