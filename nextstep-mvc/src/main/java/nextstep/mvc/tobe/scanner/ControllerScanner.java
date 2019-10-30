@@ -33,7 +33,7 @@ public class ControllerScanner {
         } catch (NoSuchMethodException | IllegalAccessException
                 | InstantiationException | InvocationTargetException e) {
             logger.debug(e.getMessage(), e);
-            throw new InstanceCreationFailedException();
+            throw new InstanceCreationFailedException(e);
         }
     }
 }
