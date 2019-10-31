@@ -7,17 +7,13 @@ import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-public class HandlerExecution implements HandlerAdapter {
+public class HandlerExecution implements Handler {
     private Object instance;
     private Method method;
 
     HandlerExecution(Object controller, Method method) {
         this.instance = controller;
         this.method = method;
-    }
-
-    public Method getMethod() {
-        return method;
     }
 
     @Override

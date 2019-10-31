@@ -1,7 +1,6 @@
 package nextstep.mvc.tobe.scanner;
 
 import nextstep.mvc.tobe.exception.InstanceCreationFailedException;
-import nextstep.utils.LoggingUtils;
 import nextstep.web.annotation.Controller;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
@@ -33,8 +32,8 @@ public class ControllerScanner {
             return constructor.newInstance();
         } catch (NoSuchMethodException | IllegalAccessException
                 | InstantiationException | InvocationTargetException e) {
-            LoggingUtils.logStackTrace(logger, e);
-            throw new InstanceCreationFailedException();
+            logger.debug(e.getMessage(), e);
+            throw new InstanceCreationFailedException(e);
         }
     }
 }

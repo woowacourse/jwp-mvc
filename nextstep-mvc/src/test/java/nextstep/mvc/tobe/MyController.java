@@ -35,21 +35,6 @@ public class MyController {
         return null;
     }
 
-    @RequestMapping(value = "/notnull", method = RequestMethod.POST)
-    public ModelAndView returnNotNull(HttpServletRequest request, HttpServletResponse response) {
-        return new ModelAndView();
-    }
-
-    @RequestMapping(value = "/method", method = RequestMethod.POST)
-    public ModelAndView handlePost(HttpServletRequest request, HttpServletResponse response) {
-        return new ModelAndView();
-    }
-
-    @RequestMapping(value = "/method")
-    public ModelAndView cannotHandlePost(HttpServletRequest request, HttpServletResponse response) {
-        return new ModelAndView();
-    }
-
     @RequestMapping(value = "/one-method", method = RequestMethod.POST)
     public ModelAndView handleOneRequestMethod(HttpServletRequest request, HttpServletResponse response) {
         return new ModelAndView();
