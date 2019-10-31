@@ -95,4 +95,14 @@ public class NsWebTestClient {
                 .exchange()
                 .expectStatus();
     }
+
+    public StatusAssertions postRequest(URI location, MultiValueMap<String, String> body, String cookie) {
+        return testClientBuilder.build()
+                .post()
+                .uri(location.toString())
+                .header("Cookie", cookie)
+                .body(BodyInserters.fromFormData(body))
+                .exchange()
+                .expectStatus();
+    }
 }

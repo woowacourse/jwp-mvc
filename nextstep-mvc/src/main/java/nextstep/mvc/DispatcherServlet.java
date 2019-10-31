@@ -49,8 +49,12 @@ public class DispatcherServlet extends HttpServlet {
 
             modelAndView.getView().render(modelAndView.getModel(), req, resp);
 
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (NotFoundHandlerException e) {
+            resp.sendError(404);
+            logger.error("{}", e.getMessage());
+        } catch (Exception e){
+            resp.sendError(500);
+            logger.error("{}", e.getMessage());
         }
     }
 
@@ -58,7 +62,7 @@ public class DispatcherServlet extends HttpServlet {
         return handlerMappings.stream()
                 .filter(handlerMapping -> handlerMapping.getHandler(req) != null)
                 .findAny()
-                .orElseThrow(ObjectMapperException::new)
+                .orElseThrow(NotFoundHandlerException::new)
                 .getHandler(req);
     }
 }

@@ -1,16 +1,14 @@
 package nextstep.mvc;
 
-import slipp.support.db.DataBase;
 import nextstep.mvc.tobe.AnnotationHandlerAdapter;
 import nextstep.mvc.tobe.AnnotationHandlerMapping;
-import nextstep.mvc.tobe.ManualHandlerAdapter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockHttpSession;
-import slipp.ManualHandlerMapping;
 import slipp.domain.User;
+import slipp.support.db.DataBase;
 
 import javax.servlet.ServletException;
 import java.io.IOException;
@@ -26,13 +24,11 @@ class DispatcherServletTest {
 
     @BeforeEach
     void setUp() throws ServletException {
-        ManualHandlerMapping manualHandlerMapping = new ManualHandlerMapping();
         AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping("slipp.controller");
-        List<HandlerMapping> handlerMappings = Arrays.asList(manualHandlerMapping, annotationHandlerMapping);
+        List<HandlerMapping> handlerMappings = Arrays.asList(annotationHandlerMapping);
 
-        ManualHandlerAdapter manualHandlerAdapter = new ManualHandlerAdapter();
         AnnotationHandlerAdapter annotationHandlerAdapter = new AnnotationHandlerAdapter();
-        List<HandlerAdapter> handlerAdapters = Arrays.asList(manualHandlerAdapter, annotationHandlerAdapter);
+        List<HandlerAdapter> handlerAdapters = Arrays.asList(annotationHandlerAdapter);
 
         dispatcherServlet = new DispatcherServlet(handlerMappings, handlerAdapters);
         dispatcherServlet.init();
