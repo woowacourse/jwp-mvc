@@ -1,10 +1,11 @@
 package nextstep.mvc;
 
-import nextstep.mvc.handleradapter.Handler;
-import nextstep.mvc.handleradapter.HandlerAdapterFactory;
-import nextstep.mvc.handleradapter.HandlerAdapterWrappers;
-import nextstep.mvc.handleradapter.SupportedHandlerAdapterFactory;
-import nextstep.mvc.handlermapping.HandlerMapping;
+import nextstep.mvc.exception.NextstepMvcException;
+import nextstep.mvc.handler.Handler;
+import nextstep.mvc.handler.HandlerFactory;
+import nextstep.mvc.handler.handleradapter.HandlerAdapterWrappers;
+import nextstep.mvc.handler.handleradapter.SupportedHandlerFactory;
+import nextstep.mvc.handler.handlermapping.HandlerMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,14 +22,14 @@ public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
 
-    private final HandlerAdapterFactory handlerAdapterFactory;
+    private final HandlerFactory handlerFactory;
 
-    private DispatcherServlet(HandlerAdapterFactory handlerAdapterFactory) {
-        this.handlerAdapterFactory = handlerAdapterFactory;
+    private DispatcherServlet(HandlerFactory handlerFactory) {
+        this.handlerFactory = handlerFactory;
     }
 
     public static DispatcherServlet from(HandlerMapping mapping, HandlerAdapterWrappers wrappers) {
-        return new DispatcherServlet(SupportedHandlerAdapterFactory.from(mapping, wrappers));
+        return new DispatcherServlet(SupportedHandlerFactory.from(mapping, wrappers));
     }
 
     @Override
@@ -39,11 +40,12 @@ public class DispatcherServlet extends HttpServlet {
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try {
-            Handler handler = handlerAdapterFactory.create(request);
+            Handler handler = handlerFactory.create(request);
 
             handler.render(request, response);
         } catch (Exception e) {
             log.error("error: ", e);
+            throw NextstepMvcException.ofException(e);
         }
     }
 }

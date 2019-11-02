@@ -1,12 +1,11 @@
 package slipp;
 
-import ch.qos.logback.access.tomcat.LogbackValve;
 import nextstep.mvc.DispatcherServlet;
 import nextstep.mvc.asis.Controller;
-import nextstep.mvc.handleradapter.ControllerAdaptor;
-import nextstep.mvc.handleradapter.HandlerAdapterWrappers;
-import nextstep.mvc.handleradapter.HandlerExecutionAdapter;
-import nextstep.mvc.handlermapping.*;
+import nextstep.mvc.handler.handleradapter.ControllerAdaptor;
+import nextstep.mvc.handler.handleradapter.HandlerAdapterWrappers;
+import nextstep.mvc.handler.handleradapter.HandlerExecutionAdapter;
+import nextstep.mvc.handler.handlermapping.*;
 import nextstep.web.WebApplicationInitializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,10 +14,6 @@ import slipp.controller.HomeController;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRegistration;
-import java.io.File;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.nio.file.Paths;
 import java.util.Arrays;
 
 public class SlippWebApplicationInitializer implements WebApplicationInitializer {
@@ -33,6 +28,12 @@ public class SlippWebApplicationInitializer implements WebApplicationInitializer
                 new AnnotationHandlerMapping("slipp")));
 
         mapping.initialize();
+        // [review] wrapper 가 정말 필요할까?
+        // 현재 필요한 이유는??
+        //  - 기존 컨트롤러 역할을 해주는 구현체들이 Handler 의 형태가 아님 (여기선 Handler 가 컨트롤러 역할을 추상화)
+        //  - 결국 Handler 는 추상화된 컨트롤러
+        //  - 전체적으로 추상화된 컨트롤러를 가지고 일하고 싶다면??
+        //      - 즉... mapping 자체에서 Handler 를 바로 반환해준다면... wrapper 가 필요 없음
         DispatcherServlet dispatcherServlet = DispatcherServlet.from(
                 mapping,
                 HandlerAdapterWrappers.builder()
