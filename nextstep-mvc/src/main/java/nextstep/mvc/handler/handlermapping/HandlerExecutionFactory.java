@@ -13,7 +13,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Objects;
 
-class HandlerExecutionFactory {
+public class HandlerExecutionFactory {
     private static final Logger log = LoggerFactory.getLogger(HandlerExecutionFactory.class);
 
     private static final Class<?>[] handlerExecutionParameterTypes = {HttpServletRequest.class, HttpServletResponse.class};
