@@ -8,6 +8,7 @@ class HomeControllerTest extends BaseControllerTest {
     @DisplayName("index페이지를 되돌려준다.")
     void index() {
         client.get("/")
+                .exchange()
                 .expectStatus().isOk();
     }
 }

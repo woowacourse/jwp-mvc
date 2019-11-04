@@ -59,11 +59,16 @@ public class NsWebTestClient {
                 .returnResult().getResponseBody();
     }
 
-    public WebTestClient.ResponseSpec get(String uri) {
+    public WebTestClient.RequestHeadersSpec<?> get(String uri) {
         return testClientBuilder.build()
                 .get()
-                .uri(uri)
-                .exchange();
+                .uri(uri);
+    }
+
+    public WebTestClient.RequestBodySpec post(String uri) {
+        return testClientBuilder.build()
+                .post()
+                .uri(uri);
     }
 
     public static NsWebTestClient of(int port) {
