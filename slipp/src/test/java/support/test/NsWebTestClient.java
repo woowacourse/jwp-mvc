@@ -59,6 +59,13 @@ public class NsWebTestClient {
                 .returnResult().getResponseBody();
     }
 
+    public WebTestClient.ResponseSpec get(String uri) {
+        return testClientBuilder.build()
+                .get()
+                .uri(uri)
+                .exchange();
+    }
+
     public static NsWebTestClient of(int port) {
         return of(BASE_URL, port);
     }
