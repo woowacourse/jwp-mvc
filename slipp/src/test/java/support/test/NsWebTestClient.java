@@ -3,9 +3,11 @@ package support.test;
 import org.springframework.test.web.reactive.server.EntityExchangeResult;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Mono;
+import slipp.dto.UserLoginDto;
 
 import java.net.URI;
 
+import static org.springframework.web.reactive.function.BodyInserters.fromFormData;
 import static org.springframework.web.reactive.function.client.ExchangeFilterFunctions.basicAuthentication;
 
 public class NsWebTestClient {
@@ -77,5 +79,17 @@ public class NsWebTestClient {
 
     public static NsWebTestClient of(String baseUrl, int port) {
         return new NsWebTestClient(baseUrl, port);
+    }
+
+    public String getLoginCookie(UserLoginDto loginDto) {
+        return testClientBuilder.build()
+                .post()
+                .uri("/users/login")
+                .body(fromFormData("userId", loginDto.getUserId())
+                        .with("password", loginDto.getPassword()))
+                .exchange()
+                .returnResult(String.class)
+                .getResponseHeaders()
+                .getFirst("Set-Cookie");
     }
 }
