@@ -63,7 +63,11 @@ public class UserApiAcceptanceTest extends BaseControllerTest {
                 "pobi@nextstep.camp"
         );
         URI location = client.createResource("/api/users", expected, UserCreatedDto.class);
-        UserUpdatedDto updatedUser = new UserUpdatedDto("password2", "코난", "conan@nextstep.camp");
+        UserUpdatedDto updatedUser = new UserUpdatedDto(
+                "password2",
+                "코난",
+                "conan@nextstep.camp"
+        );
 
         // When
         client.updateResource(location, updatedUser, UserUpdatedDto.class);
