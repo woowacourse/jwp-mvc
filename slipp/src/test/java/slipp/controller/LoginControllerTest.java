@@ -1,5 +1,6 @@
 package slipp.controller;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import slipp.dto.UserCreatedDto;
@@ -8,10 +9,8 @@ import slipp.dto.UserLoginDto;
 import static org.springframework.web.reactive.function.BodyInserters.fromFormData;
 
 public class LoginControllerTest extends BaseControllerTest {
-    @Test
-    @DisplayName("사용자 로그인")
-    void login() {
-        // Given
+    @BeforeEach
+    void setUp() {
         UserCreatedDto createdDto = new UserCreatedDto(
                 "login",
                 "password",
@@ -19,8 +18,11 @@ public class LoginControllerTest extends BaseControllerTest {
                 "pobi@nextstep.camp"
         );
         client.createResource("/api/users", createdDto, UserCreatedDto.class);
+    }
 
-        // When, Then
+    @Test
+    @DisplayName("사용자 로그인")
+    void login() {
         UserLoginDto loginDto = new UserLoginDto("login", "password");
 
         client.post("/users/login")
@@ -49,16 +51,6 @@ public class LoginControllerTest extends BaseControllerTest {
     @Test
     @DisplayName("비밀번호가 틀린 경우 로그인 실패")
     void failLogin_WrongPassword() {
-        // Given
-        UserCreatedDto createdDto = new UserCreatedDto(
-                "login",
-                "password",
-                "포비",
-                "pobi@nextstep.camp"
-        );
-        client.createResource("/api/users", createdDto, UserCreatedDto.class);
-
-        // When, Then
         UserLoginDto loginDto = new UserLoginDto("login", "wrong");
 
         client.post("/users/login")
