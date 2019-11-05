@@ -1,5 +1,6 @@
 package slipp.controller;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import slipp.dto.UserCreatedDto;
@@ -9,6 +10,21 @@ import slipp.dto.UserUpdatedDto;
 import static org.springframework.web.reactive.function.BodyInserters.fromFormData;
 
 class UserControllerTest extends BaseControllerTest {
+    private static final String SETUP_USER_ID = "userControllerTest";
+    private static final String PASSWORD = "password";
+
+    @BeforeEach
+    void setUp() {
+        UserCreatedDto userCreatedDto = new UserCreatedDto(
+                SETUP_USER_ID,
+                PASSWORD,
+                "name",
+                "email@email.com"
+        );
+
+        client.createResource("/api/users", userCreatedDto, UserCreatedDto.class);
+    }
+
     @Test
     @DisplayName("회원가입 페이지를 되돌려준다.")
     void creationForm() {
@@ -29,8 +45,7 @@ class UserControllerTest extends BaseControllerTest {
     @DisplayName("유저 정보 수정 페이지를 되돌려준다.")
     void updateForm() {
         // Given
-        UserLoginDto loginDto = new UserLoginDto("loginFormTest", "password");
-        createUserForLogin(loginDto.getUserId(), loginDto.getPassword());
+        UserLoginDto loginDto = new UserLoginDto(SETUP_USER_ID, PASSWORD);
 
         // When, Then
         String cookie = client.getLoginCookie(loginDto);
@@ -76,8 +91,7 @@ class UserControllerTest extends BaseControllerTest {
     @DisplayName("로그인 하고 유저 목록에 접근하면 로그인 페이지를 보여준다.")
     void userList_ifClient_isLogined() {
         // Given
-        UserLoginDto loginDto = new UserLoginDto("loginTest", "password");
-        createUserForLogin(loginDto.getUserId(), loginDto.getPassword());
+        UserLoginDto loginDto = new UserLoginDto(SETUP_USER_ID, PASSWORD);
 
         // When, Then
         String cookie = client.getLoginCookie(loginDto);
@@ -91,8 +105,7 @@ class UserControllerTest extends BaseControllerTest {
     @Test
     @DisplayName("유저 프로필을 되돌려준다.")
     void userProfile() {
-        // TODO: 2019-11-05 userId 변경
-        client.get("/users/profile?userId=admin")
+        client.get("/users/profile?userId=" + SETUP_USER_ID)
                 .exchange()
                 .expectStatus().isOk();
     }
@@ -101,8 +114,8 @@ class UserControllerTest extends BaseControllerTest {
     @DisplayName("유저 정보를 수정한다.")
     void updateUser() {
         // Given
-        UserLoginDto loginDto = new UserLoginDto("updateTest", "password");
-        createUserForLogin(loginDto.getUserId(), loginDto.getPassword());
+        UserLoginDto loginDto = new UserLoginDto(SETUP_USER_ID, PASSWORD);
+        String cookie = client.getLoginCookie(loginDto);
         UserUpdatedDto updatedUser = new UserUpdatedDto(
                 "password2",
                 "코난",
@@ -110,8 +123,6 @@ class UserControllerTest extends BaseControllerTest {
         );
 
         // When, Then
-        String cookie = client.getLoginCookie(loginDto);
-
         client.post("/users/update")
                 .header("cookie", cookie)
                 .body(fromFormData("userId", loginDto.getUserId())
@@ -123,24 +134,4 @@ class UserControllerTest extends BaseControllerTest {
                 .expectHeader()
                 .valueEquals("location", "/");
     }
-
-    private void createUserForLogin(String userId, String password) {
-        UserCreatedDto userCreatedDto = new UserCreatedDto(
-                userId,
-                password,
-                "name",
-                "email@email.com"
-        );
-
-        client.post("/users/create")
-                .body(fromFormData("userId", userCreatedDto.getUserId())
-                        .with("password", userCreatedDto.getPassword())
-                        .with("name", userCreatedDto.getName())
-                        .with("email", userCreatedDto.getEmail()))
-                .exchange()
-                .expectStatus().is3xxRedirection()
-                .expectHeader()
-                .valueEquals("location", "/");
-    }
-
 }
