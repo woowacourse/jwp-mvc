@@ -20,7 +20,7 @@ public class UserApiController {
     @RequestMapping(value = "/api/users", method = RequestMethod.POST)
     public ModelAndView create(HttpServletRequest req, HttpServletResponse resp) {
         User user = JsonUtils.requestBodyToObject(req, User.class);
-        String location = req.getRequestURI() + "?userId=" + user.getUserId();
+        String location = "/api/users?userId=" + user.getUserId();
 
         DataBase.addUser(user);
 

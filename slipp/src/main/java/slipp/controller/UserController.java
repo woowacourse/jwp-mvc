@@ -66,7 +66,7 @@ public class UserController {
         User updatedUser = createUserByRequestBody(req);
 
         user.update(updatedUser);
-        return new ModelAndView(new RedirectView("redirect:/"));
+        return new ModelAndView(new RedirectView("/"));
     }
 
     private User getAuthenticatedUser(HttpServletRequest req) {
