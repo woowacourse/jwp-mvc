@@ -9,6 +9,7 @@ import reflection.helper.ExpectedMethod;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.*;
 
@@ -84,6 +85,36 @@ public class ReflectionTest {
     }
 
     @Test
+    public void clazz_getFields_getParentField() {
+        Class<Child> clazz = Child.class;
+
+        Map<String, ExpectedField> expectedFields = new HashMap<>() {{
+            put("age", ExpectedField.builder()
+                    .declaringClass(Parent.class)
+                    .type(int.class)
+                    .modifiers(Modifier.PUBLIC)
+                    .name("age")
+                    .build());
+        }};
+
+        Field[] fields = clazz.getFields();
+        assertThat(fields.length).isEqualTo(expectedFields.size());
+        for (Field field : fields) {
+            log.debug("field name: {}", field.getName());
+            ExpectedField expectedField = expectedFields.get(field.getName());
+
+            expectedField.assertField(field);
+        }
+    }
+
+    class Parent {
+        public int age;
+    }
+
+    class Child extends Parent {
+    }
+
+    @Test
     public void clazz_getDeclaredFields() {
         Class<Simple> clazz = Simple.class;
 
@@ -136,6 +167,8 @@ public class ReflectionTest {
                 .filter(constructor -> isIncludedBy(expectedConstructors, constructor))
                 .count();
         assertThat(existConstructorCount).isEqualTo(constructors.length);
+
+
     }
 
     @Test
@@ -170,7 +203,6 @@ public class ReflectionTest {
         return expectedConstructors.stream().anyMatch(expectedConstructor -> expectedConstructor.isSameSignature(constructor));
     }
 
-
     @Test
     public void clazz_getDeclaredMethods() {
         Class<Simple> clazz = Simple.class;
@@ -199,6 +231,16 @@ public class ReflectionTest {
                     .returnType(String.class)
                     .build());
         }};
+
+        Method[] methods = clazz.getDeclaredMethods();
+        assertThat(methods.length).isEqualTo(expectedMethods.size());
+
+        for (Method method : methods) {
+            log.debug(method.getName());
+            ExpectedMethod expectedMethod = expectedMethods.get(method.getName());
+
+            expectedMethod.assertMethod(method);
+        }
     }
 
     @Test
